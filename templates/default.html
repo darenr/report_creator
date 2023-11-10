@@ -1,9 +1,40 @@
 <!DOCTYPE html><html lang="en">
     <head>
         <title>${title}</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css">
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
-        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/$theme.min.css">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/$highlight">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+        
+        <!--
+
+            variables, for example: style: color: var(--links)
+
+                --background-body
+                --background
+                --background-alt
+                --selection
+                --text-main
+                --text-bright
+                --text-muted
+                --links
+                --focus
+                --border
+                --code
+                --animation-duration
+                --button-hover
+                --scrollbar-thumb
+                --scrollbar-thumb-hover
+                --form-placeholder
+                --form-text
+                --variable
+                --highlight
+                --select-arrow
+
+            https://github.com/kognise/water.css#theming
+        -->
 
         <style>
             block {
@@ -16,6 +47,7 @@
                 display: flex;
                 flex-direction: row;
                 flex-wrap: wrap;
+                justify-content: space-around;
             }
         
             block_article {
@@ -25,14 +57,25 @@
             }
 
             group_article {
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                padding: 10px;
                 flex: 1;
-            }              
+            }      
+            
+            group_separator {
+                padding: 10px;
+            }
 
         </style>
     </head>
 
     <body>
         $body
+
+
+        <script>hljs.highlightAll();</script>
+
     </body>
 
 </html>

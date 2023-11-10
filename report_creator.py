@@ -51,7 +51,8 @@ class Group:
         for component in self.components:
             html += "<group_article>"           
             html += component.to_html()
-            html += "</group_article>"           
+            html += "</group_article>"    
+            html += "<group_separator></group_separator>"       
             
         html += "</group>"
         return html
@@ -70,7 +71,7 @@ class BigNumber(Base):
         logging.info(f"BigNumber {self.heading} {self.value}")
 
     def to_html(self):
-        return f"<div><h1>{self.heading}</h1><h2>{self.value}</h2></div>"
+        return f"<p style='color: var(--text-muted);'>{self.heading}</p><h1>{self.value}</h1>"
 
 class DataTable(Base):
     def __init__(self, df: pd.DataFrame, label=None):
@@ -100,6 +101,16 @@ class Markdown(Base):
         return markdown(self.text)
 
 
+class Python(Base):
+    def __init__(self, text: str, label=None):
+        Base.__init__(self, label=label)
+        self.text = text
+        self.language = "python"
+        logging.info(f"Python {len(self.text)} characters")        
+    
+    def to_html(self):
+        return f"<pre><code class='language-{self.language}'>{self.text}</code></pre>"
+
 class Plot(Base):
     def __init__(self, fig, label=None):
         Base.__init__(self, label=label)
@@ -107,17 +118,19 @@ class Plot(Base):
 
 
 class ReportCreator:
-    def __init__(self, title: str, template="default"):
+    def __init__(self, title: str):
         self.title = title
-        self.template = template
 
-    def save(self, view: Base, path: str) -> None:
-        logging.info(f"Saving report to {path}")
+    def save(self, view: Base, path: str, theme: str = 'water') -> None:
+        logging.info(f"Saving report to {path}, (theme: {theme})")
         
-        with open(f"templates/{self.template}.html", "r") as f:
+        if theme not in ['light', 'dark']:
+            raise ValueError(f"Unknown theme {theme}, use one of light|dark")
+                
+        with open(f"templates/default.html", "r") as f:
             t = Template(f.read())
             with open(path, "w") as f:
-                html = t.substitute(title=self.title, body=view.to_html())
+                html = t.substitute(title=self.title, theme=theme, highlight=f'stackoverflow-{theme}.min.css', body=view.to_html())
                 soup = bs(html, features="lxml") 
                 f.write(soup.prettify())
 
@@ -133,12 +146,14 @@ if __name__ == "__main__":
     view = Blocks(
         Group(
             BigNumber(
-                heading="Number of percentage points",
+                heading="Chances of rain",
                 value="84%",
             ),
-            BigNumber(heading="Simple Statistic", value=100)
+            BigNumber(heading="Loss", value=0.1),
+            BigNumber(heading="Accuracy", value=95)
         ),
         Text("This is a paragraph.\n\nThis is another paragraph."),
+        Python("import pandas as pd\n\ndf = pd.DataFrame({'a': [1, 2], 'b': [3, 4]})"),
         Markdown("""
 > #### The quarterly results look great!
 >
@@ -151,4 +166,4 @@ if __name__ == "__main__":
         DataTable(df, label="Data"),
     )
 
-    report.save(view, "aa.html")
+    report.save(view, "aa.html", theme='dark')

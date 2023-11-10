@@ -4,10 +4,41 @@
   <title>
    My Report
   </title>
-  <link href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css" rel="stylesheet"/>
-  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css" rel="stylesheet"/>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js">
+  <link href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/stackoverflow-dark.min.css" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js">
   </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js">
+  </script>
+  <!--
+
+            variables, for example: style: color: var(--links)
+
+                --background-body
+                --background
+                --background-alt
+                --selection
+                --text-main
+                --text-bright
+                --text-muted
+                --links
+                --focus
+                --border
+                --code
+                --animation-duration
+                --button-hover
+                --scrollbar-thumb
+                --scrollbar-thumb-hover
+                --form-placeholder
+                --form-text
+                --variable
+                --highlight
+                --select-arrow
+
+            https://github.com/kognise/water.css#theming
+        -->
   <style>
    block {
                 display: flex;
@@ -19,6 +50,7 @@
                 display: flex;
                 flex-direction: row;
                 flex-wrap: wrap;
+                justify-content: space-around;
             }
         
             block_article {
@@ -28,7 +60,14 @@
             }
 
             group_article {
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                padding: 10px;
                 flex: 1;
+            }      
+            
+            group_separator {
+                padding: 10px;
             }
   </style>
  </head>
@@ -37,25 +76,35 @@
    <block_article>
     <group>
      <group_article>
-      <div>
-       <h1>
-        Number of percentage points
-       </h1>
-       <h2>
-        84%
-       </h2>
-      </div>
+      <p style="color: var(--text-muted);">
+       Chances of rain
+      </p>
+      <h1>
+       84%
+      </h1>
      </group_article>
+     <group_separator>
+     </group_separator>
      <group_article>
-      <div>
-       <h1>
-        Simple Statistic
-       </h1>
-       <h2>
-        100
-       </h2>
-      </div>
+      <p style="color: var(--text-muted);">
+       Loss
+      </p>
+      <h1>
+       0.1
+      </h1>
      </group_article>
+     <group_separator>
+     </group_separator>
+     <group_article>
+      <p style="color: var(--text-muted);">
+       Accuracy
+      </p>
+      <h1>
+       95
+      </h1>
+     </group_article>
+     <group_separator>
+     </group_separator>
     </group>
    </block_article>
    <block_article>
@@ -65,6 +114,11 @@
     <p>
      This is another paragraph.
     </p>
+   </block_article>
+   <block_article>
+    <pre><code class="language-python">import pandas as pd
+
+df = pd.DataFrame({'a': [1, 2], 'b': [3, 4]})</code></pre>
    </block_article>
    <block_article>
     <blockquote>
@@ -96,5 +150,8 @@
    <block_article>
    </block_article>
   </block>
+  <script>
+   hljs.highlightAll();
+  </script>
  </body>
 </html>
