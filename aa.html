@@ -4,8 +4,8 @@
   <title>
    My Report
   </title>
-  <link href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.min.css" rel="stylesheet"/>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/stackoverflow-dark.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/stackoverflow-light.min.css" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js">
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js">
@@ -61,11 +61,23 @@
 
             group_article {
                 border: 1px solid var(--border);
-                border-radius: 10px;
+                border-radius: 0.5rem;
                 padding: 10px;
                 flex: 1;
             }      
             
+            h1.bignumber {
+                margin-top: 0;
+            }
+
+            p.bignumber{
+                color: var(--text-muted);
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+
+
+
             group_separator {
                 padding: 10px;
             }
@@ -76,30 +88,30 @@
    <block_article>
     <group>
      <group_article>
-      <p style="color: var(--text-muted);">
+      <p class="bignumber">
        Chances of rain
       </p>
-      <h1>
+      <h1 class="bignumber">
        84%
       </h1>
      </group_article>
      <group_separator>
      </group_separator>
      <group_article>
-      <p style="color: var(--text-muted);">
+      <p class="bignumber">
        Loss
       </p>
-      <h1>
+      <h1 class="bignumber">
        0.1
       </h1>
      </group_article>
      <group_separator>
      </group_separator>
      <group_article>
-      <p style="color: var(--text-muted);">
+      <p class="bignumber">
        Accuracy
       </p>
-      <h1>
+      <h1 class="bignumber">
        95
       </h1>
      </group_article>
@@ -108,11 +120,14 @@
     </group>
    </block_article>
    <block_article>
-    <p>
-     This is a paragraph.
+    <p title="Alice in Wonderland">
+     Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do: once or twice she had peeped into the book her sister was reading, but it had no pictures or conversations in it, “and what is the use of a book,” thought Alice “without pictures or conversations?”
     </p>
-    <p>
-     This is another paragraph.
+    <p title="Alice in Wonderland">
+     So she was considering in her own mind (as well as she could, for the hot day made her feel very sleepy and stupid), whether the pleasure of making a daisy-chain would be worth the trouble of getting up and picking the daisies, when suddenly a White Rabbit with pink eyes ran close by her.
+    </p>
+    <p title="Alice in Wonderland">
+     There was nothing so very remarkable in that; nor did Alice think it so very much out of the way to hear the Rabbit say to itself, “Oh dear! Oh dear! I shall be late!” (when she thought it over afterwards, it occurred to her that she ought to have wondered at this, but at the time it all seemed quite natural); but when the Rabbit actually took a watch out of its waistcoat-pocket, and looked at it, and then hurried on, Alice started to her feet, for it flashed across her mind that she had never before seen a rabbit with either a waistcoat-pocket, or a watch to take out of it, and burning with curiosity, she ran across the field after it, and fortunately was just in time to see it pop down a large rabbit-hole under the hedge.
     </p>
    </block_article>
    <block_article>
@@ -172,6 +187,73 @@ df = pd.DataFrame({'a': [1, 2], 'b': [3, 4]})</code></pre>
    <block_article>
    </block_article>
    <block_article>
+    <style type="text/css">
+     #T_bea41   {
+  margin: 0;
+  font-family: "Helvetica", "Arial", sans-serif;
+  border-collapse: collapse;
+  border: none;
+}
+#T_bea41 tbody tr:nth-child(even) {
+  background-color: #fff;
+}
+#T_bea41 tbody tr:nth-child(odd) {
+  background-color: #eee;
+}
+#T_bea41 td {
+  padding: .5em;
+}
+#T_bea41 th {
+  font-size: 100%;
+  text-align: center;
+}
+#T_bea41 caption {
+  color: var(--text-muted);
+  padding-bottom: 10px;
+  font-size: 1.5em;
+}
+    </style>
+    <table id="T_bea41">
+     <caption>
+      Boring data
+     </caption>
+     <thead>
+      <tr>
+       <th class="col_heading level0 col0" id="T_bea41_level0_col0">
+        Name
+       </th>
+       <th class="col_heading level0 col1" id="T_bea41_level0_col1">
+        Age
+       </th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td class="data row0 col0" id="T_bea41_row0_col0">
+        Daren
+       </td>
+       <td class="data row0 col1" id="T_bea41_row0_col1">
+        42
+       </td>
+      </tr>
+      <tr>
+       <td class="data row1 col0" id="T_bea41_row1_col0">
+        Yekaterina
+       </td>
+       <td class="data row1 col1" id="T_bea41_row1_col1">
+        15
+       </td>
+      </tr>
+      <tr>
+       <td class="data row2 col0" id="T_bea41_row2_col0">
+        Andrea
+       </td>
+       <td class="data row2 col1" id="T_bea41_row2_col1">
+        14
+       </td>
+      </tr>
+     </tbody>
+    </table>
    </block_article>
   </block>
   <script>

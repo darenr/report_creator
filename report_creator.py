@@ -4,6 +4,7 @@ from typing import Dict, List, Sequence, Tuple, Union
 
 import matplotlib
 import pandas as pd
+import numpy as np
 from bs4 import BeautifulSoup as bs
 from markdown import markdown
 from yaml import Dumper, dump
@@ -72,14 +73,74 @@ class BigNumber(Base):
         logging.info(f"BigNumber {self.heading} {self.value}")
 
     def to_html(self):
-        return f"<p style='color: var(--text-muted);'>{self.heading}</p><h1>{self.value}</h1>"
+        return f"<p class='bignumber'>{self.heading}</p><h1 class='bignumber'>{self.value}</h1>"
 
 
 class DataTable(Base):
-    def __init__(self, df: pd.DataFrame, label=None):
+    def __init__(self, df: pd.DataFrame, label=None, max_rows=None, hide_index=True):
         Base.__init__(self, label=label)
         self.df = df
+        self.max_rows = max_rows
+        self.hide_index = hide_index
         logging.info(f"DataTable {len(self.df)} rows")
+        
+    def to_html(self):
+        
+        # properties = {"border": "2px solid gray", "color": "green", "font-size": "16px"}
+        # styler = self.df.style.set_properties(**properties)
+        # if self.label:
+        #     styler.set_caption(self.label)
+            
+        # styler.format(precision=3)  
+           
+        # if self.hide_index: 
+        #     styler.hide()
+
+        # return styler.to_html(max_rows=self.max_rows)
+    
+        styles = [
+        #table properties
+        dict(selector=" ", 
+             props=[("margin","0"),
+                    ("font-family",'"Helvetica", "Arial", sans-serif'),
+                    ("border-collapse", "collapse"),
+                    ("border","none"),
+                       ]),
+
+
+
+        #background shading
+        dict(selector="tbody tr:nth-child(even)",
+             props=[("background-color", "#fff")]),
+        dict(selector="tbody tr:nth-child(odd)",
+             props=[("background-color", "#eee")]),
+
+        #cell spacing
+        dict(selector="td", 
+             props=[("padding", ".5em")]),
+
+        #header cell properties
+        dict(selector="th", 
+             props=[("font-size", "100%"),
+                    ("text-align", "center")]),
+
+        dict(selector="caption",
+             props=[("color", "var(--text-muted)"),
+                    ("padding-bottom", "10px"),
+                    ("font-size", "1.5em")]),
+        ]
+
+        styler = self.df.style.set_table_styles(styles)
+        
+        if self.label:
+            styler.set_caption(self.label)
+
+        if self.hide_index: 
+            styler.hide()
+
+        return styler.to_html(max_rows=self.max_rows)        
+    
+    
 
 
 class Text(Base):
@@ -89,10 +150,10 @@ class Text(Base):
         logging.info(f"Text {len(self.text)} characters")
 
     def to_html(self):
-        html = ""
-        for p in self.text.split("\n\n"):
-            html += f"<p>{p.strip()}</p>"
-        return html
+        title = f"title='{self.label}'" if self.label else ""
+
+        return '\n\n'.join([f"<p {title}>{p.strip()}</p>" for p in self.text.split("\n\n")])
+
 
 
 class Markdown(Base):
@@ -160,10 +221,13 @@ class ReportCreator:
 
 
 if __name__ == "__main__":
-    df = pd.DataFrame(
+    boring_df = pd.DataFrame(
         [["Daren", 42], ["Yekaterina", 15], ["Andrea", 14]], columns=["Name", "Age"]
     )
-    fig = df.plot.bar(x="Name", y="Age")
+    
+
+    
+    fig = boring_df.plot.bar(x="Name", y="Age")
 
     report = ReportCreator("My Report")
 
@@ -176,7 +240,12 @@ if __name__ == "__main__":
             BigNumber(heading="Loss", value=0.1),
             BigNumber(heading="Accuracy", value=95),
         ),
-        Text("This is a paragraph.\n\nThis is another paragraph."),
+        Text("""Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do: once or twice she had peeped into the book her sister was reading, but it had no pictures or conversations in it, “and what is the use of a book,” thought Alice “without pictures or conversations?”
+
+So she was considering in her own mind (as well as she could, for the hot day made her feel very sleepy and stupid), whether the pleasure of making a daisy-chain would be worth the trouble of getting up and picking the daisies, when suddenly a White Rabbit with pink eyes ran close by her.
+
+There was nothing so very remarkable in that; nor did Alice think it so very much out of the way to hear the Rabbit say to itself, “Oh dear! Oh dear! I shall be late!” (when she thought it over afterwards, it occurred to her that she ought to have wondered at this, but at the time it all seemed quite natural); but when the Rabbit actually took a watch out of its waistcoat-pocket, and looked at it, and then hurried on, Alice started to her feet, for it flashed across her mind that she had never before seen a rabbit with either a waistcoat-pocket, or a watch to take out of it, and burning with curiosity, she ran across the field after it, and fortunately was just in time to see it pop down a large rabbit-hole under the hedge.
+        """, label="Alice in Wonderland"),
         Yaml(
             """
 doe: "a deer, a female deer"
@@ -215,7 +284,7 @@ turtle-doves: two
         """
         ),
         Plot(fig, label="Chart"),
-        DataTable(df, label="Data"),
+        DataTable(boring_df, label="Boring data"),
     )
 
-    report.save(view, "aa.html", theme="dark")
+    report.save(view, "aa.html", theme="light")
