@@ -1,13 +1,23 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
     <head>
         <title>${title}</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/$theme.min.css">
+
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/$highlight">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
         
+
+
+        <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.7.0.js"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+        <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+        
+
+
         <!--
 
             variables, for example: style: color: var(--links)
@@ -74,11 +84,19 @@
             }
 
 
-
             group_separator {
                 padding: 10px;
             }
 
+            caption {
+                margin-top: 0.5em;
+                margin-bottom: 1em;
+                font-size: 1.5em;
+                font-weight: bold;
+                border-left: 10px solid var(--highlight);
+                padding-left: 15px;            
+            }
+            
         </style>
     </head>
 
@@ -86,7 +104,14 @@
         $body
 
 
-        <script>hljs.highlightAll();</script>
+        <script>
+            // style any code blocks
+            hljs.highlightAll();
+
+            // style tables
+            new DataTable('table.fancy_table');
+        
+        </script>
 
     </body>
 
