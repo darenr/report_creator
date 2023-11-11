@@ -15,7 +15,6 @@ class Blocks:
         html = "<block>"
 
         for component in self.components:
-            logging.info(f"adding {type(component)} to block")
             html += "<block_article>"
             html += component.to_html()
             html += "</block_article>"
