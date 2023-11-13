@@ -10,6 +10,9 @@ from .rc_select import Select
 from .rc_yaml import Yaml
 from .rc_text import Text
 from .rc_html import Html
+from .rc_image import Image
+from .rc_section import Section
+from .rc_summary import Summary
 
 __all__ = [
     "Base",
@@ -25,4 +28,6 @@ __all__ = [
     "Text",
     "Html",
     "Image",
+    "Section",
+    "Summary",
 ]

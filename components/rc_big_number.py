@@ -13,4 +13,4 @@ class BigNumber(Base):
         logging.info(f"BigNumber {self.heading} {self.value}")
 
     def to_html(self):
-        return f"<p class='bignumber'>{self.heading}</p><h1 class='bignumber'>{self.value}</h1>"
+        return f"<div class='bignumber'><p>{self.heading}</p><h1 class='bignumber'>{self.value}</h1></div>"

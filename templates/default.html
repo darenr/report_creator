@@ -22,6 +22,15 @@
     />
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
 
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/water.css@2/out/${theme}.css"
+    />
+
+    
+    <!-- <link rel="stylesheet" href="https://unpkg.com/bamboo.css/dist/${theme}.min.css"> -->
+   
+
     <!--
 
             variables, for example: style: color: var(--links)
@@ -71,20 +80,25 @@
       }
 
       group_article {
-        border: 1px solid var(--border);
-        border-radius: 0.5rem;
-        padding: 10px;
+        <!-- border: 1px solid var(--border); -->
+        <!-- border-radius: 0.5rem; -->
+        <!-- padding: 10px; -->
         flex: 1;
       }
 
-      h1.bignumber {
+      .bignumber > h1 {
         margin-top: 0;
       }
 
-      p.bignumber {
+      .bignumber p {
         color: var(--text-muted);
         margin-top: 0;
         margin-bottom: 0;
+      }
+
+      div.bignumber {
+        border-left: 10px solid red;
+        padding-left: 15px;        
       }
 
       group_separator {
@@ -96,68 +110,48 @@
         margin-bottom: 1em;
         font-size: 1.5em;
         font-weight: bold;
-        border-left: 10px solid var(--highlight);
+        border-left: 10px solid red;
         padding-left: 15px;
       }
 
-      header>h1 {
+      header > h1 {
         text-align: left;
       }
-      header>buton {
-        text-align: right;
-      }
+
+      select:not([multiple]):not([size]) {
+        padding-right: 1.5rem;
+        background-repeat: no-repeat;
+        background-position: right 0.5rem center;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
     </style>
+
+        
   </head>
 
   <body>
     <header>
       <h1>${title}</h1>
-      <button id="switch" onclick="toggleTheme()">Switch</button>
     </header>
+
+    <hr />
 
     <div class="container">${body}</div>
 
     <script>
-      function setTheme(themeName) {
-        localStorage.setItem("theme", themeName);
-
-        //document.documentElement.className = themeName;
-
-        var link = document.createElement("link");
-        link.rel = "stylesheet";
-        if (themeName == "theme-dark") {
-          link.href =
-            "https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.min.css";
-        } else {
-          link.href =
-            "https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/light.min.css";
-        }
-        document.head.appendChild(link);
-      }
-
-      // function to toggle between light and dark theme
-      function toggleTheme() {
-        if (localStorage.getItem("theme") === "theme-dark") {
-          setTheme("theme-light");
-        } else {
-          setTheme("theme-dark");
-        }
-      }
-
-      // Immediately invoked function to set the theme on initial load
       (function () {
-        if (localStorage.getItem("theme") === "theme-dark") {
-          setTheme("theme-dark");
-        } else {
-          setTheme("theme-light");
-        }
+        // style any code blocks
+        hljs.highlightAll();
+
+        // style tables
+        new DataTable("table.fancy_table", {
+            pagingType: 'full_numbers'
+        });
       })();
-
-      // style any code blocks
-      hljs.highlightAll();
-
-      // style tables
-      new DataTable("table.fancy_table");
     </script>
   </body>
 </html>
+

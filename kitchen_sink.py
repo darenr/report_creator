@@ -4,30 +4,22 @@ from typing import Dict, List, Sequence, Tuple, Union
 import numpy as np
 import pandas as pd
 
+from pydataset import data
+
 logging.basicConfig(level=logging.INFO)
 
-from report_creator import ReportCreator
 from components import *
+from report_creator import ReportCreator
+
 
 if __name__ == "__main__":
-    df_emp = pd.read_csv("employees.csv")
 
-    df_pies = pd.DataFrame(
-        {
-            "pies": [10, 10, 42, 17, 37],
-            "gender": ["male", "female", "male", "female", "male"],
-        },
-        index=["Dad", "Mam", "Bro", "Sis", "Me"],
-    )
+    df = pd.DataFrame(columns = ['name','age'])
+    df.name = ["John",'Peter','Sarah']
+    df.age = [33,18,22]
 
     fig = (
-        df_pies["pies"]
-        .plot(
-            kind="bar",
-            title="Pies",
-            color=df_pies['gender'].replace({"male": "#273c75", "female": "#44bd32"})
-        )
-        .get_figure()
+        df.plot.bar(x='name', y='age').get_figure()
     )
 
     report = ReportCreator("My Report")
@@ -41,7 +33,8 @@ if __name__ == "__main__":
             BigNumber(heading="Loss", value=0.1),
             BigNumber(heading="Accuracy", value=95),
         ),
-        Text(
+        Summary(
+            "Alice in Wonderland",
             """Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do: once or twice she had peeped into the book her sister was reading, but it had no pictures or conversations in it, “and what is the use of a book,” thought Alice “without pictures or conversations?”
 
 So she was considering in her own mind (as well as she could, for the hot day made her feel very sleepy and stupid), whether the pleasure of making a daisy-chain would be worth the trouble of getting up and picking the daisies, when suddenly a White Rabbit with pink eyes ran close by her.
@@ -88,7 +81,9 @@ turtle-doves: two
         """
         ),
         Plot(fig, label="Pies"),
-        DataTable(df_emp, label="Employees", index=False),
+        DataTable(df, label="People", index=False),
+        Section(),
+        DataTable(data('Journals'), label="Journals", index=False),
     )
 
     report.save(view, "aa.html", theme="light")
