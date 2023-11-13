@@ -24,4 +24,5 @@ __all__ = [
     "Yaml",
     "Text",
     "Html",
+    "Image",
 ]

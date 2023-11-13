@@ -6,19 +6,29 @@ import pandas as pd
 
 logging.basicConfig(level=logging.INFO)
 
-from components import *
 from report_creator import ReportCreator
+from components import *
 
 if __name__ == "__main__":
-    emp_df = pd.read_csv("employees.csv")
+    df_emp = pd.read_csv("employees.csv")
 
-    boring_df = pd.DataFrame(
-        [["Daren", 42], ["Yekaterina", 15], ["Andrea", 14]], columns=["Name", "Age"]
+    df_pies = pd.DataFrame(
+        {
+            "pies": [10, 10, 42, 17, 37],
+            "gender": ["male", "female", "male", "female", "male"],
+        },
+        index=["Dad", "Mam", "Bro", "Sis", "Me"],
     )
 
-    fig = boring_df.plot.bar(x="Name", y="Age")
-
-    # fig = boring_df.plot.bar(x="Name", y="Age")
+    fig = (
+        df_pies["pies"]
+        .plot(
+            kind="bar",
+            title="Pies",
+            color=df_pies['gender'].replace({"male": "#273c75", "female": "#44bd32"})
+        )
+        .get_figure()
+    )
 
     report = ReportCreator("My Report")
 
@@ -67,8 +77,6 @@ turtle-doves: two
             "import pandas as pd\n\ndf = pd.DataFrame({'a': [1, 2], 'b': [3, 4]})",
             label="Some random python",
         ),
-        DataTable(boring_df, label="Boring data", index=False),
-        Plot(fig, label="Chart"),
         Markdown(
             """
 > #### The quarterly results look great!
@@ -79,8 +87,8 @@ turtle-doves: two
 >  *Everything* is going according to **plan**.                 
         """
         ),
-        Plot(fig, label="Chart"),
-        DataTable(emp_df, label="Employees", index=False),
+        Plot(fig, label="Pies"),
+        DataTable(df_emp, label="Employees", index=False),
     )
 
     report.save(view, "aa.html", theme="light")

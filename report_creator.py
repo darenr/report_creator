@@ -2,7 +2,6 @@ import logging
 from string import Template
 from typing import Dict, List, Sequence, Tuple, Union
 
-import matplotlib
 from bs4 import BeautifulSoup as bs
 
 logging.basicConfig(level=logging.INFO)
