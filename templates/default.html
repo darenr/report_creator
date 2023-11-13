@@ -1,24 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>${title}</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/$theme.min.css">
+  <head>
+    <title>${title}</title>
 
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/$highlight"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
 
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/$highlight">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
-        
+    <script
+      type="text/javascript"
+      language="javascript"
+      src="https://code.jquery.com/jquery-3.7.0.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css"
+    />
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
 
-
-        <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.7.0.js"></script>
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
-        <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
-        
-
-
-        <!--
+    <!--
 
             variables, for example: style: color: var(--links)
 
@@ -46,73 +50,114 @@
             https://github.com/kognise/water.css#theming
         -->
 
-        <style>
-            block {
-                display: flex;
-                flex-wrap: wrap;
-                flex-direction: column;
-            }
-            
-            group {
-                display: flex;
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: space-around;
-            }
-        
-            block_article {
-                padding: 10px;
-                margin: 10px;
-                flex: 1;
-            }
+    <style>
+      block {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+      }
 
-            group_article {
-                border: 1px solid var(--border);
-                border-radius: 0.5rem;
-                padding: 10px;
-                flex: 1;
-            }      
-            
-            h1.bignumber {
-                margin-top: 0;
-            }
+      group {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around;
+      }
 
-            p.bignumber{
-                color: var(--text-muted);
-                margin-top: 0;
-                margin-bottom: 0;
-            }
+      block_article {
+        padding: 10px;
+        margin: 10px;
+        flex: 1;
+      }
 
+      group_article {
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        padding: 10px;
+        flex: 1;
+      }
 
-            group_separator {
-                padding: 10px;
-            }
+      h1.bignumber {
+        margin-top: 0;
+      }
 
-            caption {
-                margin-top: 0.5em;
-                margin-bottom: 1em;
-                font-size: 1.5em;
-                font-weight: bold;
-                border-left: 10px solid var(--highlight);
-                padding-left: 15px;            
-            }
-            
-        </style>
-    </head>
+      p.bignumber {
+        color: var(--text-muted);
+        margin-top: 0;
+        margin-bottom: 0;
+      }
 
-    <body>
-        $body
+      group_separator {
+        padding: 10px;
+      }
 
+      caption {
+        margin-top: 0.5em;
+        margin-bottom: 1em;
+        font-size: 1.5em;
+        font-weight: bold;
+        border-left: 10px solid var(--highlight);
+        padding-left: 15px;
+      }
 
-        <script>
-            // style any code blocks
-            hljs.highlightAll();
+      header>h1 {
+        text-align: left;
+      }
+      header>buton {
+        text-align: right;
+      }
+    </style>
+  </head>
 
-            // style tables
-            new DataTable('table.fancy_table');
-        
-        </script>
+  <body>
+    <header>
+      <h1>${title}</h1>
+      <button id="switch" onclick="toggleTheme()">Switch</button>
+    </header>
 
-    </body>
+    <div class="container">${body}</div>
 
+    <script>
+      function setTheme(themeName) {
+        localStorage.setItem("theme", themeName);
+
+        //document.documentElement.className = themeName;
+
+        var link = document.createElement("link");
+        link.rel = "stylesheet";
+        if (themeName == "theme-dark") {
+          link.href =
+            "https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.min.css";
+        } else {
+          link.href =
+            "https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/light.min.css";
+        }
+        document.head.appendChild(link);
+      }
+
+      // function to toggle between light and dark theme
+      function toggleTheme() {
+        if (localStorage.getItem("theme") === "theme-dark") {
+          setTheme("theme-light");
+        } else {
+          setTheme("theme-dark");
+        }
+      }
+
+      // Immediately invoked function to set the theme on initial load
+      (function () {
+        if (localStorage.getItem("theme") === "theme-dark") {
+          setTheme("theme-dark");
+        } else {
+          setTheme("theme-light");
+        }
+      })();
+
+      // style any code blocks
+      hljs.highlightAll();
+
+      // style tables
+      new DataTable("table.fancy_table");
+    </script>
+  </body>
 </html>
