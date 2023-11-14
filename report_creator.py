@@ -8,6 +8,7 @@ logging.basicConfig(level=logging.INFO)
 
 from components import *
 
+
 class ReportCreator:
     def __init__(self, title: str):
         self.title = title

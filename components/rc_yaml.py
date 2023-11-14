@@ -1,6 +1,5 @@
-from typing import Dict, List, Sequence, Tuple, Union
-
 import logging
+from typing import Dict, List, Sequence, Tuple, Union
 
 from .rc_base import Base
 
@@ -14,7 +13,6 @@ class Yaml(Base):
         logging.info(f"Yaml {len(self.text)} characters")
 
     def to_html(self):
-
         if self.label:
             formatted_text = f"<pre><code class='language-{self.language}'>### {self.label}\n\n{self.text.strip()}</code></pre>"
         else:

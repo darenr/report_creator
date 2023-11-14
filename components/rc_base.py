@@ -1,6 +1,5 @@
-from typing import Dict, List, Sequence, Tuple, Union
-
 import logging
+from typing import Dict, List, Sequence, Tuple, Union
 
 
 class Base:

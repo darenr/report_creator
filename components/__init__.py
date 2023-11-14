@@ -3,15 +3,15 @@ from .rc_big_number import BigNumber
 from .rc_blocks import Blocks
 from .rc_datatable import DataTable
 from .rc_group import Group
+from .rc_html import Html
+from .rc_image import Image
 from .rc_markdown import Markdown
 from .rc_plot import Plot
 from .rc_python import Python
-from .rc_select import Select
-from .rc_yaml import Yaml
-from .rc_text import Text
-from .rc_html import Html
-from .rc_image import Image
 from .rc_section import Section
+from .rc_select import Select
+from .rc_text import Text
+from .rc_yaml import Yaml
 
 __all__ = [
     "Base",

@@ -1,12 +1,11 @@
-from typing import Dict, List, Sequence, Tuple, Union
-
 import logging
+from typing import Dict, List, Sequence, Tuple, Union
 
 from .rc_base import Base
 
 
 class Section(Base):
-    def __init__(self, label: str=None):
+    def __init__(self, label: str = None):
         Base.__init__(self, label=label)
         logging.info(f"Section")
 

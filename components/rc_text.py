@@ -1,6 +1,5 @@
-from typing import Dict, List, Sequence, Tuple, Union
-
 import logging
+from typing import Dict, List, Sequence, Tuple, Union
 
 from .rc_base import Base
 
@@ -17,7 +16,7 @@ class Text(Base):
 
         formatted_text = "\n\n".join(
             [f"<p {title}>{p.strip()}</p>" for p in self.text.split("\n\n")]
-        )        
+        )
         if self.collapse:
             if self.label:
                 return f"<details><summary>{self.label}</summary>{formatted_text}</details>"
@@ -28,4 +27,3 @@ class Text(Base):
                 return f"<h3>{self.label}</h3>{formatted_text}"
             else:
                 return formatted_text
-            

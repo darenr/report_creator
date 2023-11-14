@@ -3,7 +3,6 @@ from typing import Dict, List, Sequence, Tuple, Union
 
 import numpy as np
 import pandas as pd
-
 from pydataset import data
 
 logging.basicConfig(level=logging.INFO)
@@ -11,18 +10,14 @@ logging.basicConfig(level=logging.INFO)
 from components import *
 from report_creator import ReportCreator
 
-
 if __name__ == "__main__":
+    df = pd.DataFrame(columns=["name", "age"])
+    df.name = ["John", "Peter", "Sarah"]
+    df.age = [33, 18, 22]
 
-    df = pd.DataFrame(columns = ['name','age'])
-    df.name = ["John",'Peter','Sarah']
-    df.age = [33,18,22]
+    fig = df.plot.bar(x="name", y="age").get_figure()
 
-    fig = (
-        df.plot.bar(x='name', y='age').get_figure()
-    )
-
-    with open('report_creator.py', 'r') as f:
+    with open("report_creator.py", "r") as f:
         code_str = f.read()
 
     report = ReportCreator("My Report")
@@ -84,7 +79,7 @@ turtle-doves: two
         Plot(fig, label="Pies"),
         DataTable(df, collapse=True, label="People", index=False),
         Section(),
-        DataTable(data('Journals'), label="Journals", index=False),
+        DataTable(data("Journals"), label="Journals", index=False),
     )
 
     report.save(view, "aa.html", theme="light")
