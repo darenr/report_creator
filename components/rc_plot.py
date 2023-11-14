@@ -23,6 +23,7 @@ class Plot(Base):
     def to_html(self) -> str:
         tmp = io.BytesIO()
         self.fig.set_figwidth(10)
+        self.fig.tight_layout()
         self.fig.savefig(tmp, format='png')
         tmp.seek(0)
         b64image = base64.b64encode(tmp.getvalue()).decode("utf-8").replace("\n", "")
