@@ -20,11 +20,12 @@ class DataTable(Base):
             styler.set_caption(label)
             
         styler.hide(axis="index")
-        styler.set_table_attributes('class="fancy_table display compact" style="width:100%"')  
+        styler.set_table_attributes('class="fancy_table display compact nowrap" style="width:100%;"')  
         self.table_html = styler.to_html()
         logging.info(f"DataTable {len(df)} rows")
         
         
 
     def to_html(self):
-        return self.table_html
+        
+        return f"<div class='dataTables_wrapper'>{self.table_html}</div>"

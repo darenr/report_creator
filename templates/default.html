@@ -133,6 +133,11 @@
       padding-right: 3rem;
     }
 
+    div.dataTables_wrapper {
+      width: 1024px;
+      margin: 0 auto;
+  }
+
     </style>
 
         
@@ -154,7 +159,8 @@
 
         // style tables
         new DataTable("table.fancy_table", {
-            pagingType: 'full_numbers'
+            pagingType: 'full_numbers',
+            scrollX: true,
         });
       })();
     </script>
