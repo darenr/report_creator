@@ -8,7 +8,6 @@ logging.basicConfig(level=logging.INFO)
 
 from components import *
 
-
 class ReportCreator:
     def __init__(self, title: str):
         self.title = title
@@ -25,7 +24,7 @@ class ReportCreator:
                 html = t.substitute(
                     title=self.title,
                     theme=theme,
-                    highlight=f"stackoverflow-{theme}.min.css",
+                    code_highlight=f"stackoverflow-{theme}.css",
                     body=view.to_html(),
                 )
                 soup = bs(html, features="lxml")

@@ -12,7 +12,6 @@ from .rc_text import Text
 from .rc_html import Html
 from .rc_image import Image
 from .rc_section import Section
-from .rc_summary import Summary
 
 __all__ = [
     "Base",
@@ -29,5 +28,4 @@ __all__ = [
     "Html",
     "Image",
     "Section",
-    "Summary",
 ]
