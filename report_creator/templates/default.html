@@ -1,21 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <title>${title}</title>
 
-<head>
-  <title>${title}</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+    <script
+      type="text/javascript"
+      language="javascript"
+      src="https://code.jquery.com/jquery-3.7.0.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css"
+    />
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
 
-  <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.7.0.js"></script>
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
-  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css"
+    />
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css" />
-
-  <!--
+    <!--
 
             variables, for example: style: color: var(--links)
 
@@ -43,120 +55,174 @@
             https://github.com/kognise/water.css#theming
         -->
 
-  <style>
-    block {
-      display: flex;
-      flex-wrap: wrap;
-      flex-direction: column;
-    }
+    <style>
+      block {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+      }
 
-    group {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      justify-content: space-between;
-    }
+      group {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+      }
 
-    block_article {
-      padding: 10px;
-      margin: 10px;
-      flex: 1;
-    }
+      block_article {
+        padding: 10px;
+        margin: 10px;
+        flex: 1;
+      }
 
-    group_article {
-      border: 1px solid var(--border);
-      border-radius: 0.5rem;
-      padding: 10px;
-      padding-left: 25px;
-      flex: 1;
-    }
+      group_article {
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        padding: 10px;
+        padding-left: 25px;
+        flex: 1;
+      }
 
-    div.round-bordered {
-      border: 1px solid var(--border);
-      border-radius: 0.5rem;
-      padding: 20px;      
-    }
+      group_separator {
+        padding: 10px;
+      }
 
-    .bignumber>h1 {
-      margin-top: 0;
-    }
+      div.round-bordered {
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        padding: 20px;
+      }
 
-    .bignumber p {
-      color: var(--text-muted);
-      margin-top: 0;
-      margin-bottom: 0;
-    }
+      .bignumber > h1 {
+        margin-top: 0;
+      }
 
-    div.block-bordered {
-      border-left: 4px solid #0096bfab;
-      padding-left: 15px;
-    }
+      .bignumber p {
+        color: var(--text-muted);
+        margin-top: 0;
+        margin-bottom: 0;
+      }
 
-    group_separator {
-      padding: 10px;
-    }
+      div.block-bordered {
+        border-left: 4px solid #0096bfab;
+        padding-left: 15px;
+      }
 
-    caption {
-      margin-top: 0.5em;
-      margin-bottom: 1em;
-      font-size: 1.5em;
-      font-weight: bold;
-      border-left: 10px solid red;
-      padding-left: 15px;
-    }
+      caption {
+        margin-top: 0.5em;
+        margin-bottom: 1em;
+        font-size: 1.5em;
+        font-weight: bold;
+        border-left: 10px solid red;
+        padding-left: 15px;
+      }
 
-    header>h1 {
-      text-align: left;
-    }
+      header > h1 {
+        text-align: left;
+      }
 
-    select:not([multiple]):not([size]) {
-      padding-right: 1.5rem;
-      background-repeat: no-repeat;
-      background-position: right 0.75rem center;
-      -moz-appearance: none;
-      -webkit-appearance: none;
-      appearance: none;
-    }
+      select:not([multiple]):not([size]) {
+        padding-right: 1.5rem;
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        appearance: none;
+      }
 
-    body {
-      max-width: 9999px !important;
-      padding-left: 3rem;
-      padding-right: 3rem;
-    }
+      body {
+        max-width: 9999px !important;
+        padding-left: 3rem;
+        padding-right: 3rem;
+      }
 
-    div.dataTables_wrapper {
-      width: 1024px;
-      <!-- margin: 0 auto; -->
-    }
+      div.dataTables_wrapper {
+        width: 1024px;
+      }
 
-    details {
-      background-color: white !important;
-    }
+      details {
+        background-color: white !important;
+      }
 
-  </style>
-</head>
+      /* Style the tab */
+      .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+      }
 
-<body>
-  <header>
-    <h1>${title}</h1>
-  </header>
+      /* Style the buttons that are used to open the tab content */
+      .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+      }
 
-  <hr />
+      /* Change background color of buttons on hover */
+      .tab button:hover {
+        background-color: #ddd;
+      }
 
-  <div class="container">${body}</div>
+      /* Create an active/current tablink class */
+      .tab button.active {
+        background-color: #ccc;
+      }
 
-  <script>
-    (function () {
-      // style any code blocks
-      hljs.highlightAll();
+      /* Style the tab content */
+      .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+      }
+    </style>
+  </head>
 
-      // style tables
-      new DataTable("table.fancy_table", {
-        pagingType: "full_numbers",
-        scrollX: true
-      });
-    })();
-  </script>
-</body>
+  <body>
+    <header>
+      <h1>${title}</h1>
+    </header>
 
+    <hr />
+
+    <div class="container">${body}</div>
+
+    <script>
+      function openTab(evt, tabName) {
+        // Declare all variables
+        var i, tabcontent, tablinks;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+        }
+
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+      }
+
+      (function () {
+        // style any code blocks
+        hljs.highlightAll();
+
+        // style tables
+        new DataTable("table.fancy_table", {
+          pagingType: "full_numbers",
+          scrollX: true,
+        });
+      })();
+    </script>
+  </body>
 </html>

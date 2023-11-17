@@ -3,7 +3,8 @@ from typing import Dict, List, Sequence, Tuple, Union
 
 import numpy as np
 import pandas as pd
-from pydataset import data
+import pydataset
+import yaml
 
 logging.basicConfig(level=logging.INFO)
 
@@ -19,6 +20,7 @@ from report_creator import (
     Python,
     ReportCreator,
     Section,
+    Select,
     Text,
     Yaml,
 )
@@ -34,7 +36,7 @@ if __name__ == "__main__":
         example_python = f.read()
 
     with open("example.yaml", "r") as f:
-        yaml_data = f.read()
+        yaml_data = yaml.safe_load(f.read())
 
     with open("example.txt", "r") as f:
         example_text = f.read()
@@ -65,12 +67,14 @@ if __name__ == "__main__":
             yaml_data,
             label="Random Yaml",
         ),
+        Section(),
         Python(example_python, label="Report Creator Code"),
         Markdown(example_md, label="Example Markdown"),
         Collapse("Example Collapsed Plot", Plot(fig, label="Pies")),
-        DataTable(df, label="People", index=False),
-        Section(),
-        DataTable(data("Journals"), label="Journals", index=False),
+        Select(
+            DataTable(df, label="People", index=False),
+            DataTable(pydataset.data("Journals"), label="Journals", index=False),
+        ),
     )
 
     report.save(view, "aa.html")

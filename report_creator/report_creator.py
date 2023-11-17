@@ -17,6 +17,17 @@ plt.style.use("ggplot")
 logging.basicConfig(level=logging.INFO)
 
 
+def strip_whitespace(func):
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        if isinstance(result, str):
+            return result.strip()
+        else:
+            return result
+
+    return wrapper
+
+
 class Base:
     def __init__(self, label: str):
         self.label = label
@@ -34,6 +45,7 @@ class Blocks:
         self.components = components
         logging.info(f"Blocks {len(self.components)} components")
 
+    @strip_whitespace
     def to_html(self):
         html = "<block>"
 
@@ -56,6 +68,7 @@ class Group:
         self.components = components
         logging.info(f"Group {len(self.components)} components")
 
+    @strip_whitespace
     def to_html(self):
         html = "<group>"
 
@@ -78,6 +91,7 @@ class Collapse:
         self.label = label
         logging.info(f"Collapse {len(self.components)} components")
 
+    @strip_whitespace
     def to_html(self):
         html = f"<details><summary>{self.label}</summary>"
 
@@ -98,6 +112,7 @@ class BigNumber(Base):
         self.value = value
         logging.info(f"BigNumber {self.heading} {self.value}")
 
+    @strip_whitespace
     def to_html(self):
         return f"<div class='block-bordered'><p>{self.heading}</p><h1 class='bignumber'>{self.value}</h1></div>"
 
@@ -130,6 +145,7 @@ class DataTable(Base):
         self.table_html = styler.to_html()
         logging.info(f"DataTable {len(df)} rows")
 
+    @strip_whitespace
     def to_html(self):
         return f"<div class='dataTables_wrapper'>{self.table_html}</div>"
 
@@ -143,6 +159,7 @@ class Html(Base):
         self.html = html
         logging.info(f"Html {len(self.html)} characters")
 
+    @strip_whitespace
     def to_html(self):
         return self.html
 
@@ -172,18 +189,22 @@ class Markdown(Base):
             extensions=[
                 "markdown.extensions.fenced_code",
                 "markdown.extensions.tables",
-                "markdown.extensions.codehilite",
             ],
         ).strip()
 
+    @strip_whitespace
     def to_html(self):
-        return Markdown.markdown_to_html(self.text).strip()
+        return Markdown.markdown_to_html(self.text)
 
 
 ##############################
 
 
 class Plot(Base):
+    
+    # see https://plotly.com/python/interactive-html-export/
+    # for how to make interactive
+    
     def __init__(self, fig: matplotlib.figure.Figure, label=None):
         Base.__init__(self, label=label)
         if not isinstance(fig, matplotlib.figure.Figure):
@@ -193,6 +214,7 @@ class Plot(Base):
         self.fig = fig
         logging.info(f"Plot")
 
+    @strip_whitespace
     def to_html(self) -> str:
         tmp = io.BytesIO()
         self.fig.set_figwidth(10)
@@ -227,11 +249,12 @@ class Text(Base):
         self.text = text
         logging.info(f"Text {len(self.text)} characters")
 
+    @strip_whitespace
     def to_html(self):
         title = f"title='{self.label}'" if self.label else ""
 
         formatted_text = "\n\n".join(
-            [f"<p {title}>{p.strip()}</p>" for p in self.text.split("\n\n")]
+            [f"<p>{p.strip()}</p>" for p in self.text.split("\n\n")]
         )
 
         if self.label:
@@ -246,7 +269,33 @@ class Text(Base):
 class Select(Base):
     def __init__(self, *components: Base):
         self.components = components
+        for component in self.components:
+            if not component.label:
+                raise ValueError("All components must have a label to use in a Select")
+
         logging.info(f"Select {len(self.components)} components")
+
+    def to_html(self):
+        """
+        <div class="tab">
+        <button class="tablinks" onclick="openTab(event, 'London')">London</button>
+        <button class="tablinks" onclick="openTab(event, 'Paris')">Paris</button>
+        <button class="tablinks" onclick="openTab(event, 'Tokyo')">Tokyo</button>
+        </div>
+
+        <div id="London" class="tabcontent">
+        <h3>London</h3>
+        <p>London is the capital city of England.</p>
+        </div>
+        """
+        html = "<block>"
+
+        for component in self.components:
+            html += component.to_html()
+
+        html += "</block>"
+
+        return html
 
 
 ##############################
@@ -259,6 +308,7 @@ class Language(Base):
         self.language = language
         logging.info(f"{language} {len(self.text)} characters")
 
+    @strip_whitespace
     def to_html(self):
         if self.label:
             formatted_text = f"<pre><code class='language-{self.language}'>### {self.label}\n\n{self.text.strip()}</code></pre>"

@@ -1,5 +1,10 @@
-from .__meta__ import __version__, __authors__, __license__, __contact__, __description__
-
+from .__meta__ import (
+    __authors__,
+    __contact__,
+    __description__,
+    __license__,
+    __version__,
+)
 from .report_creator import (
     Base,
     BigNumber,
@@ -12,6 +17,7 @@ from .report_creator import (
     Python,
     ReportCreator,
     Section,
+    Select,
     Text,
     Yaml,
 )
