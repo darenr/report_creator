@@ -1,23 +1,28 @@
-# report_creator
-Tool to assemble reports in HTML from various components
+[![License](https://img.shields.io/badge/license-Apache-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)
+[![PyPI Version](https://img.shields.io/pypi/v/report_creator.svg?style=flat&color=blue)](https://pypi.org/project/report_creator)
+[![Python Versions](https://img.shields.io/pypi/pyversions/report_creator.svg?logo=python&logoColor=white&style=flat)](https://pypi.org/project/report_creator)
 
-## Features:
+
+# Report Creator
+
+Library to assemble reports in HTML from various components using python
+
+## Features
 
 - good pandas support
 - looks modern
 - allows markdown as input for text blocks
 - allows html as input
 - a few simple components for things like metrics ("Accuracy: 87%") from a triple of key, value, Optional[description]
-- declarative support for plotting
+- support for plotting
 - images (styled by the library)
 - json/yaml/python blocks with color syntax highlighting
 - integrate with langchain
 - (stretch) support tabs, if not then each tab can just be additional vertical content
 
-
 ## Example
 
-```python3
+``` .python
     view = Blocks(
         Group(
             BigNumber(
@@ -31,4 +36,10 @@ Tool to assemble reports in HTML from various components
     )
 
     report.save(view, "report.html", theme="light")
+```
+
+## local development
+
+```
+pip install -e .
 ```

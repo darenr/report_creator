@@ -1,0 +1,21 @@
+version: 2
+
+conda:
+    environment: docs/environment.yml
+
+build:
+   image: latest
+
+# This part is necessary otherwise the project is not built
+python:
+   version: "3.8"
+   install:
+      - method: pip
+        path: .
+        
+# By default readthedocs does not checkout git submodules
+submodules:                                                                                                                          
+    include: all
+
+sphinx:
+   configuration: docs/source/conf.py
