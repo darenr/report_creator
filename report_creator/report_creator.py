@@ -201,10 +201,9 @@ class Markdown(Base):
 
 
 class Plot(Base):
-    
     # see https://plotly.com/python/interactive-html-export/
     # for how to make interactive
-    
+
     def __init__(self, fig: matplotlib.figure.Figure, label=None):
         Base.__init__(self, label=label)
         if not isinstance(fig, matplotlib.figure.Figure):

@@ -22,21 +22,16 @@
   </head>
   <body>
     
-    <div>
-      $plot1
-    </div>
+    {% for plot_div in plots %}
+        <h2>Plot:</h2>
+        <div>
+          {{ plot_div|safe }}
+        </div>
+    {% endfor %}
 
     <hr/>
 
-    <div>
-      $plot2
-    </div>
-
-    <hr/>
-
-      $javascript
-
-
+      {{ javascript|safe }}
 
     
   </body>

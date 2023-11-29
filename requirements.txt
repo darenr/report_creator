@@ -4,3 +4,5 @@ numpy
 matplotlib
 markdown
 pyyaml
+bokeh
+Jinja2
