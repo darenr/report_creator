@@ -64,13 +64,14 @@ class Blocks:
 
 class Group:
     # horizontally stacked compoments
-    def __init__(self, *components: Base):
+    def __init__(self, *components: Base, label=None):
         self.components = components
+        self.label = label
         logging.info(f"Group {len(self.components)} components")
 
     @strip_whitespace
     def to_html(self):
-        html = "<group>"
+        html = f"<group><summary>{self.label}</summary>"
 
         for component in self.components:
             html += "<group_article>"
