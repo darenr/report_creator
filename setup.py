@@ -22,7 +22,7 @@ with open("README.md", mode="r") as readme:
 
 
 # get package metadata by parsing __meta__ module
-with open("report_ceator/__meta__.py", mode="r") as source:
+with open("report_creator/__meta__.py", mode="r") as source:
     content = source.read().strip()
     metadata = {
         key: re.search(key + r'\s*=\s*[\'"]([^\'"]*)[\'"]', content).group(1)
