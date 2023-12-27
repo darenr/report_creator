@@ -103,14 +103,15 @@ if __name__ == "__main__":
         ),
         Group(
             Image(
-                "http://placekitten.com/g/600/400",
+                "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
             ),
             Image(
-                "http://placekitten.com/g/400/400",
+                "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
             ),
             Image(
-                "http://placekitten.com/g/500/400",
+                "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
             ),
+            label="Yves Klein, IKB 79 1959"
         ),
     )
 

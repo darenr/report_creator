@@ -76,17 +76,19 @@
         flex-wrap: wrap;
         justify-content: space-between;
         padding-top: 20px;
+        margin: 0 -10px;
       }
 
       block_article {
         padding: 10px;
         margin: 10px;
         flex: 1;
+        align-items: stretch;
       }
 
       group_article {
         flex: 1;
-        margin: 10px
+        margin: 0 10px;
       }
 
       group_separator {
@@ -225,8 +227,13 @@
         text-indent: 20px;
       }
 
-      figure {
-        padding: 0;
+      .image-block {
+        padding-top: 25px;
+        padding-bottom: 25px;
+      }
+
+      .image-block img {
+        min-height:100%;
       }
 
     </style>

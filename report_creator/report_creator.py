@@ -188,11 +188,11 @@ class Image(Base):
 
     @strip_whitespace
     def to_html(self):
-        return f"""
-        <figure>
-        <img src="{self.img}" alt="{self.label}" style="width: 100%">
-        <figcaption>{self.label}</figcaption>
-        </figure>"""
+     return f"""
+        <div class="image-block">
+            <img src="{self.img}" alt="{self.label}">
+        </div>
+    """
 
 
 ##############################
