@@ -103,13 +103,13 @@ if __name__ == "__main__":
         ),
         Group(
             Image(
-                "http://placekitten.com/g/400/200",
+                "http://placekitten.com/g/600/400",
             ),
             Image(
-                "http://placekitten.com/g/300/200",
+                "http://placekitten.com/g/400/400",
             ),
             Image(
-                "http://placekitten.com/g/500/200",
+                "http://placekitten.com/g/500/400",
             ),
         ),
     )

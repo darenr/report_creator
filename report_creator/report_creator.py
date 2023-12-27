@@ -80,7 +80,6 @@ class Group:
             html += "<group_article>"
             html += component.to_html()
             html += "</group_article>"
-            html += "<group_separator></group_separator>"
 
         html += "</group_component>"
         html += "</group>"
@@ -191,7 +190,7 @@ class Image(Base):
     def to_html(self):
         return f"""
         <figure>
-        <img src="{self.img}" alt="{self.label}" style="max-width:100%">
+        <img src="{self.img}" alt="{self.label}" style="width: 100%">
         <figcaption>{self.label}</figcaption>
         </figure>"""
 
