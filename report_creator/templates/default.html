@@ -56,7 +56,6 @@
         -->
 
     <style>
-
       :root {
         --focus: red;
       }
@@ -86,10 +85,6 @@
       }
 
       group_article {
-        border: 1px solid var(--border);
-        border-radius: 0.5rem;
-        padding: 10px;
-        padding-left: 25px;
         flex: 1;
       }
 
@@ -97,6 +92,7 @@
         padding: 10px;
       }
 
+      /* unused for now
       fieldset {
         border: 3px solid var(--focus);
         background: var(--background-body);
@@ -113,6 +109,7 @@
         box-shadow: 0 0 0 3px #ddd;
         margin-left: 20px;
       }
+      */
 
       div.round-bordered {
         border: 1px solid var(--border);
@@ -120,11 +117,18 @@
         padding: 20px;
       }
 
-      .bignumber > h1 {
+      .statistic {
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        padding: 10px;
+        padding-left: 25px;
+      }
+
+      .statistic > h1 {
         margin-top: 0;
       }
 
-      .bignumber p {
+      .statistic p {
         color: var(--text-muted);
         margin-top: 0;
         margin-bottom: 0;
@@ -216,8 +220,13 @@
         border-top: none;
       }
 
+      .indented-text-block {
+        text-indent: 20px;
+      }
+
 
     </style>
+
   </head>
 
   <body>

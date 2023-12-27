@@ -15,7 +15,6 @@ from bokeh.models import BoxZoomTool, HoverTool
 from jinja2 import Template
 
 
-
 def get_plot_1():
     fruits = ["Apples", "Pears", "Nectarines", "Plums", "Grapes", "Strawberries"]
     years = ["2015", "2016", "2017"]

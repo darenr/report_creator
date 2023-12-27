@@ -111,21 +111,22 @@ class Collapse:
 ##############################
 
 
-class BigNumber(Base):
-    def __init__(self, heading: str, value: Union[str, int, float], unit=None, label=None):
+class Statistic(Base):
+    def __init__(
+        self, heading: str, value: Union[str, int, float], unit=None, label=None
+    ):
         Base.__init__(self, label=label)
         self.heading = heading
         self.value = value
         self.unit = unit or ""
-        logging.info(f"BigNumber {self.heading} {self.value}")
+        logging.info(f"Statistic {self.heading} {self.value}")
 
     @strip_whitespace
     def to_html(self):
-
         return f"""
-            <div>
+            <div class="statistic">
                 <p>{self.heading}</p>
-                <h1 class="bignumber"">{self.value}{self.unit}</h1>
+                <h1>{self.value}{self.unit}</h1>
             </div>
         """
 
@@ -183,16 +184,18 @@ class Html(Base):
 class Image(Base):
     def __init__(self, img: str, label=None):
         Base.__init__(self, label=label or img)
+        self.img = img
         logging.info(f"Image URL {img}, label: {self.label}")
 
     @strip_whitespace
     def to_html(self):
-        return f'''
+        return f"""
         <figure>
-        <img src="{self.img}" alt="{self.label}" style="width:100%">
+        <img src="{self.img}" alt="{self.label}" style="max-width:100%">
         <figcaption>{self.label}</figcaption>
-        </figure>'''
-        
+        </figure>"""
+
+
 ##############################
 
 
@@ -273,7 +276,7 @@ class Text(Base):
         title = f"title='{self.label}'" if self.label else ""
 
         formatted_text = "\n\n".join(
-            [f"<p>{p.strip()}</p>" for p in self.text.split("\n\n")]
+            [f"<p class='indented-text-block'>{p.strip()}</p>" for p in self.text.split("\n\n")]
         )
 
         if self.label:

@@ -7,7 +7,7 @@ from .__meta__ import (
 )
 from .report_creator import (
     Base,
-    BigNumber,
+    Statistic,
     Blocks,
     Collapse,
     DataTable,
@@ -20,4 +20,5 @@ from .report_creator import (
     Select,
     Text,
     Yaml,
+    Image,
 )

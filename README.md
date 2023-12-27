@@ -25,12 +25,12 @@ Library to assemble reports in HTML from various components using python
 ``` .python
     view = Blocks(
         Group(
-            BigNumber(
+            Statistic(
                 heading="Chances of rain",
                 value="84%",
             ),
-            BigNumber(heading="Loss", value=0.1),
-            BigNumber(heading="Accuracy", value=95),
+            Statistic(heading="Loss", value=0.1),
+            Statistic(heading="Accuracy", value=95),
         ),
         Text("Some Text")
     )

@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO)
 
 from report_creator import (
     Base,
-    BigNumber,
+    Statistic,
     Blocks,
     Collapse,
     DataTable,
@@ -23,6 +23,7 @@ from report_creator import (
     Select,
     Text,
     Yaml,
+    Image,
 )
 
 if __name__ == "__main__":
@@ -47,41 +48,43 @@ if __name__ == "__main__":
     report = ReportCreator("My Report")
 
     view = Blocks(
-        Collapse("Code (kitchen_sink.py) to create this report", Python(example_python, label="kitchen_sink.py")),
+        Collapse(
+            "Code (kitchen_sink.py) to create this report",
+            Python(example_python, label="kitchen_sink.py"),
+        ),
         Group(
-            BigNumber(
+            Statistic(
                 heading="Chances of rain",
                 value="84",
                 unit="%",
             ),
-            BigNumber(heading="Loss", value=0.1),
-            BigNumber(
+            Statistic(heading="Loss", value=0.1),
+            Statistic(
                 heading="Accuracy",
                 value=95,
                 label="Number of correct predictions Total number of predictions",
             ),
-            label="Grouped Big Numbers",
+            label="Grouped Stats",
         ),
         Group(
-            BigNumber(
+            Statistic(
                 heading="Answer to Life, The Universe, and Everything",
                 value="42",
             ),
-            BigNumber(
+            Statistic(
                 heading="Confidence",
                 value=95,
                 unit="%",
                 label="How likely is this to be correct.",
             ),
-            BigNumber(
+            Statistic(
                 heading="Author",
                 value="Douglas Adams",
             ),
-                       
-        ),        
+        ),
         Text(
             example_text,
-            label="Alice in Wonderland",
+            label="Ready Player One",
         ),
         Yaml(
             yaml_data,
@@ -91,8 +94,23 @@ if __name__ == "__main__":
         Markdown(example_md, label="Example Markdown"),
         Collapse("Example Collapsed Plot", Plot(fig, label="Pies")),
         Select(
-            DataTable(df, label="People", index=False),
             DataTable(pydataset.data("Journals"), label="Journals", index=False),
+        ),
+        Section(label="Images"),
+        Image(
+            "https://sufipathoflove.files.wordpress.com/2019/02/prim.jpg",
+            label="La Primavera – Botticelli",
+        ),
+        Group(
+            Image(
+                "http://placekitten.com/g/400/200",
+            ),
+            Image(
+                "http://placekitten.com/g/300/200",
+            ),
+            Image(
+                "http://placekitten.com/g/500/200",
+            ),
         ),
     )
 
