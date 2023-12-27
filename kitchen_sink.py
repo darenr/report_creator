@@ -47,10 +47,12 @@ if __name__ == "__main__":
     report = ReportCreator("My Report")
 
     view = Blocks(
+        Collapse("Code (kitchen_sink.py) to create this report", Python(example_python, label="kitchen_sink.py")),
         Group(
             BigNumber(
                 heading="Chances of rain",
-                value="84%",
+                value="84",
+                unit="%",
             ),
             BigNumber(heading="Loss", value=0.1),
             BigNumber(
@@ -58,7 +60,20 @@ if __name__ == "__main__":
                 value=95,
                 label="Number of correct predictions Total number of predictions",
             ),
+            label="Grouped Big Numbers",
         ),
+        Group(
+            BigNumber(
+                heading="Answer to Life, The Universe, and Everything",
+                value="42",
+            ),
+            BigNumber(
+                heading="Confidence",
+                value=95,
+                unit="%",
+                label="How likely is this to be correct.",
+            ),
+        ),        
         Text(
             example_text,
             label="Alice in Wonderland",
@@ -68,7 +83,6 @@ if __name__ == "__main__":
             label="Random Yaml",
         ),
         Section(),
-        Python(example_python, label="Report Creator Code"),
         Markdown(example_md, label="Example Markdown"),
         Collapse("Example Collapsed Plot", Plot(fig, label="Pies")),
         Select(

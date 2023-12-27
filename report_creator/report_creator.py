@@ -67,19 +67,24 @@ class Group:
     def __init__(self, *components: Base, label=None):
         self.components = components
         self.label = label
-        logging.info(f"Group {len(self.components)} components")
+        logging.info(f"Group {len(self.components)} components {label=}")
 
     @strip_whitespace
     def to_html(self):
-        html = f"<group><summary>{self.label}</summary>"
+        html = "<group>"
+        if self.label:
+            html += f"<report_caption>{self.label}</report_caption>"
 
+        html += "<group_component>"
         for component in self.components:
             html += "<group_article>"
             html += component.to_html()
             html += "</group_article>"
             html += "<group_separator></group_separator>"
 
+        html += "</group_component>"
         html += "</group>"
+
         return html
 
 
@@ -107,15 +112,16 @@ class Collapse:
 
 
 class BigNumber(Base):
-    def __init__(self, heading: str, value: Union[str, int, float], label=None):
+    def __init__(self, heading: str, value: Union[str, int, float], unit=None, label=None):
         Base.__init__(self, label=label)
         self.heading = heading
         self.value = value
+        self.unit = unit or ""
         logging.info(f"BigNumber {self.heading} {self.value}")
 
     @strip_whitespace
     def to_html(self):
-        return f"<div class='block-bordered'><p>{self.heading}</p><h1 class='bignumber'>{self.value}</h1></div>"
+        return f"<div class='block-bordered'><p>{self.heading}</p><h1 class='bignumber'>{self.value}{self.unit}</h1></div>"
 
 
 ##############################
@@ -169,11 +175,18 @@ class Html(Base):
 
 
 class Image(Base):
-    def __init__(self, img, label=None):
-        Base.__init__(self, label=label)
-        logging.info(f"Image")
+    def __init__(self, img: str, label=None):
+        Base.__init__(self, label=label or img)
+        logging.info(f"Image URL {img}, label: {self.label}")
 
-
+    @strip_whitespace
+    def to_html(self):
+        return f'''
+        <figure>
+        <img src="{self.img}" alt="{self.label}" style="width:100%">
+        <figcaption>{self.label}</figcaption>
+        </figure>'''
+        
 ##############################
 
 

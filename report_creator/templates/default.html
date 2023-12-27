@@ -63,10 +63,15 @@
       }
 
       group {
+        display: block;
+      }
+
+      group_component {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: space-between;
+        padding-top: 20px;
       }
 
       block_article {
@@ -87,6 +92,23 @@
         padding: 10px;
       }
 
+      fieldset {
+        border: 3px solid var(--focus);
+        background: var(--background-body);
+        border-radius: 3px;
+        padding: 15px;
+      }
+
+      fieldset legend {
+        background: var(--background-body);
+        color: var(--text);
+        padding: 5px 10px;
+        font-size: 1.5rem;
+        border-radius: 3px;
+        box-shadow: 0 0 0 3px #ddd;
+        margin-left: 20px;
+      }
+
       div.round-bordered {
         border: 1px solid var(--border);
         border-radius: 0.5rem;
@@ -104,7 +126,16 @@
       }
 
       div.block-bordered {
-        border-left: 4px solid #0096bfab;
+        border-left: 10px solid var(--focus);
+        padding-left: 15px;
+      }
+
+      report_caption {
+        margin-top: 0.5em;
+        margin-bottom: 1em;
+        font-size: 1.5em;
+        font-weight: bold;
+        border-left: 10px solid var(--focus);
         padding-left: 15px;
       }
 
@@ -113,7 +144,7 @@
         margin-bottom: 1em;
         font-size: 1.5em;
         font-weight: bold;
-        border-left: 10px solid red;
+        border-left: 10px solid var(--focus);
         padding-left: 15px;
       }
 

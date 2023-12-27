@@ -6,3 +6,4 @@ markdown
 pyyaml
 bokeh
 Jinja2
+pydataset
