@@ -73,6 +73,11 @@ if __name__ == "__main__":
                 unit="%",
                 label="How likely is this to be correct.",
             ),
+            BigNumber(
+                heading="Author",
+                value="Douglas Adams",
+            ),
+                       
         ),        
         Text(
             example_text,

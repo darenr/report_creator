@@ -121,7 +121,13 @@ class BigNumber(Base):
 
     @strip_whitespace
     def to_html(self):
-        return f"<div class='block-bordered'><p>{self.heading}</p><h1 class='bignumber'>{self.value}{self.unit}</h1></div>"
+
+        return f"""
+            <div>
+                <p>{self.heading}</p>
+                <h1 class="bignumber"">{self.value}{self.unit}</h1>
+            </div>
+        """
 
 
 ##############################
