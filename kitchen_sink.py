@@ -42,7 +42,7 @@ if __name__ == "__main__":
     with open("example.txt", "r") as f:
         example_text = f.read()
 
-    with open("example.md", "r") as f:
+    with open("README.md", "r") as f:
         example_md = f.read()
 
     report = ReportCreator("My Report")
