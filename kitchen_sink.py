@@ -100,21 +100,23 @@ if __name__ == "__main__":
             DataTable(pydataset.data("Housing"), label="Housing", index=False),
         ),
         Section(label="Images"),
-        Image(
-            "https://sufipathoflove.files.wordpress.com/2019/02/prim.jpg",
-            label="La Primavera – Botticelli",
-        ),
         Group(
-            Image(
-                "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
+            Group(
+                Image(
+                    "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
+                ),
+                Image(
+                    "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
+                ),
+                Image(
+                    "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
+                ),
+                label="Yves Klein, IKB 79 1959",
             ),
-            Image(
-                "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
-            ),
-            Image(
-                "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
-            ),
-            label="Yves Klein, IKB 79 1959",
+            Group(
+                Image("https://sufipathoflove.files.wordpress.com/2019/02/prim.jpg"),
+                label="La Primavera – Botticelli"
+            )
         ),
     )
 
