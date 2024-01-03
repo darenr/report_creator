@@ -6,5 +6,6 @@ markdown
 markdown-checklist
 pyyaml
 bokeh
+plotly-express
 Jinja2
 pydataset

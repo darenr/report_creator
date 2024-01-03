@@ -12,8 +12,6 @@ import pandas as pd
 import yaml
 from markdown import markdown
 
-plt.style.use("ggplot")
-
 logging.basicConfig(level=logging.INFO)
 
 
@@ -228,25 +226,43 @@ class Plot(Base):
     # see https://plotly.com/python/interactive-html-export/
     # for how to make interactive
 
-    def __init__(self, fig: matplotlib.figure.Figure, label=None):
+    def __init__(self, fig, label=None):
         Base.__init__(self, label=label)
-        if not isinstance(fig, matplotlib.figure.Figure):
-            raise ValueError(
-                f"Expected matplotlib.figure.Figure, got {type(fig)}, try obj.get_figure()"
-            )
+        # if not isinstance(fig, matplotlib.figure.Figure, plotly.graph_objs._figure.Figure):
+        #     raise ValueError(
+        #         f"Expected matplotlib.figure.Figure, got {type(fig)}, try obj.get_figure()"
+        #     )
         self.fig = fig
         logging.info(f"Plot")
 
     @strip_whitespace
     def to_html(self) -> str:
-        tmp = io.BytesIO()
-        self.fig.set_figwidth(10)
-        self.fig.tight_layout()
-        self.fig.savefig(tmp, format="png")
-        tmp.seek(0)
-        b64image = base64.b64encode(tmp.getvalue()).decode("utf-8").replace("\n", "")
-        return f'<img src="data:image/png;base64,{b64image}">'
-
+        
+        html = "<div class='plot_wrapper'>"
+        
+        if self.label:
+            html += f"<h3 class='block-bordered'>{self.label}</h3>"
+        
+        if isinstance(self.fig, matplotlib.figure.Figure):
+            tmp = io.BytesIO()
+            self.fig.set_figwidth(10)
+            self.fig.tight_layout()
+            self.fig.savefig(tmp, format="png")
+            tmp.seek(0)
+            b64image = base64.b64encode(tmp.getvalue()).decode("utf-8").replace("\n", "")
+            html += f'<br/><img src="data:image/png;base64,{b64image}">'
+        else:
+            import plotly
+            if isinstance(self.fig, plotly.graph_objs._figure.Figure):
+                tmp = io.StringIO()
+                self.fig.write_html(tmp)
+                html += tmp.getvalue()         
+            else:
+                raise ValueError(f"Expected matplotlib.figure.Figure, got {type(self.fig)}, try obj.get_figure()")
+            
+        html += "</div>"
+        
+        return html
 
 ##############################
 

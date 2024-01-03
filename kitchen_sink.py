@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import pydataset
 import yaml
+import plotly.express as px
 
 logging.basicConfig(level=logging.INFO)
 
@@ -27,11 +28,14 @@ from report_creator import (
 )
 
 if __name__ == "__main__":
-    df = pd.DataFrame(columns=["name", "age"])
-    df.name = ["John", "Peter", "Sarah"]
-    df.age = [33, 18, 22]
+    df1 = pd.DataFrame(columns=["Name", "Age"])
+    df1.Name = ["Lizzie", "Julie", "Andrea"]
+    df1.Age = [24, 18, 22]
 
-    fig = df.plot.bar(x="name", y="age").get_figure()
+    fig1 = df1.plot.bar(x="Name", y="Age").get_figure()
+    
+    df2 = px.data.stocks()
+    fig2 = px.line(df2, x='date', y=['GOOG', 'AAPL', 'AMZN', 'FB', 'NFLX', 'MSFT'])
 
     with open(__file__, "r") as f:
         example_python = f.read()
@@ -92,7 +96,8 @@ if __name__ == "__main__":
         ),
         Section(),
         Markdown(example_md, label="Example Markdown"),
-        Collapse("Example Collapsed Plot", Plot(fig, label="Pies")),
+        Plot(fig2, label="Plotly Figure - Stocks"),
+        Plot(fig1, label="Matplotlib Figure - People"),
         Select(
             DataTable(pydataset.data("Titanic"), label="Titanic", index=False),
             DataTable(pydataset.data("Journals"), label="Journals", index=False),
