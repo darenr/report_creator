@@ -94,7 +94,10 @@ if __name__ == "__main__":
         Markdown(example_md, label="Example Markdown"),
         Collapse("Example Collapsed Plot", Plot(fig, label="Pies")),
         Select(
+            DataTable(pydataset.data("Titanic"), label="Titanic", index=False),
             DataTable(pydataset.data("Journals"), label="Journals", index=False),
+            DataTable(pydataset.data("Boston"), label="Boston", index=False),
+            DataTable(pydataset.data("Housing"), label="Housing", index=False),
         ),
         Section(label="Images"),
         Image(
@@ -111,7 +114,7 @@ if __name__ == "__main__":
             Image(
                 "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
             ),
-            label="Yves Klein, IKB 79 1959"
+            label="Yves Klein, IKB 79 1959",
         ),
     )
 

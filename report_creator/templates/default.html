@@ -1,7 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>${title}</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css"
+    />
 
     <link
       rel="stylesheet"
@@ -16,17 +23,12 @@
       language="javascript"
       src="https://code.jquery.com/jquery-3.7.0.js"
     ></script>
+
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
     <link
       rel="stylesheet"
       href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css"
     />
-    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
-
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css"
-    />
-
     <!--
 
             variables, for example: style: color: var(--links)
@@ -60,6 +62,13 @@
         --focus: red;
       }
 
+      table,
+      th,
+      td {
+        width: unset;
+        table-layout: unset;
+      }
+
       block {
         display: flex;
         flex-wrap: wrap;
@@ -70,7 +79,7 @@
         display: block;
       }
 
-      group_component {
+      group-component {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
@@ -79,19 +88,19 @@
         margin: 0 -10px;
       }
 
-      block_article {
+      block-article {
         padding: 10px;
         margin: 10px;
         flex: 1;
         align-items: stretch;
       }
 
-      group_article {
+      group-article {
         flex: 1;
         margin: 0 10px;
       }
 
-      group_separator {
+      group-separator {
         padding: 10px;
       }
 
@@ -137,9 +146,9 @@
         margin-bottom: 0;
       }
 
-      div.block-bordered {
-        border-left: 10px solid var(--focus);
-        padding-left: 15px;
+      .block-bordered {
+        border-left: 10px solid var(--focus) !important;
+        padding-left: 15px !important;
       }
 
       report_caption {
@@ -174,13 +183,19 @@
       }
 
       body {
-        max-width: 9999px !important;
-        padding-left: 3rem;
-        padding-right: 3rem;
-      }
+        max-width: 90%;
+        width: 90%;
+        margin: 20px auto;
+        padding-left: 5%;
+        padding-right: 5%;
 
-      div.dataTables_wrapper {
-        width: 1024px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI,
+          Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans,
+          Helvetica Neue, Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji,
+          sans-serif;
+        line-height: 1.4;
+        word-wrap: break-word;
+        text-rendering: optimizeLegibility;
       }
 
       details {
@@ -190,37 +205,53 @@
       /* Style the tab */
       .tab {
         overflow: hidden;
-        border: 1px solid #ccc;
-        background-color: #f1f1f1;
+        background-color: var(--background);
       }
 
       /* Style the buttons that are used to open the tab content */
       .tab button {
-        background-color: inherit;
+        background: var(--background) !important;
         float: left;
-        border: none;
-        outline: none;
+
         cursor: pointer;
         padding: 14px 16px;
-        transition: 0.3s;
+        transition: 0.2s;
+        margin: 0 !important;
+        border-radius: 0;
+        border: none;
+        outline: none;
+        box-shadow: none !important;
       }
 
-      /* Change background color of buttons on hover */
       .tab button:hover {
-        background-color: #ddd;
+        background: #ddd !important;
+        border: none !important;
+        outline: none !important;
+        border-radius: 0 !important;
+        border-style: none !important;
+        box-shadow: none !important;
       }
 
-      /* Create an active/current tablink class */
       .tab button.active {
-        background-color: #ccc;
+        background: #ccc !important;
+        border: none !important;
+        outline: none !important;
+        border-radius: 0 !important;
+        border-style: none !important;
+        box-shadow: none !important;
+      }
+
+      .tab button:focus {
+        background-color: #ccc !important;
       }
 
       /* Style the tab content */
       .tabcontent {
         display: none;
-        padding: 6px 12px;
-        border: 1px solid #ccc;
-        border-top: none;
+        xpadding: 25px;
+        xborder: 1px solid #ccc;
+        xborder-top: none;
+        width: 100%;
       }
 
       .indented-text-block {
@@ -233,11 +264,13 @@
       }
 
       .image-block img {
-        min-height:100%;
+        min-height: 100%;
       }
 
+      .dataTables_wrapper {
+        margin-top: 20px;
+      }
     </style>
-
   </head>
 
   <body>
@@ -275,10 +308,11 @@
         // style any code blocks
         hljs.highlightAll();
 
+        document.getElementById("defaultOpen").click();
+
         // style tables
         new DataTable("table.fancy_table", {
-          pagingType: "full_numbers",
-          scrollX: true,
+          search: true,
         });
       })();
     </script>

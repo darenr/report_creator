@@ -50,9 +50,9 @@ class Blocks:
         html = "<block>"
 
         for component in self.components:
-            html += "<block_article>"
+            html += "<block-article>"
             html += component.to_html()
-            html += "</block_article>"
+            html += "</block-article>"
 
         html += "</block>"
 
@@ -75,13 +75,13 @@ class Group:
         if self.label:
             html += f"<report_caption>{self.label}</report_caption>"
 
-        html += "<group_component>"
+        html += "<group-component>"
         for component in self.components:
-            html += "<group_article>"
+            html += "<group-article>"
             html += component.to_html()
-            html += "</group_article>"
+            html += "</group-article>"
 
-        html += "</group_component>"
+        html += "</group-component>"
         html += "</group>"
 
         return html
@@ -153,7 +153,8 @@ class DataTable(Base):
 
         styler.hide(axis="index")
         styler.set_table_attributes(
-            'class="fancy_table display compact nowrap" style="width:100%;"'
+            # 'class="fancy_table display compact nowrap" style="width:100%;"'
+            'class="fancy_table display  style="width:100%;"'
         )
         self.table_html = styler.to_html()
         logging.info(f"DataTable {len(df)} rows")
@@ -188,7 +189,7 @@ class Image(Base):
 
     @strip_whitespace
     def to_html(self):
-     return f"""
+        return f"""
         <div class="image-block">
             <img src="{self.img}" alt="{self.label}">
         </div>
@@ -275,7 +276,10 @@ class Text(Base):
         title = f"title='{self.label}'" if self.label else ""
 
         formatted_text = "\n\n".join(
-            [f"<p class='indented-text-block'>{p.strip()}</p>" for p in self.text.split("\n\n")]
+            [
+                f"<p class='indented-text-block'>{p.strip()}</p>"
+                for p in self.text.split("\n\n")
+            ]
         )
 
         if self.label:
@@ -294,27 +298,48 @@ class Select(Base):
             if not component.label:
                 raise ValueError("All components must have a label to use in a Select")
 
-        logging.info(f"Select {len(self.components)} components")
+        logging.info(
+            f"Select {len(self.components)} components: {', '.join([c.label for c in self.components])}"
+        )
 
     def to_html(self):
         """
         <div class="tab">
-        <button class="tablinks" onclick="openTab(event, 'London')">London</button>
+        <button class="tablinks" onclick="openTab(event, 'London')" id="defaultOpen">London</button>
         <button class="tablinks" onclick="openTab(event, 'Paris')">Paris</button>
         <button class="tablinks" onclick="openTab(event, 'Tokyo')">Tokyo</button>
         </div>
 
+        <!-- Tab content -->
         <div id="London" class="tabcontent">
-        <h3>London</h3>
+        <h3 class="block-bordered">London</h3>
         <p>London is the capital city of England.</p>
         </div>
+
+        <div id="Paris" class="tabcontent">
+        <h3 class="block-bordered">Paris</h3>
+        <p>Paris is the capital of France.</p>
+        </div>
+
+        <div id="Tokyo" class="tabcontent">
+        <h3 class="block-bordered">Tokyo</h3>
+        <p>Tokyo is the capital of Japan.</p>
+        </div>
         """
-        html = "<block>"
+        
+        # assemble the button bar for the tabs
+        html = """<div class="tab">"""
+        for i, component in enumerate(self.components):
+            logging.info(f"creating tab: {component.label}")    
+            extra="id='defaultOpen'" if i==0 else ""
+            html += f"""<button class="tablinks" onclick="openTab(event, '{component.label}')" {extra}>{component.label}</button>"""
+        html += """</div>"""
 
+        # assemble the tab contents
         for component in self.components:
+            html += f"""<div id="{component.label}" class="tabcontent">"""
             html += component.to_html()
-
-        html += "</block>"
+            html += """</div>"""
 
         return html
 
