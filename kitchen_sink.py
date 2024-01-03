@@ -118,4 +118,4 @@ if __name__ == "__main__":
         ),
     )
 
-    report.save(view, "aa.html")
+    report.save(view, "index.html")

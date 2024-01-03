@@ -3,6 +3,7 @@ pandas
 numpy
 matplotlib
 markdown
+markdown-checklist
 pyyaml
 bokeh
 Jinja2

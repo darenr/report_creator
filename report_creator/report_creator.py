@@ -212,6 +212,7 @@ class Markdown(Base):
             extensions=[
                 "markdown.extensions.fenced_code",
                 "markdown.extensions.tables",
+                "markdown_checklist.extension",
             ],
         ).strip()
 

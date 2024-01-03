@@ -62,12 +62,19 @@
         --focus: red;
       }
 
+      /* undo some water things */
       table,
       th,
       td {
         width: unset;
         table-layout: unset;
       }
+
+      input:disabled {
+        opacity: unset;
+      }
+
+      /* end water undos */
 
       block {
         display: flex;
