@@ -1,6 +1,6 @@
-[![License](https://img.shields.io/badge/license-Apache-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)
-[![PyPI Version](https://img.shields.io/pypi/v/report_creator.svg?style=flat&color=blue)](https://pypi.org/project/report_creator)
-[![Python Versions](https://img.shields.io/pypi/pyversions/report_creator.svg?logo=python&logoColor=white&style=flat)](https://pypi.org/project/report_creator)
+[![License](https://img.shields.io/badge/license-Apache-blue.svg?style=for-the-badge)](https://www.apache.org/licenses/LICENSE-2.0)
+[![PyPI Version](https://img.shields.io/pypi/v/report_creator.svg?style=for-the-badge&color=blue)](https://pypi.org/project/report_creator)
+[![Python Versions](https://img.shields.io/pypi/pyversions/report_creator.svg?logo=python&logoColor=white&style=for-the-badge)](https://pypi.org/project/report_creator)
 
 
 # Report Creator
