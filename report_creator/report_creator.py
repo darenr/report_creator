@@ -1,5 +1,6 @@
 import base64
 import io
+import json
 import logging
 import os
 from string import Template
@@ -30,6 +31,7 @@ class Base:
     def __init__(self, label: str):
         self.label = label
 
+    @strip_whitespace
     def to_html(self):
         return ""
 
@@ -39,7 +41,7 @@ class Base:
 
 class Blocks:
     # vertically stacked compoments
-    def __init__(self, *components: Base):
+    def __init__(self, *components: Base, prompt: str = None):
         self.components = components
         logging.info(f"Blocks {len(self.components)} components")
 
@@ -62,7 +64,7 @@ class Blocks:
 
 class Group:
     # horizontally stacked compoments
-    def __init__(self, *components: Base, label=None):
+    def __init__(self, *components: Base, label=None, prompt: str = None):
         self.components = components
         self.label = label
         logging.info(f"Group {len(self.components)} components {label=}")
@@ -89,10 +91,10 @@ class Group:
 
 
 class Collapse:
-    def __init__(self, label: str, *components: Base):
+    def __init__(self, *components: Base, label: str = None):
         self.components = components
         self.label = label
-        logging.info(f"Collapse {len(self.components)} components")
+        logging.info(f"Collapse {len(self.components)} components, {label=}")
 
     @strip_whitespace
     def to_html(self):
@@ -237,32 +239,37 @@ class Plot(Base):
 
     @strip_whitespace
     def to_html(self) -> str:
-        
         html = "<div class='plot_wrapper'>"
-        
+
         if self.label:
             html += f"<h3 class='block-bordered'>{self.label}</h3>"
-        
+
         if isinstance(self.fig, matplotlib.figure.Figure):
             tmp = io.BytesIO()
             self.fig.set_figwidth(10)
             self.fig.tight_layout()
             self.fig.savefig(tmp, format="png")
             tmp.seek(0)
-            b64image = base64.b64encode(tmp.getvalue()).decode("utf-8").replace("\n", "")
+            b64image = (
+                base64.b64encode(tmp.getvalue()).decode("utf-8").replace("\n", "")
+            )
             html += f'<br/><img src="data:image/png;base64,{b64image}">'
         else:
             import plotly
+
             if isinstance(self.fig, plotly.graph_objs._figure.Figure):
                 tmp = io.StringIO()
                 self.fig.write_html(tmp)
-                html += tmp.getvalue()         
+                html += tmp.getvalue()
             else:
-                raise ValueError(f"Expected matplotlib.figure.Figure, got {type(self.fig)}, try obj.get_figure()")
-            
+                raise ValueError(
+                    f"Expected matplotlib.figure.Figure, got {type(self.fig)}, try obj.get_figure()"
+                )
+
         html += "</div>"
-        
+
         return html
+
 
 ##############################
 
@@ -272,6 +279,7 @@ class Section(Base):
         Base.__init__(self, label=label)
         logging.info(f"Section")
 
+    @strip_whitespace
     def to_html(self):
         if self.label:
             return f"<br/><div><hr/><h2>{self.label}</h2></div>"
@@ -319,6 +327,7 @@ class Select(Base):
             f"Select {len(self.components)} components: {', '.join([c.label for c in self.components])}"
         )
 
+    @strip_whitespace
     def to_html(self):
         """
         <div class="tab">
@@ -343,12 +352,12 @@ class Select(Base):
         <p>Tokyo is the capital of Japan.</p>
         </div>
         """
-        
+
         # assemble the button bar for the tabs
         html = """<div class="tab">"""
         for i, component in enumerate(self.components):
-            logging.info(f"creating tab: {component.label}")    
-            extra="id='defaultOpen'" if i==0 else ""
+            logging.info(f"creating tab: {component.label}")
+            extra = "id='defaultOpen'" if i == 0 else ""
             html += f"""<button class="tablinks" onclick="openTab(event, '{component.label}')" {extra}>{component.label}</button>"""
         html += """</div>"""
 
@@ -378,7 +387,7 @@ class Language(Base):
         else:
             formatted_text = f"<pre><code class='language-{self.language}'>{self.code.strip()}</code></pre>"
 
-        return f"<div class='block-bordered'>{formatted_text}</div>"
+        return f"""<div>{formatted_text}</div>"""
 
 
 ##############################
@@ -389,12 +398,28 @@ class Python(Language):
         Language.__init__(self, code, "python", label=label)
 
 
+##############################
+
+
 class Yaml(Language):
     def __init__(self, data: Union[Dict, List], label=None):
         Language.__init__(
             self,
-            yaml.dump(data, sort_keys=True, indent=2),
+            yaml.dump(data, indent=2),
             "yaml",
+            label=label,
+        )
+
+
+##############################
+
+
+class Json(Language):
+    def __init__(self, data: Union[Dict, List], label=None):
+        Language.__init__(
+            self,
+            json.dumps(data, indent=2),
+            "json",
             label=label,
         )
 

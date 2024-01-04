@@ -10,12 +10,14 @@
       href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css"
     />
 
+    <!-- see https://highlightjs.org/examples -->
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/mono-blue.css"
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
 
     <script
@@ -74,6 +76,15 @@
         opacity: unset;
       }
 
+      details {
+        background-color: var(--background-body);
+      }
+
+      summary {
+        background-color: var(--background-body);
+        margin-left: -20px !important;
+      }
+
       /* end water undos */
 
       block {
@@ -96,6 +107,8 @@
       }
 
       block-article {
+        display: flex;
+        flex-direction: column;
         padding: 10px;
         margin: 10px;
         flex: 1;
@@ -154,7 +167,7 @@
       }
 
       .block-bordered {
-        border-left: 10px solid var(--focus) !important;
+        border-left: 7px solid var(--focus) !important;
         padding-left: 15px !important;
       }
 
@@ -163,7 +176,7 @@
         margin-bottom: 1em;
         font-size: 1.5em;
         font-weight: bold;
-        border-left: 10px solid var(--focus);
+        border-left: 7px solid var(--focus);
         padding-left: 15px;
       }
 
@@ -172,7 +185,7 @@
         margin-bottom: 1em;
         font-size: 1.5em;
         font-weight: bold;
-        border-left: 10px solid var(--focus);
+        border-left: 7px solid var(--focus);
         padding-left: 15px;
       }
 
@@ -203,10 +216,6 @@
         line-height: 1.4;
         word-wrap: break-word;
         text-rendering: optimizeLegibility;
-      }
-
-      details {
-        background-color: white !important;
       }
 
       /* Style the tab */

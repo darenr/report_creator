@@ -1,17 +1,13 @@
+import os
+
+import numpy as np
+import pandas as pd
+from bokeh.embed import components
+from bokeh.models import BoxZoomTool, ColumnDataSource, HoverTool
+from bokeh.palettes import GnBu3, OrRd3
 from bokeh.plotting import figure
 from bokeh.resources import CDN
-from bokeh.embed import components
-from bokeh.palettes import GnBu3, OrRd3
-
-import os
-import pandas as pd
-import numpy as np
-
-from bokeh.models import ColumnDataSource
-from bokeh.plotting import figure
 from bokeh.transform import dodge
-from bokeh.models import BoxZoomTool, HoverTool
-
 from jinja2 import Template
 
 

@@ -7,18 +7,19 @@ from .__meta__ import (
 )
 from .report_creator import (
     Base,
-    Statistic,
     Blocks,
     Collapse,
     DataTable,
     Group,
+    Image,
+    Json,
     Markdown,
     Plot,
     Python,
     ReportCreator,
     Section,
     Select,
+    Statistic,
     Text,
     Yaml,
-    Image,
 )

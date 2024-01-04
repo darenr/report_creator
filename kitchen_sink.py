@@ -3,28 +3,29 @@ from typing import Dict, List, Sequence, Tuple, Union
 
 import numpy as np
 import pandas as pd
+import plotly.express as px
 import pydataset
 import yaml
-import plotly.express as px
 
 logging.basicConfig(level=logging.INFO)
 
 from report_creator import (
     Base,
-    Statistic,
     Blocks,
     Collapse,
     DataTable,
     Group,
+    Image,
+    Json,
     Markdown,
     Plot,
     Python,
     ReportCreator,
     Section,
     Select,
+    Statistic,
     Text,
     Yaml,
-    Image,
 )
 
 if __name__ == "__main__":
@@ -33,15 +34,15 @@ if __name__ == "__main__":
     df1.Age = [24, 18, 22]
 
     fig1 = df1.plot.bar(x="Name", y="Age").get_figure()
-    
+
     df2 = px.data.stocks()
-    fig2 = px.line(df2, x='date', y=['GOOG', 'AAPL', 'AMZN', 'FB', 'NFLX', 'MSFT'])
+    fig2 = px.line(df2, x="date", y=["GOOG", "AAPL", "AMZN", "FB", "NFLX", "MSFT"])
 
     with open(__file__, "r") as f:
         example_python = f.read()
 
     with open("example.yaml", "r") as f:
-        yaml_data = yaml.safe_load(f.read())
+        datastructure = yaml.safe_load(f.read())
 
     with open("example.txt", "r") as f:
         example_text = f.read()
@@ -53,8 +54,8 @@ if __name__ == "__main__":
 
     view = Blocks(
         Collapse(
-            "Code (kitchen_sink.py) to create this report",
             Python(example_python, label="kitchen_sink.py"),
+            label="Code (kitchen_sink.py) to create this report",
         ),
         Group(
             Statistic(
@@ -90,9 +91,15 @@ if __name__ == "__main__":
             example_text,
             label="Ready Player One",
         ),
-        Yaml(
-            yaml_data,
-            label="Random Yaml",
+        Group(
+            Yaml(
+                datastructure,
+                label="Kubernetes Creating a Deployment as YAML",
+            ),
+            Json(
+                datastructure,
+                label="Kubernetes Creating a Deployment as JSON",
+            ),
         ),
         Section(),
         Markdown(example_md, label="Example Markdown"),
@@ -120,8 +127,8 @@ if __name__ == "__main__":
             ),
             Group(
                 Image("https://sufipathoflove.files.wordpress.com/2019/02/prim.jpg"),
-                label="La Primavera – Botticelli"
-            )
+                label="La Primavera – Botticelli",
+            ),
         ),
     )
 
