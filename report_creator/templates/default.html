@@ -31,6 +31,7 @@
       rel="stylesheet"
       href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css"
     />
+
     <!--
 
             variables, for example: style: color: var(--links)
@@ -264,9 +265,7 @@
       /* Style the tab content */
       .tabcontent {
         display: none;
-        xpadding: 25px;
         xborder: 1px solid #ccc;
-        xborder-top: none;
         width: 100%;
       }
 
@@ -289,6 +288,15 @@
 
       .plot_wrapper {
         margin-top: 20px;
+        flex: 1;
+      }
+
+      .markdown_wrapper {
+        margin-top: 20px;
+      }
+
+      .markdown_wrapper pre {
+        white-space: pre-wrap;
       }
 
     </style>

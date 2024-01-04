@@ -3,6 +3,7 @@ import io
 import json
 import logging
 import os
+from abc import ABC, abstractmethod
 from string import Template
 from typing import Dict, List, Sequence, Tuple, Union
 
@@ -17,6 +18,16 @@ logging.basicConfig(level=logging.INFO)
 
 
 def strip_whitespace(func):
+    """
+    A decorator that strips leading and trailing whitespace from the result of a function.
+
+    Args:
+        func: The function to be decorated.
+
+    Returns:
+        The decorated function.
+
+    """
     def wrapper(*args, **kwargs):
         result = func(*args, **kwargs)
         if isinstance(result, str):
@@ -28,7 +39,7 @@ def strip_whitespace(func):
 
 
 class Base:
-    def __init__(self, label: str):
+    def __init__(self, label: str = None):
         self.label = label
 
     @strip_whitespace
@@ -39,11 +50,12 @@ class Base:
 ##############################
 
 
-class Blocks:
+class Block(Base):
     # vertically stacked compoments
-    def __init__(self, *components: Base, prompt: str = None):
+    def __init__(self, *components: Base):
+        Base.__init__(self, label=None)        
         self.components = components
-        logging.info(f"Blocks {len(self.components)} components")
+        logging.info(f"Block: {len(self.components)} components")
 
     @strip_whitespace
     def to_html(self):
@@ -62,12 +74,14 @@ class Blocks:
 ##############################
 
 
-class Group:
+class Group(Base):
     # horizontally stacked compoments
     def __init__(self, *components: Base, label=None, prompt: str = None):
+        Base.__init__(self, label=label)
         self.components = components
-        self.label = label
-        logging.info(f"Group {len(self.components)} components {label=}")
+        logging.info(f"Group: {len(self.components)} components {label=}")
+        if prompt:
+            logging.info(f"Prompt: {prompt}")
 
     @strip_whitespace
     def to_html(self):
@@ -90,10 +104,10 @@ class Group:
 ##############################
 
 
-class Collapse:
+class Collapse(Base):
     def __init__(self, *components: Base, label: str = None):
+        Base.__init__(self, label=label)
         self.components = components
-        self.label = label
         logging.info(f"Collapse {len(self.components)} components, {label=}")
 
     @strip_whitespace
@@ -218,7 +232,12 @@ class Markdown(Base):
 
     @strip_whitespace
     def to_html(self):
-        return Markdown.markdown_to_html(self.text)
+        html = """<div class='markdown_wrapper'>"""
+        if self.label:
+            html += f"<h3 class='block-bordered'>{self.label}</h3>"        
+        html += Markdown.markdown_to_html(self.text)
+        html += "</div>"
+        return html
 
 
 ##############################
@@ -274,10 +293,10 @@ class Plot(Base):
 ##############################
 
 
-class Section(Base):
+class Separator(Base):
     def __init__(self, label: str = None):
         Base.__init__(self, label=label)
-        logging.info(f"Section")
+        logging.info(f"Separator")
 
     @strip_whitespace
     def to_html(self):
@@ -308,7 +327,7 @@ class Text(Base):
         )
 
         if self.label:
-            return f"<h3>{self.label}</h3>{formatted_text}"
+            return f"""<h3 class="block-bordered">{self.label}</h3>{formatted_text}"""
         else:
             return formatted_text
 
@@ -426,12 +445,33 @@ class Json(Language):
 
 ##############################
 
+  
+class AbstractLLM(ABC): 
+  
+    def __init__(self): 
+        pass
+        
+    @abstractmethod
+    def complete(self, prompt, **kwargs): 
+        pass
+    
+##############################
 
 class ReportCreator:
     def __init__(self, title: str):
         self.title = title
-
+        logging.info(f"ReportCreator {self.title}")
+    def __enter__(self):
+        return self
+     
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        pass
+    
     def save(self, view: Base, path: str, format=True) -> None:
+        if not isinstance(view, (Block, Group)):
+            raise ValueError(
+                f"Expected view to be either Block, or Group object, got {type(view)} instead"
+            )
         logging.info(f"Saving report to {path}")
 
         current_path = os.path.dirname(os.path.abspath(__file__))

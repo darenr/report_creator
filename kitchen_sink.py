@@ -10,8 +10,9 @@ import yaml
 logging.basicConfig(level=logging.INFO)
 
 from report_creator import (
+    AbstractLLM,
     Base,
-    Blocks,
+    Block,
     Collapse,
     DataTable,
     Group,
@@ -21,8 +22,8 @@ from report_creator import (
     Plot,
     Python,
     ReportCreator,
-    Section,
     Select,
+    Separator,
     Statistic,
     Text,
     Yaml,
@@ -49,87 +50,91 @@ if __name__ == "__main__":
 
     with open("README.md", "r") as f:
         example_md = f.read()
+        
+    class DummyLLM(AbstractLLM):
+        def complete(self, prompt, **kwargs):
+            return "AI says: hello world";
 
-    report = ReportCreator("My Report")
+    with ReportCreator("Kitchen Sink Report") as report:
 
-    view = Blocks(
-        Collapse(
-            Python(example_python, label="kitchen_sink.py"),
-            label="Code (kitchen_sink.py) to create this report",
-        ),
-        Group(
-            Statistic(
-                heading="Chances of rain",
-                value="84",
-                unit="%",
-            ),
-            Statistic(heading="Loss", value=0.1),
-            Statistic(
-                heading="Accuracy",
-                value=95,
-                label="Number of correct predictions Total number of predictions",
-            ),
-            label="Grouped Stats",
-        ),
-        Group(
-            Statistic(
-                heading="Answer to Life, The Universe, and Everything",
-                value="42",
-            ),
-            Statistic(
-                heading="Confidence",
-                value=95,
-                unit="%",
-                label="How likely is this to be correct.",
-            ),
-            Statistic(
-                heading="Author",
-                value="Douglas Adams",
-            ),
-        ),
-        Text(
-            example_text,
-            label="Ready Player One",
-        ),
-        Group(
-            Yaml(
-                datastructure,
-                label="Kubernetes Creating a Deployment as YAML",
-            ),
-            Json(
-                datastructure,
-                label="Kubernetes Creating a Deployment as JSON",
-            ),
-        ),
-        Section(),
-        Markdown(example_md, label="Example Markdown"),
-        Plot(fig2, label="Plotly Figure - Stocks"),
-        Plot(fig1, label="Matplotlib Figure - People"),
-        Select(
-            DataTable(pydataset.data("Titanic"), label="Titanic", index=False),
-            DataTable(pydataset.data("Journals"), label="Journals", index=False),
-            DataTable(pydataset.data("Boston"), label="Boston", index=False),
-            DataTable(pydataset.data("Housing"), label="Housing", index=False),
-        ),
-        Section(label="Images"),
-        Group(
-            Group(
-                Image(
-                    "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
-                ),
-                Image(
-                    "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
-                ),
-                Image(
-                    "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
-                ),
-                label="Yves Klein, IKB 79 1959",
+        view = Block(
+            Collapse(
+                Python(example_python, label="kitchen_sink.py"),
+                label="Code (kitchen_sink.py) to create this report",
             ),
             Group(
-                Image("https://sufipathoflove.files.wordpress.com/2019/02/prim.jpg"),
-                label="La Primavera – Botticelli",
+                Statistic(
+                    heading="Chances of rain",
+                    value="84",
+                    unit="%",
+                ),
+                Statistic(heading="Loss", value=0.1),
+                Statistic(
+                    heading="Accuracy",
+                    value=95,
+                    label="Number of correct predictions Total number of predictions",
+                ),
+                label="Grouped Stats",
             ),
-        ),
-    )
+            Group(
+                Statistic(
+                    heading="Answer to Life, The Universe, and Everything",
+                    value="42",
+                ),
+                Statistic(
+                    heading="Confidence",
+                    value=95,
+                    unit="%",
+                    label="How likely is this to be correct.",
+                ),
+                Statistic(
+                    heading="Author",
+                    value="Douglas Adams",
+                ),
+            ),
+            Text(
+                example_text,
+                label="Ready Player One",
+            ),
+            Group(
+                Yaml(
+                    datastructure,
+                    label="Kubernetes Creating a Deployment as YAML",
+                ),
+                Json(
+                    datastructure,
+                    label="Kubernetes Creating a Deployment as JSON",
+                ),
+            ),
+            Separator(),
+            Markdown(example_md, label="README.md"),
+            Plot(fig2, label="Plotly Figure - Stocks"),
+            Plot(fig1, label="Matplotlib Figure - People"),
+            Select(
+                DataTable(pydataset.data("Titanic"), label="Titanic", index=False),
+                DataTable(pydataset.data("Journals"), label="Journals", index=False),
+                DataTable(pydataset.data("Boston"), label="Boston", index=False),
+                DataTable(pydataset.data("Housing"), label="Housing", index=False),
+            ),
+            Separator(label="Images"),
+            Group(
+                Group(
+                    Image(
+                        "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
+                    ),
+                    Image(
+                        "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
+                    ),
+                    Image(
+                        "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
+                    ),
+                    label="Yves Klein, IKB 79 1959",
+                ),
+                Group(
+                    Image("https://sufipathoflove.files.wordpress.com/2019/02/prim.jpg"),
+                    label="La Primavera – Botticelli",
+                ),
+            ),
+        )
 
-    report.save(view, "index.html")
+        report.save(view, "index.html")

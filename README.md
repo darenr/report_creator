@@ -23,18 +23,25 @@ Library to assemble reports in HTML from various components using python
 ## Example
 
 ``` .python
-    view = Blocks(
-        Group(
-            Statistic(
-                heading="Chances of rain",
-                value="84%",
-            ),
-            Statistic(heading="Loss", value=0.1),
-            Statistic(heading="Accuracy", value=95),
-        ),
-        Text("Some Text")
-    )
+    with ReportCreator("My Report") as report:
 
-    report.save(view, "report.html", theme="light")
+        view = Block(
+            Text("""It was the best of times, it was the worst of times, it was the age of wisdom, it was the age 
+            of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of 
+            light, it was the season of darkness, it was the spring of hope, it was the winter of despair.""", 
+            label="Charles Dickens, A Tale of Two Cities"),
+            Group(
+                Statistic(
+                    heading="Answer to Life, The Universe, and Everything",
+                    value="42",
+                ),
+                Statistic(
+                    heading="Author",
+                    value="Douglas Adams",
+                ),                
+            ),
+        )
+
+        report.save(view, "report.html", theme="light")
 ```
 

@@ -6,8 +6,9 @@ from .__meta__ import (
     __version__,
 )
 from .report_creator import (
+    AbstractLLM,
     Base,
-    Blocks,
+    Block,
     Collapse,
     DataTable,
     Group,
@@ -17,8 +18,8 @@ from .report_creator import (
     Plot,
     Python,
     ReportCreator,
-    Section,
     Select,
+    Separator,
     Statistic,
     Text,
     Yaml,
