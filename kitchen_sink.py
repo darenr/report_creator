@@ -10,7 +10,6 @@ import yaml
 logging.basicConfig(level=logging.INFO)
 
 from report_creator import (
-    AbstractLLM,
     Base,
     Block,
     Collapse,
@@ -50,13 +49,8 @@ if __name__ == "__main__":
 
     with open("README.md", "r") as f:
         example_md = f.read()
-        
-    class DummyLLM(AbstractLLM):
-        def complete(self, prompt, **kwargs):
-            return "AI says: hello world";
 
     with ReportCreator("Kitchen Sink Report") as report:
-
         view = Block(
             Collapse(
                 Python(example_python, label="kitchen_sink.py"),
@@ -131,7 +125,9 @@ if __name__ == "__main__":
                     label="Yves Klein, IKB 79 1959",
                 ),
                 Group(
-                    Image("https://sufipathoflove.files.wordpress.com/2019/02/prim.jpg"),
+                    Image(
+                        "https://sufipathoflove.files.wordpress.com/2019/02/prim.jpg"
+                    ),
                     label="La Primavera – Botticelli",
                 ),
             ),

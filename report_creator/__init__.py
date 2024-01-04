@@ -6,7 +6,6 @@ from .__meta__ import (
     __version__,
 )
 from .report_creator import (
-    AbstractLLM,
     Base,
     Block,
     Collapse,

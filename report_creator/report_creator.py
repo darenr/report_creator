@@ -28,6 +28,7 @@ def strip_whitespace(func):
         The decorated function.
 
     """
+
     def wrapper(*args, **kwargs):
         result = func(*args, **kwargs)
         if isinstance(result, str):
@@ -38,13 +39,13 @@ def strip_whitespace(func):
     return wrapper
 
 
-class Base:
+class Base(ABC):
     def __init__(self, label: str = None):
         self.label = label
 
-    @strip_whitespace
+    @abstractmethod
     def to_html(self):
-        return ""
+        """Each component that derives from Base must implement this method"""
 
 
 ##############################
@@ -53,7 +54,7 @@ class Base:
 class Block(Base):
     # vertically stacked compoments
     def __init__(self, *components: Base):
-        Base.__init__(self, label=None)        
+        Base.__init__(self)
         self.components = components
         logging.info(f"Block: {len(self.components)} components")
 
@@ -76,12 +77,10 @@ class Block(Base):
 
 class Group(Base):
     # horizontally stacked compoments
-    def __init__(self, *components: Base, label=None, prompt: str = None):
+    def __init__(self, *components: Base, label=None):
         Base.__init__(self, label=label)
         self.components = components
         logging.info(f"Group: {len(self.components)} components {label=}")
-        if prompt:
-            logging.info(f"Prompt: {prompt}")
 
     @strip_whitespace
     def to_html(self):
@@ -234,7 +233,7 @@ class Markdown(Base):
     def to_html(self):
         html = """<div class='markdown_wrapper'>"""
         if self.label:
-            html += f"<h3 class='block-bordered'>{self.label}</h3>"        
+            html += f"<h3 class='block-bordered'>{self.label}</h3><br/>"
         html += Markdown.markdown_to_html(self.text)
         html += "</div>"
         return html
@@ -261,7 +260,7 @@ class Plot(Base):
         html = "<div class='plot_wrapper'>"
 
         if self.label:
-            html += f"<h3 class='block-bordered'>{self.label}</h3>"
+            html += f"<h3 class='block-bordered'>{self.label}</h3><br/>"
 
         if isinstance(self.fig, matplotlib.figure.Figure):
             tmp = io.BytesIO()
@@ -327,7 +326,9 @@ class Text(Base):
         )
 
         if self.label:
-            return f"""<h3 class="block-bordered">{self.label}</h3>{formatted_text}"""
+            return (
+                f"""<h3 class="block-bordered">{self.label}</h3><br/>{formatted_text}"""
+            )
         else:
             return formatted_text
 
@@ -348,30 +349,6 @@ class Select(Base):
 
     @strip_whitespace
     def to_html(self):
-        """
-        <div class="tab">
-        <button class="tablinks" onclick="openTab(event, 'London')" id="defaultOpen">London</button>
-        <button class="tablinks" onclick="openTab(event, 'Paris')">Paris</button>
-        <button class="tablinks" onclick="openTab(event, 'Tokyo')">Tokyo</button>
-        </div>
-
-        <!-- Tab content -->
-        <div id="London" class="tabcontent">
-        <h3 class="block-bordered">London</h3>
-        <p>London is the capital city of England.</p>
-        </div>
-
-        <div id="Paris" class="tabcontent">
-        <h3 class="block-bordered">Paris</h3>
-        <p>Paris is the capital of France.</p>
-        </div>
-
-        <div id="Tokyo" class="tabcontent">
-        <h3 class="block-bordered">Tokyo</h3>
-        <p>Tokyo is the capital of Japan.</p>
-        </div>
-        """
-
         # assemble the button bar for the tabs
         html = """<div class="tab">"""
         for i, component in enumerate(self.components):
@@ -445,28 +422,21 @@ class Json(Language):
 
 ##############################
 
-  
-class AbstractLLM(ABC): 
-  
-    def __init__(self): 
-        pass
-        
-    @abstractmethod
-    def complete(self, prompt, **kwargs): 
-        pass
-    
+
 ##############################
+
 
 class ReportCreator:
     def __init__(self, title: str):
         self.title = title
         logging.info(f"ReportCreator {self.title}")
+
     def __enter__(self):
         return self
-     
+
     def __exit__(self, exc_type, exc_value, exc_traceback):
         pass
-    
+
     def save(self, view: Base, path: str, format=True) -> None:
         if not isinstance(view, (Block, Group)):
             raise ValueError(
