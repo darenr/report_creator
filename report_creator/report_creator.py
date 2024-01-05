@@ -50,6 +50,7 @@ class Base(ABC):
 
 ##############################
 
+
 class InfoBox(Base):
     def __init__(self, prompt: str, label=None):
         Base.__init__(self, label=label)
@@ -64,8 +65,8 @@ class InfoBox(Base):
             </div>
         """
 
-##############################
 
+##############################
 
 
 class Block(Base):
@@ -471,9 +472,14 @@ class ReportCreator:
                     body=view.to_html(),
                 )
                 if format:
-                    from bs4 import BeautifulSoup as bs
+                    try:
+                        # if beautifulsoup4 is installed we'll use it to prettify the generated html
+                        from bs4 import BeautifulSoup as bs
 
-                    soup = bs(html, features="lxml")
-                    f.write(soup.prettify())
+                        soup = bs(html, features="lxml")
+                        f.write(soup.prettify())
+                    except ImportError:
+                        f.write(html)
+
                 else:
                     f.write(html)

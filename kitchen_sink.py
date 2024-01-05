@@ -4,7 +4,6 @@ from typing import Dict, List, Sequence, Tuple, Union
 import numpy as np
 import pandas as pd
 import plotly.express as px
-import pydataset
 import yaml
 
 logging.basicConfig(level=logging.INFO)
@@ -102,13 +101,25 @@ if __name__ == "__main__":
             ),
             Separator(),
             Markdown(example_md, label="README.md"),
-            Plot(fig2, label="Plotly Figure - Stocks"),
             Plot(fig1, label="Matplotlib Figure - People"),
+            Plot(fig2, label="Plotly Figure - Stocks"),
             Select(
-                DataTable(pydataset.data("Titanic"), label="Titanic", index=False),
-                DataTable(pydataset.data("Journals"), label="Journals", index=False),
-                DataTable(pydataset.data("Boston"), label="Boston", index=False),
-                DataTable(pydataset.data("Housing"), label="Housing", index=False),
+                DataTable(px.data.iris(), label="Iris", index=False),
+                DataTable(
+                    px.data.election(),
+                    label="2013 Montreal mayoral election.",
+                    index=False,
+                ),
+                DataTable(
+                    px.data.medals_long(),
+                    label="Olympic Short Track Speed Skating",
+                    index=False,
+                ),
+                DataTable(
+                    px.data.wind(),
+                    label="Wind intensity in a cardinal direction",
+                    index=False,
+                ),
             ),
             Separator(label="Images"),
             Group(
