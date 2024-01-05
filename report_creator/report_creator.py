@@ -185,7 +185,7 @@ class DataTable(Base):
         styler.hide(axis="index")
         styler.set_table_attributes(
             # 'class="fancy_table display compact nowrap" style="width:100%;"'
-            'class="fancy_table display  style="width:100%;"'
+            'class="fancy_table display responsive nowrap"  style="width:100%;"'
         )
         self.table_html = styler.to_html()
         logging.info(f"DataTable {len(df)} rows")
