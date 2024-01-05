@@ -1,11 +1,9 @@
-beautifulsoup4
 pandas
 numpy
 matplotlib
 markdown
 markdown-checklist
 pyyaml
-bokeh
 plotly-express
 Jinja2
 pydataset

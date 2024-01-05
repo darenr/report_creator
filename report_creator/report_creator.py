@@ -50,6 +50,23 @@ class Base(ABC):
 
 ##############################
 
+class InfoBox(Base):
+    def __init__(self, prompt: str, label=None):
+        Base.__init__(self, label=label)
+        self.text = text
+        logging.info(f"InfoBox {len(self.text)} characters")
+
+    @strip_whitespace
+    def to_html(self):
+        return f"""
+            <div class="info-box">
+                <p>{self.text}</p>
+            </div>
+        """
+
+##############################
+
+
 
 class Block(Base):
     # vertically stacked compoments

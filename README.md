@@ -45,3 +45,9 @@ Library to assemble reports in HTML from various components using python
         report.save(view, "report.html", theme="light")
 ```
 
+## Development
+
+```
+conda create --name rc python=3.8
+pip install -r requirements.txt -U
+```
