@@ -51,4 +51,7 @@ Library to assemble reports in HTML from various components using python
 conda create --name rc python=3.9
 conda activate rc
 pip install -r requirements.txt -U
+
+# optionally for pretty html generation
+pip install beautifulsoup4 lxml
 ```
