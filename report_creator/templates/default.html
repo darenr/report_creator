@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html>
-<head>
-	  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-	  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,user-scalable=no"
+    />
 
     <title>${title}</title>
 
@@ -22,11 +25,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 
     <!-- DataTables use builder to add options https://datatables.net/download/ -->
-    <link href="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-colvis-2.4.2/b-html5-2.4.2/b-print-2.4.2/cr-1.7.0/r-2.5.0/datatables.min.css" rel="stylesheet">
- 
+    <link
+      href="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-colvis-2.4.2/b-html5-2.4.2/b-print-2.4.2/cr-1.7.0/r-2.5.0/sc-2.3.0/sl-1.7.0/datatables.min.css"
+      rel="stylesheet"
+    />
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-colvis-2.4.2/b-html5-2.4.2/b-print-2.4.2/cr-1.7.0/r-2.5.0/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-colvis-2.4.2/b-html5-2.4.2/b-print-2.4.2/cr-1.7.0/r-2.5.0/sc-2.3.0/sl-1.7.0/datatables.min.js"></script>
 
     <!--
 
@@ -224,6 +230,8 @@
       /* Style the buttons that are used to open the tab content */
       .tab button {
         background: var(--background) !important;
+        color: var(--text-main);
+
         float: left;
 
         cursor: pointer;
@@ -234,28 +242,33 @@
         border: none;
         outline: none;
         box-shadow: none !important;
+        border-left: 1px solid var(--border) !important;
       }
 
       .tab button:hover {
-        background: #ddd !important;
+        background: var(--border) !important;
         border: none !important;
         outline: none !important;
         border-radius: 0 !important;
         border-style: none !important;
         box-shadow: none !important;
+        border-left: 1px solid var(--border) !important;
       }
 
       .tab button.active {
-        background: #ccc !important;
+        background: var(--focus) !important;
+        color: var(--background);
         border: none !important;
         outline: none !important;
         border-radius: 0 !important;
         border-style: none !important;
         box-shadow: none !important;
+        border-left: 1px solid var(--border) !important;
       }
 
       .tab button:focus {
-        background-color: #ccc !important;
+        background: var(--focus) !important;
+        border-left: 1px solid var(--border) !important;
       }
 
       /* Style the tab content */
@@ -277,22 +290,23 @@
         min-height: 100%;
       }
 
-      .dataTables_wrapper {
-        margin-top: 20px;
+      div.dataTables_wrapper {
+        width: 1150px;
+        margin: 0 auto;
+        padding-top: 25px;
       }
 
-      .plot_wrapper {
+      div.plot_wrapper {
         flex: 1;
       }
 
-      .markdown_wrapper {
+      div.markdown_wrapper {
         flex: 1;
       }
 
-      .markdown_wrapper pre {
+      div.markdown_wrapper pre {
         white-space: pre-wrap;
       }
-
     </style>
   </head>
 
@@ -335,14 +349,11 @@
 
         // style tables
         new DataTable("table.fancy_table", {
-          dom: 'Bfrtip',
-          buttons: [
-              'copyHtml5',
-              'excelHtml5',
-              'csvHtml5',
-          ],
+          dom: "Bfrtip",
+          buttons: ["copyHtml5", "excelHtml5", "csvHtml5"],
           responsive: true,
-          colReorder: true
+          colReorder: true,
+          scrollX: true,
         });
       })();
     </script>

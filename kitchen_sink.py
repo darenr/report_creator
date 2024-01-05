@@ -49,6 +49,12 @@ if __name__ == "__main__":
     with open("README.md", "r") as f:
         example_md = f.read()
 
+    from sklearn.datasets import load_wine
+    wine = load_wine()
+
+    df_wine = pd.DataFrame(data= np.c_[wine['data'], wine['target']],
+                     columns= wine['feature_names'] + ['target'])
+
     with ReportCreator("Kitchen Sink Report") as report:
         view = Block(
             Collapse(
@@ -104,20 +110,21 @@ if __name__ == "__main__":
             Plot(fig1, label="Matplotlib Figure - People"),
             Plot(fig2, label="Plotly Figure - Stocks"),
             Select(
+                DataTable(df_wine, label="Wine", index=False),
                 DataTable(px.data.iris(), label="Iris", index=False),
                 DataTable(
                     px.data.election(),
-                    label="2013 Montreal mayoral election.",
+                    label="2013 Montreal election.",
                     index=False,
                 ),
                 DataTable(
                     px.data.medals_long(),
-                    label="Olympic Short Track Speed Skating",
+                    label="Olympic speed Skating",
                     index=False,
                 ),
                 DataTable(
                     px.data.wind(),
-                    label="Wind intensity in a cardinal direction",
+                    label="Wind intensity",
                     index=False,
                 ),
             ),
