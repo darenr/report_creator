@@ -114,7 +114,7 @@ if __name__ == "__main__":
                 DataTable(px.data.iris(), label="Iris", index=False),
                 DataTable(
                     px.data.election(),
-                    label="2013 Montreal election.",
+                    label="2013 Montreal election",
                     index=False,
                 ),
                 DataTable(
