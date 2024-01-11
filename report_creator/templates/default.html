@@ -1,11 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>${title}</title>
 
@@ -25,14 +21,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 
     <!-- DataTables use builder to add options https://datatables.net/download/ -->
-    <link
-      href="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-colvis-2.4.2/b-html5-2.4.2/b-print-2.4.2/cr-1.7.0/r-2.5.0/sc-2.3.0/sl-1.7.0/datatables.min.css"
-      rel="stylesheet"
-    />
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-colvis-2.4.2/b-html5-2.4.2/b-print-2.4.2/cr-1.7.0/r-2.5.0/sc-2.3.0/sl-1.7.0/datatables.min.js"></script>
+    <link href="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-html5-2.4.2/cr-1.7.0/r-2.5.0/datatables.min.css" rel="stylesheet">
+    <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-html5-2.4.2/cr-1.7.0/r-2.5.0/datatables.min.js"></script>
 
     <!--
 
@@ -97,16 +87,7 @@
       }
 
       group {
-        display: block;
-      }
-
-      group-component {
         display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        padding-top: 20px;
-        margin: 0 -10px;
       }
 
       block-article {
@@ -292,7 +273,8 @@
       }
 
       div.dataTables_wrapper {
-        width: 1150px;
+        display: block;
+        xwidth: 1150px;
         margin: 0 auto;
         padding-top: 25px;
       }
@@ -346,16 +328,17 @@
         // style any code blocks
         hljs.highlightAll();
 
-        document.getElementById("defaultOpen").click();
+        document.querySelectorAll('.defaultOpen').forEach(function(button) {
+          button.click();
+        });
 
         // style tables
-        new DataTable("table.fancy_table", {
+        table = new DataTable("table.fancy_table", {
           dom: "Bfrtip",
           buttons: ["copyHtml5", "excelHtml5", "csvHtml5"],
-          responsive: true,
           colReorder: true,
-          scrollX: true,
         });
+
       })();
     </script>
   </body>

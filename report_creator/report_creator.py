@@ -102,18 +102,19 @@ class Group(Base):
 
     @strip_whitespace
     def to_html(self):
-        html = "<group>"
+        html = "<block>"
         if self.label:
             html += f"<report_caption>{self.label}</report_caption>"
 
-        html += "<group-component>"
+        html += "<group>"
+
         for component in self.components:
             html += "<group-article>"
             html += component.to_html()
             html += "</group-article>"
 
-        html += "</group-component>"
         html += "</group>"
+        html += "</block>"
 
         return html
 
@@ -139,6 +140,22 @@ class Collapse(Base):
 
 
 ##############################
+
+class HTML(Base):
+    def __init__(
+        self, html: str, label=None
+    ):
+        Base.__init__(self, label=label)
+        self.html = html
+
+        logging.info(f"HTML {len(self.html)} bytes")
+
+    @strip_whitespace
+    def to_html(self):
+        return self.html
+
+##############################
+
 
 
 class Statistic(Base):
@@ -370,8 +387,8 @@ class Select(Base):
         html = """<div class="tab">"""
         for i, component in enumerate(self.components):
             logging.info(f"creating tab: {component.label}")
-            extra = "id='defaultOpen'" if i == 0 else ""
-            html += f"""<button class="tablinks" onclick="openTab(event, '{component.label}')" {extra}>{component.label}</button>"""
+            extra = "defaultOpen" if i == 0 else ""
+            html += f"""<button class="tablinks {extra}" onclick="openTab(event, '{component.label}')">{component.label}</button>"""
         html += """</div>"""
 
         # assemble the tab contents
