@@ -16,7 +16,7 @@ from report_creator import (
     Group,
     Image,
     Json,
-    HTML,
+    Html,
     Markdown,
     Plot,
     Python,
@@ -50,18 +50,12 @@ if __name__ == "__main__":
     with open("README.md", "r") as f:
         example_md = f.read()
 
-    from sklearn.datasets import load_wine
-    wine = load_wine()
-
-    df_wine = pd.DataFrame(data= np.c_[wine['data'], wine['target']],
-                     columns= wine['feature_names'] + ['target'])
-
     with ReportCreator("Kitchen Sink Report") as report:
         view = Block(
-            # Collapse(
-            #     Python(example_python, label="kitchen_sink.py"),
-            #     label="Code (kitchen_sink.py) to create this report",
-            # ),
+            Collapse(
+                Python(example_python, label="kitchen_sink.py"),
+                label="Code (kitchen_sink.py) to create this report",
+            ),
             Group(
                 Statistic(
                     heading="Chances of rain",
@@ -92,65 +86,68 @@ if __name__ == "__main__":
                     value="Douglas Adams",
                 ),
             ),
-            # Text(
-            #     example_text,
-            #     label="Ready Player One",
-            # ),
-            # Group(
-            #     Yaml(
-            #         datastructure,
-            #         label="Kubernetes Creating a Deployment as YAML",
-            #     ),
-            #     Json(
-            #         datastructure,
-            #         label="Kubernetes Creating a Deployment as JSON",
-            #     ),
-            # ),
-            # Separator(),
-            # Markdown(example_md, label="README.md"),
-            # Plot(fig1, label="Matplotlib Figure - People"),
-            # Plot(fig2, label="Plotly Figure - Stocks"),
-            DataTable(df_wine, label="Wine", index=False),
-            # Select(
-            #     DataTable(df_wine, label="Wine", index=False),
-            #     DataTable(px.data.iris(), label="Iris", index=False),
-            #     DataTable(
-            #         px.data.election(),
-            #         label="2013 Montreal election",
-            #         index=False,
-            #     ),
-            #     DataTable(
-            #         px.data.medals_long(),
-            #         label="Olympic speed Skating",
-            #         index=False,
-            #     ),
-            #     DataTable(
-            #         px.data.wind(),
-            #         label="Wind intensity",
-            #         index=False,
-            #     ),
-            # ),
-            # Separator(label="Images"),
-            # Group(
-            #     Group(
-            #         Image(
-            #             "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
-            #         ),
-            #         Image(
-            #             "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
-            #         ),
-            #         Image(
-            #             "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
-            #         ),
-            #         label="Yves Klein, IKB 79 1959",
-            #     ),
-            #     Group(
-            #         Image(
-            #             "https://sufipathoflove.files.wordpress.com/2019/02/prim.jpg"
-            #         ),
-            #         label="La Primavera – Botticelli",
-            #     ),
-            # ),
+            Text(
+                example_text,
+                label="Ready Player One",
+            ),
+            Group(
+                Yaml(
+                    datastructure,
+                    label="Kubernetes Creating a Deployment as YAML",
+                ),
+                Json(
+                    datastructure,
+                    label="Kubernetes Creating a Deployment as JSON",
+                ),
+            ),
+            Separator(),
+            Markdown(example_md, label="README.md"),
+            Plot(fig1, label="Matplotlib Figure - People"),
+            Plot(fig2, label="Plotly Figure - Stocks"),
+            Html("""
+                <svg height="100" width="100">
+                    <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="blue" />
+                </svg>
+                """, label="HTML Showing blue SVG Circle with black border"),
+            Select(
+                DataTable(px.data.iris(), label="Iris", index=False),
+                DataTable(
+                    px.data.election(),
+                    label="2013 Montreal election",
+                    index=False,
+                ),
+                DataTable(
+                    px.data.medals_long(),
+                    label="Olympic speed Skating",
+                    index=False,
+                ),
+                DataTable(
+                    px.data.wind(),
+                    label="Wind intensity",
+                    index=False,
+                ),
+            ),
+            Separator(label="Images"),
+            Group(
+                Group(
+                    Image(
+                        "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
+                    ),
+                    Image(
+                        "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
+                    ),
+                    Image(
+                        "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
+                    ),
+                    label="Yves Klein, IKB 79 1959",
+                ),
+                Group(
+                    Image(
+                        "https://sufipathoflove.files.wordpress.com/2019/02/prim.jpg"
+                    ),
+                    label="La Primavera – Botticelli",
+                ),
+            ),
         )
 
         report.save(view, "index.html")

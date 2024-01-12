@@ -11,7 +11,7 @@ from .report_creator import (
     Collapse,
     DataTable,
     Group,
-    HTML,
+    Html,
     Image,
     Json,
     Markdown,

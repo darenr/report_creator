@@ -23,7 +23,7 @@
     <!-- DataTables use builder to add options https://datatables.net/download/ -->
     <link href="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-html5-2.4.2/cr-1.7.0/r-2.5.0/datatables.min.css" rel="stylesheet">
     <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-html5-2.4.2/cr-1.7.0/r-2.5.0/datatables.min.js"></script>
-
+    
     <!--
 
             variables, for example: style: color: var(--links)
@@ -57,14 +57,6 @@
         --focus: red;
       }
 
-      /* undo some water things */
-      table,
-      th,
-      td {
-        width: unset;
-        table-layout: unset;
-      }
-
       input:disabled {
         opacity: unset;
       }
@@ -84,6 +76,9 @@
         display: flex;
         flex-wrap: wrap;
         flex-direction: column;
+        min-width: 0;
+        width: 100%;
+        flex-wrap: nowrap;
       }
 
       group {
@@ -272,13 +267,6 @@
         min-height: 100%;
       }
 
-      div.dataTables_wrapper {
-        display: block;
-        xwidth: 1150px;
-        margin: 0 auto;
-        padding-top: 25px;
-      }
-
       div.plot_wrapper {
         flex: 1;
       }
@@ -290,7 +278,21 @@
       div.markdown_wrapper pre {
         white-space: pre-wrap;
       }
+
+      .remove-all-styles {
+        all: unset;
+        display: block;
+      }
+      div.dataTables_wrapper {
+        all: unset;
+        display: block !important;
+        min-width: 0;
+      }
+
+
     </style>
+
+
   </head>
 
   <body>
@@ -334,9 +336,12 @@
 
         // style tables
         table = new DataTable("table.fancy_table", {
+          responsive: true
+          /*
           dom: "Bfrtip",
           buttons: ["copyHtml5", "excelHtml5", "csvHtml5"],
           colReorder: true,
+          */
         });
 
       })();

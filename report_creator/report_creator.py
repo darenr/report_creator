@@ -201,7 +201,7 @@ class DataTable(Base):
 
         styler.hide(axis="index")
         styler.set_table_attributes(
-            'class="fancy_table display nowrap" style="width: 100%;"'
+            'class="remove-all-styles fancy_table display responsive nowrap" style="width: 100%;"'
         )
         self.table_html = styler.to_html()
         logging.info(f"DataTable {len(df)} rows")
@@ -215,14 +215,19 @@ class DataTable(Base):
 
 
 class Html(Base):
-    def __init__(self, html: str, label=None):
+    def __init__(self, html: str, css: str=None, label=None):
         Base.__init__(self, label=label)
         self.html = html
-        logging.info(f"Html {len(self.html)} characters")
+        self.css = css
+        logging.info(f"HTML {len(self.html)} characters")
 
     @strip_whitespace
     def to_html(self):
-        return self.html
+        html = f"<style>{self.css}</style>" if self.css else ""
+        if self.label:
+            html += f"<h3 class='block-bordered'>{self.label}</h3><br/>"
+        html += self.html
+        return html
 
 
 ##############################
