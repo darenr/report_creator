@@ -110,20 +110,20 @@ if __name__ == "__main__":
                 </svg>
                 """, label="HTML Showing blue SVG Circle with black border"),
             Select(
-                DataTable(px.data.iris(), label="Iris", index=False),
+                DataTable(px.data.iris(), label="Iris Petals", index=False),
                 DataTable(
                     px.data.election(),
-                    label="2013 Montreal election",
+                    label="2013 Montreal Election",
                     index=False,
                 ),
                 DataTable(
                     px.data.medals_long(),
-                    label="Olympic speed Skating",
+                    label="Olympic Speed Skating",
                     index=False,
                 ),
                 DataTable(
                     px.data.wind(),
-                    label="Wind intensity",
+                    label="Wind Intensity",
                     index=False,
                 ),
             ),
