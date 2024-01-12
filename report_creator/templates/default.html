@@ -283,10 +283,11 @@
         all: unset;
         display: block;
       }
+
       div.dataTables_wrapper {
         all: unset;
-        display: block !important;
         min-width: 0;
+        width: 100%;
       }
 
 
@@ -336,12 +337,10 @@
 
         // style tables
         table = new DataTable("table.fancy_table", {
-          responsive: true
-          /*
           dom: "Bfrtip",
           buttons: ["copyHtml5", "excelHtml5", "csvHtml5"],
           colReorder: true,
-          */
+          responsive: true
         });
 
       })();

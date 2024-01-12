@@ -208,7 +208,7 @@ class DataTable(Base):
 
     @strip_whitespace
     def to_html(self):
-        return f"<div class='dataTables_wrapper'>{self.table_html}</div>"
+        return f"<div class='dataTables_wrapper'><br/>{self.table_html}</div>"
 
 
 ##############################
