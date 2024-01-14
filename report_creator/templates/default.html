@@ -1,30 +1,28 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>${title}</title>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css"
-    />
+  <title>${title}</title>
 
-    <!-- see https://highlightjs.org/examples -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/mono-blue.css"
-    />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css" />
 
-    <!-- DataTables use builder to add options https://datatables.net/download/ -->
-    <link href="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-html5-2.4.2/cr-1.7.0/r-2.5.0/datatables.min.css" rel="stylesheet">
-    <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-html5-2.4.2/cr-1.7.0/r-2.5.0/datatables.min.js"></script>
-    
-    <!--
+  <!-- see https://highlightjs.org/examples -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/mono-blue.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+
+  <!-- DataTables use builder to add options https://datatables.net/download/ -->
+  <link
+    href="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-html5-2.4.2/cr-1.7.0/r-2.5.0/datatables.min.css"
+    rel="stylesheet">
+  <script
+    src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-html5-2.4.2/cr-1.7.0/r-2.5.0/datatables.min.js"></script>
+
+  <!--
 
             variables, for example: style: color: var(--links)
 
@@ -52,58 +50,61 @@
             https://github.com/kognise/water.css#theming
         -->
 
-    <style>
-      :root {
-        --focus: red;
-      }
+  <style>
+    :root {
+      --focus: red;
+    }
 
-      input:disabled {
-        opacity: unset;
-      }
+    input:disabled {
+      opacity: unset;
+    }
 
-      details {
-        background-color: var(--background-body);
-      }
+    details {
+      background-color: var(--background-body);
+    }
 
-      summary {
-        background-color: var(--background-body);
-        margin-left: -20px !important;
-      }
+    summary {
+      background-color: var(--background-body);
+      margin-left: -20px !important;
+    }
 
-      /* end water undos */
+    /* end water undos */
 
-      block {
-        display: flex;
-        flex-wrap: wrap;
-        flex-direction: column;
-        min-width: 0;
-        width: 100%;
-        flex-wrap: nowrap;
-      }
+    block {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+      min-width: 0;
+      width: 100%;
+      flex-wrap: nowrap;
+    }
 
-      group {
-        display: flex;
-      }
 
-      block-article {
-        display: flex;
-        flex-direction: column;
-        padding: 10px;
-        margin: 10px;
-        flex: 1;
-        align-items: stretch;
-      }
+    block-article {
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      margin: 10px;
+      flex: 1;
+      align-items: stretch;
+    }
 
-      group-article {
-        flex: 1;
-        margin: 0 10px;
-      }
+    group {
+      display: flex;
+      flex-flow: row wrap;
+      align-items: flex-start;
+      gap: 15px;
+    }
 
-      group-separator {
-        padding: 10px;
-      }
+    group-article {
+      flex: 1;
+    }
 
-      /* unused for now
+    group-separator {
+      padding: 10px;
+    }
+
+    /* unused for now
       fieldset {
         border: 3px solid var(--focus);
         background: var(--background-body);
@@ -122,227 +123,231 @@
       }
       */
 
-      div.round-bordered {
-        border: 1px solid var(--border);
-        border-radius: 0.5rem;
-        padding: 20px;
+    div.round-bordered {
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 20px;
+    }
+
+    .statistic {
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 10px;
+      padding-left: 25px;
+    }
+
+    .statistic>h1 {
+      margin-top: 0;
+    }
+
+    .statistic p {
+      color: var(--text-muted);
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
+    .block-bordered {
+      border-left: 7px solid var(--focus) !important;
+      padding-left: 15px !important;
+    }
+
+    report-caption {
+      display: block;
+      margin-top: 0.5em;
+      margin-bottom: 1.5em;
+      font-size: 1.5em;
+      font-weight: bold;
+      border-left: 10px solid var(--focus);
+      padding-left: 15px;
+    }
+
+    caption {
+      margin-top: 0.5em;
+      margin-bottom: 1em;
+      font-size: 1.5em;
+      font-weight: bold;
+      border-left: 7px solid var(--focus);
+      padding-left: 15px;
+    }
+
+    header>h1 {
+      text-align: left;
+    }
+
+    select:not([multiple]):not([size]) {
+      padding-right: 1.5rem;
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      -moz-appearance: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    body {
+      max-width: 90%;
+      width: 90%;
+      margin: 20px auto;
+      padding-left: 5%;
+      padding-right: 5%;
+
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI,
+        Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans,
+        Helvetica Neue, Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji,
+        sans-serif;
+      line-height: 1.4;
+      word-wrap: break-word;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* Style the tab */
+    .tab {
+      overflow: hidden;
+      background-color: black;
+    }
+
+    /* Style the buttons that are used to open the tab content */
+    .tab button {
+      background: black !important;
+      color: white;
+
+      float: left;
+
+      cursor: pointer;
+      transition: 0.1s;
+      margin: 0 !important;
+      border-radius: 0;
+      border: none;
+      outline: none;
+      box-shadow: none !important;
+    }
+
+    .tab button:hover {
+      background: var(--border) !important;
+      color: black;
+      border: none !important;
+      outline: none !important;
+      border-radius: 0 !important;
+      border-style: none !important;
+      box-shadow: none !important;
+    }
+
+    .tab button.active {
+      background: var(--focus) !important;
+      color: var(--background);
+      border: none !important;
+      outline: none !important;
+      border-radius: 0 !important;
+      border-style: none !important;
+      box-shadow: none !important;
+    }
+
+    .tab button:focus {
+      background: var(--focus) !important;
+      color: var(--background);
+    }
+
+    /* Style the tab content */
+    .tabcontent {
+      display: none;
+      width: 100%;
+    }
+
+    .indented-text-block {
+      text-indent: 20px;
+    }
+
+    .image-block {
+      padding-top: 25px;
+      padding-bottom: 25px;
+    }
+
+    .image-block img {
+      min-height: 100%;
+    }
+
+    div.plot_wrapper {
+      flex: 1;
+    }
+
+    div.markdown_wrapper {
+      flex: 1;
+    }
+
+    div.markdown_wrapper pre {
+      white-space: pre-wrap;
+    }
+
+    .remove-all-styles {
+      all: unset;
+      display: block;
+    }
+
+    div.dataTables_wrapper {
+      all: unset;
+      min-width: 0;
+      width: 100%;
+    }
+
+    table.dataTable tbody tr {
+      font-weight: normal;
+    }
+
+
+  </style>
+
+
+</head>
+
+<body>
+  <header>
+    <h1>${title}</h1>
+  </header>
+
+  <hr />
+
+  <div class="container">${body}</div>
+
+  <script>
+    function openTab(evt, tabName) {
+      // Declare all variables
+      var i, tabcontent, tablinks;
+
+      // Get all elements with class="tabcontent" and hide them
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
       }
 
-      .statistic {
-        border: 1px solid var(--border);
-        border-radius: 0.5rem;
-        padding: 10px;
-        padding-left: 25px;
+      // Get all elements with class="tablinks" and remove the class "active"
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
       }
 
-      .statistic > h1 {
-        margin-top: 0;
-      }
+      // Show the current tab, and add an "active" class to the button that opened the tab
+      document.getElementById(tabName).style.display = "block";
+      evt.currentTarget.className += " active";
+    }
 
-      .statistic p {
-        color: var(--text-muted);
-        margin-top: 0;
-        margin-bottom: 0;
-      }
+    (function () {
+      // style any code blocks
+      hljs.highlightAll();
 
-      .block-bordered {
-        border-left: 7px solid var(--focus) !important;
-        padding-left: 15px !important;
-      }
+      document.querySelectorAll('.defaultOpen').forEach(function (button) {
+        button.click();
+      });
 
-      report_caption {
-        margin-top: 0.5em;
-        margin-bottom: 1em;
-        font-size: 1.5em;
-        font-weight: bold;
-        border-left: 7px solid var(--focus);
-        padding-left: 15px;
-      }
+      // style tables
+      table = new DataTable("table.fancy_table", {
+        dom: "Bfrtip",
+        buttons: ["copyHtml5", "excelHtml5", "csvHtml5"],
+        colReorder: true,
+        responsive: true,
+        stripeClasses: [],
+      });
 
-      caption {
-        margin-top: 0.5em;
-        margin-bottom: 1em;
-        font-size: 1.5em;
-        font-weight: bold;
-        border-left: 7px solid var(--focus);
-        padding-left: 15px;
-      }
+    })();
+  </script>
+</body>
 
-      header > h1 {
-        text-align: left;
-      }
-
-      select:not([multiple]):not([size]) {
-        padding-right: 1.5rem;
-        background-repeat: no-repeat;
-        background-position: right 0.75rem center;
-        -moz-appearance: none;
-        -webkit-appearance: none;
-        appearance: none;
-      }
-
-      body {
-        max-width: 90%;
-        width: 90%;
-        margin: 20px auto;
-        padding-left: 5%;
-        padding-right: 5%;
-
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI,
-          Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans,
-          Helvetica Neue, Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji,
-          sans-serif;
-        line-height: 1.4;
-        word-wrap: break-word;
-        text-rendering: optimizeLegibility;
-      }
-
-      /* Style the tab */
-      .tab {
-        overflow: hidden;
-        background-color: var(--background);
-      }
-
-      /* Style the buttons that are used to open the tab content */
-      .tab button {
-        background: var(--background) !important;
-        color: var(--text-main);
-
-        float: left;
-
-        cursor: pointer;
-        transition: 0.1s;
-        margin: 0 !important;
-        border-radius: 0;
-        border: none;
-        outline: none;
-        box-shadow: none !important;
-        border-left: 1px solid var(--border) !important;
-      }
-
-      .tab button:hover {
-        background: var(--border) !important;
-        border: none !important;
-        outline: none !important;
-        border-radius: 0 !important;
-        border-style: none !important;
-        box-shadow: none !important;
-        border-left: 1px solid var(--border) !important;
-      }
-
-      .tab button.active {
-        background: var(--focus) !important;
-        color: var(--background);
-        border: none !important;
-        outline: none !important;
-        border-radius: 0 !important;
-        border-style: none !important;
-        box-shadow: none !important;
-        border-left: 1px solid var(--border) !important;
-      }
-
-      .tab button:focus {
-        background: var(--focus) !important;
-        border-left: 1px solid var(--border) !important;
-        color: var(--background);
-      }
-
-      /* Style the tab content */
-      .tabcontent {
-        display: none;
-        width: 100%;
-      }
-
-      .indented-text-block {
-        text-indent: 20px;
-      }
-
-      .image-block {
-        padding-top: 25px;
-        padding-bottom: 25px;
-      }
-
-      .image-block img {
-        min-height: 100%;
-      }
-
-      div.plot_wrapper {
-        flex: 1;
-      }
-
-      div.markdown_wrapper {
-        flex: 1;
-      }
-
-      div.markdown_wrapper pre {
-        white-space: pre-wrap;
-      }
-
-      .remove-all-styles {
-        all: unset;
-        display: block;
-      }
-
-      div.dataTables_wrapper {
-        all: unset;
-        min-width: 0;
-        width: 100%;
-      }
-
-
-    </style>
-
-
-  </head>
-
-  <body>
-    <header>
-      <h1>${title}</h1>
-    </header>
-
-    <hr />
-
-    <div class="container">${body}</div>
-
-    <script>
-      function openTab(evt, tabName) {
-        // Declare all variables
-        var i, tabcontent, tablinks;
-
-        // Get all elements with class="tabcontent" and hide them
-        tabcontent = document.getElementsByClassName("tabcontent");
-        for (i = 0; i < tabcontent.length; i++) {
-          tabcontent[i].style.display = "none";
-        }
-
-        // Get all elements with class="tablinks" and remove the class "active"
-        tablinks = document.getElementsByClassName("tablinks");
-        for (i = 0; i < tablinks.length; i++) {
-          tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-
-        // Show the current tab, and add an "active" class to the button that opened the tab
-        document.getElementById(tabName).style.display = "block";
-        evt.currentTarget.className += " active";
-      }
-
-      (function () {
-        // style any code blocks
-        hljs.highlightAll();
-
-        document.querySelectorAll('.defaultOpen').forEach(function(button) {
-          button.click();
-        });
-
-        // style tables
-        table = new DataTable("table.fancy_table", {
-          dom: "Bfrtip",
-          buttons: ["copyHtml5", "excelHtml5", "csvHtml5"],
-          colReorder: true,
-          responsive: true
-        });
-
-      })();
-    </script>
-  </body>
 </html>

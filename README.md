@@ -58,3 +58,5 @@ pip install beautifulsoup4 lxml
 # recommended installs for code hygiene
 pip install black isort
 ```
+
+The Blocks/Groups use css [flex](https://css-tricks.com/snippets/css/a-guide-to-flexbox/). Blocks flow vertically (columns), Groups flow horizontal (row). 

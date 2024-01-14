@@ -105,7 +105,7 @@ class Group(Base):
     def to_html(self):
         html = "<block>"
         if self.label:
-            html += f"<report_caption>{self.label}</report_caption>"
+            html += f"<report-caption>{self.label}</report-caption>"
 
         html += "<group>"
 
@@ -201,7 +201,7 @@ class DataTable(Base):
 
         styler.hide(axis="index")
         styler.set_table_attributes(
-            'class="remove-all-styles fancy_table display responsive nowrap" style="width: 100%;"'
+            'class="remove-all-styles fancy_table display row-border hover responsive nowrap" cellspacing="0" style="width: 100%;"'
         )
         self.table_html = styler.to_html()
         logging.info(f"DataTable {len(df)} rows")
@@ -225,7 +225,7 @@ class Html(Base):
     def to_html(self):
         html = f"<style>{self.css}</style>" if self.css else ""
         if self.label:
-            html += f"<h3 class='block-bordered'>{self.label}</h3><br/>"
+            html += f"<report-caption>{self.label}</report-caption>"
         html += self.html
         return html
 
@@ -234,18 +234,21 @@ class Html(Base):
 
 
 class Image(Base):
-    def __init__(self, img: str, label=None):
+    def __init__(self, img: str, link: str = None, label=None):
         Base.__init__(self, label=label or img)
         self.img = img
+        self.link = link or img
         logging.info(f"Image URL {img}, label: {self.label}")
 
     @strip_whitespace
     def to_html(self):
-        return f"""
-        <div class="image-block">
-            <img src="{self.img}" alt="{self.label}">
-        </div>
-    """
+        html = ""
+        if self.label:
+            html += f"<report-caption>{self.label}</report-caption>"
+
+        html += f"""<a href="{self.link}" target="_blank"><img src="{self.img}" alt="{self.label}"></a>"""
+
+        return html
 
 
 ##############################
@@ -272,7 +275,7 @@ class Markdown(Base):
     def to_html(self):
         html = """<div class='markdown_wrapper'>"""
         if self.label:
-            html += f"<h3 class='block-bordered'>{self.label}</h3><br/>"
+            html += f"<report-caption>{self.label}</report-caption>"
         html += Markdown.markdown_to_html(self.text)
         html += "</div>"
         return html
@@ -299,7 +302,7 @@ class Plot(Base):
         html = "<div class='plot_wrapper'>"
 
         if self.label:
-            html += f"<h3 class='block-bordered'>{self.label}</h3><br/>"
+            html += f"<report-caption>{self.label}</report-caption>"
 
         if isinstance(self.fig, matplotlib.figure.Figure):
             tmp = io.BytesIO()
@@ -339,9 +342,9 @@ class Separator(Base):
     @strip_whitespace
     def to_html(self):
         if self.label:
-            return f"<br/><div><hr/><h2>{self.label}</h2></div>"
+            return f"<br /><hr /><report-caption>{self.label}</report-caption>"
         else:
-            return f"<br/><div><hr/></div>"
+            return f"<b r/><hr />"
 
 
 ##############################
@@ -365,9 +368,7 @@ class Text(Base):
         )
 
         if self.label:
-            return (
-                f"""<h3 class="block-bordered">{self.label}</h3><br/>{formatted_text}"""
-            )
+            return f"""<report-caption>{self.label}</report-caption>{formatted_text}"""
         else:
             return formatted_text
 
@@ -390,7 +391,7 @@ class Select(Base):
     @strip_whitespace
     def to_html(self):
         if self.label:
-            html = f"<h2>{self.label}</h2><br/>"
+            html = f"<report-caption>{self.label}</report-caption>"
         else:
             html = ""
 

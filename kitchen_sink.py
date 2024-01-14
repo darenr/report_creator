@@ -8,25 +8,9 @@ import yaml
 
 logging.basicConfig(level=logging.INFO)
 
-from report_creator import (
-    Base,
-    Block,
-    Collapse,
-    DataTable,
-    Group,
-    Html,
-    Image,
-    Json,
-    Markdown,
-    Plot,
-    Python,
-    ReportCreator,
-    Select,
-    Separator,
-    Statistic,
-    Text,
-    Yaml,
-)
+from report_creator import (Base, Block, Collapse, DataTable, Group, Html,
+                            Image, Json, Markdown, Plot, Python, ReportCreator,
+                            Select, Separator, Statistic, Text, Yaml)
 
 if __name__ == "__main__":
     df1 = pd.DataFrame(columns=["Name", "Age"])
@@ -72,7 +56,7 @@ if __name__ == "__main__":
             ),
             Group(
                 Statistic(
-                    heading="Answer to Life, The Universe, and Everything",
+                    heading="Ultimate Answer",
                     value="42",
                 ),
                 Statistic(
@@ -128,6 +112,7 @@ if __name__ == "__main__":
                 + "</span>",
                 label="HTML Showing SVG Circles with black border",
             ),
+            Separator(),
             Select(
                 DataTable(px.data.iris(), label="Iris Petals", index=False),
                 DataTable(
@@ -145,27 +130,24 @@ if __name__ == "__main__":
                     label="Wind Intensity",
                     index=False,
                 ),
-                label="Data Table Tabs",
+                label="Tab Group of Data Tables",
             ),
-            Separator(label="Images"),
+            Separator(),
             Group(
-                Group(
-                    Image(
-                        "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
-                    ),
-                    Image(
-                        "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
-                    ),
-                    Image(
-                        "https://media.tate.org.uk/art/images/work/T/T01/T01513_10.jpg",
-                    ),
-                    label="Yves Klein, IKB 79 1959",
+                Image(
+                    "https://midlibraryassets.b-cdn.net/638266c083c0cd991057c455/655f82d114b7bf12e5f2e5d0_Portrait%20of%20a%20Man%20with%20a%20Medal%20of%20Cosimo%20il%20Vecchio%20de%27%20Medici%20(1475)-p-800.jpg",
+                    label="Portrait of a Man with a Medal (1475)",
+                    link="https://midlibrary.io/focus/sandro-botticelli",
                 ),
-                Group(
-                    Image(
-                        "https://sufipathoflove.files.wordpress.com/2019/02/prim.jpg"
-                    ),
-                    label="La Primavera – Botticelli",
+                Image(
+                    "https://midlibraryassets.b-cdn.net/638266c083c0cd991057c455/655f82d07c2a7e39a7e7424e_Detail%20of%20The%20Spring%20(Flora)%20(late%201470s%20or%20early%201480s).jpg",
+                    label="The Spring, Flora (late 1470s or early 1480s)",
+                    link="https://midlibrary.io/focus/sandro-botticelli",
+                ),
+                Image(
+                    "https://midlibraryassets.b-cdn.net/638266c083c0cd991057c455/655f82d0703381e47145077a_Idealised%20Portrait%20of%20a%20Lady%20(Portrait%20of%20Simonetta%20Vespucci%20as%20Nymph)%20(1480%E2%80%931485).jpg",
+                    label="Portrait of Simonetta Vespucci",
+                    link="https://midlibrary.io/focus/sandro-botticelli",
                 ),
             ),
         )
