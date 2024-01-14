@@ -54,4 +54,7 @@ pip install -r requirements.txt -U
 
 # optionally for pretty html generation
 pip install beautifulsoup4 lxml
+
+# recommended installs for code hygiene
+pip install black isort
 ```

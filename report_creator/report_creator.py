@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 import yaml
 from markdown import markdown
+from markupsafe import escape
 
 logging.basicConfig(level=logging.INFO)
 
@@ -141,10 +142,9 @@ class Collapse(Base):
 
 ##############################
 
+
 class HTML(Base):
-    def __init__(
-        self, html: str, label=None
-    ):
+    def __init__(self, html: str, label=None):
         Base.__init__(self, label=label)
         self.html = html
 
@@ -154,8 +154,8 @@ class HTML(Base):
     def to_html(self):
         return self.html
 
-##############################
 
+##############################
 
 
 class Statistic(Base):
@@ -215,7 +215,7 @@ class DataTable(Base):
 
 
 class Html(Base):
-    def __init__(self, html: str, css: str=None, label=None):
+    def __init__(self, html: str, css: str = None, label=None):
         Base.__init__(self, label=label)
         self.html = html
         self.css = css
@@ -376,7 +376,8 @@ class Text(Base):
 
 
 class Select(Base):
-    def __init__(self, *components: Base):
+    def __init__(self, *components: Base, label: str = None):
+        Base.__init__(self, label=label)
         self.components = components
         for component in self.components:
             if not component.label:
@@ -388,8 +389,13 @@ class Select(Base):
 
     @strip_whitespace
     def to_html(self):
+        if self.label:
+            html = f"<h2>{self.label}</h2><br/>"
+        else:
+            html = ""
+
         # assemble the button bar for the tabs
-        html = """<div class="tab">"""
+        html += """<div class="tab">"""
         for i, component in enumerate(self.components):
             logging.info(f"creating tab: {component.label}")
             extra = "defaultOpen" if i == 0 else ""
@@ -430,7 +436,7 @@ class Language(Base):
 
 class Python(Language):
     def __init__(self, code: str, label=None):
-        Language.__init__(self, code, "python", label=label)
+        Language.__init__(self, escape(code), "python", label=label)
 
 
 ##############################

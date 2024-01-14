@@ -14,9 +14,9 @@ from report_creator import (
     Collapse,
     DataTable,
     Group,
+    Html,
     Image,
     Json,
-    Html,
     Markdown,
     Plot,
     Python,
@@ -104,11 +104,30 @@ if __name__ == "__main__":
             Markdown(example_md, label="README.md"),
             Plot(fig1, label="Matplotlib Figure - People"),
             Plot(fig2, label="Plotly Figure - Stocks"),
-            Html("""
+            Separator(),
+            Html(
+                "<span>"
+                + "".join(
+                    [
+                        f"""
                 <svg height="100" width="100">
-                    <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="blue" />
+                    <circle cx="50" cy="50" r="40" stroke="lightgrey" stroke-width="0.5" fill="{color}" />
                 </svg>
-                """, label="HTML Showing blue SVG Circle with black border"),
+                """
+                        for color in (
+                            "red",
+                            "orange",
+                            "yellow",
+                            "green",
+                            "indigo",
+                            "violet",
+                            "blue",
+                        )
+                    ]
+                )
+                + "</span>",
+                label="HTML Showing SVG Circles with black border",
+            ),
             Select(
                 DataTable(px.data.iris(), label="Iris Petals", index=False),
                 DataTable(
@@ -126,6 +145,7 @@ if __name__ == "__main__":
                     label="Wind Intensity",
                     index=False,
                 ),
+                label="Data Table Tabs",
             ),
             Separator(label="Images"),
             Group(
