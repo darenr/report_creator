@@ -5,12 +5,29 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import yaml
+import math
 
 logging.basicConfig(level=logging.INFO)
 
-from report_creator import (Base, Block, Collapse, DataTable, Group, Html,
-                            Image, Json, Markdown, Plot, Python, ReportCreator,
-                            Select, Separator, Statistic, Text, Yaml)
+from report_creator import (
+    Base,
+    Block,
+    Collapse,
+    DataTable,
+    Group,
+    Html,
+    Image,
+    Json,
+    Markdown,
+    Plot,
+    Python,
+    ReportCreator,
+    Select,
+    Separator,
+    Statistic,
+    Text,
+    Yaml,
+)
 
 if __name__ == "__main__":
     df1 = pd.DataFrame(columns=["Name", "Age"])
@@ -152,4 +169,4 @@ if __name__ == "__main__":
             ),
         )
 
-        report.save(view, "index.html")
+        report.save(view, "index.html", mode="light")

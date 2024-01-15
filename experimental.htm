@@ -27,7 +27,7 @@
         }
 
         body {
-            display: flex;
+            display: block;
         }
 
         .bar-chart-container {
@@ -101,16 +101,25 @@
         }
 
         .chart .part .bar.red:after {
-            background: #f22;
+            background: red;
         }
 
         .chart .part .bar.blue:after {
-            background: #56a;
+            background: blue;
         }
 
         .chart .part .bar.green:after {
-            background: #2a5;
+            background: green;
         }
+
+        .chart .part .bar.indigo:after {
+            background: indigo;
+        }
+
+        .chart .part .bar.orange:after {
+            background: orange;
+        }
+
 
         .chart .part .bar .label {
             position: absolute;
@@ -120,42 +129,6 @@
             z-index: 1;
             color: #fff;
             font-weight: 600;
-        }
-
-        .chart .part.percent-1 .bar:after {
-            width: 1%;
-        }
-
-        .chart .part.percent-2 .bar:after {
-            width: 2%;
-        }
-
-        .chart .part.percent-3 .bar:after {
-            width: 3%;
-        }
-
-        .chart .part.percent-4 .bar:after {
-            width: 4%;
-        }
-
-        .chart .part.percent-5 .bar:after {
-            width: 5%;
-        }
-
-        .chart .part.percent-6 .bar:after {
-            width: 6%;
-        }
-
-        .chart .part.percent-7 .bar:after {
-            width: 7%;
-        }
-
-        .chart .part.percent-8 .bar:after {
-            width: 8%;
-        }
-
-        .chart .part.percent-9 .bar:after {
-            width: 9%;
         }
 
         .chart .part.percent-10 .bar:after {
@@ -533,6 +506,69 @@
                 width: 0;
             }
         }
+
+        /* pie chart */
+
+
+        .pie {
+            --p: 20;
+            --b: 22px;
+            --c: darkred;
+            --w: 100px;
+
+            width: var(--w);
+            aspect-ratio: 1;
+            position: relative;
+            display: inline-grid;
+            margin: 5px;
+            place-content: center;
+            font-size: 25px;
+            font-weight: bold;
+            font-family: sans-serif;
+            padding: 1em;
+            border-radius: 5px;
+
+        }
+
+        .pie:before,
+        .pie:after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .pie:before {
+            inset: 0;
+            background:
+                radial-gradient(farthest-side, var(--c) 98%, #0000) top/var(--b) var(--b) no-repeat,
+                conic-gradient(var(--c) calc(var(--p)*1%), #0000 0);
+            -webkit-mask: radial-gradient(farthest-side, #0000 calc(99% - var(--b)), #000 calc(100% - var(--b)));
+            mask: radial-gradient(farthest-side, #0000 calc(99% - var(--b)), #000 calc(100% - var(--b)));
+        }
+
+        .pie:after {
+            inset: calc(50% - var(--b)/2);
+            background: var(--c);
+            transform: rotate(calc(var(--p)*3.6deg)) translateY(calc(50% - var(--w)/2));
+        }
+
+        .animate {
+            animation: p 1s .5s both;
+        }
+
+        .no-round:before {
+            background-size: 0 0, auto;
+        }
+
+        .no-round:after {
+            content: none;
+        }
+
+        @keyframes p {
+            from {
+                --p: 0
+            }
+        }
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gauge.js/1.2.1/gauge.min.js"
@@ -542,34 +578,51 @@
 </head>
 
 <body>
-    <div class="gauge-container">
-        <canvas id="demo" data-min="0" data-max="100" data-val="" 42"></canvas>
-    </div>
 
-    <hr />
+    <div style="display: flex; flex-wrap: wrap; flex-direction: row;">
 
-    <div class="bar-chart-container">
-        <h1>html chart</h1>
-        <div class="chart">
-            <div class="part percent-75">
-                <div class="label">yes</div>
-                <div class="bar red">aw
-                    <div class="label">75%</div>
+        <div class="gauge-container">
+            <canvas id="demo" data-min="0" data-max="100" data-val="" 42"></canvas>
+        </div>
+
+        <br />
+
+        <div class="bar-chart-container">
+            <h1>html chart</h1>
+            <div class="chart">
+                <div class="part percent-75">
+                    <div class="label">yes</div>
+                    <div class="bar red">aw
+                        <div class="label">75%</div>
+                    </div>
                 </div>
-            </div>
-            <div class="part percent-25">
-                <div class="label">no</div>
-                <div class="bar blue">aw
-                    <div class="label">25%</div>
+                <div class="part percent-25">
+                    <div class="label">no</div>
+                    <div class="bar blue">aw
+                        <div class="label">25%</div>
+                    </div>
                 </div>
-            </div>
-            <div class="part percent-38">
-                <div class="label">maybe</div>
-                <div class="bar green">aw
-                    <div class="label">38% </div>
+                <div class="part percent-38">
+                    <div class="label">maybe</div>
+                    <div class="bar green">aw
+                        <div class="label">38% </div>
+                    </div>
+                </div>
+                <div class="part percent-42">
+                    <div class="label">HH</div>
+                    <div class="bar indigo">aw
+                        <div class="label">42% </div>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <br />
+
+        <div class="gauge-container">
+            <div class="pie animate no-round" style="--p:75;--c:red;"> 75%</div>
+        </div>
+
     </div>
 
     <script>
@@ -577,16 +630,8 @@
             angle: 0.15, // The span of the gauge arc
             lineWidth: 0.44, // The line thickness
             radiusScale: 1, // Relative radius
-            pointer: {
-                length: 0.6, // // Relative to gauge radius
-                strokeWidth: 0.035, // The thickness
-                color: '#000000' // Fill color
-            },
             limitMax: false,     // If false, max value increases automatically if value > maxValue
             limitMin: false,     // If true, the min value of the gauge will be fixed
-            colorStart: '#6FADCF',   // Colors
-            colorStop: '#8FC0DA',    // just experiment with them
-            strokeColor: '#E0E0E0',  // to see which ones work best for you
             generateGradient: true,
             highDpiSupport: true,
         };

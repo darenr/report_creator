@@ -3,6 +3,7 @@ import io
 import json
 import logging
 import os
+import traceback
 from abc import ABC, abstractmethod
 from string import Template
 from typing import Dict, List, Sequence, Tuple, Union
@@ -483,21 +484,31 @@ class ReportCreator:
     def __exit__(self, exc_type, exc_value, exc_traceback):
         pass
 
-    def save(self, view: Base, path: str, format=True) -> None:
+    def save(self, view: Base, path: str, format=True, mode: str = "light") -> None:
         if not isinstance(view, (Block, Group)):
             raise ValueError(
                 f"Expected view to be either Block, or Group object, got {type(view)} instead"
             )
-        logging.info(f"Saving report to {path}")
+            
+        if mode not in ["light", "dark"]:
+            raise ValueError(f"Expected mode to be 'light' or 'dark', got {mode} instead")
+        
+        logging.info(f"Saving report to {path} [{mode} mode]")
 
         current_path = os.path.dirname(os.path.abspath(__file__))
+
+        try:
+            body = view.to_html()
+        except ValueError:
+            body = f"""<pre>{traceback.format_exc()}</pre>"""
 
         with open(f"{current_path}/templates/default.html", "r") as f:
             t = Template(f.read())
             with open(path, "w") as f:
                 html = t.substitute(
-                    title=self.title,
-                    body=view.to_html(),
+                    title = self.title,
+                    body = body,
+                    mode = mode,
                 )
                 if format:
                     try:
