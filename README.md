@@ -1,9 +1,8 @@
+# Report Creator
+
 [![License](https://img.shields.io/badge/license-Apache-blue.svg?style=for-the-badge)](https://www.apache.org/licenses/LICENSE-2.0)
 [![PyPI Version](https://img.shields.io/pypi/v/report_creator.svg?style=for-the-badge&color=blue)](https://pypi.org/project/report_creator)
 [![Python Versions](https://img.shields.io/pypi/pyversions/report_creator.svg?logo=python&logoColor=white&style=for-the-badge)](https://pypi.org/project/report_creator)
-
-
-# Report Creator
 
 Library to assemble reports in HTML from various components using python
 
@@ -47,7 +46,7 @@ Library to assemble reports in HTML from various components using python
 
 ## Development
 
-```
+``` .python
 conda create --name rc python=3.9
 conda activate rc
 pip install -r requirements.txt -U
@@ -59,4 +58,13 @@ pip install beautifulsoup4 lxml
 pip install black isort
 ```
 
-The Blocks/Groups use css [flex](https://css-tricks.com/snippets/css/a-guide-to-flexbox/). Blocks flow vertically (columns), Groups flow horizontal (row). 
+## Dev Notes
+
+* The Blocks/Groups use css [flex](https://css-tricks.com/snippets/css/a-guide-to-flexbox/).
+  * Blocks flow vertically (columns)
+* Groups flow horizontal (row).
+
+## Ideas
+
+* [html chart](https://codepen.io/sean_codes/pen/VNQVJE)
+* [css pie chart](https://codepen.io/t_afif/pen/XWaPXZO)
