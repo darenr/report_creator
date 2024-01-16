@@ -476,7 +476,7 @@ class Language(Base):
         else:
             formatted_text = f"<pre><code class='language-{self.language}'>{self.code.strip()}</code></pre>"
 
-        return f"""<div>{formatted_text}</div>"""
+        return f"""<div class="code-block">{formatted_text}</div>"""
 
 
 ##############################
@@ -554,9 +554,9 @@ class ReportCreator:
             t = Template(f.read())
             with open(path, "w") as f:
                 html = t.substitute(
-                    title=self.title,
-                    body=body,
-                    mode=mode,
+                    title = self.title,
+                    body = body,
+                    mode = mode,
                 )
                 if format:
                     try:

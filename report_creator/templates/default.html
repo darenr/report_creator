@@ -9,7 +9,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/${mode}.css" />
 
   <!-- see https://highlightjs.org/examples -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/humanoid-${mode}.css" />
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/google-${mode}.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
@@ -104,25 +105,25 @@
       padding: 10px;
     }
 
-      fieldset {
-        border: 2px solid var(--border);
-        background: var(--background-alt);
-        border-radius: 0.5rem;
-        padding: 15px;
-        font-size: 1.2em;
-        color: var(--text-bright);
-        min-height: 100px;
-      }
+    fieldset {
+      border: 2px solid var(--border);
+      background: var(--background-alt);
+      border-radius: 0.5rem;
+      padding: 15px;
+      font-size: 1.2em;
+      color: var(--text-bright);
+      min-height: 100px;
+    }
 
-      fieldset legend {
-        background: var(--background-body);
-        color: var(--focus);
-        padding: 0px 25px;
-        font-size: 1.3rem;
-        border-radius: 0.3rem;
-        box-shadow: 0 0 0 2px #ddd;
-        margin-left: 25px;
-      }
+    fieldset legend {
+      background: var(--background-body);
+      color: var(--focus);
+      padding: 0px 25px;
+      font-size: 1.3rem;
+      border-radius: 0.3rem;
+      box-shadow: 0 0 0 2px #ddd;
+      margin-left: 25px;
+    }
 
     div.round-bordered {
       border: 1px solid var(--border);
@@ -297,18 +298,22 @@
     .infobox {
       font-weight: 400;
       border: 0;
-      -webkit-box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
-      box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
+      -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+      box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
       background-color: #e0e0e0 !important;
       border-radius: 0.25rem !important;
       flex: 1 1 auto;
       min-height: 1px;
     }
 
-    .infobox h2, h3 {
+    .infobox h2,
+    h3 {
       padding-left: 1.25rem;
     }
 
+    pre code.hljs {
+      border: 1px solid var(--border);
+    }
 
   </style>
 
