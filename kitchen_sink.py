@@ -54,9 +54,6 @@ if __name__ == "__main__":
                     value=95,
                     label="Number of correct predictions Total number of predictions",
                 ),
-                label="Grouped Stats",
-            ),
-            rc.Group(
                 rc.Metric(
                     heading="Ultimate Answer",
                     value="42",
@@ -71,6 +68,7 @@ if __name__ == "__main__":
                     heading="Author",
                     value="Douglas Adams",
                 ),
+                label="Grouped Stats",
             ),
             rc.Text(
                 example_text,

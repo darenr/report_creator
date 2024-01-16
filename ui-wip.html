@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    /*Flex items*/
+    .list {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .list-item {
+      display: flex; 
+      padding: 0.5em;
+      width: 100%;
+    }
+    @media all and (min-width: 40em) {
+      .list-item {
+        width: 50%;
+      }
+    }
+    @media all and (min-width: 60em) {
+      .list-item {
+        width: 33.33%;
+      }
+    }
+    .list-content {
+      display: flex;
+      flex-direction: column;
+      padding: 1em;
+      width: 100%;
+    }
+    .list-content p {
+      flex: 1 0 auto;
+    }
+    
+  </style>
+</head>
+
+<body>
+  <div class="list">
+  <div class="list-item">
+    <div class="list-content">
+      <h2>Title</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio, eveniet.</p>
+      <a href="">Link</a>
+    </div>
+</div>
+  
+   <div class="list-item">
+    <div class="list-content">
+      <h2>Title</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Labore, vel, quia. Non nostrum, consectetur ipsum doloribus enim maiores a laudantium, odio vel blanditiis id ea dolorum expedita fugit incidunt commodi.</p>
+      <a href="">Link</a>
+    </div>
+  </div>
+  
+  <div class="list-item">
+    <div class="list-content">
+      <h2>Title</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Labore, vel, quia. Non nostrum, consectetur ipsum doloribus enim maiores a laudantium.</p>
+      <a href="">Link</a>
+    </div>
+  </div>
+  
+  <div class="list-item">
+    <div class="list-content">
+      <h2>Title</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur optio ipsa fuga vel repudiandae impedit illum delectus nihil error animi nobis quaerat quidem, amet, praesentium aspernatur inventore numquam! Totam, dolorem inventore reprehenderit, culpa obcaecati!</p>
+      <a href="">Link</a>
+    </div>
+  </div>
+  
+  <div class="list-item">
+    <div class="list-content">
+      <h2>Title</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo veniam tempore vero velit deleniti corporis recusandae placeat eum repellendus modi architecto, iste, numquam nulla, praesentium fuga soluta eos consequatur sequi expedita! Ea aspernatur explicabo optio ducimus officia blanditiis voluptas possimus veniam maxime!</p>
+      <a href="">Link</a>
+    </div>
+  </div>
+
+  
+    <div class="list-item">
+    <div class="list-content">
+      <h2>Title</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nostrum molestiae esse dolore corporis velit fugiat ipsam tempore optio dicta. Magnam iusto facere, maxime! Praesentium quo laborum, deserunt adipisci. Ipsam officia delectus repudiandae, aperiam magnam blanditiis fuga similique.</p>
+      <a href="">Link</a>
+    </div>
+  </div>
+</ul>
+
+</body>
+</html>
