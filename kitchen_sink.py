@@ -77,8 +77,8 @@ if __name__ == "__main__":
                 label="Ready Player One",
             ),
             rc.InfoBox(
-                "Warning: Killer Rabbit of Caerbannog",
-                is_code=False,
+                "**Warning** *You’ve performed this action too many times, please try again later.*",
+                format="markdown",
                 label="InfoBox",
             ),
             rc.Group(

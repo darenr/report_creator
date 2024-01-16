@@ -65,11 +65,16 @@ class Base(ABC):
 
 
 class InfoBox(Base):
-    def __init__(self, text: str, is_code=True, label=None):
+    def __init__(self, text: str, format="plaintext", label=None):
         Base.__init__(self, label=label)
-        self.text = text
-        self.is_code = is_code
-        logging.info(f"InfoBox {len(self.text)} characters, is_code: {self.is_code}")
+        if format not in ["plaintext", "code", "markdown"]:
+            raise ValueError(
+                f"Expected format to be one of 'plaintext', 'markdown;, 'code', got {format} instead"
+            )
+        self.text = text.strip()
+        self.format = format
+        
+        logging.info(f"InfoBox {len(self.text)} characters, format: {self.format}")
 
     @strip_whitespace
     def to_html(self):
@@ -77,8 +82,11 @@ class InfoBox(Base):
 
         if self.label:
             html += f"<legend>{self.label}</legend>"
-
-        if self.is_code:
+            
+            
+        if self.format == "markdown":
+            html += f"{markdown_to_html(self.text)}"
+        elif self.format == "code":
             html += f"<pre><code>{self.text}</code></pre>"
         else:
             html += f"<b>{self.text}</b>"
