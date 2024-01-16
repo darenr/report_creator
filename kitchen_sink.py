@@ -12,7 +12,6 @@ logging.basicConfig(level=logging.INFO)
 import report_creator as rc
 
 if __name__ == "__main__":
-    
     # set up of example text, plots and dataframes
     df1 = pd.DataFrame(columns=["Name", "Age"])
     df1.Name = ["Lizzie", "Julie", "Andrea"]
@@ -35,9 +34,8 @@ if __name__ == "__main__":
     with open("README.md", "r") as f:
         example_md = f.read()
 
-
     # begin the use of the report_creator package
-    
+
     with rc.ReportCreator("Kitchen Sink Report") as report:
         view = rc.Block(
             rc.Collapse(

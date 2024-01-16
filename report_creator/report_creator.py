@@ -530,18 +530,16 @@ class ReportCreator:
     def __exit__(self, exc_type, exc_value, exc_traceback):
         pass
 
-    def save(self, view: Base, path: str, format=True, mode: str = "auto") -> None:
+    def save(self, view: Base, path: str, format=True, mode: str = "light") -> None:
         if not isinstance(view, (Block, Group)):
             raise ValueError(
                 f"Expected view to be either Block, or Group object, got {type(view)} instead"
             )
 
-        if mode not in ["auto", "light", "dark"]:
+        if mode not in ["light", "dark"]:
             raise ValueError(
-                f"Expected mode to be 'auto', 'light' or 'dark', got {mode} instead"
+                f"Expected mode to be 'light' or 'dark', got {mode} instead"
             )
-
-        mode = "water" if mode == "auto" else mode
 
         logging.info(f"Saving report to {path} [{mode} mode]")
 
