@@ -30,11 +30,11 @@ Library to assemble reports in HTML from various components using python
             light, it was the season of darkness, it was the spring of hope, it was the winter of despair.""", 
             label="Charles Dickens, A Tale of Two Cities"),
             Group(
-                Statistic(
+                Metric(
                     heading="Answer to Life, The Universe, and Everything",
                     value="42",
                 ),
-                Statistic(
+                Metric(
                     heading="Author",
                     value="Douglas Adams",
                 ),                

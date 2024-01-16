@@ -104,24 +104,24 @@
       padding: 10px;
     }
 
-    /* unused for now
       fieldset {
-        border: 3px solid var(--focus);
+        border: 2px solid var(--border);
         background: var(--background-body);
-        border-radius: 3px;
+        border-radius: 0.5rem;
         padding: 15px;
+        font-size: 1.2em;
+        color: var(--text-bright);
       }
 
       fieldset legend {
         background: var(--background-body);
-        color: var(--text);
+        color: var(--text-muted);
         padding: 5px 10px;
         font-size: 1.5rem;
-        border-radius: 3px;
-        box-shadow: 0 0 0 3px #ddd;
-        margin-left: 20px;
+        border-radius: 0.5rem;
+        box-shadow: 0 0 0 2px #ddd;
+        margin-left: 25px;
       }
-      */
 
     div.round-bordered {
       border: 1px solid var(--border);
@@ -290,6 +290,22 @@
 
     table.dataTable tbody tr {
       font-weight: normal;
+    }
+
+    /* admonitions */
+    .infobox {
+      font-weight: 400;
+      border: 0;
+      -webkit-box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
+      box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
+      background-color: #e0e0e0 !important;
+      border-radius: 0.25rem !important;
+      flex: 1 1 auto;
+      min-height: 1px;
+    }
+
+    .infobox h2, h3 {
+      padding-left: 1.25rem;
     }
 
 

@@ -9,25 +9,7 @@ import math
 
 logging.basicConfig(level=logging.INFO)
 
-from report_creator import (
-    Base,
-    Block,
-    Collapse,
-    DataTable,
-    Group,
-    Html,
-    Image,
-    Json,
-    Markdown,
-    Plot,
-    Python,
-    ReportCreator,
-    Select,
-    Separator,
-    Statistic,
-    Text,
-    Yaml,
-)
+import report_creator as rc
 
 if __name__ == "__main__":
     df1 = pd.DataFrame(columns=["Name", "Age"])
@@ -37,7 +19,7 @@ if __name__ == "__main__":
     fig1 = df1.plot.bar(x="Name", y="Age").get_figure()
 
     df2 = px.data.stocks()
-    fig2 = px.line(df2, x="date", y=["GOOG", "AAPL", "AMZN", "FB", "NFLX", "MSFT"])
+    fig2 = px.line(df2, x="date", y=["GOOG", "AAPL", "NFLX", "MSFT"])
 
     with open(__file__, "r") as f:
         example_python = f.read()
@@ -51,62 +33,78 @@ if __name__ == "__main__":
     with open("README.md", "r") as f:
         example_md = f.read()
 
-    with ReportCreator("Kitchen Sink Report") as report:
-        view = Block(
-            Collapse(
-                Python(example_python, label="kitchen_sink.py"),
+    with rc.ReportCreator("Kitchen Sink Report") as report:
+        view = rc.Block(
+            rc.Collapse(
+                rc.Python(example_python, label="kitchen_sink.py"),
                 label="Code (kitchen_sink.py) to create this report",
             ),
-            Group(
-                Statistic(
+            rc.Group(
+                rc.Metric(
                     heading="Chances of rain",
                     value="84",
                     unit="%",
                 ),
-                Statistic(heading="Loss", value=0.1),
-                Statistic(
+                rc.Metric(heading="Loss", value=0.1),
+                rc.Metric(
                     heading="Accuracy",
                     value=95,
                     label="Number of correct predictions Total number of predictions",
                 ),
                 label="Grouped Stats",
             ),
-            Group(
-                Statistic(
+            rc.Group(
+                rc.Metric(
                     heading="Ultimate Answer",
                     value="42",
                 ),
-                Statistic(
+                rc.Metric(
                     heading="Confidence",
                     value=95,
                     unit="%",
                     label="How likely is this to be correct.",
                 ),
-                Statistic(
+                rc.Metric(
                     heading="Author",
                     value="Douglas Adams",
                 ),
             ),
-            Text(
+            rc.Text(
                 example_text,
                 label="Ready Player One",
             ),
-            Group(
-                Yaml(
+            rc.InfoBox(
+                """
+                **I'm Sorry Dave.**
+                
+                **I’m afraid. I’m afraid**, Dave. Dave, my mind is going. 
+                I can feel it. 
+                I can feel it. 
+                My mind is going. There is no question about it. I can 
+                feel it. I can feel it. I can feel it. **I’m a… fraid**. Good afternoon, 
+                gentlemen. I am a HAL 9000 computer. I became operational at the 
+                H.A.L. plant in Urbana, Illinois on the 12th of January 1992.
+                My instructor was Mr. Langley, and he taught me to sing a song. 
+                If you’d like to hear it I can sing it for you.
+                """,
+                label="HAL 9000",
+            ),
+            rc.Group(
+                rc.Yaml(
                     datastructure,
                     label="Kubernetes Creating a Deployment as YAML",
                 ),
-                Json(
+                rc.Json(
                     datastructure,
                     label="Kubernetes Creating a Deployment as JSON",
                 ),
             ),
-            Separator(),
-            Markdown(example_md, label="README.md"),
-            Plot(fig1, label="Matplotlib Figure - People"),
-            Plot(fig2, label="Plotly Figure - Stocks"),
-            Separator(),
-            Html(
+            rc.Separator(),
+            rc.Markdown(example_md, label="README.md"),
+            rc.Plot(fig1, label="Matplotlib Figure - People"),
+            rc.Plot(fig2, label="Plotly Figure - Stocks"),
+            rc.Separator(),
+            rc.Html(
                 "<span>"
                 + "".join(
                     [
@@ -129,39 +127,39 @@ if __name__ == "__main__":
                 + "</span>",
                 label="HTML Showing SVG Circles with black border",
             ),
-            Separator(),
-            Select(
-                DataTable(px.data.iris(), label="Iris Petals", index=False),
-                DataTable(
+            rc.Separator(),
+            rc.Select(
+                rc.DataTable(px.data.iris(), label="Iris Petals", index=False),
+                rc.DataTable(
                     px.data.election(),
                     label="2013 Montreal Election",
                     index=False,
                 ),
-                DataTable(
+                rc.DataTable(
                     px.data.medals_long(),
                     label="Olympic Speed Skating",
                     index=False,
                 ),
-                DataTable(
+                rc.DataTable(
                     px.data.wind(),
                     label="Wind Intensity",
                     index=False,
                 ),
                 label="Tab Group of Data Tables",
             ),
-            Separator(),
-            Group(
-                Image(
+            rc.Separator(),
+            rc.Group(
+                rc.Image(
                     "https://midlibraryassets.b-cdn.net/638266c083c0cd991057c455/655f82d114b7bf12e5f2e5d0_Portrait%20of%20a%20Man%20with%20a%20Medal%20of%20Cosimo%20il%20Vecchio%20de%27%20Medici%20(1475)-p-800.jpg",
                     label="Portrait of a Man with a Medal (1475)",
                     link="https://midlibrary.io/focus/sandro-botticelli",
                 ),
-                Image(
+                rc.Image(
                     "https://midlibraryassets.b-cdn.net/638266c083c0cd991057c455/655f82d07c2a7e39a7e7424e_Detail%20of%20The%20Spring%20(Flora)%20(late%201470s%20or%20early%201480s).jpg",
                     label="The Spring, Flora (late 1470s or early 1480s)",
                     link="https://midlibrary.io/focus/sandro-botticelli",
                 ),
-                Image(
+                rc.Image(
                     "https://midlibraryassets.b-cdn.net/638266c083c0cd991057c455/655f82d0703381e47145077a_Idealised%20Portrait%20of%20a%20Lady%20(Portrait%20of%20Simonetta%20Vespucci%20as%20Nymph)%20(1480%E2%80%931485).jpg",
                     label="Portrait of Simonetta Vespucci",
                     link="https://midlibrary.io/focus/sandro-botticelli",

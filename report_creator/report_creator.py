@@ -19,6 +19,17 @@ from markupsafe import escape
 logging.basicConfig(level=logging.INFO)
 
 
+def markdown_to_html(text: str):
+    return markdown(
+        "\n".join(x.strip() for x in text.splitlines()),
+        extensions=[
+            "markdown.extensions.fenced_code",
+            "markdown.extensions.tables",
+            "markdown_checklist.extension",
+        ],
+    ).strip()
+
+
 def strip_whitespace(func):
     """
     A decorator that strips leading and trailing whitespace from the result of a function.
@@ -54,18 +65,23 @@ class Base(ABC):
 
 
 class InfoBox(Base):
-    def __init__(self, prompt: str, label=None):
+    def __init__(self, text: str, label=None):
         Base.__init__(self, label=label)
-        self.text = text
+        self.text = markdown_to_html(text)
         logging.info(f"InfoBox {len(self.text)} characters")
 
     @strip_whitespace
     def to_html(self):
-        return f"""
-            <div class="info-box">
-                <p>{self.text}</p>
-            </div>
-        """
+        html = f"<fieldset>"
+
+        if self.label:
+            html += f"<legend>{self.label}</legend>"
+
+        html += self.text
+
+        html += f"<br /></fieldset>"
+
+        return html
 
 
 ##############################
@@ -159,7 +175,7 @@ class HTML(Base):
 ##############################
 
 
-class Statistic(Base):
+class Metric(Base):
     def __init__(
         self, heading: str, value: Union[str, int, float], unit=None, label=None
     ):
@@ -167,7 +183,7 @@ class Statistic(Base):
         self.heading = heading
         self.value = value
         self.unit = unit or ""
-        logging.info(f"Statistic {self.heading} {self.value}")
+        logging.info(f"Metric {self.heading} {self.value}")
 
     @strip_whitespace
     def to_html(self):
@@ -263,14 +279,7 @@ class Markdown(Base):
 
     @staticmethod
     def markdown_to_html(text):
-        return markdown(
-            text,
-            extensions=[
-                "markdown.extensions.fenced_code",
-                "markdown.extensions.tables",
-                "markdown_checklist.extension",
-            ],
-        ).strip()
+        return markdown_to_html(text)
 
     @strip_whitespace
     def to_html(self):
@@ -416,6 +425,39 @@ class Select(Base):
 ##############################
 
 
+class Admonition(Base):
+    # Admonitions ("safety messages" or "hazard statements") can appear
+    # anywhere an ordinary body element can. They contain arbitrary
+    # body elements.
+
+    def __init__(self, text: str, level: str = "note", label=None):
+        Base.__init__(self, label=label)
+        if level.lower() not in ["note", "error"]:
+            raise ValueError(
+                f"Admonition Expected level to be one of 'note', 'error', got {level} instead"
+            )
+
+        self.text = text
+        self.level = level.lower()
+        logging.info(f'[{level}] "{self.text}"')
+
+    @strip_whitespace
+    def to_html(self):
+        if self.label:
+            html = f"<report-caption>{self.label}</report-caption>"
+        else:
+            html = ""
+
+        html += f"""
+            <div class="admonition admonition-{self.level}">
+            {self.text}
+            </div>
+        """
+
+
+##############################
+
+
 class Language(Base):
     def __init__(self, text: str, language: str, label=None):
         Base.__init__(self, label=label)
@@ -484,15 +526,19 @@ class ReportCreator:
     def __exit__(self, exc_type, exc_value, exc_traceback):
         pass
 
-    def save(self, view: Base, path: str, format=True, mode: str = "light") -> None:
+    def save(self, view: Base, path: str, format=True, mode: str = "auto") -> None:
         if not isinstance(view, (Block, Group)):
             raise ValueError(
                 f"Expected view to be either Block, or Group object, got {type(view)} instead"
             )
-            
-        if mode not in ["light", "dark"]:
-            raise ValueError(f"Expected mode to be 'light' or 'dark', got {mode} instead")
-        
+
+        if mode not in ["auto", "light", "dark"]:
+            raise ValueError(
+                f"Expected mode to be 'auto', 'light' or 'dark', got {mode} instead"
+            )
+
+        mode = "water" if mode == "auto" else mode
+
         logging.info(f"Saving report to {path} [{mode} mode]")
 
         current_path = os.path.dirname(os.path.abspath(__file__))
@@ -506,9 +552,9 @@ class ReportCreator:
             t = Template(f.read())
             with open(path, "w") as f:
                 html = t.substitute(
-                    title = self.title,
-                    body = body,
-                    mode = mode,
+                    title=self.title,
+                    body=body,
+                    mode=mode,
                 )
                 if format:
                     try:
