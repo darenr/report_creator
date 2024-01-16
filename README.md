@@ -22,19 +22,22 @@ Library to assemble reports in HTML from various components using python
 ## Example
 
 ``` .python
+
+    import report_creator as rc
+
     with ReportCreator("My Report") as report:
 
-        view = Block(
+        view = rc.Block(
             Text("""It was the best of times, it was the worst of times, it was the age of wisdom, it was the age 
             of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of 
             light, it was the season of darkness, it was the spring of hope, it was the winter of despair.""", 
             label="Charles Dickens, A Tale of Two Cities"),
-            Group(
-                Metric(
+            rc.Group(
+                rc.Metric(
                     heading="Answer to Life, The Universe, and Everything",
                     value="42",
                 ),
-                Metric(
+                rc.Metric(
                     heading="Author",
                     value="Douglas Adams",
                 ),                

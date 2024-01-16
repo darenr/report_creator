@@ -1,11 +1,11 @@
 import logging
+import math
 from typing import Dict, List, Sequence, Tuple, Union
 
 import numpy as np
 import pandas as pd
 import plotly.express as px
 import yaml
-import math
 
 logging.basicConfig(level=logging.INFO)
 
@@ -74,20 +74,9 @@ if __name__ == "__main__":
                 label="Ready Player One",
             ),
             rc.InfoBox(
-                """
-                **I'm Sorry Dave.**
-                
-                **I’m afraid. I’m afraid**, Dave. Dave, my mind is going. 
-                I can feel it. 
-                I can feel it. 
-                My mind is going. There is no question about it. I can 
-                feel it. I can feel it. I can feel it. **I’m a… fraid**. Good afternoon, 
-                gentlemen. I am a HAL 9000 computer. I became operational at the 
-                H.A.L. plant in Urbana, Illinois on the 12th of January 1992.
-                My instructor was Mr. Langley, and he taught me to sing a song. 
-                If you’d like to hear it I can sing it for you.
-                """,
-                label="HAL 9000",
+                "Warning: Killer Rabbit of Caerbannog",
+                is_code=False,
+                label="InfoBox",
             ),
             rc.Group(
                 rc.Yaml(

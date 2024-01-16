@@ -21,7 +21,7 @@ logging.basicConfig(level=logging.INFO)
 
 def markdown_to_html(text: str):
     return markdown(
-        "\n".join(x.strip() for x in text.splitlines()),
+        text.strip(),
         extensions=[
             "markdown.extensions.fenced_code",
             "markdown.extensions.tables",
@@ -65,10 +65,11 @@ class Base(ABC):
 
 
 class InfoBox(Base):
-    def __init__(self, text: str, label=None):
+    def __init__(self, text: str, is_code=True, label=None):
         Base.__init__(self, label=label)
-        self.text = markdown_to_html(text)
-        logging.info(f"InfoBox {len(self.text)} characters")
+        self.text = text
+        self.is_code = is_code
+        logging.info(f"InfoBox {len(self.text)} characters, is_code: {self.is_code}")
 
     @strip_whitespace
     def to_html(self):
@@ -77,7 +78,10 @@ class InfoBox(Base):
         if self.label:
             html += f"<legend>{self.label}</legend>"
 
-        html += self.text
+        if self.is_code:
+            html += f"<pre><code>{self.text}</code></pre>"
+        else:
+            html += f"<b>{self.text}</b>"
 
         html += f"<br /></fieldset>"
 
