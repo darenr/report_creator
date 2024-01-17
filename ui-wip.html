@@ -16,13 +16,13 @@
     }
 
     /*Flex items*/
-    .list {
+    .group {
       display: flex;
       flex-wrap: wrap;
       width: 100%;
     }
 
-    .list-item {
+    .group-item {
       display: flex;
       width: 300px;
       border: 1px solid black; 
@@ -31,24 +31,39 @@
     }
 
 
-    .list-content {
+    .group-content {
       display: flex;
       flex-direction: column;
       padding: 1em;
       width: 100%;
     }
 
-    .list-content p {
-      flex: 1 0 auto;
+    .metric {
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 10px;
+      padding-left: 25px;
     }
+
+    .metric h1 {
+      margin-top: 0;
+    }
+
+    .metric p {
+      color: var(--text-muted);
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
+
   </style>
 </head>
 
 <body>
-  <div class="list">
+  <div class="group">
 
-    <div class="list-item">
-      <div class="list-content">
+    <div class="group-item">
+      <div class="group-content metric">
         <p>
           Chances of rain
          </p>
@@ -58,8 +73,8 @@
       </div>
     </div>
 
-    <div class="list-item">
-      <div class="list-content">
+    <div class="group-item">
+      <div class="group-content metric">
         <p>
           Loss
          </p>
@@ -69,8 +84,8 @@
       </div>
     </div>
 
-    <div class="list-item">
-      <div class="list-content">
+    <div class="group-item">
+      <div class="group-content metric">
         <p>
           Author
          </p>
@@ -80,8 +95,8 @@
       </div>
     </div>
 
-    <div class="list-item">
-      <div class="list-content">
+    <div class="group-item">
+      <div class="group-content metric">
         <p>
           Ultimate Answer
          </p>
@@ -91,8 +106,8 @@
       </div>
     </div>
 
-    <div class="list-item">
-      <div class="list-content">
+    <div class="group-item">
+      <div class="group-content metric">
         <p>
           Confidence
          </p>
@@ -103,8 +118,8 @@
     </div>
 
 
-    <div class="list-item">
-      <div class="list-content">
+    <div class="group-item">
+      <div class="group-content metric">
         <p>
           Loss
          </p>

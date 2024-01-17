@@ -132,19 +132,30 @@ class Group(Base):
 
     @strip_whitespace
     def to_html(self):
-        html = "<block>"
+        
+        html = "<div>"
+        
         if self.label:
             html += f"<report-caption>{self.label}</report-caption>"
-
-        html += "<group>"
-
+        
+        html += """<div class="group">"""
+        
+        
         for component in self.components:
-            html += "<group-article>"
+            html += """
+                <div class="group-item">
+                    <div class="group-content">"""
+                    
             html += component.to_html()
-            html += "</group-article>"
+            
+            html += """
+                </div>
+                    </div>"""
 
-        html += "</group>"
-        html += "</block>"
+        html += "</div>"
+
+        html += "</div>"
+        html += "</div>"
 
         return html
 
@@ -200,7 +211,7 @@ class Metric(Base):
     @strip_whitespace
     def to_html(self):
         return f"""
-            <div class="statistic">
+            <div class="metric">
                 <p>{self.heading}</p>
                 <h1>{self.value}{self.unit}</h1>
             </div>
@@ -271,11 +282,13 @@ class Image(Base):
 
     @strip_whitespace
     def to_html(self):
-        html = ""
-        if self.label:
-            html += f"<report-caption>{self.label}</report-caption>"
+        html = """<div class="image-block"><figure>"""
 
         html += f"""<a href="{self.link}" target="_blank"><img src="{self.img}" alt="{self.label}"></a>"""
+        if self.label:
+            html += f"<figcaption>{self.label}</figcaption>"
+        html += "</figure></div>"
+             
 
         return html
 
@@ -432,39 +445,6 @@ class Select(Base):
             html += """</div>"""
 
         return html
-
-
-##############################
-
-
-class Admonition(Base):
-    # Admonitions ("safety messages" or "hazard statements") can appear
-    # anywhere an ordinary body element can. They contain arbitrary
-    # body elements.
-
-    def __init__(self, text: str, level: str = "note", label=None):
-        Base.__init__(self, label=label)
-        if level.lower() not in ["note", "error"]:
-            raise ValueError(
-                f"Admonition Expected level to be one of 'note', 'error', got {level} instead"
-            )
-
-        self.text = text
-        self.level = level.lower()
-        logging.info(f'[{level}] "{self.text}"')
-
-    @strip_whitespace
-    def to_html(self):
-        if self.label:
-            html = f"<report-caption>{self.label}</report-caption>"
-        else:
-            html = ""
-
-        html += f"""
-            <div class="admonition admonition-{self.level}">
-            {self.text}
-            </div>
-        """
 
 
 ##############################
