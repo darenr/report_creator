@@ -1,37 +1,35 @@
 <!DOCTYPE html>
-<html>
-
+<html translate="no">
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css" />
 
   <style>
     * {
       box-sizing: border-box;
     }
 
+    body {
+      max-width: initial;
+    }
+
     /*Flex items*/
     .list {
       display: flex;
       flex-wrap: wrap;
+      width: 100%;
     }
 
     .list-item {
       display: flex;
-      padding: 0.5em;
-      width: 100%;
+      width: 300px;
+      border: 1px solid black; 
+      border-radius: 0.5em;
+      margin: 15px;
     }
 
-    @media all and (min-width: 40em) {
-      .list-item {
-        width: 50%;
-      }
-    }
-
-    @media all and (min-width: 60em) {
-      .list-item {
-        width: 33.33%;
-      }
-    }
 
     .list-content {
       display: flex;
@@ -51,53 +49,68 @@
 
     <div class="list-item">
       <div class="list-content">
-        <h2>Title</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio, eveniet.</p>
+        <p>
+          Chances of rain
+         </p>
+         <h1>
+          84%
+         </h1>
       </div>
     </div>
 
     <div class="list-item">
       <div class="list-content">
-        <h2>Title</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Labore, vel, quia. Non nostrum, consectetur ipsum
-          doloribus enim maiores a laudantium, odio vel blanditiis id ea dolorum expedita fugit incidunt commodi.</p>
+        <p>
+          Loss
+         </p>
+         <h1>
+          0.1
+         </h1>  
       </div>
     </div>
 
     <div class="list-item">
       <div class="list-content">
-        <h2>Title</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Labore, vel, quia. Non nostrum, consectetur ipsum
-          doloribus enim maiores a laudantium.</p>
+        <p>
+          Author
+         </p>
+         <h1>
+          Douglas Adams
+         </h1>
       </div>
     </div>
 
     <div class="list-item">
       <div class="list-content">
-        <h2>Title</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur optio ipsa fuga vel repudiandae impedit
-          illum delectus nihil error animi nobis quaerat quidem, amet, praesentium aspernatur inventore numquam! Totam,
-          dolorem inventore reprehenderit, culpa obcaecati!</p>
+        <p>
+          Ultimate Answer
+         </p>
+         <h1>
+          42
+         </h1>
       </div>
     </div>
 
     <div class="list-item">
       <div class="list-content">
-        <h2>Title</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo veniam tempore vero velit deleniti corporis
-          recusandae placeat eum repellendus modi architecto, iste, numquam nulla, praesentium fuga soluta eos
-          consequatur sequi expedita! Ea aspernatur explicabo optio ducimus officia blanditiis voluptas possimus veniam
-          maxime!</p>
+        <p>
+          Confidence
+         </p>
+         <h1>
+          95%
+         </h1>
       </div>
     </div>
 
 
     <div class="list-item">
       <div class="list-content">
-        <h2>Title</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nostrum molestiae esse dolore corporis velit fugiat
-          ipsam tempore optio dicta. Magnam iusto facere, maxime! Praesentium quo laborum, deserunt adipisci. Ipsam
-          officia delectus repudiandae, aperiam magnam blanditiis fuga similique.</p>
+        <p>
+          Loss
+         </p>
+         <h1>
+          0.1
+         </h1>
       </div>
     </div>
 
