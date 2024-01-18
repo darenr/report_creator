@@ -8,16 +8,15 @@ Library to assemble reports in HTML from various components using python
 
 ## Features
 
-* [x] good pandas support
+* [x] good pandas/dataframe support
 * [x] looks modern
 * [x] allows markdown as input for text blocks
 * [x] allows html as input
 * [x] a few simple components for things like metrics ("Accuracy: 87%") from a triple of key, value, Optional[description]
-* [x] support for plotting
+* [x] support for plotting figures, interactive (`plotly``) and `matplotlib`
 * [x] images (styled by the library)
-* [x] json/yaml/python blocks with color syntax highlighting
-* [ ] integrate with langchain
-* [x] (stretch) support tabs, if not then each tab can just be additional vertical content
+* [x] `json`/`yaml`/python`` code blocks with color syntax highlighting
+* [x] support tabs
 
 ## Example
 
