@@ -140,20 +140,20 @@ if __name__ == "__main__":
             rc.Separator(),
             rc.Group(
                 rc.Image(
-                    "https://images.metmuseum.org/CRDImages/ma/mobile-large/DT1438.jpg",
-                    label="The Italian Woman - Modigliani (1916)",
-                    link="https://www.metmuseum.org/art/collection/search/489102",
+                    "https://midlibraryassets.b-cdn.net/638266c083c0cd991057c455/655f82d114b7bf12e5f2e5d0_Portrait%20of%20a%20Man%20with%20a%20Medal%20of%20Cosimo%20il%20Vecchio%20de%27%20Medici%20(1475)-p-800.jpg",
+                    label="Portrait of a Man with a Medal (1475)",
+                    link="https://midlibrary.io/focus/sandro-botticelli",
                 ),
                 rc.Image(
-                    "https://images.metmuseum.org/CRDImages/ma/mobile-large/DT2180.jpg",
-                    label="Jeanne Hébuterne - Modigliani (1919)",
-                    link="https://www.metmuseum.org/art/collection/search/489102",
+                    "https://midlibraryassets.b-cdn.net/638266c083c0cd991057c455/655f82d07c2a7e39a7e7424e_Detail%20of%20The%20Spring%20(Flora)%20(late%201470s%20or%20early%201480s).jpg",
+                    label="The Spring, Flora (late 1470s or early 1480s)",
+                    link="https://midlibrary.io/focus/sandro-botticelli",
                 ),
                 rc.Image(
-                    "https://images.metmuseum.org/CRDImages/ma/mobile-large/CT_2860.jpg",
-                    label="Girl in a Sailor's Blouse - Modigliani (1918)",
-                    link="https://www.metmuseum.org/art/collection/search/489102",
-                ),
+                    "https://midlibraryassets.b-cdn.net/638266c083c0cd991057c455/655f82d0703381e47145077a_Idealised%20Portrait%20of%20a%20Lady%20(Portrait%20of%20Simonetta%20Vespucci%20as%20Nymph)%20(1480%E2%80%931485).jpg",
+                    label="Portrait of Simonetta Vespucci",
+                    link="https://midlibrary.io/focus/sandro-botticelli",
+                ),                
             ),
         )
 
