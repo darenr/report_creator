@@ -286,7 +286,7 @@ class Image(Base):
 
         html += f"""<a href="{self.link}" target="_blank"><img src="{self.img}" alt="{self.label}"></a>"""
         if self.label:
-            html += f"<figcaption>{self.label}</figcaption>"
+            html += f"<figcaption><report-caption>{self.label}</report-caption></figcaption>"
         html += "</figure></div>"
              
 
