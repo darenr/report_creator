@@ -73,7 +73,7 @@ class InfoBox(Base):
             )
         self.text = text.strip()
         self.format = format
-        
+
         logging.info(f"InfoBox {len(self.text)} characters, format: {self.format}")
 
     @strip_whitespace
@@ -82,8 +82,7 @@ class InfoBox(Base):
 
         if self.label:
             html += f"<legend>{self.label}</legend>"
-            
-            
+
         if self.format == "markdown":
             html += f"{markdown_to_html(self.text)}"
         elif self.format == "code":
@@ -132,22 +131,20 @@ class Group(Base):
 
     @strip_whitespace
     def to_html(self):
-        
         html = "<div>"
-        
+
         if self.label:
             html += f"<report-caption>{self.label}</report-caption>"
-        
+
         html += """<div class="group">"""
-        
-        
+
         for component in self.components:
             html += """
                 <div class="group-item">
                     <div class="group-content">"""
-                    
+
             html += component.to_html()
-            
+
             html += """
                 </div>
                     </div>"""
@@ -288,7 +285,6 @@ class Image(Base):
         if self.label:
             html += f"<figcaption><report-caption>{self.label}</report-caption></figcaption>"
         html += "</figure></div>"
-             
 
         return html
 
@@ -462,7 +458,7 @@ class Language(Base):
         if self.label:
             formatted_text = f"<pre><code class='language-{self.language}'>### {self.label}\n\n{self.text.strip()}</code></pre>"
         else:
-            formatted_text = f"<pre><code class='language-{self.language}'>{self.code.strip()}</code></pre>"
+            formatted_text = f"<pre><code class='language-{self.language}'>{self.text.strip()}</code></pre>"
 
         return f"""<div class="code-block">{formatted_text}</div>"""
 
@@ -542,9 +538,9 @@ class ReportCreator:
             t = Template(f.read())
             with open(path, "w") as f:
                 html = t.substitute(
-                    title = self.title,
-                    body = body,
-                    mode = mode,
+                    title=self.title,
+                    body=body,
+                    mode=mode,
                 )
                 if format:
                     try:

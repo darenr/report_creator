@@ -58,6 +58,9 @@ pip install beautifulsoup4 lxml
 
 # recommended installs for code hygiene
 pip install black isort
+
+# run kitchen_sink.py
+PYTHONPATH=. python examples/kitchen_sink.py
 ```
 
 ## Dev Notes

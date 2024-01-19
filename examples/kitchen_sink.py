@@ -25,10 +25,10 @@ if __name__ == "__main__":
     with open(__file__, "r") as f:
         example_python = f.read()
 
-    with open("example.yaml", "r") as f:
+    with open("examples/example.yaml", "r") as f:
         datastructure = yaml.safe_load(f.read())
 
-    with open("example.txt", "r") as f:
+    with open("examples/example.txt", "r") as f:
         example_text = f.read()
 
     with open("README.md", "r") as f:
@@ -153,7 +153,7 @@ if __name__ == "__main__":
                     "https://midlibraryassets.b-cdn.net/638266c083c0cd991057c455/655f82d0703381e47145077a_Idealised%20Portrait%20of%20a%20Lady%20(Portrait%20of%20Simonetta%20Vespucci%20as%20Nymph)%20(1480%E2%80%931485).jpg",
                     label="Portrait of Simonetta Vespucci",
                     link="https://midlibrary.io/focus/sandro-botticelli",
-                ),                
+                ),
             ),
         )
 
