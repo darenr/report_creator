@@ -51,7 +51,7 @@ if __name__ == "__main__":
                 rc.Metric(heading="Loss", value=0.1),
                 rc.Metric(
                     heading="Accuracy",
-                    value=95,
+                    value=0.95,
                     label="Number of correct predictions Total number of predictions",
                 ),
                 rc.Metric(
