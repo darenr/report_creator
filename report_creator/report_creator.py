@@ -197,20 +197,26 @@ class HTML(Base):
 
 class Metric(Base):
     def __init__(
-        self, heading: str, value: Union[str, int, float], unit=None, label=None
+        self, heading: str, value: Union[str, int, float], unit=None, float_precision=3, label=None
     ):
         Base.__init__(self, label=label)
         self.heading = heading
+        self.float_precision = float_precision
         self.value = value
         self.unit = unit or ""
         logging.info(f"Metric {self.heading} {self.value}")
 
     @strip_whitespace
     def to_html(self):
+        if isinstance(self.value, (float)):
+            value = round(self.value, self.float_precision)
+        else:
+            value = self.value
+            
         return f"""
             <div class="metric">
                 <p>{self.heading}</p>
-                <h1>{self.value}{self.unit}</h1>
+                <h1>{value}{self.unit}</h1>
             </div>
         """
 
