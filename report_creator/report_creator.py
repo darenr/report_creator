@@ -332,11 +332,9 @@ class Plot(Base):
 
     def __init__(self, fig, label=None):
         Base.__init__(self, label=label)
-        # if not isinstance(fig, matplotlib.figure.Figure, plotly.graph_objs._figure.Figure):
-        #     raise ValueError(
-        #         f"Expected matplotlib.figure.Figure, got {type(fig)}, try obj.get_figure()"
-        #     )
         self.fig = fig
+        if hasattr(fig, 'get_figure'):
+            self.fig = fig.get_figure()
         logging.info(f"Plot")
 
     @strip_whitespace
