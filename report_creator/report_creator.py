@@ -197,7 +197,12 @@ class HTML(Base):
 
 class Metric(Base):
     def __init__(
-        self, heading: str, value: Union[str, int, float], unit=None, float_precision=3, label=None
+        self,
+        heading: str,
+        value: Union[str, int, float],
+        unit=None,
+        float_precision=3,
+        label=None,
     ):
         Base.__init__(self, label=label)
         self.heading = heading
@@ -212,7 +217,7 @@ class Metric(Base):
             value = round(self.value, self.float_precision)
         else:
             value = self.value
-            
+
         return f"""
             <div class="metric">
                 <p>{self.heading}</p>
