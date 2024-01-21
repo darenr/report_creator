@@ -109,6 +109,7 @@ with rc.ReportCreator("RandomForest Classifier Report") as report:
             label="Classification Metrics",
         ),
         rc.Separator(),
+        rc.InfoBox("hello world", label="Info Box"),
         rc.Select(
             rc.DataTable(df_cancer, label="Cancer Data"),
             rc.DataTable(df_yhat, label="Predictions vs Actual"),
