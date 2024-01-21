@@ -180,6 +180,36 @@ class Collapse(Base):
 ##############################
 
 
+class Widget(Base):
+    # This component is used to add a widget to the report, a widget is any
+    # component that supports the _repr_html_ method, such as a plotly figure,
+    # anything written for Jupyter. sklearn Pipelines for example.
+    def __init__(self, widget, label=None):
+        Base.__init__(self, label=label)
+        if not hasattr(widget, "_repr_html_"):
+            raise ValueError(
+                f"Expected widget to have a _repr_html_ method, got {type(widget)} instead"
+            )
+        self.widget = widget
+
+        logging.info(f"Widget {type(self.widget)}")
+
+    @strip_whitespace
+    def to_html(self):
+        html = "<div class='report-widget'>"
+
+        if self.label:
+            html += f"<report-caption>{self.label}</report-caption>"
+
+        html += self.widget._repr_html_()
+
+        html += "</div>"
+        return html
+
+
+##############################
+
+
 class HTML(Base):
     def __init__(self, html: str, label=None):
         Base.__init__(self, label=label)
@@ -333,7 +363,7 @@ class Plot(Base):
     def __init__(self, fig, label=None):
         Base.__init__(self, label=label)
         self.fig = fig
-        if hasattr(fig, 'get_figure'):
+        if hasattr(fig, "get_figure"):
             self.fig = fig.get_figure()
         logging.info(f"Plot")
 

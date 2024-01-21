@@ -4,28 +4,25 @@ import warnings
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import scikitplot as skplt
 import plotly.express as px
-
-from sklearn import datasets
-from sklearn.linear_model import LogisticRegression
+import scikitplot as skplt
+from sklearn import datasets, set_config
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (
     accuracy_score,
     balanced_accuracy_score,
-    classification_report,
-    confusion_matrix,
     f1_score,
-    precision_recall_fscore_support,
     precision_score,
     recall_score,
-    roc_auc_score,
-    roc_curve,
 )
 from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 
 warnings.filterwarnings("ignore")
 
 logging.basicConfig(level=logging.INFO)
+
 
 import report_creator as rc
 
@@ -44,11 +41,20 @@ X_train, X_test, Y_train, Y_test = train_test_split(
     X, Y, train_size=0.80, test_size=0.20, stratify=Y, random_state=1
 )
 
-log_reg = LogisticRegression(random_state=42)
+steps = [
+    ("standard_scaler", StandardScaler()),
+    (
+        "classifier",
+        RandomForestClassifier(
+            n_estimators=100, max_samples=0.3, oob_score=True, random_state=42
+        ),
+    ),
+]
+pipeline = Pipeline(steps)
 
-log_reg.fit(X_train, Y_train)
+pipeline.fit(X_train, Y_train)
 
-Y_preds = log_reg.predict(X_test)
+Y_preds = pipeline.predict(X_test)
 
 # make a dataframe from y_preds and y_test
 df_yhat = pd.DataFrame(data={"predictions": Y_preds, "actual": Y_test})
@@ -64,11 +70,12 @@ fig_confusion_matrix = skplt.metrics.plot_confusion_matrix(
 
 
 fig_roc_curve = skplt.metrics.plot_roc_curve(
-    Y_test, log_reg.predict_proba(X_test), title="ROC Curve", figsize=(12, 6)
+    Y_test, pipeline.predict_proba(X_test), title="ROC Curve", figsize=(12, 6)
 )
 
+fi = px.bar(x=(cancer.feature_names), y=(pipeline["classifier"].feature_importances_))
 
-with rc.ReportCreator("LogisticRegression Report") as report:
+with rc.ReportCreator("RandomForest Classifier Report") as report:
     view = rc.Block(
         rc.Collapse(
             rc.Python(open(__file__, "r").read()),
@@ -77,7 +84,7 @@ with rc.ReportCreator("LogisticRegression Report") as report:
         rc.Group(
             rc.Metric(
                 heading="Train Accuracy",
-                value=log_reg.score(X_train, Y_train),
+                value=pipeline.score(X_train, Y_train),
             ),
             rc.Metric(
                 heading="Test Accuracy",
@@ -108,6 +115,10 @@ with rc.ReportCreator("LogisticRegression Report") as report:
         ),
         rc.Plot(fig_confusion_matrix, label="Confusion Matrix"),
         rc.Plot(fig_roc_curve, label="ROC Curve"),
+        rc.Separator(),
+        rc.Widget(pipeline, label="Pipeline Model"),
+        rc.Widget(fi, label="feature_importances"),
+        rc.Widget(df_cancer, label="test"),
     )
 
     # save the report, light, dark, or auto mode (follow browser settings)

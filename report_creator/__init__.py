@@ -23,5 +23,6 @@ from .report_creator import (
     Select,
     Separator,
     Text,
+    Widget,
     Yaml,
 )
