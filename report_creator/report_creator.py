@@ -365,7 +365,7 @@ class Plot(Base):
         self.fig = fig
         if hasattr(fig, "get_figure"):
             self.fig = fig.get_figure()
-        logging.info(f"Plot")
+        logging.info(f"Plot: {type(self.fig)} {self.label=}")
 
     @strip_whitespace
     def to_html(self) -> str:
@@ -468,7 +468,6 @@ class Select(Base):
         # assemble the button bar for the tabs
         html += """<div class="tab">"""
         for i, component in enumerate(self.components):
-            logging.info(f"creating tab: {component.label}")
             extra = "defaultOpen" if i == 0 else ""
             html += f"""<button class="tablinks {extra}" onclick="openTab(event, '{component.label}')">{component.label}</button>"""
         html += """</div>"""
