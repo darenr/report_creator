@@ -214,13 +214,15 @@
     /* Style the tab */
     .tab {
       overflow: hidden;
-      background-color: black;
+      border-bottom: 3px solid var(--button-hover);
     }
 
     /* Style the buttons that are used to open the tab content */
     .tab button {
-      background: black !important;
-      color: white;
+      font-weight: normal;
+
+      background: var(--background-body) !important;
+      color: var(--text-muted);
 
       float: left;
 
@@ -234,29 +236,17 @@
     }
 
     .tab button:hover {
-      background: var(--border) !important;
-      color: black;
-      border: none !important;
-      outline: none !important;
-      border-radius: 0 !important;
-      border-style: none !important;
-      box-shadow: none !important;
+      color: var(--text-bright);
     }
 
     .tab button.active {
-      background: var(--focus) !important;
-      color: var(--background);
-      border: none !important;
-      outline: none !important;
-      border-radius: 0 !important;
-      border-style: none !important;
-      box-shadow: none !important;
+      background: var(--button-hover) !important;
+      color: var(--text-main);
+      border-top-right-radius: 0.25em;
+      border-top-left-radius: 0.25em;
+      font-weight: bold;
     }
 
-    .tab button:focus {
-      background: var(--focus) !important;
-      color: var(--background);
-    }
 
     /* Style the tab content */
     .tabcontent {

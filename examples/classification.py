@@ -118,7 +118,6 @@ with rc.ReportCreator("RandomForest Classifier Report") as report:
         rc.Separator(),
         rc.Widget(pipeline, label="Pipeline Model"),
         rc.Widget(fi, label="feature_importances"),
-        rc.Widget(df_cancer, label="test"),
     )
 
     # save the report, light, dark, or auto mode (follow browser settings)
