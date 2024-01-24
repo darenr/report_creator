@@ -13,7 +13,6 @@ from .report_creator import (
     Group,
     Html,
     Image,
-    InfoBox,
     Json,
     Markdown,
     Metric,

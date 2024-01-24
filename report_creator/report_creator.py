@@ -64,40 +64,6 @@ class Base(ABC):
 ##############################
 
 
-class InfoBox(Base):
-    def __init__(self, text: str, format="plaintext", label=None):
-        Base.__init__(self, label=label)
-        if format not in ["plaintext", "code", "markdown"]:
-            raise ValueError(
-                f"Expected format to be one of 'plaintext', 'markdown;, 'code', got {format} instead"
-            )
-        self.text = text.strip()
-        self.format = format
-
-        logging.info(f"InfoBox {len(self.text)} characters, format: {self.format}")
-
-    @strip_whitespace
-    def to_html(self):
-        html = f"<fieldset>"
-
-        if self.label:
-            html += f"<legend>{self.label}</legend>"
-
-        if self.format == "markdown":
-            html += f"{markdown_to_html(self.text)}"
-        elif self.format == "code":
-            html += f"<pre><code>{self.text}</code></pre>"
-        else:
-            html += f"<b>{self.text}</b>"
-
-        html += f"<br /></fieldset>"
-
-        return html
-
-
-##############################
-
-
 class Block(Base):
     # vertically stacked compoments
     def __init__(self, *components: Base):
@@ -265,6 +231,7 @@ class DataTable(Base):
         df: pd.DataFrame,
         label=None,
         max_rows: int = -1,
+        float_precision: int = 3,
         **kwargs,
     ):
         Base.__init__(self, label=label)
@@ -277,6 +244,7 @@ class DataTable(Base):
         if label:
             styler.set_caption(label)
 
+        styler.format(precision=float_precision)
         styler.hide(axis="index")
         styler.set_table_attributes(
             'class="remove-all-styles fancy_table display row-border hover responsive nowrap" cellspacing="0" style="width: 100%;"'

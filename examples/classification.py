@@ -18,6 +18,7 @@ from sklearn.metrics import (
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import PolynomialFeatures, StandardScaler
+from sklearn.metrics import classification_report
 
 warnings.filterwarnings("ignore")
 
@@ -59,7 +60,6 @@ Y_preds = pipeline.predict(X_test)
 # make a dataframe from y_preds and y_test
 df_yhat = pd.DataFrame(data={"predictions": Y_preds, "actual": Y_test})
 
-
 fig_confusion_matrix = skplt.metrics.plot_confusion_matrix(
     Y_test,
     Y_preds,
@@ -74,6 +74,12 @@ fig_roc_curve = skplt.metrics.plot_roc_curve(
 )
 
 fi = px.bar(x=(cancer.feature_names), y=(pipeline["classifier"].feature_importances_))
+
+
+report = classification_report(Y_test, Y_preds, output_dict=True)
+df_classification_report = pd.DataFrame(report).transpose()
+
+print(df_classification_report)
 
 with rc.ReportCreator("RandomForest Classifier Report") as report:
     view = rc.Block(
