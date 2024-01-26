@@ -73,13 +73,8 @@ fig_roc_curve = skplt.metrics.plot_roc_curve(
     Y_test, pipeline.predict_proba(X_test), title="ROC Curve", figsize=(12, 6)
 )
 
-fi = px.bar(x=(cancer.feature_names), y=(pipeline["classifier"].feature_importances_))
+fi = px.bar(x=(cancer.feature_names), y=(pipeline["classifier"].feature_importances_)).update_xaxes(categoryorder="total descending")
 
-
-report = classification_report(Y_test, Y_preds, output_dict=True)
-df_classification_report = pd.DataFrame(report).transpose()
-
-print(df_classification_report)
 
 with rc.ReportCreator("RandomForest Classifier Report") as report:
     view = rc.Block(
