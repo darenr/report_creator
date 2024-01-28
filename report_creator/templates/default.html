@@ -5,13 +5,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>${title}</title>
+  <title>{{title}}</title>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/${mode}.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/{{mode}}.css" />
 
   <!-- see https://highlightjs.org/examples -->
   <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/google-${mode}.css" />
+    href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/google-{{mode}}.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
@@ -328,14 +328,17 @@
 
 <body>
   <header>
-    <h1>${title}</h1>
+    <h1>{{title}}</h1>
   </header>
 
-  <div class="report-description"><p>${description}</p></div>
+  {% if description %}
+  <div class="report-description"><p>{{description}}</p></div>
+  {% endif %}
+  
 
   <hr />
 
-  <div class="container">${body}</div>
+  <div class="container">{{body}}</div>
 
   <script>
     function openTab(evt, tabName) {

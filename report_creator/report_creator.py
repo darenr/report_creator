@@ -5,14 +5,14 @@ import logging
 import os
 import traceback
 from abc import ABC, abstractmethod
-from string import Template
-from typing import Dict, List, Sequence, Tuple, Union, Optional
+from typing import Dict, List, Optional, Sequence, Tuple, Union
 
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import yaml
+from jinja2 import Environment, FileSystemLoader, Template
 from markdown import markdown
 from markupsafe import escape
 
@@ -553,10 +553,13 @@ class ReportCreator:
         except ValueError:
             body = f"""<pre>{traceback.format_exc()}</pre>"""
 
+        file_loader = FileSystemLoader("report_creator/templates")
+        template = Environment(loader=file_loader).get_template("default.html")
+
         with open(f"{current_path}/templates/default.html", "r") as f:
             t = Template(f.read())
             with open(path, "w") as f:
-                html = t.substitute(
+                html = template.render(
                     title=self.title or "Report",
                     description=self.description or "",
                     body=body,

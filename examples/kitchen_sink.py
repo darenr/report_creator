@@ -36,7 +36,9 @@ if __name__ == "__main__":
 
     # begin the use of the report_creator package
 
-    with rc.ReportCreator(title="Kitchen Sink Report", description="Show every component") as report:
+    with rc.ReportCreator(
+        title="Kitchen Sink Report", description="Show every component"
+    ) as report:
         view = rc.Block(
             rc.Collapse(
                 rc.Python(example_python, label="kitchen_sink.py"),
