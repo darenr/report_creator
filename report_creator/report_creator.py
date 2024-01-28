@@ -557,7 +557,6 @@ class ReportCreator:
         template = Environment(loader=file_loader).get_template("default.html")
 
         with open(f"{current_path}/templates/default.html", "r") as f:
-            t = Template(f.read())
             with open(path, "w") as f:
                 html = template.render(
                     title=self.title or "Report",
