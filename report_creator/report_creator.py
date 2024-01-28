@@ -6,7 +6,7 @@ import os
 import traceback
 from abc import ABC, abstractmethod
 from string import Template
-from typing import Dict, List, Sequence, Tuple, Union
+from typing import Dict, List, Sequence, Tuple, Union, Optional
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -53,7 +53,7 @@ def strip_whitespace(func):
 
 
 class Base(ABC):
-    def __init__(self, label: str = None):
+    def __init__(self, label: Optional[str] = None):
         self.label = label
 
     @abstractmethod
@@ -90,7 +90,7 @@ class Block(Base):
 
 class Group(Base):
     # horizontally stacked compoments
-    def __init__(self, *components: Base, label=None):
+    def __init__(self, *components: Base, label: Optional[str] = None):
         Base.__init__(self, label=label)
         self.components = components
         logging.info(f"Group: {len(self.components)} components {label=}")
@@ -127,7 +127,7 @@ class Group(Base):
 
 
 class Collapse(Base):
-    def __init__(self, *components: Base, label: str = None):
+    def __init__(self, *components: Base, label: Optional[str] = None):
         Base.__init__(self, label=label)
         self.components = components
         logging.info(f"Collapse {len(self.components)} components, {label=}")
@@ -150,7 +150,7 @@ class Widget(Base):
     # This component is used to add a widget to the report, a widget is any
     # component that supports the _repr_html_ method, such as a plotly figure,
     # anything written for Jupyter. sklearn Pipelines for example.
-    def __init__(self, widget, label=None):
+    def __init__(self, widget, label: Optional[str] = None):
         Base.__init__(self, label=label)
         if not hasattr(widget, "_repr_html_"):
             raise ValueError(
@@ -177,7 +177,7 @@ class Widget(Base):
 
 
 class HTML(Base):
-    def __init__(self, html: str, label=None):
+    def __init__(self, html: Optional[str], label=None):
         Base.__init__(self, label=label)
         self.html = html
 
@@ -198,7 +198,7 @@ class Metric(Base):
         value: Union[str, int, float],
         unit=None,
         float_precision=3,
-        label=None,
+        label: Optional[str] = None,
     ):
         Base.__init__(self, label=label)
         self.heading = heading
@@ -225,11 +225,26 @@ class Metric(Base):
 ##############################
 
 
+class Table(Widget):
+    def __init__(
+        self,
+        df: pd.DataFrame,
+        label: Optional[str] = None,
+        max_rows: int = -1,
+        float_precision: int = 3,
+        **kwargs,
+    ):
+        Widget.__init__(self, df, label=label)
+
+
+##############################
+
+
 class DataTable(Base):
     def __init__(
         self,
         df: pd.DataFrame,
-        label=None,
+        label: Optional[str] = None,
         max_rows: int = -1,
         float_precision: int = 3,
         **kwargs,
@@ -261,7 +276,7 @@ class DataTable(Base):
 
 
 class Html(Base):
-    def __init__(self, html: str, css: str = None, label=None):
+    def __init__(self, html: str, css: str = None, label: Optional[str] = None):
         Base.__init__(self, label=label)
         self.html = html
         self.css = css
@@ -280,7 +295,7 @@ class Html(Base):
 
 
 class Image(Base):
-    def __init__(self, img: str, link: str = None, label=None):
+    def __init__(self, img: str, link: str = None, label: Optional[str] = None):
         Base.__init__(self, label=label or img)
         self.img = img
         self.link = link or img
@@ -302,7 +317,7 @@ class Image(Base):
 
 
 class Markdown(Base):
-    def __init__(self, text: str, label=None):
+    def __init__(self, text: str, label: Optional[str] = None):
         Base.__init__(self, label=label)
         self.text = text
         logging.info(f"Markdown {len(self.text)} characters")
@@ -328,7 +343,7 @@ class Plot(Base):
     # see https://plotly.com/python/interactive-html-export/
     # for how to make interactive
 
-    def __init__(self, fig, label=None):
+    def __init__(self, fig, label: Optional[str] = None):
         Base.__init__(self, label=label)
         self.fig = fig
         if hasattr(fig, "get_figure"):
@@ -373,7 +388,7 @@ class Plot(Base):
 
 
 class Separator(Base):
-    def __init__(self, label: str = None):
+    def __init__(self, label: Optional[str] = None):
         Base.__init__(self, label=label)
         logging.info(f"Separator")
 
@@ -389,7 +404,7 @@ class Separator(Base):
 
 
 class Text(Base):
-    def __init__(self, text: str, label=None):
+    def __init__(self, text: str, label: Optional[str] = None):
         Base.__init__(self, label=label)
         self.text = text
         logging.info(f"Text {len(self.text)} characters")
@@ -415,15 +430,15 @@ class Text(Base):
 
 
 class Select(Base):
-    def __init__(self, *components: Base, label: str = None):
+    def __init__(self, blocks: List[Base], label: Optional[str] = None):
         Base.__init__(self, label=label)
-        self.components = components
-        for component in self.components:
-            if not component.label:
-                raise ValueError("All components must have a label to use in a Select")
+        self.blocks = blocks
+        for blocks in self.blocks:
+            if not blocks.label:
+                raise ValueError("All blocks must have a label to use in a Select")
 
         logging.info(
-            f"Select {len(self.components)} components: {', '.join([c.label for c in self.components])}"
+            f"Select {len(self.blocks)} comblocksponents: {', '.join([c.label for c in self.blocks])}"
         )
 
     @strip_whitespace
@@ -435,15 +450,15 @@ class Select(Base):
 
         # assemble the button bar for the tabs
         html += """<div class="tab">"""
-        for i, component in enumerate(self.components):
+        for i, block in enumerate(self.blocks):
             extra = "defaultOpen" if i == 0 else ""
-            html += f"""<button class="tablinks {extra}" onclick="openTab(event, '{component.label}')">{component.label}</button>"""
+            html += f"""<button class="tablinks {extra}" onclick="openTab(event, '{block.label}')">{block.label}</button>"""
         html += """</div>"""
 
         # assemble the tab contents
-        for component in self.components:
-            html += f"""<div id="{component.label}" class="tabcontent">"""
-            html += component.to_html()
+        for block in self.blocks:
+            html += f"""<div id="{block.label}" class="tabcontent">"""
+            html += block.to_html()
             html += """</div>"""
 
         return html
@@ -453,7 +468,7 @@ class Select(Base):
 
 
 class Language(Base):
-    def __init__(self, text: str, language: str, label=None):
+    def __init__(self, text: str, language: str, label: Optional[str] = None):
         Base.__init__(self, label=label)
         self.text = text
         self.language = language
@@ -473,7 +488,7 @@ class Language(Base):
 
 
 class Python(Language):
-    def __init__(self, code: str, label=None):
+    def __init__(self, code: str, label: Optional[str] = None):
         Language.__init__(self, escape(code), "python", label=label)
 
 
@@ -481,7 +496,7 @@ class Python(Language):
 
 
 class Yaml(Language):
-    def __init__(self, data: Union[Dict, List], label=None):
+    def __init__(self, data: Union[Dict, List], label: Optional[str] = None):
         Language.__init__(
             self,
             yaml.dump(data, indent=2),
@@ -494,7 +509,7 @@ class Yaml(Language):
 
 
 class Json(Language):
-    def __init__(self, data: Union[Dict, List], label=None):
+    def __init__(self, data: Union[Dict, List], label: Optional[str] = None):
         Language.__init__(
             self,
             json.dumps(data, indent=2),
@@ -506,12 +521,10 @@ class Json(Language):
 ##############################
 
 
-##############################
-
-
 class ReportCreator:
-    def __init__(self, title: str):
+    def __init__(self, title: str, description: Optional[str] = None):
         self.title = title
+        self.description = description
         logging.info(f"ReportCreator {self.title}")
 
     def __enter__(self):
@@ -544,7 +557,8 @@ class ReportCreator:
             t = Template(f.read())
             with open(path, "w") as f:
                 html = t.substitute(
-                    title=self.title,
+                    title=self.title or "Report",
+                    description=self.description or "",
                     body=body,
                     mode=mode,
                 )

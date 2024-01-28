@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
     # begin the use of the report_creator package
 
-    with rc.ReportCreator("Kitchen Sink Report") as report:
+    with rc.ReportCreator(title="Kitchen Sink Report", description="Show every component") as report:
         view = rc.Block(
             rc.Collapse(
                 rc.Python(example_python, label="kitchen_sink.py"),
@@ -73,11 +73,6 @@ if __name__ == "__main__":
             rc.Text(
                 example_text,
                 label="Ready Player One",
-            ),
-            rc.InfoBox(
-                "**Warning** *You’ve performed this action too many times, please try again later.*",
-                format="markdown",
-                label="InfoBox",
             ),
             rc.Group(
                 rc.Yaml(
@@ -119,22 +114,27 @@ if __name__ == "__main__":
             ),
             rc.Separator(),
             rc.Select(
-                rc.DataTable(px.data.iris(), label="Iris Petals", index=False),
-                rc.DataTable(
-                    px.data.election(),
-                    label="2013 Montreal Election",
-                    index=False,
-                ),
-                rc.DataTable(
-                    px.data.medals_long(),
-                    label="Olympic Speed Skating",
-                    index=False,
-                ),
-                rc.DataTable(
-                    px.data.wind(),
-                    label="Wind Intensity",
-                    index=False,
-                ),
+                blocks=[
+                    rc.DataTable(px.data.iris(), label="Iris Petals", index=False),
+                    rc.DataTable(
+                        px.data.election(),
+                        label="2013 Montreal Election",
+                        index=False,
+                    ),
+                    rc.DataTable(
+                        px.data.medals_long(),
+                        label="Olympic Speed Skating",
+                        index=False,
+                    ),
+                    rc.DataTable(
+                        px.data.wind(),
+                        label="Wind Intensity",
+                        index=False,
+                    ),
+                    rc.Table(
+                        px.data.wind().describe(), label="Wind Description", index=False
+                    ),
+                ],
                 label="Tab Group of Data Tables",
             ),
             rc.Separator(),

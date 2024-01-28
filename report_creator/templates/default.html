@@ -162,6 +162,11 @@
       padding-left: 15px !important;
     }
 
+    header h1 {
+      font-size: 2.05em;
+      font-weight: bold;
+    }
+
     report-caption {
       display: block;
       margin-top: 0.5em;
@@ -309,7 +314,6 @@
       display: block;
       max-width: -moz-fit-content;
       max-width: fit-content;
-      margin: 0 auto;
       overflow-x: auto;
       white-space: nowrap;
       border: none;
@@ -319,7 +323,6 @@
       font-size: 0.8em;
       color: var(--text-muted);
     }
-
   </style>
 </head>
 
@@ -327,6 +330,8 @@
   <header>
     <h1>${title}</h1>
   </header>
+
+  <div class="report-description"><p>${description}</p></div>
 
   <hr />
 

@@ -73,7 +73,9 @@ fig_roc_curve = skplt.metrics.plot_roc_curve(
     Y_test, pipeline.predict_proba(X_test), title="ROC Curve", figsize=(12, 6)
 )
 
-fi = px.bar(x=(cancer.feature_names), y=(pipeline["classifier"].feature_importances_)).update_xaxes(categoryorder="total descending")
+fi = px.bar(
+    x=(cancer.feature_names), y=(pipeline["classifier"].feature_importances_)
+).update_xaxes(categoryorder="total descending")
 
 
 with rc.ReportCreator("RandomForest Classifier Report") as report:
@@ -111,8 +113,10 @@ with rc.ReportCreator("RandomForest Classifier Report") as report:
         ),
         rc.Separator(),
         rc.Select(
-            rc.DataTable(df_cancer, label="Cancer Data"),
-            rc.DataTable(df_yhat, label="Predictions vs Actual"),
+            blocks=[
+                rc.DataTable(df_cancer, label="Cancer Data"),
+                rc.DataTable(df_yhat, label="Predictions vs Actual"),
+            ]
         ),
         rc.Plot(fig_confusion_matrix, label="Confusion Matrix"),
         rc.Plot(fig_roc_curve, label="ROC Curve"),

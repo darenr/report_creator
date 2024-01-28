@@ -9,6 +9,7 @@ from .report_creator import (
     Base,
     Block,
     Collapse,
+    Table,
     DataTable,
     Group,
     Html,
