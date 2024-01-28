@@ -533,7 +533,7 @@ class ReportCreator:
     def __exit__(self, exc_type, exc_value, exc_traceback):
         pass
 
-    def save(self, view: Base, path: str, format=True, mode: str = "light") -> None:
+    def save(self, view: Base, path: str, prettify_html=True, mode: str = "light") -> None:
         if not isinstance(view, (Block, Group)):
             raise ValueError(
                 f"Expected view to be either Block, or Group object, got {type(view)} instead"
@@ -553,26 +553,25 @@ class ReportCreator:
         except ValueError:
             body = f"""<pre>{traceback.format_exc()}</pre>"""
 
-        file_loader = FileSystemLoader("report_creator/templates")
+        file_loader = FileSystemLoader("templates")
         template = Environment(loader=file_loader).get_template("default.html")
 
-        with open(f"{current_path}/templates/default.html", "r") as f:
-            with open(path, "w") as f:
-                html = template.render(
-                    title=self.title or "Report",
-                    description=self.description or "",
-                    body=body,
-                    mode=mode,
-                )
-                if format:
-                    try:
-                        # if beautifulsoup4 is installed we'll use it to prettify the generated html
-                        from bs4 import BeautifulSoup as bs
+        with open(path, "w") as f:
+            html = template.render(
+                title=self.title or "Report",
+                description=self.description or "",
+                body=body,
+                mode=mode,
+            )
+            if prettify_html:
+                try:
+                    # if beautifulsoup4 is installed we'll use it to prettify the generated html
+                    from bs4 import BeautifulSoup as bs
 
-                        soup = bs(html, features="lxml")
-                        f.write(soup.prettify())
-                    except ImportError:
-                        f.write(html)
-
-                else:
+                    soup = bs(html, features="lxml")
+                    f.write(soup.prettify())
+                except ImportError:
                     f.write(html)
+
+            else:
+                f.write(html)
