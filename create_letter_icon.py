@@ -22,9 +22,9 @@ def svg_to_base64_datauri(svg_contents: str):
     return "data:image/svg+xml;base64," + base64_encoded_svg_contents.decode()
 
 
-def create_word_icon(label: str, width: int = 150):
-    match = re.findall(r"(^[a-zA-Z]{1}).*?(\d+[a-z]{1})", label)
-    icon_text = ''.join(match[0] if match else [label[0]])
+def create_word_icon(label: str, width: int = 150, return_as_datauri=True):
+    match = re.findall(r"(^[a-zA-Z]{1}).*?(\d+[a-z]?)", label)
+    icon_text = "".join(match[0] if match else [label[0]])
     icon_color, text_color = random_color_generator(label)
     cx = width / 2
     cy = width / 2
@@ -54,12 +54,19 @@ def create_word_icon(label: str, width: int = 150):
     )
 
     icon_svg = t.substitute(**locals())
-    return svg_to_base64_datauri(icon_svg)
+    if return_as_datauri:
+        return svg_to_base64_datauri(icon_svg)
+    else:
+        return icon_svg
 
 
 if __name__ == "__main__":
     datauri = create_word_icon(sys.argv[1] if 1 < len(sys.argv) else "H")
-    print('Example usages:')
+    print("Example usages:")
     print(f'  or <img src="{datauri}" />')
     print('   or create_word_icon.py "Hello" > hello.svg')
     print("   or paste the string into the browser address bar")
+
+    for test in ["Llama2-7b", "Mistral-7b", "Code-LLama", "phi1", "JAIS"]:
+        with open(f"{test}.svg", "w") as f:
+            f.write(create_word_icon(test, return_as_datauri=False))
