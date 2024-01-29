@@ -1,5 +1,5 @@
 from string import Template
-import random
+import random, sys
 
 
 def random_color_generator(word: str):
@@ -9,8 +9,8 @@ def random_color_generator(word: str):
     g = random.randint(20, 235)
     b = random.randint(20, 235)
 
-    luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; # per ITU-R BT.709
-    text_color = "black" if luma > 160 else "white"
+    text_color = "black" if (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.5 else "white"
+
     return f"#{r:02x}{g:02x}{b:02x}", text_color
 
 
@@ -22,7 +22,6 @@ def create_icon(label: str, width: int = 150):
 
     t = Template(
         """
-
         <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="${width}" height="${width}">
 
             <circle cx="${cx}" cy="${cy}" r="${r}" fill="${icon_color}" />
@@ -35,9 +34,6 @@ def create_icon(label: str, width: int = 150):
                 text-anchor="middle">
                 ${label}
             </text>   
-
-
-             
         </svg>
     """.strip()
     )
@@ -56,4 +52,5 @@ def create_icon(label: str, width: int = 150):
         f.write(icon_svg)
 
 
-create_icon("Mistral")
+if __name__ == "__main__":
+    create_icon(sys.argv[1])
