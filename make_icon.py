@@ -5,9 +5,9 @@ import random, sys
 def random_color_generator(word: str):
     seed = sum([ord(c) for c in word]) % 32768
     random.seed(seed)
-    r = random.randint(20, 235)
-    g = random.randint(20, 235)
-    b = random.randint(20, 235)
+    r = random.randint(10, 245)
+    g = random.randint(10, 245)
+    b = random.randint(10, 245)
 
     text_color = "black" if (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.5 else "white"
 
