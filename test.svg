@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="150" height="150">
+
+            <circle cx="75.0" cy="75.0" r="75.0" fill="#bd3276" />
+            <text x="50%" y="50%" 
+                alignment-baseline="middle" 
+                fill="white" 
+                font-size="150%"
+                font-family="monospace"
+                font-weight="bold" 
+                text-anchor="middle">
+                Mistral
+            </text>   
+
+
+             
+        </svg>

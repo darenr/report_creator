@@ -533,7 +533,9 @@ class ReportCreator:
     def __exit__(self, exc_type, exc_value, exc_traceback):
         pass
 
-    def save(self, view: Base, path: str, prettify_html=True, mode: str = "light") -> None:
+    def save(
+        self, view: Base, path: str, prettify_html=True, mode: str = "light"
+    ) -> None:
         if not isinstance(view, (Block, Group)):
             raise ValueError(
                 f"Expected view to be either Block, or Group object, got {type(view)} instead"
