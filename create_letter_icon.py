@@ -1,6 +1,7 @@
 import base64
 import random
 import sys
+import re
 from string import Template
 
 
@@ -22,12 +23,13 @@ def svg_to_base64_datauri(svg_contents: str):
 
 
 def create_word_icon(label: str, width: int = 150):
-    letter = label[0].upper()
-    icon_color, text_color = random_color_generator(letter)
+    match = re.findall(r"(^[a-zA-Z]{1}).*?(\d+[a-z]{1})", label)
+    icon_text = ''.join(match[0] if match else [label[0]])
+    icon_color, text_color = random_color_generator(label)
     cx = width / 2
     cy = width / 2
     r = width / 2
-    fs = int(r / 15)
+    fs = int(r / 25)
 
     t = Template(
         """
@@ -46,7 +48,7 @@ def create_word_icon(label: str, width: int = 150):
             </style>
 
             <circle cx="${cx}" cy="${cy}" r="${r}" fill="${icon_color}" />
-            <text x="50%" y="50%" fill="${text_color}">${letter}</text>   
+            <text x="50%" y="50%" fill="${text_color}">${icon_text}</text>   
         </svg>
     """.strip()
     )
