@@ -3,7 +3,10 @@ import io
 import json
 import logging
 import os
+import random
+import re
 import traceback
+
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional, Sequence, Tuple, Union
 
@@ -50,6 +53,40 @@ def strip_whitespace(func):
             return result
 
     return wrapper
+
+
+def random_color_generator(word: str) -> Tuple[str, str]:
+    """returns auto selected (background_color, text_color) as tuple"""
+    seed = sum([ord(c) for c in word]) % 13
+    random.seed(seed)  # must be deterministic
+    r = random.randint(10, 245)
+    g = random.randint(10, 245)
+    b = random.randint(10, 245)
+
+    background_color = f"#{r:02x}{g:02x}{b:02x}"
+    text_color = "black" if (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.5 else "white"
+
+    return background_color, text_color
+
+
+def svg_to_base64_datauri(svg_contents: str) -> str:
+    """convert svg to base64 datauri"""
+    base64_encoded_svg_contents = base64.b64encode(svg_contents.encode())
+    return "data:image/svg+xml;base64," + base64_encoded_svg_contents.decode()
+
+
+def convert_imgurl_to_datauri(imgurl: str) -> str:
+    """convert url to base64 datauri"""
+    import requests
+    from PIL import Image
+    from io import BytesIO
+
+    response = requests.get(imgurl)
+    img = Image.open(BytesIO(response.content))
+    buffered = BytesIO()
+    img.save(buffered, format="JPEG")
+    img_str = base64.b64encode(buffered.getvalue())
+    return f"data:image/jpeg;base64,{img_str.decode('utf-8')}"
 
 
 class Base(ABC):
@@ -176,21 +213,6 @@ class Widget(Base):
 ##############################
 
 
-class HTML(Base):
-    def __init__(self, html: Optional[str], label=None):
-        Base.__init__(self, label=label)
-        self.html = html
-
-        logging.info(f"HTML {len(self.html)} bytes")
-
-    @strip_whitespace
-    def to_html(self):
-        return self.html
-
-
-##############################
-
-
 class Metric(Base):
     def __init__(
         self,
@@ -311,6 +333,8 @@ class Image(Base):
         html += "</figure></div>"
 
         return html
+
+
 
 
 ##############################
@@ -527,6 +551,40 @@ class ReportCreator:
         self.description = description
         logging.info(f"ReportCreator {self.title}")
 
+        icon_text = self.title[0].upper()
+        icon_color, text_color = random_color_generator(self.title)
+        
+        width = 125
+
+        cx = width / 2
+        cy = width / 2
+        r = width / 2
+        fs = int(r / 15)
+
+        svg_str = f"""
+            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="{width}" height="{width}">
+
+                <style>
+                    text {{
+                        font-size: {fs}em;
+                        font-family: lucida console, Fira Mono, monospace;
+                        text-anchor: middle;
+                        stroke-width: 1px;
+                        font-weight: bold;
+                        alignment-baseline: central;
+                    }}
+
+                </style>
+
+                <circle cx="{cx}" cy="{cy}" r="{r}" fill="{icon_color}" />
+                <text x="50%" y="50%" fill="{text_color}">{icon_text}</text>   
+            </svg>
+        """.strip()
+
+        self.header_datauri = svg_to_base64_datauri(svg_str)
+
+        
+
     def __enter__(self):
         return self
 
@@ -564,6 +622,7 @@ class ReportCreator:
                 description=self.description or "",
                 body=body,
                 mode=mode,
+                header_datauri=self.header_datauri
             )
             if prettify_html:
                 try:

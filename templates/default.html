@@ -162,9 +162,26 @@
       padding-left: 15px !important;
     }
 
+    header {
+      align-items: center;
+      display: flex;
+      gap: 25px;
+    }
+
     header h1 {
       font-size: 2.05em;
       font-weight: bold;
+      text-align: left;
+    }
+
+    header header-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    header letter-icon {
+      display: flex;
+      flex-direction: column;      
     }
 
     report-caption {
@@ -186,9 +203,7 @@
       padding-left: 15px;
     }
 
-    header>h1 {
-      text-align: left;
-    }
+
 
     select:not([multiple]):not([size]) {
       padding-right: 1.5rem;
@@ -328,14 +343,17 @@
 
 <body>
   <header>
-    <h1>{{title}}</h1>
+    <div class="letter-icon">
+      <img src="{{header_datauri}}" alt="{{title}}">
+    </div>
+    <div class="header-text">
+      <h1>{{title}}</h1>
+      {% if description %}
+      <div class="report-description"><p>{{description}}</p></div>
+      {% endif %}
+    </div>
   </header>
-
-  {% if description %}
-  <div class="report-description"><p>{{description}}</p></div>
-  {% endif %}
   
-
   <hr />
 
   <div class="container">{{body}}</div>
