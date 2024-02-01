@@ -1,0 +1,46 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Data</title>
+</head>
+
+<body>
+    <button 
+        id="downloadButton" 
+        data-filename="dict.json" 
+        data-type="application/json" 
+        data-blob=`This is a multiline string with punctuation and "quotes",
+        and it even spans
+        multiple lines.`>Download Data</button>
+
+    <script>
+
+        var element = document.getElementById('downloadButton');
+        element.addEventListener('click', function () {
+
+            console.log(element.dataset.type);
+            console.log(element.dataset.filename);
+            console.log(element.dataset.blob);
+
+            var blob = new Blob([element.dataset.blob], { type: element.dataset.type });
+            var url = URL.createObjectURL(blob);
+
+            // Create a temporary 'a' element and trigger a download
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = element.dataset.filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url); // Clean up the URL object
+        });
+
+
+    </script>
+
+
+</body>
+
+</html>
