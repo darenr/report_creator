@@ -4,7 +4,6 @@ import logging
 import pandas as pd
 import plotly.express as px
 import yaml
-import faker
 
 logging.basicConfig(level=logging.INFO)
 
