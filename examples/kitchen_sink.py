@@ -1,15 +1,13 @@
+import report_creator as rc
 import logging
-import math
-from typing import Dict, List, Sequence, Tuple, Union
 
-import numpy as np
 import pandas as pd
 import plotly.express as px
 import yaml
+import faker
 
 logging.basicConfig(level=logging.INFO)
 
-import report_creator as rc
 
 if __name__ == "__main__":
     # set up of example text, plots and dataframes
@@ -54,7 +52,7 @@ if __name__ == "__main__":
                 rc.Metric(
                     heading="Accuracy",
                     value=0.95,
-                    label="Number of correct predictions Total number of predictions",
+                    label="Number of correct predictions by Total number of predictions",
                 ),
                 rc.Metric(
                     heading="Ultimate Answer",
@@ -70,7 +68,13 @@ if __name__ == "__main__":
                     heading="Author",
                     value="Douglas Adams",
                 ),
-                label="Grouped Stats",
+                label="Grouped Metrics",
+            ),
+            rc.MetricGroup(
+                df1,
+                heading="Name",
+                value="Age",
+                label="Metrics Group from DataFrame",
             ),
             rc.Text(
                 example_text,

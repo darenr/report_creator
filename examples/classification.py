@@ -1,24 +1,22 @@
 import logging
 import warnings
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import plotly.express as px
 import scikitplot as skplt
-from sklearn import datasets, set_config
+from sklearn import datasets
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (
     accuracy_score,
     balanced_accuracy_score,
-    classification_report,
     f1_score,
     precision_score,
     recall_score,
 )
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import PolynomialFeatures, StandardScaler
+from sklearn.preprocessing import StandardScaler
 
 warnings.filterwarnings("ignore")
 

@@ -3,19 +3,17 @@ import io
 import json
 import logging
 import os
-import random
 import re
+import random
 import traceback
 
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Sequence, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import matplotlib
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import yaml
-from jinja2 import Environment, FileSystemLoader, Template
+from jinja2 import Environment, FileSystemLoader
 from markdown import markdown
 from markupsafe import escape
 
@@ -67,12 +65,6 @@ def random_color_generator(word: str) -> Tuple[str, str]:
     text_color = "black" if (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.5 else "white"
 
     return background_color, text_color
-
-
-def svg_to_base64_datauri(svg_contents: str) -> str:
-    """convert svg to base64 datauri"""
-    base64_encoded_svg_contents = base64.b64encode(svg_contents.encode())
-    return "data:image/svg+xml;base64," + base64_encoded_svg_contents.decode()
 
 
 def convert_imgurl_to_datauri(imgurl: str) -> str:
@@ -213,6 +205,28 @@ class Widget(Base):
 ##############################
 
 
+class MetricGroup(Base):
+    def __init__(
+        self, df: pd.DataFrame, heading: str, value: str, label: Optional[str] = None
+    ):
+        Base.__init__(self, label=label)
+        assert heading in df.columns, f"heading {heading} not in df"
+        assert value in df.columns, f"value {value} not in df"
+
+        self.g = Group(
+            *[Metric(row[heading], row[value]) for _, row in df.iterrows()], label=label
+        )
+
+        logging.info(f"MetricGroup {len(df)} metrics")
+
+    @strip_whitespace
+    def to_html(self):
+        return self.g.to_html()
+
+
+##############################
+
+
 class Metric(Base):
     def __init__(
         self,
@@ -229,6 +243,9 @@ class Metric(Base):
         self.unit = unit or ""
         logging.info(f"Metric {self.heading} {self.value}")
 
+    def __str__(self) -> str:
+        return f"Metric {self.heading=} {self.value=} {self.unit=} {self.label=}"
+
     @strip_whitespace
     def to_html(self):
         if isinstance(self.value, (float)):
@@ -236,10 +253,15 @@ class Metric(Base):
         else:
             value = self.value
 
+        description = (
+            f"<div class='metric-description'>{self.label}</div>" if self.label else ""
+        )
+
         return f"""
             <div class="metric">
                 <p>{self.heading}</p>
                 <h1>{value}{self.unit}</h1>
+                {description}
             </div>
         """
 
@@ -335,8 +357,6 @@ class Image(Base):
         return html
 
 
-
-
 ##############################
 
 
@@ -414,14 +434,14 @@ class Plot(Base):
 class Separator(Base):
     def __init__(self, label: Optional[str] = None):
         Base.__init__(self, label=label)
-        logging.info(f"Separator")
+        logging.info("Separator")
 
     @strip_whitespace
     def to_html(self):
         if self.label:
             return f"<br /><hr /><report-caption>{self.label}</report-caption>"
         else:
-            return f"<b r/><hr />"
+            return "<b r/><hr />"
 
 
 ##############################
@@ -435,8 +455,6 @@ class Text(Base):
 
     @strip_whitespace
     def to_html(self):
-        title = f"title='{self.label}'" if self.label else ""
-
         formatted_text = "\n\n".join(
             [
                 f"<p class='indented-text-block'>{p.strip()}</p>"
@@ -551,9 +569,10 @@ class ReportCreator:
         self.description = description
         logging.info(f"ReportCreator {self.title}")
 
-        icon_text = self.title[0].upper()
+        match = re.findall(r"[A-Z]", self.title)
+        icon_text = "".join(match[:2]) if match else self.title[0]
         icon_color, text_color = random_color_generator(self.title)
-        
+
         width = 125
 
         cx = width / 2
@@ -561,7 +580,7 @@ class ReportCreator:
         r = width / 2
         fs = int(r / 15)
 
-        svg_str = f"""
+        self.svg_str = f"""
             <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="{width}" height="{width}">
 
                 <style>
@@ -580,10 +599,6 @@ class ReportCreator:
                 <text x="50%" y="50%" fill="{text_color}">{icon_text}</text>   
             </svg>
         """.strip()
-
-        self.header_datauri = svg_to_base64_datauri(svg_str)
-
-        
 
     def __enter__(self):
         return self
@@ -606,14 +621,14 @@ class ReportCreator:
 
         logging.info(f"Saving report to {path} [{mode} mode]")
 
-        current_path = os.path.dirname(os.path.abspath(__file__))
-
         try:
             body = view.to_html()
         except ValueError:
             body = f"""<pre>{traceback.format_exc()}</pre>"""
 
-        file_loader = FileSystemLoader("templates")
+        file_loader = FileSystemLoader(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../templates"
+        )
         template = Environment(loader=file_loader).get_template("default.html")
 
         with open(path, "w") as f:
@@ -622,7 +637,7 @@ class ReportCreator:
                 description=self.description or "",
                 body=body,
                 mode=mode,
-                header_datauri=self.header_datauri
+                header_svg=self.svg_str,
             )
             if prettify_html:
                 try:

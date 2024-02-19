@@ -7,3 +7,4 @@ markdown-checklist
 pyyaml
 plotly-express
 Jinja2
+ruff

@@ -10,6 +10,7 @@ from .report_creator import (
     Block,
     Collapse,
     DataTable,
+    MetricGroup,
     Group,
     Html,
     Image,
