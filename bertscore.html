@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Bert Score Report
+  </title>
+  <link href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css" rel="stylesheet"/>
+  <!-- see https://highlightjs.org/examples -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/google-light.css" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js">
+  </script>
+  <!-- DataTables use builder to add options https://datatables.net/download/ -->
+  <link href="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-html5-2.4.2/cr-1.7.0/r-2.5.0/datatables.min.css" rel="stylesheet"/>
+  <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-html5-2.4.2/cr-1.7.0/r-2.5.0/datatables.min.js">
+  </script>
+  <!--
+
+            variables, for example: style: color: var(--links)
+
+                --background-body
+                --background
+                --background-alt
+                --selection
+                --text-main
+                --text-bright
+                --text-muted
+                --links
+                --focus
+                --border
+                --code
+                --animation-duration
+                --button-hover
+                --scrollbar-thumb
+                --scrollbar-thumb-hover
+                --form-placeholder
+                --form-text
+                --variable
+                --highlight
+                --select-arrow
+
+            https://github.com/kognise/water.css#theming
+        -->
+  <style>
+   :root {
+        --focus: red;
+      }
+
+      input:disabled {
+        opacity: unset;
+      }
+
+      details {
+        background-color: var(--background-body);
+      }
+
+      summary {
+        background-color: var(--background-body);
+        margin-left: -20px !important;
+      }
+
+      /* end water undos */
+
+      block {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        min-width: 0;
+        width: 100%;
+        flex-wrap: nowrap;
+      }
+
+      block-article {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        margin: 10px;
+        flex: 1;
+        align-items: stretch;
+      }
+
+      .group {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        gap: 1em;
+      }
+
+      .group-item {
+        display: flex;
+        min-width: 300px;
+        flex: 1;
+        justify-content: space-between;
+
+        height: auto;
+      }
+
+      .group-content {
+        display: flex;
+        flex-direction: row;
+
+        width: 100%;
+      }
+
+      fieldset {
+        border: 2px solid var(--border);
+        background: var(--background-alt);
+        border-radius: 0.5rem;
+        padding: 15px;
+        color: var(--text-bright);
+        min-height: 100px;
+        margin-top: 25px;
+      }
+
+      fieldset legend {
+        background: var(--background-body);
+        color: var(--text-muted);
+        padding: 0px 25px;
+        font-size: 1.3rem;
+        border-radius: 0.3rem;
+        box-shadow: 0 0 0 2px var(--background-body);
+        margin-left: 25px;
+
+        background: var(--focus) !important;
+        color: var(--background);
+      }
+
+      div.round-bordered {
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        padding: 20px;
+      }
+
+      .metric {
+        padding: 10px;
+        padding-left: 25px;
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        height: 100%;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .metric h1 {
+        margin-top: 0;
+      }
+
+      .metric p {
+        color: var(--text-muted);
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      .block-bordered {
+        border-left: 7px solid var(--focus) !important;
+        padding-left: 15px !important;
+      }
+
+      header {
+        align-items: center;
+        display: flex;
+        gap: 25px;
+      }
+
+      header h1 {
+        font-size: 2.05em;
+        font-weight: bold;
+        text-align: left;
+      }
+
+      header header-text {
+        display: flex;
+        flex-direction: column;
+      }
+
+      header letter-icon {
+        display: flex;
+        flex-direction: column;
+      }
+
+      report-caption {
+        display: block;
+        margin-top: 0.5em;
+        margin-bottom: 1.5em;
+        font-size: 1.5em;
+        font-weight: bold;
+        border-left: 10px solid var(--focus);
+        padding-left: 15px;
+      }
+
+      caption {
+        margin-top: 0.5em;
+        margin-bottom: 1em;
+        font-size: 1.5em;
+        font-weight: bold;
+        border-left: 7px solid var(--focus);
+        padding-left: 15px;
+      }
+
+      select:not([multiple]):not([size]) {
+        padding-right: 1.5rem;
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+
+      body {
+        max-width: 90%;
+        width: 90%;
+        margin: 20px auto;
+        padding-left: 5%;
+        padding-right: 5%;
+
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI,
+          Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans,
+          Helvetica Neue, Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji,
+          sans-serif;
+        line-height: 1.4;
+        word-wrap: break-word;
+        text-rendering: optimizeLegibility;
+      }
+
+      /* Style the tab */
+      .tab {
+        overflow: hidden;
+        border-bottom: 3px solid var(--button-hover);
+      }
+
+      /* Style the buttons that are used to open the tab content */
+      .tab button {
+        font-weight: normal;
+
+        background: var(--background-body) !important;
+        color: var(--text-muted);
+
+        float: left;
+
+        cursor: pointer;
+        transition: 0.1s;
+        margin: 0 !important;
+        border-radius: 0;
+        border: none;
+        outline: none;
+        box-shadow: none !important;
+      }
+
+      .tab button:hover {
+        color: var(--text-bright);
+      }
+
+      .tab button.active {
+        background: var(--button-hover) !important;
+        color: white;
+        border-top-right-radius: 0.25em;
+        border-top-left-radius: 0.25em;
+      }
+
+      /* Style the tab content */
+      .tabcontent {
+        display: none;
+        width: 100%;
+      }
+
+      .indented-text-block {
+        text-indent: 20px;
+      }
+
+      .image-block {
+        flex: 1;
+      }
+
+      .image-block img {
+        height: 500px;
+        object-fit: scale-down;
+      }
+
+      div.plot_wrapper {
+        flex: 1;
+      }
+
+      div.markdown_wrapper {
+        flex: 1;
+      }
+
+      div.markdown_wrapper pre {
+        white-space: pre-wrap;
+      }
+
+      .remove-all-styles {
+        all: unset;
+        display: block;
+      }
+
+      div.dataTables_wrapper {
+        all: unset;
+        min-width: 0;
+        width: 100%;
+      }
+
+      table.dataTable tbody tr {
+        font-weight: normal;
+      }
+
+      .code-block {
+        flex: 1;
+      }
+
+      pre code.hljs {
+        border: 1px solid var(--border);
+      }
+
+      .report-widget {
+        width: 100%;
+      }
+
+      .report-widget table {
+        display: block;
+        max-width: -moz-fit-content;
+        max-width: fit-content;
+        overflow-x: auto;
+        white-space: nowrap;
+        border: none;
+      }
+
+      .component-description {
+        font-size: 0.8em;
+        color: var(--text-muted);
+      }
+  </style>
+ </head>
+ <body>
+  <header>
+   <div class="letter-icon">
+    <svg height="125" version="1.1" width="125" xmlns="http://www.w3.org/2000/svg">
+     <style>
+      text {
+                        font-size: 4em;
+                        font-family: lucida console, Fira Mono, monospace;
+                        text-anchor: middle;
+                        stroke-width: 1px;
+                        font-weight: bold;
+                        alignment-baseline: central;
+                    }
+     </style>
+     <circle cx="62.5" cy="62.5" fill="#d59cdc" r="62.5">
+     </circle>
+     <text fill="black" x="50%" y="50%">
+      BS
+     </text>
+    </svg>
+   </div>
+   <div class="header-text">
+    <h1>
+     Bert Score Report
+    </h1>
+   </div>
+  </header>
+  <hr/>
+  <div class="container">
+   <block>
+    <block-article>
+     <div class="markdown_wrapper">
+      <h1>
+       BERTScore
+      </h1>
+      <pre><code>        Bert Score is a metric for evaluating the quality of text generation models, such as machine translation or summarization. It utilizes pre-trained BERT contextual embeddings for both the generated and reference texts, and then calculates the cosine similarity between these embeddings.
+
+        BERTScore significantly outperforms other text evaluation metrics, primarily because it utilizes contextual embeddings. These embeddings address the limitations of traditional word- or character-based metrics.
+</code></pre>
+     </div>
+    </block-article>
+    <block-article>
+     <details>
+      <summary>
+       Source Data
+      </summary>
+      <div class="dataTables_wrapper">
+       <br/>
+       <style type="text/css">
+       </style>
+       <table cellspacing="0" class="remove-all-styles fancy_table display row-border hover responsive nowrap" id="T_13df7" style="width: 100%;">
+        <thead>
+         <tr>
+          <th class="col_heading level0 col0" id="T_13df7_level0_col0">
+           candidates
+          </th>
+          <th class="col_heading level0 col1" id="T_13df7_level0_col1">
+           references
+          </th>
+         </tr>
+        </thead>
+        <tbody>
+         <tr>
+          <td class="data row0 col0" id="T_13df7_row0_col0">
+           28-year-old chef found dead in San Francisco mall
+          </td>
+          <td class="data row0 col1" id="T_13df7_row0_col1">
+           28-Year-Old Chef Found Dead at San Francisco Mall
+          </td>
+         </tr>
+         <tr>
+          <td class="data row1 col0" id="T_13df7_row1_col0">
+           A 28-year-old chef who recently moved to San Francisco was found dead in the staircase of a local shopping center.
+          </td>
+          <td class="data row1 col1" id="T_13df7_row1_col1">
+           A 28-year-old chef who had recently moved to San Francisco was found dead in the stairwell of a local mall this week.
+          </td>
+         </tr>
+         <tr>
+          <td class="data row2 col0" id="T_13df7_row2_col0">
+           The victim's brother said he cannot imagine anyone who would want to harm him,"Finally, it went uphill again at him."
+          </td>
+          <td class="data row2 col1" id="T_13df7_row2_col1">
+           But the victim's brother says he can't think of anyone who would want to hurt him, saying, "Things were finally going well for him."
+          </td>
+         </tr>
+         <tr>
+          <td class="data row3 col0" id="T_13df7_row3_col0">
+           The corpse, found Wednesday morning in the Westfield Mall, was identified as the 28-year-old Frank Galicia from San Francisco, the Justice Department said in San Francisco.
+          </td>
+          <td class="data row3 col1" id="T_13df7_row3_col1">
+           The body found at the Westfield Mall Wednesday morning was identified as 28-year-old San Francisco resident Frank Galicia, the San Francisco Medical Examiner's Office said.
+          </td>
+         </tr>
+         <tr>
+          <td class="data row4 col0" id="T_13df7_row4_col0">
+           The San Francisco Police Department said the death was classified as murder and the investigation is on the running.
+          </td>
+          <td class="data row4 col1" id="T_13df7_row4_col1">
+           The San Francisco Police Department said the death was ruled a homicide and an investigation is ongoing.
+          </td>
+         </tr>
+         <tr>
+          <td class="data row5 col0" id="T_13df7_row5_col0">
+           The victim's brother, Louis Galicia, told the ABS broadcaster KGO in San Francisco that Frank, who formerly worked as a cook in Boston, had his dream job as a cook at the Sons &amp; Daughters restaurant in San Francisco six months ago.
+          </td>
+          <td class="data row5 col1" id="T_13df7_row5_col1">
+           The victim's brother, Louis Galicia, told ABC station KGO in San Francisco that Frank, previously a line cook in Boston, had landed his dream job as line chef at San Francisco's Sons &amp; Daughters restaurant six months ago.
+          </td>
+         </tr>
+         <tr>
+          <td class="data row6 col0" id="T_13df7_row6_col0">
+           A spokesman for the Sons &amp; Daughters said they were "shocked and destroyed on the ground" over his death.
+          </td>
+          <td class="data row6 col1" id="T_13df7_row6_col1">
+           A spokesperson for Sons &amp; Daughters said they were "shocked and devastated" by his death.
+          </td>
+         </tr>
+         <tr>
+          <td class="data row7 col0" id="T_13df7_row7_col0">
+           "We are a small team that works like a close family and we are going to miss him painfully," said the spokesman.
+          </td>
+          <td class="data row7 col1" id="T_13df7_row7_col1">
+           "We are a small team that operates like a close knit family and he will be dearly missed," the spokesperson said.
+          </td>
+         </tr>
+         <tr>
+          <td class="data row8 col0" id="T_13df7_row8_col0">
+           Our thoughts and condolences are in this difficult time at Franks's family and friends.
+          </td>
+          <td class="data row8 col1" id="T_13df7_row8_col1">
+           Our thoughts and condolences are with Frank's family and friends at this difficult time.
+          </td>
+         </tr>
+         <tr>
+          <td class="data row9 col0" id="T_13df7_row9_col0">
+           Louis Galicia admitted that Frank initially lived in hostels, but that "things for him finally went uphill."
+          </td>
+          <td class="data row9 col1" id="T_13df7_row9_col1">
+           Louis Galicia said Frank initially stayed in hostels, but recently, "Things were finally going well for him."
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </details>
+    </block-article>
+    <block-article>
+     <div>
+      <report-caption>
+       Bert Score Metrics
+      </report-caption>
+      <div class="group">
+       <div class="group-item">
+        <div class="group-content">
+         <div class="metric">
+          <p>
+           Mean F1
+          </p>
+          <h1>
+           0.944
+          </h1>
+         </div>
+        </div>
+       </div>
+       <div class="group-item">
+        <div class="group-content">
+         <div class="metric">
+          <p>
+           Min F1
+          </p>
+          <h1>
+           0.886
+          </h1>
+         </div>
+        </div>
+       </div>
+       <div class="group-item">
+        <div class="group-content">
+         <div class="metric">
+          <p>
+           Max F1
+          </p>
+          <h1>
+           0.992
+          </h1>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </block-article>
+   </block>
+  </div>
+  <block-article>
+   <div>
+    <report-caption>
+     Best Performer, score: 0.992
+    </report-caption>
+    <div class="group">
+     <div class="group-item">
+      <div class="group-content">
+       <div class="metric">
+        <p>
+         LLM response
+        </p>
+        <h1>
+         28-year-old chef found dead in San Francisco mall
+        </h1>
+       </div>
+      </div>
+     </div>
+     <div class="group-item">
+      <div class="group-content">
+       <div class="metric">
+        <p>
+         LLM Reference
+        </p>
+        <h1>
+         28-Year-Old Chef Found Dead at San Francisco Mall
+        </h1>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </block-article>
+  <block-article>
+   <div>
+    <report-caption>
+     Worst Performers, score: 0.886
+    </report-caption>
+    <div class="group">
+     <div class="group-item">
+      <div class="group-content">
+       <div class="metric">
+        <p>
+         LLM response
+        </p>
+        <h1>
+         The victim's brother said he cannot imagine anyone who would want to harm him,"Finally, it went uphill again at him."
+        </h1>
+       </div>
+      </div>
+     </div>
+     <div class="group-item">
+      <div class="group-content">
+       <div class="metric">
+        <p>
+         LLM Reference
+        </p>
+        <h1>
+         But the victim's brother says he can't think of anyone who would want to hurt him, saying, "Things were finally going well for him."
+        </h1>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </block-article>
+  <script>
+   function openTab(evt, tabName) {
+        // Declare all variables
+        var i, tabcontent, tablinks;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+        }
+
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+      }
+
+      (function () {
+        // style any code blocks
+        hljs.highlightAll();
+
+        document.querySelectorAll(".defaultOpen").forEach(function (button) {
+          button.click();
+        });
+
+        // style tables
+        table = new DataTable("table.fancy_table", {
+          dom: "Bfrtip",
+          buttons: ["copyHtml5", "excelHtml5", "csvHtml5"],
+          colReorder: true,
+          responsive: true,
+          stripeClasses: [],
+        });
+      })();
+  </script>
+ </body>
+</html>

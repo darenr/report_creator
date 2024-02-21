@@ -456,10 +456,7 @@ class Text(Base):
     @strip_whitespace
     def to_html(self):
         formatted_text = "\n\n".join(
-            [
-                f"<p class='indented-text-block'>{p.strip()}</p>"
-                for p in self.text.split("\n\n")
-            ]
+            [f"<p>{p.strip()}</p>" for p in self.text.split("\n\n")]
         )
 
         if self.label:
