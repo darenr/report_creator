@@ -68,11 +68,11 @@ with rc.ReportCreator("Bert Score Report") as report:
     view = rc.Block(
         rc.Markdown(
             """
-            # BERTScore 
-            
-            Bert Score is a metric for evaluating the quality of text generation models, such as machine translation or summarization. It utilizes pre-trained BERT contextual embeddings for both the generated and reference texts, and then calculates the cosine similarity between these embeddings.
-            
-            BERTScore significantly outperforms other text evaluation metrics, primarily because it utilizes contextual embeddings. These embeddings address the limitations of traditional word- or character-based metrics.
+# BERTScore 
+
+Bert Score is a metric for evaluating the quality of text generation models, such as machine translation or summarization. It utilizes pre-trained BERT contextual embeddings for both the generated and reference texts, and then calculates the cosine similarity between these embeddings.
+
+BERTScore significantly outperforms other text evaluation metrics, primarily because it utilizes contextual embeddings. These embeddings address the limitations of traditional word- or character-based metrics.
             """
         ),
         rc.Collapse(rc.DataTable(df), label="Source Data"),
