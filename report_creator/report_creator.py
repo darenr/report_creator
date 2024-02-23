@@ -276,6 +276,7 @@ class Table(Widget):
         label: Optional[str] = None,
         max_rows: int = -1,
         float_precision: int = 3,
+        index: bool = False,
         **kwargs,
     ):
         Widget.__init__(self, df, label=label)
@@ -455,9 +456,11 @@ class Text(Base):
 
     @strip_whitespace
     def to_html(self):
-        formatted_text = "\n\n".join(
+        formatted_text = "<report_text>"
+        formatted_text += "\n\n".join(
             [f"<p>{p.strip()}</p>" for p in self.text.split("\n\n")]
         )
+        formatted_text += "</report_text>"
 
         if self.label:
             return f"""<report-caption>{self.label}</report-caption>{formatted_text}"""
@@ -593,7 +596,7 @@ class ReportCreator:
                 </style>
 
                 <circle cx="{cx}" cy="{cy}" r="{r}" fill="{icon_color}" />
-                <text x="50%" y="50%" fill="{text_color}">{icon_text}</text>   
+                <text x="50%" y="50%" fill="{text_color}">{icon_text}</text>
             </svg>
         """.strip()
 

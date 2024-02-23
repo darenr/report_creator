@@ -5,7 +5,6 @@ import logging
 import warnings
 import pandas as pd
 
-from statistics import mean
 
 warnings.filterwarnings("ignore")
 
@@ -82,14 +81,17 @@ BERTScore significantly outperforms other text evaluation metrics, primarily bec
             rc.Metric(heading="Max F1", value=max_f1),
             label="Bert Score Metrics",
         ),
-        rc.Group(
-            rc.Metric(
-                heading="LLM response", value=best_performers.iloc[0]["candidates"]
-            ),
-            rc.Metric(
-                heading="LLM Reference",
-                value=best_performers.iloc[0]["references"],
-            ),
+        rc.Select(
+            blocks=[
+                rc.Html(
+                    best_performers[["candidates"]].to_html(index=False),
+                    label="Candidates",
+                ),
+                rc.Html(
+                    best_performers[["references"]].to_html(index=False),
+                    label="References",
+                ),
+            ],
             label=f"Best Performer, score: {max_f1:.3f}",
         ),
         rc.Group(
