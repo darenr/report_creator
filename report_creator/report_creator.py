@@ -340,17 +340,24 @@ class Html(Base):
 
 
 class Image(Base):
-    def __init__(self, img: str, link: str = None, label: Optional[str] = None):
+    def __init__(
+        self,
+        img: str,
+        link: str = None,
+        label: Optional[str] = None,
+        extra_css: str = None,
+    ):
         Base.__init__(self, label=label or img)
         self.img = img
         self.link = link or img
+        self.extra_css = extra_css or ""
         logging.info(f"Image URL {img}, label: {self.label}")
 
     @strip_whitespace
     def to_html(self):
         html = """<div class="image-block"><figure>"""
 
-        html += f"""<a href="{self.link}" target="_blank"><img src="{self.img}" alt="{self.label}"></a>"""
+        html += f"""<a href="{self.link}" target="_blank"><img src="{self.img}" style="{self.extra_css}" alt="{self.label}"></a>"""
         if self.label:
             html += f"<figcaption><report-caption>{self.label}</report-caption></figcaption>"
         html += "</figure></div>"
@@ -362,10 +369,10 @@ class Image(Base):
 
 
 class Markdown(Base):
-    def __init__(self, text: str, label: Optional[str] = None, bordered=False):
+    def __init__(self, text: str, label: Optional[str] = None, extra_css: str = None):
         Base.__init__(self, label=label)
         self.text = text
-        self.bordered = bordered
+        self.extra_css = extra_css or ""
         logging.info(f"Markdown {len(self.text)} characters")
 
     @staticmethod
@@ -377,7 +384,7 @@ class Markdown(Base):
         html = "<div class='markdown_wrapper'>"
         if self.label:
             html += f"<report-caption>{self.label}</report-caption>"
-        html += f"""<div class='{"bordered" if self.bordered else ""}'"""
+        html += f'<div style="{self.extra_css}">'
         html += Markdown.markdown_to_html(self.text)
         html += "</div>"
         html += "</div>"
@@ -452,14 +459,16 @@ class Separator(Base):
 
 
 class Text(Base):
-    def __init__(self, text: str, label: Optional[str] = None):
+    def __init__(self, text: str, label: Optional[str] = None, extra_css: str = None):
         Base.__init__(self, label=label)
         self.text = text
+                self.extra_css = extra_css or ""
+
         logging.info(f"Text {len(self.text)} characters")
 
     @strip_whitespace
     def to_html(self):
-        formatted_text = "<report_text>"
+        formatted_text = f'<report_text style="{self.extra_css}">'
         formatted_text += "\n\n".join(
             [f"<p>{p.strip()}</p>" for p in self.text.split("\n\n")]
         )
