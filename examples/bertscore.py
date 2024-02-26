@@ -4,6 +4,8 @@ import evaluate
 import logging
 import warnings
 import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib as mpl
 
 
 warnings.filterwarnings("ignore")
@@ -11,6 +13,9 @@ warnings.filterwarnings("ignore")
 logging.basicConfig(level=logging.INFO)
 
 import report_creator as rc
+
+mpl.rcParams["figure.dpi"] = 300
+
 
 candicates = [
     "28-year-old chef found dead in San Francisco mall",
@@ -67,7 +72,17 @@ max_f1 = df_results["f1"].max()
 worst_performers = df.iloc[df_results["f1"].nsmallest(5).index]
 best_performers = df.iloc[df_results["f1"].nlargest(5).index]
 
-print(worst_performers)
+fig = plt.figure(1, figsize=(3, 3))
+ax = fig.add_subplot(111)
+bp = ax.boxplot(
+    df_results[["f1", "precision", "recall"]],
+    showmeans=True,
+    whis=99,
+)
+ax.grid(True, axis="y")  # let's add a grid on y-axis
+ax.set_ylabel("BertScore")  # y axis title
+ax.set_xticks([1, 2, 3], ["F1", "Precision", "Recall"])  # x
+ax.set_title("BertScore Distribution")  # title
 
 with rc.ReportCreator("Bert Score Report") as report:
     view = rc.Block(
@@ -80,8 +95,8 @@ Bert Score is a metric for evaluating the quality of text generation models, suc
 BERTScore significantly outperforms other text evaluation metrics, primarily because it utilizes contextual embeddings. These embeddings address the limitations of traditional word- or character-based metrics.
             """
         ),
-        rc.Collapse(rc.DataTable(df), label="Source Data"),
-        rc.Separator(),
+        rc.Collapse(rc.DataTable(df, label="Data"), label="Data"),
+        rc.Plot(fig, label="Score Distribution"),
         rc.Group(
             rc.Metric(heading="Mean F1", value=mean_f1),
             rc.Metric(heading="Min F1", value=min_f1),

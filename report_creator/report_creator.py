@@ -462,7 +462,7 @@ class Text(Base):
     def __init__(self, text: str, label: Optional[str] = None, extra_css: str = None):
         Base.__init__(self, label=label)
         self.text = text
-                self.extra_css = extra_css or ""
+        self.extra_css = extra_css or ""
 
         logging.info(f"Text {len(self.text)} characters")
 
