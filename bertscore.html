@@ -299,6 +299,12 @@
         flex: 1;
       }
 
+      div.bordered {
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        padding: 15px;
+      }
+
       div.markdown_wrapper pre {
         white-space: pre-wrap;
       }
@@ -377,15 +383,15 @@
    <block>
     <block-article>
      <div class="markdown_wrapper">
-      <h1>
+      <div class="">
        BERTScore
-      </h1>
-      <p>
-       Bert Score is a metric for evaluating the quality of text generation models, such as machine translation or summarization. It utilizes pre-trained BERT contextual embeddings for both the generated and reference texts, and then calculates the cosine similarity between these embeddings.
-      </p>
-      <p>
-       BERTScore significantly outperforms other text evaluation metrics, primarily because it utilizes contextual embeddings. These embeddings address the limitations of traditional word- or character-based metrics.
-      </p>
+       <p>
+        Bert Score is a metric for evaluating the quality of text generation models, such as machine translation or summarization. It utilizes pre-trained BERT contextual embeddings for both the generated and reference texts, and then calculates the cosine similarity between these embeddings.
+       </p>
+       <p>
+        BERTScore significantly outperforms other text evaluation metrics, primarily because it utilizes contextual embeddings. These embeddings address the limitations of traditional word- or character-based metrics.
+       </p>
+      </div>
      </div>
     </block-article>
     <block-article>
@@ -397,102 +403,161 @@
        <br/>
        <style type="text/css">
        </style>
-       <table cellspacing="0" class="remove-all-styles fancy_table display row-border hover responsive nowrap" id="T_6287e" style="width: 100%;">
+       <table cellspacing="0" class="remove-all-styles fancy_table display row-border hover responsive nowrap" id="T_6c7f5" style="width: 100%;">
         <thead>
          <tr>
-          <th class="col_heading level0 col0" id="T_6287e_level0_col0">
+          <th class="col_heading level0 col0" id="T_6c7f5_level0_col0">
            candidates
           </th>
-          <th class="col_heading level0 col1" id="T_6287e_level0_col1">
+          <th class="col_heading level0 col1" id="T_6c7f5_level0_col1">
            references
+          </th>
+          <th class="col_heading level0 col2" id="T_6c7f5_level0_col2">
+           categories
           </th>
          </tr>
         </thead>
         <tbody>
          <tr>
-          <td class="data row0 col0" id="T_6287e_row0_col0">
+          <td class="data row0 col0" id="T_6c7f5_row0_col0">
            28-year-old chef found dead in San Francisco mall
           </td>
-          <td class="data row0 col1" id="T_6287e_row0_col1">
+          <td class="data row0 col1" id="T_6c7f5_row0_col1">
            28-Year-Old Chef Found Dead at San Francisco Mall
           </td>
+          <td class="data row0 col2" id="T_6c7f5_row0_col2">
+           crime
+          </td>
          </tr>
          <tr>
-          <td class="data row1 col0" id="T_6287e_row1_col0">
+          <td class="data row1 col0" id="T_6c7f5_row1_col0">
            A 28-year-old chef who recently moved to San Francisco was found dead in the staircase of a local shopping center.
           </td>
-          <td class="data row1 col1" id="T_6287e_row1_col1">
+          <td class="data row1 col1" id="T_6c7f5_row1_col1">
            A 28-year-old chef who had recently moved to San Francisco was found dead in the stairwell of a local mall this week.
           </td>
+          <td class="data row1 col2" id="T_6c7f5_row1_col2">
+           crime
+          </td>
          </tr>
          <tr>
-          <td class="data row2 col0" id="T_6287e_row2_col0">
+          <td class="data row2 col0" id="T_6c7f5_row2_col0">
            The victim's brother said he cannot imagine anyone who would want to harm him,"Finally, it went uphill again at him."
           </td>
-          <td class="data row2 col1" id="T_6287e_row2_col1">
+          <td class="data row2 col1" id="T_6c7f5_row2_col1">
            But the victim's brother says he can't think of anyone who would want to hurt him, saying, "Things were finally going well for him."
           </td>
+          <td class="data row2 col2" id="T_6c7f5_row2_col2">
+           crime
+          </td>
          </tr>
          <tr>
-          <td class="data row3 col0" id="T_6287e_row3_col0">
+          <td class="data row3 col0" id="T_6c7f5_row3_col0">
            The corpse, found Wednesday morning in the Westfield Mall, was identified as the 28-year-old Frank Galicia from San Francisco, the Justice Department said in San Francisco.
           </td>
-          <td class="data row3 col1" id="T_6287e_row3_col1">
+          <td class="data row3 col1" id="T_6c7f5_row3_col1">
            The body found at the Westfield Mall Wednesday morning was identified as 28-year-old San Francisco resident Frank Galicia, the San Francisco Medical Examiner's Office said.
           </td>
+          <td class="data row3 col2" id="T_6c7f5_row3_col2">
+           crime
+          </td>
          </tr>
          <tr>
-          <td class="data row4 col0" id="T_6287e_row4_col0">
+          <td class="data row4 col0" id="T_6c7f5_row4_col0">
            The San Francisco Police Department said the death was classified as murder and the investigation is on the running.
           </td>
-          <td class="data row4 col1" id="T_6287e_row4_col1">
+          <td class="data row4 col1" id="T_6c7f5_row4_col1">
            The San Francisco Police Department said the death was ruled a homicide and an investigation is ongoing.
           </td>
+          <td class="data row4 col2" id="T_6c7f5_row4_col2">
+           crime
+          </td>
          </tr>
          <tr>
-          <td class="data row5 col0" id="T_6287e_row5_col0">
+          <td class="data row5 col0" id="T_6c7f5_row5_col0">
            The victim's brother, Louis Galicia, told the ABS broadcaster KGO in San Francisco that Frank, who formerly worked as a cook in Boston, had his dream job as a cook at the Sons &amp; Daughters restaurant in San Francisco six months ago.
           </td>
-          <td class="data row5 col1" id="T_6287e_row5_col1">
+          <td class="data row5 col1" id="T_6c7f5_row5_col1">
            The victim's brother, Louis Galicia, told ABC station KGO in San Francisco that Frank, previously a line cook in Boston, had landed his dream job as line chef at San Francisco's Sons &amp; Daughters restaurant six months ago.
           </td>
+          <td class="data row5 col2" id="T_6c7f5_row5_col2">
+           crime
+          </td>
          </tr>
          <tr>
-          <td class="data row6 col0" id="T_6287e_row6_col0">
+          <td class="data row6 col0" id="T_6c7f5_row6_col0">
            A spokesman for the Sons &amp; Daughters said they were "shocked and destroyed on the ground" over his death.
           </td>
-          <td class="data row6 col1" id="T_6287e_row6_col1">
+          <td class="data row6 col1" id="T_6c7f5_row6_col1">
            A spokesperson for Sons &amp; Daughters said they were "shocked and devastated" by his death.
           </td>
+          <td class="data row6 col2" id="T_6c7f5_row6_col2">
+           crime
+          </td>
          </tr>
          <tr>
-          <td class="data row7 col0" id="T_6287e_row7_col0">
+          <td class="data row7 col0" id="T_6c7f5_row7_col0">
            "We are a small team that works like a close family and we are going to miss him painfully," said the spokesman.
           </td>
-          <td class="data row7 col1" id="T_6287e_row7_col1">
+          <td class="data row7 col1" id="T_6c7f5_row7_col1">
            "We are a small team that operates like a close knit family and he will be dearly missed," the spokesperson said.
           </td>
+          <td class="data row7 col2" id="T_6c7f5_row7_col2">
+           crime
+          </td>
          </tr>
          <tr>
-          <td class="data row8 col0" id="T_6287e_row8_col0">
+          <td class="data row8 col0" id="T_6c7f5_row8_col0">
            Our thoughts and condolences are in this difficult time at Franks's family and friends.
           </td>
-          <td class="data row8 col1" id="T_6287e_row8_col1">
+          <td class="data row8 col1" id="T_6c7f5_row8_col1">
            Our thoughts and condolences are with Frank's family and friends at this difficult time.
+          </td>
+          <td class="data row8 col2" id="T_6c7f5_row8_col2">
+           crime
           </td>
          </tr>
          <tr>
-          <td class="data row9 col0" id="T_6287e_row9_col0">
+          <td class="data row9 col0" id="T_6c7f5_row9_col0">
            Louis Galicia admitted that Frank initially lived in hostels, but that "things for him finally went uphill."
           </td>
-          <td class="data row9 col1" id="T_6287e_row9_col1">
+          <td class="data row9 col1" id="T_6c7f5_row9_col1">
            Louis Galicia said Frank initially stayed in hostels, but recently, "Things were finally going well for him."
+          </td>
+          <td class="data row9 col2" id="T_6c7f5_row9_col2">
+           crime
+          </td>
+         </tr>
+         <tr>
+          <td class="data row10 col0" id="T_6c7f5_row10_col0">
+           Reeded edges are often referred to as "ridged" or "grooved" (US usage), or "milled" (UK usage).[1] Some coins, such as United States quarters and dimes, have reeded edges. Reeding of edges was introduced to prevent coin clipping and counterfeiting.
+          </td>
+          <td class="data row10 col1" id="T_6c7f5_row10_col1">
+           The serrated edges of coins, also known as reeded or grooved edges, are used to prevent clipping and counterfeiting
+          </td>
+          <td class="data row10 col2" id="T_6c7f5_row10_col2">
+           currency
           </td>
          </tr>
         </tbody>
        </table>
       </div>
      </details>
+    </block-article>
+    <block-article>
+     <div class="markdown_wrapper">
+      <report-caption>
+       Summary Card
+      </report-caption>
+      <div class="bordered">
+       Mean F1: 0.936
+      </div>
+     </div>
+    </block-article>
+    <block-article>
+     <b r="">
+     </b>
+     <hr/>
     </block-article>
     <block-article>
      <div>
@@ -507,7 +572,7 @@
            Mean F1
           </p>
           <h1>
-           0.944
+           0.936
           </h1>
          </div>
         </div>
@@ -519,7 +584,7 @@
            Min F1
           </p>
           <h1>
-           0.886
+           0.851
           </h1>
          </div>
         </div>
@@ -554,6 +619,9 @@
     </button>
    </div>
    <div class="tabcontent" id="Candidates">
+    <report-caption>
+     Candidates
+    </report-caption>
     <table border="1" class="dataframe">
      <thead>
       <tr style="text-align: right;">
@@ -592,6 +660,9 @@
     </table>
    </div>
    <div class="tabcontent" id="References">
+    <report-caption>
+     References
+    </report-caption>
     <table border="1" class="dataframe">
      <thead>
       <tr style="text-align: right;">
@@ -633,7 +704,7 @@
   <block-article>
    <div>
     <report-caption>
-     Worst Performers, score: 0.886
+     Worst Performers, score: 0.851
     </report-caption>
     <div class="group">
      <div class="group-item">
@@ -643,7 +714,7 @@
          LLM response
         </p>
         <h1>
-         The victim's brother said he cannot imagine anyone who would want to harm him,"Finally, it went uphill again at him."
+         Reeded edges are often referred to as "ridged" or "grooved" (US usage), or "milled" (UK usage).[1] Some coins, such as United States quarters and dimes, have reeded edges. Reeding of edges was introduced to prevent coin clipping and counterfeiting.
         </h1>
        </div>
       </div>
@@ -655,7 +726,7 @@
          LLM Reference
         </p>
         <h1>
-         But the victim's brother says he can't think of anyone who would want to hurt him, saying, "Things were finally going well for him."
+         The serrated edges of coins, also known as reeded or grooved edges, are used to prevent clipping and counterfeiting
         </h1>
        </div>
       </div>

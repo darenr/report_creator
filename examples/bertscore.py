@@ -23,6 +23,7 @@ candicates = [
     '"We are a small team that works like a close family and we are going to miss him painfully," said the spokesman.',
     "Our thoughts and condolences are in this difficult time at Franks's family and friends.",
     'Louis Galicia admitted that Frank initially lived in hostels, but that "things for him finally went uphill."',
+    """Reeded edges are often referred to as "ridged" or "grooved" (US usage), or "milled" (UK usage).[1] Some coins, such as United States quarters and dimes, have reeded edges. Reeding of edges was introduced to prevent coin clipping and counterfeiting.""",
 ]
 
 references = [
@@ -36,11 +37,16 @@ references = [
     '"We are a small team that operates like a close knit family and he will be dearly missed," the spokesperson said.',
     "Our thoughts and condolences are with Frank's family and friends at this difficult time.",
     'Louis Galicia said Frank initially stayed in hostels, but recently, "Things were finally going well for him."',
+    "The serrated edges of coins, also known as reeded or grooved edges, are used to prevent clipping and counterfeiting",
 ]
 
+categories = ["crime"] * 10 + ["currency"] * 1
+
 df = pd.DataFrame(
-    list(zip(candicates, references)), columns=["candidates", "references"]
+    list(zip(candicates, references, categories)),
+    columns=["candidates", "references", "categories"],
 )
+
 
 df_results = pd.DataFrame(
     evaluate.load("bertscore").compute(
@@ -75,6 +81,7 @@ BERTScore significantly outperforms other text evaluation metrics, primarily bec
             """
         ),
         rc.Collapse(rc.DataTable(df), label="Source Data"),
+        rc.Separator(),
         rc.Group(
             rc.Metric(heading="Mean F1", value=mean_f1),
             rc.Metric(heading="Min F1", value=min_f1),

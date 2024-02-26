@@ -362,9 +362,10 @@ class Image(Base):
 
 
 class Markdown(Base):
-    def __init__(self, text: str, label: Optional[str] = None):
+    def __init__(self, text: str, label: Optional[str] = None, bordered=False):
         Base.__init__(self, label=label)
         self.text = text
+        self.bordered = bordered
         logging.info(f"Markdown {len(self.text)} characters")
 
     @staticmethod
@@ -373,10 +374,12 @@ class Markdown(Base):
 
     @strip_whitespace
     def to_html(self):
-        html = """<div class='markdown_wrapper'>"""
+        html = "<div class='markdown_wrapper'>"
         if self.label:
             html += f"<report-caption>{self.label}</report-caption>"
+        html += f"""<div class='{"bordered" if self.bordered else ""}'"""
         html += Markdown.markdown_to_html(self.text)
+        html += "</div>"
         html += "</div>"
         return html
 
