@@ -66,7 +66,7 @@ def gen_markdown_report(
         grade, grade_description = get_grade(median_f1)
         std = metric["summary_data"]["overall"]["f1"]["std"]
         rows.append(
-            f"|{metric_name}|Median F1: **{median_f1:0.3f}** (SDV: {std:0.3f})|**{grade}**, {grade_description}|"
+            f"|{metric_name}|Median F1: **{median_f1:0.3f}** (SD: {std:0.3f})|**{grade}**, {grade_description}|"
         )
 
     print("\n".join(rows))
