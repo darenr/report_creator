@@ -57,6 +57,7 @@ def gen_markdown_report(
     model_details: dict,
     metric_results: dict,
 ):
+    # https://www.codecademy.com/resources/docs/markdown/tables
     rows = []
     rows.append("|Metric|Score|Grade|")
     rows.append("|:---:|:---|:---|")
