@@ -52,46 +52,57 @@ def gen_report(
 
     with rc.ReportCreator(title=title, description=description) as report:
         view = rc.Block(
-            rc.Group(
-                rc.Html(
-                    f"""<h2>Summary:</h2>The model <b>"{model_name}"</b> created {human_readable_model_created(model_details)} was
+            rc.Select(
+                blocks=[
+                    rc.Block(
+                        rc.Group(
+                            rc.Html(
+                                f"""<h2>Summary:</h2>The model <b>"{model_name}"</b> created {human_readable_model_created(model_details)} was
                     evaluated (<b>{evaluation_metric}</b>) against the <b>"{dataset['name']}"</b> dataset scoring an overal median F1 score
                     of <b>{median_f1:0.3f}</b> (meaning at least half 
                     of the evaluations scored at, or better than, {median_f1:0.3f}) with a standard deviation of <b>{f1_std:0.3f}</b>. The
                     lowest performing evaluation was <b>{min_f1:0.3f}</b> and the highest was <b>{max_f1:0.3f}</b>. The evaluation model 
                     used to calculate {evaluation_metric} was <b>{evaluation_model}</b>"""
-                ),
-                label=f"""Model: {model_name}""",
-            ),
-            rc.Group(
-                rc.Metric(
-                    heading=f"Mean {evaluation_metric} F1",
-                    value=mean_f1,
-                    label="F1 score is a measure of the harmonic mean of precision and recall.",
-                ),
-                rc.Metric(
-                    heading="Standard deviation (σ)",
-                    value=f1_std,
-                    label="Standard deviation is a statistical measurement that indicates how spread out a set of data is in relation to its mean.",
-                ),
-                rc.Metric(
-                    heading="Evaluations",
-                    value=len(df_results),
-                    label=f"Number of {evaluation_metric} evaluations performed",
-                ),
-                label=f"{evaluation_metric} Metrics",
-            ),
-            rc.Group(
-                rc.Plot(
-                    df_results.boxplot(column="f1", by="categories").get_figure(),
-                    label="Score Distribution",
-                )
-            ),
-            rc.Collapse(
-                rc.Table(
-                    model_parms_to_table(model_params),
-                ),
-                label="Model Parameters",
+                            ),
+                            label=f"""Model: {model_name}""",
+                        ),
+                        rc.Group(
+                            rc.Metric(
+                                heading=f"Mean {evaluation_metric} F1",
+                                value=mean_f1,
+                                label="F1 score is a measure of the harmonic mean of precision and recall.",
+                            ),
+                            rc.Metric(
+                                heading="Standard deviation (σ)",
+                                value=f1_std,
+                                label="Standard deviation is a statistical measurement that indicates how spread out a set of data is in relation to its mean.",
+                            ),
+                            rc.Metric(
+                                heading="Evaluations",
+                                value=len(df_results),
+                                label=f"Number of {evaluation_metric} evaluations performed",
+                            ),
+                            label=f"{evaluation_metric} Metrics",
+                        ),
+                        rc.Group(
+                            # rc.Plot(
+                            #     df_results.boxplot(
+                            #         column="f1", by="categories"
+                            #     ).get_figure(),
+                            #     label="Score Distribution",
+                            # )
+                            # rc.Text("bert")
+                        ),
+                        rc.Collapse(
+                            rc.Table(
+                                model_parms_to_table(model_params),
+                            ),
+                            label="Model Parameters",
+                        ),
+                        label=evaluation_metric,
+                    ),
+                    rc.Block(rc.Text("hello world"), label="other"),
+                ],
             ),
         )
         # save the report, light, dark, or auto mode (follow browser settings)

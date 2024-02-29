@@ -95,8 +95,8 @@ class Base(ABC):
 
 class Block(Base):
     # vertically stacked compoments
-    def __init__(self, *components: Base):
-        Base.__init__(self)
+    def __init__(self, *components: Base, label: Optional[str] = None):
+        Base.__init__(self, label=label)
         self.components = components
         logging.info(f"Block: {len(self.components)} components")
 
@@ -146,7 +146,6 @@ class Group(Base):
 
         html += "</div>"
 
-        html += "</div>"
         html += "</div>"
 
         return html
@@ -501,7 +500,7 @@ class Select(Base):
                 raise ValueError("All blocks must have a label to use in a Select")
 
         logging.info(
-            f"Select {len(self.blocks)} comblocksponents: {', '.join([c.label for c in self.blocks])}"
+            f"Select {len(self.blocks)} components: {', '.join([c.label for c in self.blocks])}"
         )
 
     @strip_whitespace
