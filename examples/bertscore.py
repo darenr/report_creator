@@ -20,7 +20,9 @@ def model_parms_to_table(model_params: dict) -> pd.DataFrame:
 
 
 def human_readable_model_created(model_details: dict) -> str:
-    return f"""{humanize.naturaltime(datetime.fromisoformat(model_details["Time created"]))}"""
+    return (
+        f"""{humanize.naturaltime(datetime.fromisoformat(model_details["created"]))}"""
+    )
 
 
 def gen_report(
@@ -46,19 +48,20 @@ def gen_report(
     evaluation_metric = metric_results["name"]
     description = metric_results["description"]
     evaluation_model = os.path.basename(metric_results["data"][0]["hashcode"])
+    model_name = model_details["name"]
 
     with rc.ReportCreator(title=title, description=description) as report:
         view = rc.Block(
             rc.Group(
                 rc.Html(
-                    f"""<h2>Summary:</h2>The model <b>"{model_details['Model name']}"</b> created {human_readable_model_created(model_details)} was
+                    f"""<h2>Summary:</h2>The model <b>"{model_name}"</b> created {human_readable_model_created(model_details)} was
                     evaluated (<b>{evaluation_metric}</b>) against the <b>"{dataset['name']}"</b> dataset scoring an overal median F1 score
                     of <b>{median_f1:0.3f}</b> (meaning at least half 
                     of the evaluations scored at, or better than, {median_f1:0.3f}) with a standard deviation of <b>{f1_std:0.3f}</b>. The
                     lowest performing evaluation was <b>{min_f1:0.3f}</b> and the highest was <b>{max_f1:0.3f}</b>. The evaluation model 
                     used to calculate {evaluation_metric} was <b>{evaluation_model}</b>"""
                 ),
-                label=f"""Model: {model_details['Model name']}""",
+                label=f"""Model: {model_name}""",
             ),
             rc.Group(
                 rc.Metric(
@@ -78,9 +81,11 @@ def gen_report(
                 ),
                 label=f"{evaluation_metric} Metrics",
             ),
-            rc.Plot(
-                df_results.boxplot(column="f1", by="categories").get_figure(),
-                label="Score Distribution",
+            rc.Group(
+                rc.Plot(
+                    df_results.boxplot(column="f1", by="categories").get_figure(),
+                    label="Score Distribution",
+                )
             ),
             rc.Collapse(
                 rc.Table(
