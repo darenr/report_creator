@@ -59,9 +59,9 @@ def gen_markdown_report(
 ):
     rows = []
     rows.append("|Metric|Score|Grade|")
-    rows.append("|:---|---:|---:|")
+    rows.append("|:---:|:---|:---|")
     for _, metric in metric_results.items():
-        metric_name = metric["name"]
+        metric_name = metric["name"].replace(" ", "")
         median_f1 = metric["summary_data"]["overall"]["f1"]["0.5"]
         grade, grade_description = get_grade(median_f1)
         std = metric["summary_data"]["overall"]["f1"]["std"]
