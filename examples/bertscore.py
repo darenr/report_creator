@@ -52,9 +52,6 @@ def get_grade(mean_f1: float) -> tuple[str, str]:
 
 
 def gen_markdown_report(
-    dataset: dict,
-    model_params: dict,
-    model_details: dict,
     metric_results: dict,
 ):
     # https://www.codecademy.com/resources/docs/markdown/tables
@@ -190,9 +187,4 @@ if __name__ == "__main__":
         metric_results["bertscore"],
     )
 
-    gen_markdown_report(
-        dataset,
-        model_params,
-        model_details,
-        metric_results,
-    )
+    gen_markdown_report(metric_results)
