@@ -50,6 +50,36 @@ def gen_report(
     evaluation_model = os.path.basename(metric_results["data"][0]["hashcode"])
     model_name = model_details["name"]
 
+    # Above 0.9 is considered excellent, indicating high precision and recall.
+    # Between 0.8 to 0.9 is viewed as very good, suggesting that the model has a strong balance between precision and recall.
+    # Between 0.7 to 0.8 is considered good, suitable for many practical applications, especially when dealing with complex or challenging classification tasks.
+    # Between 0.6 to 0.7 might be acceptable in some contexts, especially in difficult classification problems where achieving high precision and recall is challenging.
+    # Below 0.6 often indicates that there is significant room for improvement, either in the model's ability to generalize from its training data or in the data itself (e.g., it might be imbalanced or noisy).
+
+    grade = (
+        ("Excellent", "High precision and recall")
+        if mean_f1 > 0.9
+        else (
+            "Very good",
+            "The model has a strong balance between precision and recall",
+        )
+        if mean_f1 > 0.8
+        else (
+            "Good",
+            "The model is suitable for many practical applications, especially when dealing with complex or challenging tasks",
+        )
+        if mean_f1 > 0.7
+        else (
+            "Acceptable",
+            "The model is acceptable in some contexts, especially in difficult problems where achieving high precision and recall is challenging",
+        )
+        if mean_f1 > 0.6
+        else (
+            "Poor",
+            "There is significant room for improvement, either in the model's ability to generalize from its training data or in the data itself (e.g., it might be imbalanced or noisy)",
+        )
+    )
+
     with rc.ReportCreator(title=title, description=description) as report:
         view = rc.Block(
             rc.Select(
@@ -59,14 +89,15 @@ def gen_report(
                             rc.Html(
                                 f"""<h2>Summary:</h2>The model <b>"{model_name}"</b> created {human_readable_model_created(model_details)} was
                     evaluated (<b>{evaluation_metric}</b>) against the <b>"{dataset['name']}"</b> dataset scoring an overal median F1 score
-                    of <b>{median_f1:0.3f}</b> (meaning at least half 
+                    of <b>{median_f1:0.3f}</b> (meaning at least half
                     of the evaluations scored at, or better than, {median_f1:0.3f}) with a standard deviation of <b>{f1_std:0.3f}</b>. The
-                    lowest performing evaluation was <b>{min_f1:0.3f}</b> and the highest was <b>{max_f1:0.3f}</b>. The evaluation model 
+                    lowest performing evaluation was <b>{min_f1:0.3f}</b> and the highest was <b>{max_f1:0.3f}</b>. The evaluation model
                     used to calculate {evaluation_metric} was <b>{evaluation_model}</b>"""
                             ),
                             label=f"""Model: {model_name}""",
                         ),
                         rc.Group(
+                            rc.Metric(heading="Grade", value=grade[0], label=grade[1]),
                             rc.Metric(
                                 heading=f"Mean {evaluation_metric} F1",
                                 value=mean_f1,
@@ -85,13 +116,12 @@ def gen_report(
                             label=f"{evaluation_metric} Metrics",
                         ),
                         rc.Group(
-                            # rc.Plot(
-                            #     df_results.boxplot(
-                            #         column="f1", by="categories"
-                            #     ).get_figure(),
-                            #     label="Score Distribution",
-                            # )
-                            # rc.Text("bert")
+                            rc.Plot(
+                                df_results.boxplot(
+                                    column="f1", by="categories"
+                                ).get_figure(),
+                                label="Score Distribution",
+                            )
                         ),
                         rc.Collapse(
                             rc.Table(
