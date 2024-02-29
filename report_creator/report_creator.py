@@ -3,10 +3,9 @@ import io
 import json
 import logging
 import os
-import re
 import random
+import re
 import traceback
-
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional, Tuple, Union
 
@@ -69,9 +68,10 @@ def random_color_generator(word: str) -> Tuple[str, str]:
 
 def convert_imgurl_to_datauri(imgurl: str) -> str:
     """convert url to base64 datauri"""
+    from io import BytesIO
+
     import requests
     from PIL import Image
-    from io import BytesIO
 
     response = requests.get(imgurl)
     img = Image.open(BytesIO(response.content))
@@ -179,13 +179,16 @@ class Widget(Base):
     # This component is used to add a widget to the report, a widget is any
     # component that supports the _repr_html_ method, such as a plotly figure,
     # anything written for Jupyter. sklearn Pipelines for example.
-    def __init__(self, widget, label: Optional[str] = None):
+    def __init__(
+        self, widget, index: Optional[bool] = False, label: Optional[str] = None
+    ):
         Base.__init__(self, label=label)
         if not hasattr(widget, "_repr_html_"):
             raise ValueError(
                 f"Expected widget to have a _repr_html_ method, got {type(widget)} instead"
             )
         self.widget = widget
+        self.index = index
 
         logging.info(f"Widget {type(self.widget)}")
 
@@ -196,7 +199,13 @@ class Widget(Base):
         if self.label:
             html += f"<report-caption>{self.label}</report-caption>"
 
-        html += self.widget._repr_html_()
+        if isinstance(self.widget, pd.DataFrame):
+            s = self.widget.style
+            if self.index == False:
+                s.hide()
+            html += s._repr_html_()
+        else:
+            html += self.widget._repr_html_(index=self.index)
 
         html += "</div>"
         return html
@@ -279,7 +288,7 @@ class Table(Widget):
         index: bool = False,
         **kwargs,
     ):
-        Widget.__init__(self, df, label=label)
+        Widget.__init__(self, df, index=index, label=label)
 
 
 ##############################
@@ -332,7 +341,7 @@ class Html(Base):
         html = f"<style>{self.css}</style>" if self.css else ""
         if self.label:
             html += f"<report-caption>{self.label}</report-caption>"
-        html += self.html
+        html += "<div>" + self.html + "</div>"
         return html
 
 
@@ -469,7 +478,7 @@ class Text(Base):
     @strip_whitespace
     def to_html(self):
         formatted_text = f'<report_text style="{self.extra_css}">'
-        formatted_text += "\n\n".join(
+        formatted_text += "".join(
             [f"<p>{p.strip()}</p>" for p in self.text.split("\n\n")]
         )
         formatted_text += "</report_text>"

@@ -4,6 +4,7 @@
 [lint]
 extend-ignore = ["E402"]
 ignore = [
+  "S101",    # use of assert
   "B008",    # function call in argument defaults
   "B017",    # pytest.raises considered evil
   "B023",    # function definition in loop (TODO: un-ignore this)

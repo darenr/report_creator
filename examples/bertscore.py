@@ -1,12 +1,12 @@
-# pip install bert-score evaluate pandas
-
-import evaluate
+import json
 import logging
+import os
 import warnings
-import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib as mpl
+from datetime import datetime
+from operator import itemgetter
 
+import humanize
+import pandas as pd
 
 warnings.filterwarnings("ignore")
 
@@ -14,120 +14,96 @@ logging.basicConfig(level=logging.INFO)
 
 import report_creator as rc
 
-mpl.rcParams["figure.dpi"] = 300
+
+def model_parms_to_table(model_params: dict) -> pd.DataFrame:
+    return pd.DataFrame(model_params.items(), columns=["Parameter", "Value"])
 
 
-candicates = [
-    "28-year-old chef found dead in San Francisco mall",
-    "A 28-year-old chef who recently moved to San Francisco was found dead in the staircase of a local shopping center.",
-    'The victim\'s brother said he cannot imagine anyone who would want to harm him,"Finally, it went uphill again at him."',
-    "The corpse, found Wednesday morning in the Westfield Mall, was identified as the 28-year-old Frank Galicia from San Francisco, the Justice Department said in San Francisco.",
-    "The San Francisco Police Department said the death was classified as murder and the investigation is on the running.",
-    "The victim's brother, Louis Galicia, told the ABS broadcaster KGO in San Francisco that Frank, who formerly worked as a cook in Boston, had his dream job as a cook at the Sons & Daughters restaurant in San Francisco six months ago.",
-    'A spokesman for the Sons & Daughters said they were "shocked and destroyed on the ground" over his death.',
-    '"We are a small team that works like a close family and we are going to miss him painfully," said the spokesman.',
-    "Our thoughts and condolences are in this difficult time at Franks's family and friends.",
-    'Louis Galicia admitted that Frank initially lived in hostels, but that "things for him finally went uphill."',
-    """Reeded edges are often referred to as "ridged" or "grooved" (US usage), or "milled" (UK usage).[1] Some coins, such as United States quarters and dimes, have reeded edges. Reeding of edges was introduced to prevent coin clipping and counterfeiting.""",
-]
-
-references = [
-    "28-Year-Old Chef Found Dead at San Francisco Mall",
-    "A 28-year-old chef who had recently moved to San Francisco was found dead in the stairwell of a local mall this week.",
-    "But the victim's brother says he can't think of anyone who would want to hurt him, saying, \"Things were finally going well for him.\"",
-    "The body found at the Westfield Mall Wednesday morning was identified as 28-year-old San Francisco resident Frank Galicia, the San Francisco Medical Examiner's Office said.",
-    "The San Francisco Police Department said the death was ruled a homicide and an investigation is ongoing.",
-    "The victim's brother, Louis Galicia, told ABC station KGO in San Francisco that Frank, previously a line cook in Boston, had landed his dream job as line chef at San Francisco's Sons & Daughters restaurant six months ago.",
-    'A spokesperson for Sons & Daughters said they were "shocked and devastated" by his death.',
-    '"We are a small team that operates like a close knit family and he will be dearly missed," the spokesperson said.',
-    "Our thoughts and condolences are with Frank's family and friends at this difficult time.",
-    'Louis Galicia said Frank initially stayed in hostels, but recently, "Things were finally going well for him."',
-    "The serrated edges of coins, also known as reeded or grooved edges, are used to prevent clipping and counterfeiting",
-]
-
-categories = ["crime"] * 10 + ["currency"] * 1
-
-df = pd.DataFrame(
-    list(zip(candicates, references, categories)),
-    columns=["candidates", "references", "categories"],
-)
+def human_readable_model_created(model_details: dict) -> str:
+    return f"""{humanize.naturaltime(datetime.fromisoformat(model_details["Time created"]))}"""
 
 
-df_results = pd.DataFrame(
-    evaluate.load("bertscore").compute(
-        predictions=df["candidates"],
-        references=df["references"],
-        lang="en",
-        model_type="distilbert-base-uncased",
-    )
-)
+def gen_report(
+    name: str,
+    title: str,
+    dataset: dict,
+    model_params: dict,
+    model_details: dict,
+    metric_results: dict,
+):
+    assert "data" in metric_results, "No data found in metric_results"
+    assert "name" in metric_results, "No name found in metric_results"
+    assert "description" in metric_results, "No description found in metric_results"
+    assert len(metric_results["data"]) > 0, "No data found in metric_results['data']"
 
-mean_f1 = df_results["f1"].mean()
-mean_precision = df_results["precision"].mean()
-mean_recall = df_results["recall"].mean()
+    df_results = pd.DataFrame(metric_results["data"])
+    mean_f1 = df_results["f1"].mean()
+    median_f1 = df_results["f1"].median()
+    f1_std = df_results["f1"].std()
+    min_f1 = df_results["f1"].min()
+    max_f1 = df_results["f1"].max()
 
-min_f1 = df_results["f1"].min()
-max_f1 = df_results["f1"].max()
+    evaluation_metric = metric_results["name"]
+    description = metric_results["description"]
+    evaluation_model = os.path.basename(metric_results["data"][0]["hashcode"])
 
-worst_performers = df.iloc[df_results["f1"].nsmallest(5).index]
-best_performers = df.iloc[df_results["f1"].nlargest(5).index]
-
-fig = plt.figure(1, figsize=(3, 3))
-ax = fig.add_subplot(111)
-bp = ax.boxplot(
-    df_results[["f1", "precision", "recall"]],
-    showmeans=True,
-    whis=99,
-)
-ax.grid(True, axis="y")  # let's add a grid on y-axis
-ax.set_ylabel("BertScore")  # y axis title
-ax.set_xticks([1, 2, 3], ["F1", "Precision", "Recall"])  # x
-ax.set_title("BertScore Distribution")  # title
-
-with rc.ReportCreator("Bert Score Report") as report:
-    view = rc.Block(
-        rc.Markdown(
-            """
-# BERTScore 
-
-Bert Score is a metric for evaluating the quality of text generation models, such as machine translation or summarization. It utilizes pre-trained BERT contextual embeddings for both the generated and reference texts, and then calculates the cosine similarity between these embeddings.
-
-BERTScore significantly outperforms other text evaluation metrics, primarily because it utilizes contextual embeddings. These embeddings address the limitations of traditional word- or character-based metrics.
-            """
-        ),
-        rc.Collapse(rc.DataTable(df, label="Data"), label="Data"),
-        rc.Plot(fig, label="Score Distribution"),
-        rc.Group(
-            rc.Metric(heading="Mean F1", value=mean_f1),
-            rc.Metric(heading="Min F1", value=min_f1),
-            rc.Metric(heading="Max F1", value=max_f1),
-            label="Bert Score Metrics",
-        ),
-        rc.Select(
-            blocks=[
+    with rc.ReportCreator(title=title, description=description) as report:
+        view = rc.Block(
+            rc.Group(
                 rc.Html(
-                    best_performers[["candidates"]].to_html(index=False),
-                    label="Candidates",
+                    f"""<h2>Summary:</h2>The model <b>"{model_details['Model name']}"</b> created {human_readable_model_created(model_details)} was
+                    evaluated (<b>{evaluation_metric}</b>) against the <b>"{dataset['name']}"</b> dataset scoring an overal median F1 score
+                    of <b>{median_f1:0.3f}</b> (meaning at least half 
+                    of the evaluations scored at, or better than, {median_f1:0.3f}) with a standard deviation of <b>{f1_std:0.3f}</b>. The
+                    lowest performing evaluation was <b>{min_f1:0.3f}</b> and the highest was <b>{max_f1:0.3f}</b>. The evaluation model 
+                    used to calculate {evaluation_metric} was <b>{evaluation_model}</b>"""
                 ),
-                rc.Html(
-                    best_performers[["references"]].to_html(index=False),
-                    label="References",
+                label=f"""Model: {model_details['Model name']}""",
+            ),
+            rc.Group(
+                rc.Metric(
+                    heading=f"Mean {evaluation_metric} F1",
+                    value=mean_f1,
+                    label="F1 score is a measure of the harmonic mean of precision and recall.",
                 ),
-            ],
-            label=f"Best Performer, score: {max_f1:.3f}",
-        ),
-        rc.Group(
-            rc.Metric(
-                heading="LLM response",
-                value=worst_performers.iloc[0]["candidates"],
+                rc.Metric(
+                    heading="Standard deviation (σ)",
+                    value=f1_std,
+                    label="Standard deviation is a statistical measurement that indicates how spread out a set of data is in relation to its mean.",
+                ),
+                rc.Metric(
+                    heading="Evaluations",
+                    value=len(df_results),
+                    label=f"Number of {evaluation_metric} evaluations performed",
+                ),
+                label=f"{evaluation_metric} Metrics",
             ),
-            rc.Metric(
-                heading="LLM Reference",
-                value=worst_performers.iloc[0]["references"],
+            rc.Plot(
+                df_results.boxplot(column="f1", by="categories").get_figure(),
+                label="Score Distribution",
             ),
-            label=f"Worst Performers, score: {min_f1:.3f}",
-        ),
-    )
+            rc.Collapse(
+                rc.Table(
+                    model_parms_to_table(model_params),
+                ),
+                label="Model Parameters",
+            ),
+        )
+        # save the report, light, dark, or auto mode (follow browser settings)
+        report.save(view, name, mode="light")
 
-    # save the report, light, dark, or auto mode (follow browser settings)
-    report.save(view, "bertscore.html", mode="light")
+
+if __name__ == "__main__":
+    with open("report.json") as f:
+        data, dataset, model_params, model_details, metric_results = itemgetter(
+            "data", "dataset", "model_params", "model_details", "metric_results"
+        )(json.load(f))
+
+    gen_report(
+        "bertscore.html",
+        "Model Evaluation Report",
+        dataset,
+        model_params,
+        model_details,
+        metric_results["bertscore"],
+    )

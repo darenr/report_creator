@@ -6,6 +6,7 @@ from .__meta__ import (
     __version__,
 )
 from .report_creator import (
+    ReportCreator,
     Base,
     Block,
     Collapse,
@@ -19,7 +20,6 @@ from .report_creator import (
     Metric,
     Plot,
     Python,
-    ReportCreator,
     Select,
     Separator,
     Table,

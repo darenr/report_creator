@@ -1,0 +1,165 @@
+{
+  "data": [
+    {
+      "prompts": "<s>[INST] Summarize this dialog: \n\nHannah: Hey, do you have Betty's number?\nAmanda: Lemme check\nHannah: <file_gif>\nAmanda: Sorry, can't find it.\nAmanda: Ask Larry\nAmanda: He called her last time we were at the park together\nHannah: I don't know him well\nHannah: <file_gif>\nAmanda: Don't be shy, he's very nice\nHannah: If you say so..\nHannah: I'd rather you texted him\nAmanda: Just text him \ud83d\ude42\nHannah: Urgh.. Alright\nHannah: Bye\nAmanda: Bye bye\n---\nSummary:[/INST]",
+      "references": "Hannah needs Betty's number but Amanda doesn't have it. She needs to contact Larry.",
+      "responses": "<s>[INST] Summarize this dialog: \n\nHannah: Hey, do you have Betty's number?\nAmanda: Lemme check\nHannah: <file_gif>\nAmanda: Sorry, can't find it.\nAmanda: Ask Larry\nAmanda: He called her last time we were at the park together\nHannah: I don't know him well\nHannah: <file_gif>\nAmanda: Don't be shy, he's very nice\nHannah: If you say so..\nHannah: I'd rather you texted him\nAmanda: Just text him \ud83d\ude42\nHannah: Urgh.. Alright\nHannah: Bye\nAmanda: Bye bye\n---\nSummary:[/INST] Hannah asks Amanda if she has Betty's number. Amanda checks and cannot find it. She suggests that Hannah ask Larry, who called Betty last time they were at the park together. Hannah is hesitant to ask Larry, but Amanda encourages her to be friendly and text him. Hannah agrees and sends a text.",
+      "categories": "type1"
+    },
+    {
+      "prompts": "<s>[INST] Summarize this dialog: \n\nLenny: Babe, can you help me with something?\r\nBob: Sure, what's up?\r\nLenny: Which one should I pick?\r\nBob: Send me photos\r\nLenny:  <file_photo>\r\nLenny:  <file_photo>\r\nLenny:  <file_photo>\r\nBob: I like the first ones best\r\nLenny: But I already have purple trousers. Does it make sense to have two pairs?\r\nBob: I have four black pairs :D :D\r\nLenny: yeah, but shouldn't I pick a different color?\r\nBob: what matters is what you'll give you the most outfit options\r\nLenny: So I guess I'll buy the first or the third pair then\r\nBob: Pick the best quality then\r\nLenny: ur right, thx\r\nBob: no prob :)\n---\nSummary:[/INST]",
+      "references": "Lenny can't decide which trousers to buy. Bob advised Lenny on that topic. Lenny goes with Bob's advice to pick the trousers that are of best quality.",
+      "responses": "<s>[INST] Summarize this dialog: \n\nLenny: Babe, can you help me with something?\r\nBob: Sure, what's up?\r\nLenny: Which one should I pick?\r\nBob: Send me photos\r\nLenny:  <file_photo>\r\nLenny:  <file_photo>\r\nLenny:  <file_photo>\r\nBob: I like the first ones best\r\nLenny: But I already have purple trousers. Does it make sense to have two pairs?\r\nBob: I have four black pairs :D :D\r\nLenny: yeah, but shouldn't I pick a different color?\r\nBob: what matters is what you'll give you the most outfit options\r\nLenny: So I guess I'll buy the first or the third pair then\r\nBob: Pick the best quality then\r\nLenny: ur right, thx\r\nBob: no prob :)\n---\nSummary:[/INST] Lenny is asking Bob for help in choosing between three pairs of pants. Bob suggests that Lenny send him photos of the pants so he can see them better. Lenny sends three photos, and Bob says he likes the first ones best. Lenny is hesitant to buy two pairs of pants in the same color, but Bob reassures him that having more options is more important. Lenny decides to buy either the first or the third pair, and Bob advises him to choose the best quality.",
+      "categories": "type1"
+    },
+    {
+      "prompts": "<s>[INST] Summarize this dialog: \n\nEric: MACHINE!\r\nRob: That's so gr8!\r\nEric: I know! And shows how Americans see Russian ;)\r\nRob: And it's really funny!\r\nEric: I know! I especially like the train part!\r\nRob: Hahaha! No one talks to the machine like that!\r\nEric: Is this his only stand-up?\r\nRob: Idk. I'll check.\r\nEric: Sure.\r\nRob: Turns out no! There are some of his stand-ups on youtube.\r\nEric: Gr8! I'll watch them now!\r\nRob: Me too!\r\nEric: MACHINE!\r\nRob: MACHINE!\r\nEric: TTYL?\r\nRob: Sure :)\n---\nSummary:[/INST]",
+      "references": "Eric and Rob are going to watch a stand-up on youtube.",
+      "responses": "<s>[INST] Summarize this dialog: \n\nEric: MACHINE!\r\nRob: That's so gr8!\r\nEric: I know! And shows how Americans see Russian ;)\r\nRob: And it's really funny!\r\nEric: I know! I especially like the train part!\r\nRob: Hahaha! No one talks to the machine like that!\r\nEric: Is this his only stand-up?\r\nRob: Idk. I'll check.\r\nEric: Sure.\r\nRob: Turns out no! There are some of his stand-ups on youtube.\r\nEric: Gr8! I'll watch them now!\r\nRob: Me too!\r\nEric: MACHINE!\r\nRob: MACHINE!\r\nEric: TTYL?\r\nRob: Sure :)\n---\nSummary:[/INST] Eric and Rob are discussing a stand-up routine by a comedian named \"Machine.\" Eric finds the routine to be funny and especially enjoys the train part. Rob agrees and notes that no one talks to machines the way Machine does in his routine. Eric asks if this is Machine's only stand-up routine, and Rob checks and finds that there are more of his routines available on YouTube. Eric and Rob both plan to watch them. Eric ends the conversation by saying \"MACHINE!\" and Rob responds with the same.",
+      "categories": "type2"
+    }
+  ],
+  "model_params": {
+    "max_tokens": 500,
+    "temperature": 100.0,
+    "top_p": 1.0,
+    "top_k": 1,
+    "messages": null,
+    "n": 1,
+    "seed": null,
+    "stop": [],
+    "stream": false,
+    "logprobs": false,
+    "top_logprobs": null,
+    "presence_penalty": 0.0,
+    "frequency_penalty": 0.0,
+    "logit_bias": null,
+    "user": null,
+    "use_beam_search": false,
+    "ignore_eos": false,
+    "min_p": 0.0
+  },
+  "model_details": {
+    "Model name": "Mistral merged aqua vllm container A10.2",
+    "Time created": "2024-02-07T23:39:52.835000+00:00",
+    "Status": "State.ACTIVE"
+  },
+  "dataset": {
+    "name": "oci://bucket/file.csv",
+    "rows": 100,
+    "failed_parsing_rows": 5,
+    "failed_inferencing_rows": 2
+  },
+  "metric_results": {
+    "bertscore": {
+      "name": "BERTScore",
+      "description": "BERTScore is a metric for evaluating the quality of text generation models, for example machine translation or summarization that aligns well with human judgement. BERTScore significantly outperforms other text evaluation metrics, because it utilizes contextual embeddings. These embeddings address the limitations of traditional word (or character based) metrics. However, this reliance on contextual embeddings also makes the metric dependent on the language and the quality of the pre-trained embedding model.",
+      "summary_data": {
+        "overall": {
+          "precision": {
+            "0.25": 0.5610056519508362,
+            "0.5": 0.5889354944229126,
+            "0.75": 0.6042251586914062,
+            "std": 0.02191565535127966
+          },
+          "recall": {
+            "0.25": 0.7524561583995819,
+            "0.5": 0.7650378942489624,
+            "0.75": 0.7657093107700348,
+            "std": 0.0074654417695002705
+          },
+          "f1": {
+            "0.25": 0.6471594274044037,
+            "0.5": 0.6655344367027283,
+            "0.75": 0.6699503660202026,
+            "std": 0.01208696461371754
+          }
+        },
+        "by_category": {
+          "type1": {
+            "precision": {
+              "0.25": 0.5965803265571594,
+              "0.5": 0.6042251586914062,
+              "0.75": 0.6118699908256531,
+              "std": 0.021622850572635032
+            },
+            "recall": {
+              "0.25": 0.7461652904748917,
+              "0.5": 0.7524561583995819,
+              "0.75": 0.7587470263242722,
+              "std": 0.017793261476389665
+            },
+            "f1": {
+              "0.25": 0.6677424013614655,
+              "0.5": 0.6699503660202026,
+              "0.75": 0.6721583306789398,
+              "std": 0.006245067131253212
+            }
+          },
+          "type2": {
+            "precision": {
+              "0.25": 0.5330758094787598,
+              "0.5": 0.5330758094787598,
+              "0.75": 0.5330758094787598,
+              "std": null
+            },
+            "recall": {
+              "0.25": 0.7663807272911072,
+              "0.5": 0.7663807272911072,
+              "0.75": 0.7663807272911072,
+              "std": null
+            },
+            "f1": {
+              "0.25": 0.6287844181060791,
+              "0.5": 0.6287844181060791,
+              "0.75": 0.6287844181060791,
+              "std": null
+            }
+          }
+        }
+      },
+      "data": [
+        {
+          "precision": 0.5889354944229126,
+          "recall": 0.7650378942489624,
+          "f1": 0.6655344367027283,
+          "hashcode": "/Users/dmcherka/Work/huggingface/bert-base-multilingual-cased_L9_no-idf_version=0.3.12(hug_trans=4.38.1)",
+          "prompts": "<s>[INST] Summarize this dialog: \n\nHannah: Hey, do you have Betty's number?\nAmanda: Lemme check\nHannah: <file_gif>\nAmanda: Sorry, can't find it.\nAmanda: Ask Larry\nAmanda: He called her last time we were at the park together\nHannah: I don't know him well\nHannah: <file_gif>\nAmanda: Don't be shy, he's very nice\nHannah: If you say so..\nHannah: I'd rather you texted him\nAmanda: Just text him \ud83d\ude42\nHannah: Urgh.. Alright\nHannah: Bye\nAmanda: Bye bye\n---\nSummary:[/INST]",
+          "references": "Hannah needs Betty's number but Amanda doesn't have it. She needs to contact Larry.",
+          "responses": "<s>[INST] Summarize this dialog: \n\nHannah: Hey, do you have Betty's number?\nAmanda: Lemme check\nHannah: <file_gif>\nAmanda: Sorry, can't find it.\nAmanda: Ask Larry\nAmanda: He called her last time we were at the park together\nHannah: I don't know him well\nHannah: <file_gif>\nAmanda: Don't be shy, he's very nice\nHannah: If you say so..\nHannah: I'd rather you texted him\nAmanda: Just text him \ud83d\ude42\nHannah: Urgh.. Alright\nHannah: Bye\nAmanda: Bye bye\n---\nSummary:[/INST] Hannah asks Amanda if she has Betty's number. Amanda checks and cannot find it. She suggests that Hannah ask Larry, who called Betty last time they were at the park together. Hannah is hesitant to ask Larry, but Amanda encourages her to be friendly and text him. Hannah agrees and sends a text.",
+          "categories": "type1"
+        },
+        {
+          "precision": 0.6395148229598999,
+          "recall": 0.7398744225502014,
+          "f1": 0.674366295337677,
+          "hashcode": "/Users/dmcherka/Work/huggingface/bert-base-multilingual-cased_L9_no-idf_version=0.3.12(hug_trans=4.38.1)",
+          "prompts": "<s>[INST] Summarize this dialog: \n\nLenny: Babe, can you help me with something?\r\nBob: Sure, what's up?\r\nLenny: Which one should I pick?\r\nBob: Send me photos\r\nLenny:  <file_photo>\r\nLenny:  <file_photo>\r\nLenny:  <file_photo>\r\nBob: I like the first ones best\r\nLenny: But I already have purple trousers. Does it make sense to have two pairs?\r\nBob: I have four black pairs :D :D\r\nLenny: yeah, but shouldn't I pick a different color?\r\nBob: what matters is what you'll give you the most outfit options\r\nLenny: So I guess I'll buy the first or the third pair then\r\nBob: Pick the best quality then\r\nLenny: ur right, thx\r\nBob: no prob :)\n---\nSummary:[/INST]",
+          "references": "Lenny can't decide which trousers to buy. Bob advised Lenny on that topic. Lenny goes with Bob's advice to pick the trousers that are of best quality.",
+          "responses": "<s>[INST] Summarize this dialog: \n\nLenny: Babe, can you help me with something?\r\nBob: Sure, what's up?\r\nLenny: Which one should I pick?\r\nBob: Send me photos\r\nLenny:  <file_photo>\r\nLenny:  <file_photo>\r\nLenny:  <file_photo>\r\nBob: I like the first ones best\r\nLenny: But I already have purple trousers. Does it make sense to have two pairs?\r\nBob: I have four black pairs :D :D\r\nLenny: yeah, but shouldn't I pick a different color?\r\nBob: what matters is what you'll give you the most outfit options\r\nLenny: So I guess I'll buy the first or the third pair then\r\nBob: Pick the best quality then\r\nLenny: ur right, thx\r\nBob: no prob :)\n---\nSummary:[/INST] Lenny is asking Bob for help in choosing between three pairs of pants. Bob suggests that Lenny send him photos of the pants so he can see them better. Lenny sends three photos, and Bob says he likes the first ones best. Lenny is hesitant to buy two pairs of pants in the same color, but Bob reassures him that having more options is more important. Lenny decides to buy either the first or the third pair, and Bob advises him to choose the best quality.",
+          "categories": "type1"
+        },
+        {
+          "precision": 0.6330758094787598,
+          "recall": 0.663807272911072,
+          "f1": 0.6687844181060791,
+          "hashcode": "/Users/dmcherka/Work/huggingface/bert-base-multilingual-cased_L9_no-idf_version=0.3.12(hug_trans=4.38.1)",
+          "prompts": "<s>[INST] Summarize this dialog: \n\nEric: MACHINE!\r\nRob: That's so gr8!\r\nEric: I know! And shows how Americans see Russian ;)\r\nRob: And it's really funny!\r\nEric: I know! I especially like the train part!\r\nRob: Hahaha! No one talks to the machine like that!\r\nEric: Is this his only stand-up?\r\nRob: Idk. I'll check.\r\nEric: Sure.\r\nRob: Turns out no! There are some of his stand-ups on youtube.\r\nEric: Gr8! I'll watch them now!\r\nRob: Me too!\r\nEric: MACHINE!\r\nRob: MACHINE!\r\nEric: TTYL?\r\nRob: Sure :)\n---\nSummary:[/INST]",
+          "references": "Eric and Rob are going to watch a stand-up on youtube.",
+          "responses": "<s>[INST] Summarize this dialog: \n\nEric: MACHINE!\r\nRob: That's so gr8!\r\nEric: I know! And shows how Americans see Russian ;)\r\nRob: And it's really funny!\r\nEric: I know! I especially like the train part!\r\nRob: Hahaha! No one talks to the machine like that!\r\nEric: Is this his only stand-up?\r\nRob: Idk. I'll check.\r\nEric: Sure.\r\nRob: Turns out no! There are some of his stand-ups on youtube.\r\nEric: Gr8! I'll watch them now!\r\nRob: Me too!\r\nEric: MACHINE!\r\nRob: MACHINE!\r\nEric: TTYL?\r\nRob: Sure :)\n---\nSummary:[/INST] Eric and Rob are discussing a stand-up routine by a comedian named \"Machine.\" Eric finds the routine to be funny and especially enjoys the train part. Rob agrees and notes that no one talks to machines the way Machine does in his routine. Eric asks if this is Machine's only stand-up routine, and Rob checks and finds that there are more of his routines available on YouTube. Eric and Rob both plan to watch them. Eric ends the conversation by saying \"MACHINE!\" and Rob responds with the same.",
+          "categories": "type2"
+        },
+        {
+          "precision": 0.6330758094787598,
+          "recall": 0.663807272911072,
+          "f1": 0.6087844181060791,
+          "hashcode": "/Users/dmcherka/Work/huggingface/bert-base-multilingual-cased_L9_no-idf_version=0.3.12(hug_trans=4.38.1)",
+          "prompts": "<s>[INST] Summarize this dialog: \n\nEric: MACHINE!\r\nRob: That's so gr8!\r\nEric: I know! And shows how Americans see Russian ;)\r\nRob: And it's really funny!\r\nEric: I know! I especially like the train part!\r\nRob: Hahaha! No one talks to the machine like that!\r\nEric: Is this his only stand-up?\r\nRob: Idk. I'll check.\r\nEric: Sure.\r\nRob: Turns out no! There are some of his stand-ups on youtube.\r\nEric: Gr8! I'll watch them now!\r\nRob: Me too!\r\nEric: MACHINE!\r\nRob: MACHINE!\r\nEric: TTYL?\r\nRob: Sure :)\n---\nSummary:[/INST]",
+          "references": "Eric and Rob are going to watch a stand-up on youtube.",
+          "responses": "<s>[INST] Summarize this dialog: \n\nEric: MACHINE!\r\nRob: That's so gr8!\r\nEric: I know! And shows how Americans see Russian ;)\r\nRob: And it's really funny!\r\nEric: I know! I especially like the train part!\r\nRob: Hahaha! No one talks to the machine like that!\r\nEric: Is this his only stand-up?\r\nRob: Idk. I'll check.\r\nEric: Sure.\r\nRob: Turns out no! There are some of his stand-ups on youtube.\r\nEric: Gr8! I'll watch them now!\r\nRob: Me too!\r\nEric: MACHINE!\r\nRob: MACHINE!\r\nEric: TTYL?\r\nRob: Sure :)\n---\nSummary:[/INST] Eric and Rob are discussing a stand-up routine by a comedian named \"Machine.\" Eric finds the routine to be funny and especially enjoys the train part. Rob agrees and notes that no one talks to machines the way Machine does in his routine. Eric asks if this is Machine's only stand-up routine, and Rob checks and finds that there are more of his routines available on YouTube. Eric and Rob both plan to watch them. Eric ends the conversation by saying \"MACHINE!\" and Rob responds with the same.",
+          "categories": "type2"
+        }
+      ]
+    }
+  }
+}
