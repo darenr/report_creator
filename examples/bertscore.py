@@ -107,7 +107,6 @@ def gen_report(
 
     with rc.ReportCreator(title=title, description=generic_description) as report:
         view = rc.Block(
-            rc.Collapse(rc.DataTable(data, wrap_text=True), label="Big Ass Table"),
             rc.Select(
                 blocks=[
                     rc.Block(
@@ -165,8 +164,12 @@ def gen_report(
                             ),
                             label="Model Parameters",
                         ),
+                        rc.Collapse(
+                            rc.DataTable(data, wrap_text=True),
+                            label="Results Table",
+                        ),
                         label=evaluation_metric,
-                    ),
+                    )
                 ],
             ),
         )
