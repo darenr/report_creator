@@ -307,6 +307,7 @@ class DataTable(Base):
         data: Union[pd.DataFrame, List[Dict]],
         label: Optional[str] = None,
         wrap_text: bool = True,
+        index: bool = False,
         max_rows: int = -1,
         float_precision: int = 3,
     ):
@@ -338,7 +339,8 @@ class DataTable(Base):
             data_table_classes.append("nowrap")
 
         styler.format(precision=float_precision)
-        styler.hide(axis="index")
+        if not index:
+            styler.hide(axis="index")
         styler.set_table_attributes(
             f'class="{" ".join(data_table_classes)} cellspacing="0" style="width: 100%;"'
         )
