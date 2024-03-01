@@ -1,4 +1,5 @@
 import base64
+import importlib.util
 import io
 import json
 import logging
@@ -61,13 +62,23 @@ def markdown_to_html(text: str) -> str:
         text (str): markdown text
     """
 
+    extensions = [
+        "markdown.extensions.fenced_code",
+        "markdown.extensions.tables",
+        "markdown_checklist.extension",
+        "markdown.extensions.codehilite",
+        "markdown.extensions.extra",
+        "markdown.extensions.nl2br",
+        "markdown.extensions.sane_lists",
+        "markdown.extensions.md_in_html",
+    ]
+
+    if importlib.util.find_spec("md4mathjax"):
+        extensions.append("md4mathjax")
+
     return markdown(
         text.strip(),
-        extensions=[
-            "markdown.extensions.fenced_code",
-            "markdown.extensions.tables",
-            "markdown_checklist.extension",
-        ],
+        extensions=extensions,
     ).strip()
 
 
@@ -541,6 +552,7 @@ class Markdown(Base):
         Base.__init__(self, label=label)
         self.text = text
         self.extra_css = extra_css or ""
+
         logging.info(f"Markdown {len(self.text)} characters")
 
     @staticmethod

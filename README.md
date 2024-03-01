@@ -68,6 +68,7 @@ PYTHONPATH=. python examples/kitchen_sink.py
 * The Blocks/Groups use css [flex](https://css-tricks.com/snippets/css/a-guide-to-flexbox/).
   * Blocks flow vertically (columns)
 * Groups flow horizontal (row).
+* to render math you'll need to `pip install md4mathjax`
 
 ## Ideas
 

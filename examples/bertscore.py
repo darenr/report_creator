@@ -51,25 +51,6 @@ def get_grade(mean_f1: float) -> tuple[str, str]:
     )
 
 
-def gen_markdown_report(
-    metric_results: dict,
-):
-    # https://www.codecademy.com/resources/docs/markdown/tables
-    rows = []
-    rows.append("|Metric|Score|Grade|")
-    rows.append("|:---:|:---|:---|")
-    for _, metric in metric_results.items():
-        metric_name = metric["name"].replace(" ", "")
-        median_f1 = metric["summary_data"]["overall"]["f1"]["0.5"]
-        grade, grade_description = get_grade(median_f1)
-        std = metric["summary_data"]["overall"]["f1"]["std"]
-        rows.append(
-            f"|{metric_name}|Median F1: **{median_f1:0.3f}** (SD: {std:0.3f})|**{grade}**, {grade_description}|"
-        )
-
-    return "\n".join(rows)
-
-
 def gen_report(
     name: str,
     title: str,
@@ -194,5 +175,3 @@ if __name__ == "__main__":
         model_details,
         metric_results["bertscore"],
     )
-
-    gen_markdown_report(metric_results)
