@@ -200,11 +200,11 @@ class Widget(Base):
 
         if isinstance(self.widget, pd.DataFrame):
             s = self.widget.style
-            if self.index == False:
+            if self.index is False:
                 s.hide()
             html += s._repr_html_()
         else:
-            html += self.widget._repr_html_(index=self.index)
+            html += self.widget._repr_html_()
 
         html += "</div>"
         return html
@@ -280,14 +280,22 @@ class Metric(Base):
 class Table(Widget):
     def __init__(
         self,
-        df: pd.DataFrame,
+        data: Union[pd.DataFrame, List[Dict]],
         label: Optional[str] = None,
-        max_rows: int = -1,
-        float_precision: int = 3,
         index: bool = False,
-        **kwargs,
     ):
-        Widget.__init__(self, df, index=index, label=label)
+        if isinstance(data, list):
+            df = pd.DataFrame(data)
+        elif isinstance(data, pd.DataFrame):
+            df = data
+        else:
+            raise ValueError(
+                f"Expected data to be a list or pd.DataFrame, got {type(data)}"
+            )
+
+        s = df.style if index else df.style.hide()
+
+        Widget.__init__(self, s.format(escape="html"), label=label)
 
 
 ##############################
@@ -296,7 +304,7 @@ class Table(Widget):
 class DataTable(Base):
     def __init__(
         self,
-        df: pd.DataFrame,
+        data: Union[pd.DataFrame, List[Dict]],
         label: Optional[str] = None,
         max_rows: int = -1,
         float_precision: int = 3,
@@ -304,10 +312,16 @@ class DataTable(Base):
     ):
         Base.__init__(self, label=label)
 
-        if max_rows > 0:
-            styler = df.head(max_rows).style
+        if isinstance(data, list):
+            df = pd.DataFrame(data)
+        elif isinstance(data, pd.DataFrame):
+            df = data
         else:
-            styler = df.style
+            raise ValueError(
+                f"Expected data to be a list or pd.DataFrame, got {type(data)}"
+            )
+
+        styler = df.head(max_rows).style if max_rows > 0 else df.style
 
         if label:
             styler.set_caption(label)
@@ -317,7 +331,7 @@ class DataTable(Base):
         styler.set_table_attributes(
             'class="remove-all-styles fancy_table display row-border hover responsive nowrap" cellspacing="0" style="width: 100%;"'
         )
-        self.table_html = styler.to_html()
+        self.table_html = styler.format(escape="html").to_html()
         logging.info(f"DataTable {len(df)} rows")
 
     @strip_whitespace

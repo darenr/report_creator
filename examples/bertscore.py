@@ -67,12 +67,13 @@ def gen_markdown_report(
             f"|{metric_name}|Median F1: **{median_f1:0.3f}** (SD: {std:0.3f})|**{grade}**, {grade_description}|"
         )
 
-    print("\n".join(rows))
+    return "\n".join(rows)
 
 
 def gen_report(
     name: str,
     title: str,
+    data: dict,
     dataset: dict,
     model_params: dict,
     model_details: dict,
@@ -106,6 +107,7 @@ def gen_report(
 
     with rc.ReportCreator(title=title, description=generic_description) as report:
         view = rc.Block(
+            rc.Table(data),
             rc.Select(
                 blocks=[
                     rc.Block(
@@ -181,6 +183,7 @@ if __name__ == "__main__":
     gen_report(
         "bertscore.html",
         "Model Evaluation Report",
+        data,
         dataset,
         model_params,
         model_details,
