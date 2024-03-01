@@ -19,7 +19,13 @@ from markupsafe import escape
 logging.basicConfig(level=logging.INFO)
 
 
-def markdown_to_html(text: str):
+def markdown_to_html(text: str) -> str:
+    """Converts markdown to html
+
+    Args:
+        text (str): markdown text
+    """
+
     return markdown(
         text.strip(),
         extensions=[
@@ -53,7 +59,11 @@ def strip_whitespace(func):
 
 
 def random_color_generator(word: str) -> Tuple[str, str]:
-    """returns auto selected (background_color, text_color) as tuple"""
+    """returns auto selected (background_color, text_color) as tuple
+
+    Args:
+        word (str): word to generate color for
+    """
     seed = sum([ord(c) for c in word]) % 13
     random.seed(seed)  # must be deterministic
     r = random.randint(10, 245)
@@ -67,7 +77,11 @@ def random_color_generator(word: str) -> Tuple[str, str]:
 
 
 def convert_imgurl_to_datauri(imgurl: str) -> str:
-    """convert url to base64 datauri"""
+    """convert url to base64 datauri
+
+    Args:
+        imgurl (str): url of the image
+    """
     from io import BytesIO
 
     import requests
@@ -83,6 +97,11 @@ def convert_imgurl_to_datauri(imgurl: str) -> str:
 
 class Base(ABC):
     def __init__(self, label: Optional[str] = None):
+        """Abstract Base Class for all components
+
+        Args:
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
         self.label = label
 
     @abstractmethod
@@ -94,8 +113,13 @@ class Base(ABC):
 
 
 class Block(Base):
-    # vertically stacked compoments
     def __init__(self, *components: Base, label: Optional[str] = None):
+        """Block is a container for vertically stacked components
+
+        Args:
+            components (Base): _description_
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
         Base.__init__(self, label=label)
         self.components = components
         logging.info(f"Block: {len(self.components)} components")
@@ -118,8 +142,13 @@ class Block(Base):
 
 
 class Group(Base):
-    # horizontally stacked compoments
     def __init__(self, *components: Base, label: Optional[str] = None):
+        """Group is a container for horizontally stacked components
+
+        Args:
+            components (Base): _description_
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
         Base.__init__(self, label=label)
         self.components = components
         logging.info(f"Group: {len(self.components)} components {label=}")
@@ -156,6 +185,12 @@ class Group(Base):
 
 class Collapse(Base):
     def __init__(self, *components: Base, label: Optional[str] = None):
+        """Collapse is a container for vertically stacked components that can be collapsed
+
+        Args:
+            components (Base): _description_
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
         Base.__init__(self, label=label)
         self.components = components
         logging.info(f"Collapse {len(self.components)} components, {label=}")
@@ -175,12 +210,16 @@ class Collapse(Base):
 
 
 class Widget(Base):
-    # This component is used to add a widget to the report, a widget is any
-    # component that supports the _repr_html_ method, such as a plotly figure,
-    # anything written for Jupyter. sklearn Pipelines for example.
     def __init__(
         self, widget, index: Optional[bool] = False, label: Optional[str] = None
     ):
+        """Widget is a container for any component that supports the _repr_html_ method (anything written for Jupyter).
+
+        Args:
+            widget: A widget that supports the _repr_html_ method.
+            index (Optional[bool], optional): _description_. Defaults to False.
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
         Base.__init__(self, label=label)
         if not hasattr(widget, "_repr_html_"):
             raise ValueError(
@@ -217,6 +256,14 @@ class MetricGroup(Base):
     def __init__(
         self, df: pd.DataFrame, heading: str, value: str, label: Optional[str] = None
     ):
+        """MetricGroup is a container for a group of metrics. It takes a DataFrame with a heading and value column.
+
+        Args:
+            df (pd.DataFrame): _description_
+            heading (str): _description_
+            value (str): _description_
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
         Base.__init__(self, label=label)
         assert heading in df.columns, f"heading {heading} not in df"
         assert value in df.columns, f"value {value} not in df"
@@ -244,6 +291,15 @@ class Metric(Base):
         float_precision=3,
         label: Optional[str] = None,
     ):
+        """Metric is a container for a single metric. It takes a heading and a value.
+
+        Args:
+            heading (str): _description_
+            value (Union[str, int, float]): _description_
+            unit ([type], optional): _description_. Defaults to None.
+            float_precision (int, optional): _description_. Defaults to 3.
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
         Base.__init__(self, label=label)
         self.heading = heading
         self.float_precision = float_precision
@@ -284,6 +340,13 @@ class Table(Widget):
         label: Optional[str] = None,
         index: bool = False,
     ):
+        """Table is a simple container for a DataFrame (or table-like list of dictionaries.)
+
+        Args:
+            data (Union[pd.DataFrame, List[Dict]]): _description_
+            label (Optional[str], optional): _description_. Defaults to None.
+            index (bool, optional): _description_. Defaults to False.
+        """
         if isinstance(data, list):
             df = pd.DataFrame(data)
         elif isinstance(data, pd.DataFrame):
@@ -311,6 +374,16 @@ class DataTable(Base):
         max_rows: int = -1,
         float_precision: int = 3,
     ):
+        """DataTable is a container for a DataFrame (or table-like list of dictionaries.) with search and sort capabilities.
+
+        Args:
+            data (Union[pd.DataFrame, List[Dict]]): _description_
+            label (Optional[str], optional): _description_. Defaults to None.
+            wrap_text (bool, optional): _description_. Defaults to True.
+            index (bool, optional): _description_. Defaults to False.
+            max_rows (int, optional): _description_. Defaults to -1.
+            float_precision (int, optional): _description_. Defaults to 3.
+        """
         Base.__init__(self, label=label)
 
         if isinstance(data, list):
@@ -357,6 +430,13 @@ class DataTable(Base):
 
 class Html(Base):
     def __init__(self, html: str, css: str = None, label: Optional[str] = None):
+        """Html is a container for raw HTML. It can also take CSS.
+
+        Args:
+            html (str): _description_
+            css (str, optional): _description_. Defaults to None.
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
         Base.__init__(self, label=label)
         self.html = html
         self.css = css
@@ -382,6 +462,14 @@ class Image(Base):
         label: Optional[str] = None,
         extra_css: str = None,
     ):
+        """Image is a container for an image. It can also take a link.
+
+        Args:
+            img (str): _description_
+            link (str, optional): _description_. Defaults to None.
+            label (Optional[str], optional): _description_. Defaults to None.
+            extra_css (str, optional): _description_. Defaults to None.
+        """
         Base.__init__(self, label=label or img)
         self.img = img
         self.link = link or img
@@ -405,6 +493,13 @@ class Image(Base):
 
 class Markdown(Base):
     def __init__(self, text: str, label: Optional[str] = None, extra_css: str = None):
+        """Markdown is a container for markdown text. It can also take extra CSS.
+
+        Args:
+            text (str): _description_
+            label (Optional[str], optional): _description_. Defaults to None.
+            extra_css (str, optional): _description_. Defaults to None.
+        """
         Base.__init__(self, label=label)
         self.text = text
         self.extra_css = extra_css or ""
@@ -434,6 +529,12 @@ class Plot(Base):
     # for how to make interactive
 
     def __init__(self, fig, label: Optional[str] = None):
+        """Plot is a container for a matplotlib or plotly figure. It can also take a label.
+
+        Args:
+            fig: A matplotlib or plotly figure.
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
         Base.__init__(self, label=label)
         self.fig = fig
         if hasattr(fig, "get_figure"):
@@ -479,6 +580,11 @@ class Plot(Base):
 
 class Separator(Base):
     def __init__(self, label: Optional[str] = None):
+        """Separator is a container for a horizontal line. It can also take a label.
+
+        Args:
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
         Base.__init__(self, label=label)
         logging.info("Separator")
 
@@ -495,6 +601,7 @@ class Separator(Base):
 
 class Text(Base):
     def __init__(self, text: str, label: Optional[str] = None, extra_css: str = None):
+        """Text is a container for raw text. It can also take extra CSS."""
         Base.__init__(self, label=label)
         self.text = text
         self.extra_css = extra_css or ""
@@ -520,6 +627,12 @@ class Text(Base):
 
 class Select(Base):
     def __init__(self, blocks: List[Base], label: Optional[str] = None):
+        """Select is a container for a group of components that will shown in tabs. It can also take an outer label.
+
+        Args:
+            blocks (List[Base]): _description_
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
         Base.__init__(self, label=label)
         self.blocks = blocks
         for blocks in self.blocks:
@@ -532,10 +645,7 @@ class Select(Base):
 
     @strip_whitespace
     def to_html(self):
-        if self.label:
-            html = f"<report-caption>{self.label}</report-caption>"
-        else:
-            html = ""
+        html = f"<report-caption>{self.label}</report-caption>" if self.label else ""
 
         # assemble the button bar for the tabs
         html += """<div class="tab">"""
@@ -558,6 +668,14 @@ class Select(Base):
 
 class Language(Base):
     def __init__(self, text: str, language: str, label: Optional[str] = None):
+        """Language is a container for code. It can also take a label.
+
+        Args:
+            text (str): _description_
+            language (str): _description_
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
+
         Base.__init__(self, label=label)
         self.text = text
         self.language = language
@@ -578,6 +696,13 @@ class Language(Base):
 
 class Python(Language):
     def __init__(self, code: str, label: Optional[str] = None):
+        """Python is a container for python code. It can also take a label.
+
+        Args:
+            code (str): _description_
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
+
         Language.__init__(self, escape(code), "python", label=label)
 
 
@@ -586,6 +711,12 @@ class Python(Language):
 
 class Yaml(Language):
     def __init__(self, data: Union[Dict, List], label: Optional[str] = None):
+        """Yaml is a container for yaml. It can also take a label.
+
+        Args:
+            data (Union[Dict, List]): _description_
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
         Language.__init__(
             self,
             yaml.dump(data, indent=2),
@@ -599,6 +730,12 @@ class Yaml(Language):
 
 class Json(Language):
     def __init__(self, data: Union[Dict, List], label: Optional[str] = None):
+        """Json is a container for JSON data. It can also take a label.
+
+        Args:
+            data (Union[Dict, List]): _description_
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
         Language.__init__(
             self,
             json.dumps(data, indent=2),
@@ -612,6 +749,7 @@ class Json(Language):
 
 class ReportCreator:
     def __init__(self, title: str, description: Optional[str] = None):
+        """ReportCreator is a container for all components. It can also take a title and description."""
         self.title = title
         self.description = description
         logging.info(f"ReportCreator {self.title}")
