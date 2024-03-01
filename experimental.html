@@ -1,651 +1,625 @@
 <!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <style>
-        .gauge-container {
-            margin: 150px auto;
-        }
-
-        #demo {
-            height: 300px;
-            width: 300px;
-        }
-
-
-        /* bar chart */
-
-        html,
-        body {
-            padding: 0px;
-            margin: 0px;
-            font-family: monospace;
-            height: 100%;
-        }
-
-        body {
-            display: block;
-        }
-
-        .bar-chart-container {
-            background: #fff;
-            width: 400px;
-            margin: auto;
-        }
-
-        h1 {
-            text-align: center;
-            color: #222;
-        }
-
-        .chart {
-            position: relative;
-            padding: 1em;
-            background: #222;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        .chart * {
-            box-sizing: border-box;
-        }
-
-        .chart:after {
-            content: "";
-            position: absolute;
-            left: 25%;
-            top: 7.5%;
-            transform: translateX(100%);
-            width: 4px;
-            background: #fff;
-            height: 86%;
-            border-radius: 2px;
-        }
-
-        .chart .part {
-            display: flex;
-            height: 3em;
-        }
-
-        .chart .part>.label {
-            flex: 1;
-            flex-basis: 25%;
-            text-align: right;
-            padding-right: 1em;
-            margin: 0.5em 0;
-            height: 2em;
-            line-height: 2em;
-            color: #fff;
-            font-weight: 600;
-        }
-
-        .chart .part .bar {
-            flex: 3;
-            flex-basis: 75%;
-            position: relative;
-            margin: 0.5em 0;
-        }
-
-        .chart .part .bar:after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            border-radius: 0 2px 2px 0;
-            -webkit-animation: grow 0.5s;
-            animation: grow 0.5s;
-        }
-
-        .chart .part .bar.red:after {
-            background: red;
-        }
-
-        .chart .part .bar.blue:after {
-            background: blue;
-        }
-
-        .chart .part .bar.green:after {
-            background: green;
-        }
-
-        .chart .part .bar.indigo:after {
-            background: indigo;
-        }
-
-        .chart .part .bar.orange:after {
-            background: orange;
-        }
-
-
-        .chart .part .bar .label {
-            position: absolute;
-            top: 50%;
-            left: 0.5em;
-            transform: translateX(0%) translateY(-50%);
-            z-index: 1;
-            color: #fff;
-            font-weight: 600;
-        }
-
-        .chart .part.percent-10 .bar:after {
-            width: 10%;
-        }
-
-        .chart .part.percent-11 .bar:after {
-            width: 11%;
-        }
-
-        .chart .part.percent-12 .bar:after {
-            width: 12%;
-        }
-
-        .chart .part.percent-13 .bar:after {
-            width: 13%;
-        }
-
-        .chart .part.percent-14 .bar:after {
-            width: 14%;
-        }
-
-        .chart .part.percent-15 .bar:after {
-            width: 15%;
-        }
-
-        .chart .part.percent-16 .bar:after {
-            width: 16%;
-        }
-
-        .chart .part.percent-17 .bar:after {
-            width: 17%;
-        }
-
-        .chart .part.percent-18 .bar:after {
-            width: 18%;
-        }
-
-        .chart .part.percent-19 .bar:after {
-            width: 19%;
-        }
-
-        .chart .part.percent-20 .bar:after {
-            width: 20%;
-        }
-
-        .chart .part.percent-21 .bar:after {
-            width: 21%;
-        }
-
-        .chart .part.percent-22 .bar:after {
-            width: 22%;
-        }
-
-        .chart .part.percent-23 .bar:after {
-            width: 23%;
-        }
-
-        .chart .part.percent-24 .bar:after {
-            width: 24%;
-        }
-
-        .chart .part.percent-25 .bar:after {
-            width: 25%;
-        }
-
-        .chart .part.percent-26 .bar:after {
-            width: 26%;
-        }
-
-        .chart .part.percent-27 .bar:after {
-            width: 27%;
-        }
-
-        .chart .part.percent-28 .bar:after {
-            width: 28%;
-        }
-
-        .chart .part.percent-29 .bar:after {
-            width: 29%;
-        }
-
-        .chart .part.percent-30 .bar:after {
-            width: 30%;
-        }
-
-        .chart .part.percent-31 .bar:after {
-            width: 31%;
-        }
-
-        .chart .part.percent-32 .bar:after {
-            width: 32%;
-        }
-
-        .chart .part.percent-33 .bar:after {
-            width: 33%;
-        }
-
-        .chart .part.percent-34 .bar:after {
-            width: 34%;
-        }
-
-        .chart .part.percent-35 .bar:after {
-            width: 35%;
-        }
-
-        .chart .part.percent-36 .bar:after {
-            width: 36%;
-        }
-
-        .chart .part.percent-37 .bar:after {
-            width: 37%;
-        }
-
-        .chart .part.percent-38 .bar:after {
-            width: 38%;
-        }
-
-        .chart .part.percent-39 .bar:after {
-            width: 39%;
-        }
-
-        .chart .part.percent-40 .bar:after {
-            width: 40%;
-        }
-
-        .chart .part.percent-41 .bar:after {
-            width: 41%;
-        }
-
-        .chart .part.percent-42 .bar:after {
-            width: 42%;
-        }
-
-        .chart .part.percent-43 .bar:after {
-            width: 43%;
-        }
-
-        .chart .part.percent-44 .bar:after {
-            width: 44%;
-        }
-
-        .chart .part.percent-45 .bar:after {
-            width: 45%;
-        }
-
-        .chart .part.percent-46 .bar:after {
-            width: 46%;
-        }
-
-        .chart .part.percent-47 .bar:after {
-            width: 47%;
-        }
-
-        .chart .part.percent-48 .bar:after {
-            width: 48%;
-        }
-
-        .chart .part.percent-49 .bar:after {
-            width: 49%;
-        }
-
-        .chart .part.percent-50 .bar:after {
-            width: 50%;
-        }
-
-        .chart .part.percent-51 .bar:after {
-            width: 51%;
-        }
-
-        .chart .part.percent-52 .bar:after {
-            width: 52%;
-        }
-
-        .chart .part.percent-53 .bar:after {
-            width: 53%;
-        }
-
-        .chart .part.percent-54 .bar:after {
-            width: 54%;
-        }
-
-        .chart .part.percent-55 .bar:after {
-            width: 55%;
-        }
-
-        .chart .part.percent-56 .bar:after {
-            width: 56%;
-        }
-
-        .chart .part.percent-57 .bar:after {
-            width: 57%;
-        }
-
-        .chart .part.percent-58 .bar:after {
-            width: 58%;
-        }
-
-        .chart .part.percent-59 .bar:after {
-            width: 59%;
-        }
-
-        .chart .part.percent-60 .bar:after {
-            width: 60%;
-        }
-
-        .chart .part.percent-61 .bar:after {
-            width: 61%;
-        }
-
-        .chart .part.percent-62 .bar:after {
-            width: 62%;
-        }
-
-        .chart .part.percent-63 .bar:after {
-            width: 63%;
-        }
-
-        .chart .part.percent-64 .bar:after {
-            width: 64%;
-        }
-
-        .chart .part.percent-65 .bar:after {
-            width: 65%;
-        }
-
-        .chart .part.percent-66 .bar:after {
-            width: 66%;
-        }
-
-        .chart .part.percent-67 .bar:after {
-            width: 67%;
-        }
-
-        .chart .part.percent-68 .bar:after {
-            width: 68%;
-        }
-
-        .chart .part.percent-69 .bar:after {
-            width: 69%;
-        }
-
-        .chart .part.percent-70 .bar:after {
-            width: 70%;
-        }
-
-        .chart .part.percent-71 .bar:after {
-            width: 71%;
-        }
-
-        .chart .part.percent-72 .bar:after {
-            width: 72%;
-        }
-
-        .chart .part.percent-73 .bar:after {
-            width: 73%;
-        }
-
-        .chart .part.percent-74 .bar:after {
-            width: 74%;
-        }
-
-        .chart .part.percent-75 .bar:after {
-            width: 75%;
-        }
-
-        .chart .part.percent-76 .bar:after {
-            width: 76%;
-        }
-
-        .chart .part.percent-77 .bar:after {
-            width: 77%;
-        }
-
-        .chart .part.percent-78 .bar:after {
-            width: 78%;
-        }
-
-        .chart .part.percent-79 .bar:after {
-            width: 79%;
-        }
-
-        .chart .part.percent-80 .bar:after {
-            width: 80%;
-        }
-
-        .chart .part.percent-81 .bar:after {
-            width: 81%;
-        }
-
-        .chart .part.percent-82 .bar:after {
-            width: 82%;
-        }
-
-        .chart .part.percent-83 .bar:after {
-            width: 83%;
-        }
-
-        .chart .part.percent-84 .bar:after {
-            width: 84%;
-        }
-
-        .chart .part.percent-85 .bar:after {
-            width: 85%;
-        }
-
-        .chart .part.percent-86 .bar:after {
-            width: 86%;
-        }
-
-        .chart .part.percent-87 .bar:after {
-            width: 87%;
-        }
-
-        .chart .part.percent-88 .bar:after {
-            width: 88%;
-        }
-
-        .chart .part.percent-89 .bar:after {
-            width: 89%;
-        }
-
-        .chart .part.percent-90 .bar:after {
-            width: 90%;
-        }
-
-        .chart .part.percent-91 .bar:after {
-            width: 91%;
-        }
-
-        .chart .part.percent-92 .bar:after {
-            width: 92%;
-        }
-
-        .chart .part.percent-93 .bar:after {
-            width: 93%;
-        }
-
-        .chart .part.percent-94 .bar:after {
-            width: 94%;
-        }
-
-        .chart .part.percent-95 .bar:after {
-            width: 95%;
-        }
-
-        .chart .part.percent-96 .bar:after {
-            width: 96%;
-        }
-
-        .chart .part.percent-97 .bar:after {
-            width: 97%;
-        }
-
-        .chart .part.percent-98 .bar:after {
-            width: 98%;
-        }
-
-        .chart .part.percent-99 .bar:after {
-            width: 99%;
-        }
-
-        .chart .part.percent-100 .bar:after {
-            width: 100%;
-        }
-
-        @-webkit-keyframes grow {
-            from {
-                width: 0;
-            }
-        }
-
-        @keyframes grow {
-            from {
-                width: 0;
-            }
-        }
+      .gauge-container {
+        margin: 150px auto;
+      }
+
+      #demo {
+        height: 300px;
+        width: 300px;
+      }
+
+      /* bar chart */
+
+      html,
+      body {
+        padding: 0px;
+        margin: 0px;
+        font-family: monospace;
+        height: 100%;
+      }
+
+      body {
+        display: block;
+      }
+
+      .bar-chart-container {
+        background: #fff;
+        width: 400px;
+        margin: auto;
+      }
+
+      h1 {
+        text-align: center;
+        color: #222;
+      }
+
+      .chart {
+        position: relative;
+        padding: 1em;
+        background: #222;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+
+      .chart * {
+        box-sizing: border-box;
+      }
+
+      .chart:after {
+        content: "";
+        position: absolute;
+        left: 25%;
+        top: 7.5%;
+        transform: translateX(100%);
+        width: 4px;
+        background: #fff;
+        height: 86%;
+        border-radius: 2px;
+      }
+
+      .chart .part {
+        display: flex;
+        height: 3em;
+      }
+
+      .chart .part > .label {
+        flex: 1;
+        flex-basis: 25%;
+        text-align: right;
+        padding-right: 1em;
+        margin: 0.5em 0;
+        height: 2em;
+        line-height: 2em;
+        color: #fff;
+        font-weight: 600;
+      }
+
+      .chart .part .bar {
+        flex: 3;
+        flex-basis: 75%;
+        position: relative;
+        margin: 0.5em 0;
+      }
+
+      .chart .part .bar:after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        border-radius: 0 2px 2px 0;
+        -webkit-animation: grow 0.5s;
+        animation: grow 0.5s;
+      }
+
+      .chart .part .bar.red:after {
+        background: red;
+      }
+
+      .chart .part .bar.blue:after {
+        background: blue;
+      }
+
+      .chart .part .bar.green:after {
+        background: green;
+      }
+
+      .chart .part .bar.indigo:after {
+        background: indigo;
+      }
+
+      .chart .part .bar.orange:after {
+        background: orange;
+      }
+
+      .chart .part .bar .label {
+        position: absolute;
+        top: 50%;
+        left: 0.5em;
+        transform: translateX(0%) translateY(-50%);
+        z-index: 1;
+        color: #fff;
+        font-weight: 600;
+      }
+
+      .chart .part.percent-10 .bar:after {
+        width: 10%;
+      }
+
+      .chart .part.percent-11 .bar:after {
+        width: 11%;
+      }
+
+      .chart .part.percent-12 .bar:after {
+        width: 12%;
+      }
+
+      .chart .part.percent-13 .bar:after {
+        width: 13%;
+      }
+
+      .chart .part.percent-14 .bar:after {
+        width: 14%;
+      }
+
+      .chart .part.percent-15 .bar:after {
+        width: 15%;
+      }
+
+      .chart .part.percent-16 .bar:after {
+        width: 16%;
+      }
+
+      .chart .part.percent-17 .bar:after {
+        width: 17%;
+      }
+
+      .chart .part.percent-18 .bar:after {
+        width: 18%;
+      }
+
+      .chart .part.percent-19 .bar:after {
+        width: 19%;
+      }
+
+      .chart .part.percent-20 .bar:after {
+        width: 20%;
+      }
+
+      .chart .part.percent-21 .bar:after {
+        width: 21%;
+      }
+
+      .chart .part.percent-22 .bar:after {
+        width: 22%;
+      }
+
+      .chart .part.percent-23 .bar:after {
+        width: 23%;
+      }
+
+      .chart .part.percent-24 .bar:after {
+        width: 24%;
+      }
+
+      .chart .part.percent-25 .bar:after {
+        width: 25%;
+      }
+
+      .chart .part.percent-26 .bar:after {
+        width: 26%;
+      }
+
+      .chart .part.percent-27 .bar:after {
+        width: 27%;
+      }
+
+      .chart .part.percent-28 .bar:after {
+        width: 28%;
+      }
+
+      .chart .part.percent-29 .bar:after {
+        width: 29%;
+      }
+
+      .chart .part.percent-30 .bar:after {
+        width: 30%;
+      }
+
+      .chart .part.percent-31 .bar:after {
+        width: 31%;
+      }
+
+      .chart .part.percent-32 .bar:after {
+        width: 32%;
+      }
+
+      .chart .part.percent-33 .bar:after {
+        width: 33%;
+      }
+
+      .chart .part.percent-34 .bar:after {
+        width: 34%;
+      }
+
+      .chart .part.percent-35 .bar:after {
+        width: 35%;
+      }
+
+      .chart .part.percent-36 .bar:after {
+        width: 36%;
+      }
+
+      .chart .part.percent-37 .bar:after {
+        width: 37%;
+      }
+
+      .chart .part.percent-38 .bar:after {
+        width: 38%;
+      }
+
+      .chart .part.percent-39 .bar:after {
+        width: 39%;
+      }
+
+      .chart .part.percent-40 .bar:after {
+        width: 40%;
+      }
+
+      .chart .part.percent-41 .bar:after {
+        width: 41%;
+      }
+
+      .chart .part.percent-42 .bar:after {
+        width: 42%;
+      }
+
+      .chart .part.percent-43 .bar:after {
+        width: 43%;
+      }
+
+      .chart .part.percent-44 .bar:after {
+        width: 44%;
+      }
+
+      .chart .part.percent-45 .bar:after {
+        width: 45%;
+      }
+
+      .chart .part.percent-46 .bar:after {
+        width: 46%;
+      }
+
+      .chart .part.percent-47 .bar:after {
+        width: 47%;
+      }
+
+      .chart .part.percent-48 .bar:after {
+        width: 48%;
+      }
+
+      .chart .part.percent-49 .bar:after {
+        width: 49%;
+      }
+
+      .chart .part.percent-50 .bar:after {
+        width: 50%;
+      }
+
+      .chart .part.percent-51 .bar:after {
+        width: 51%;
+      }
+
+      .chart .part.percent-52 .bar:after {
+        width: 52%;
+      }
+
+      .chart .part.percent-53 .bar:after {
+        width: 53%;
+      }
+
+      .chart .part.percent-54 .bar:after {
+        width: 54%;
+      }
+
+      .chart .part.percent-55 .bar:after {
+        width: 55%;
+      }
+
+      .chart .part.percent-56 .bar:after {
+        width: 56%;
+      }
+
+      .chart .part.percent-57 .bar:after {
+        width: 57%;
+      }
+
+      .chart .part.percent-58 .bar:after {
+        width: 58%;
+      }
+
+      .chart .part.percent-59 .bar:after {
+        width: 59%;
+      }
+
+      .chart .part.percent-60 .bar:after {
+        width: 60%;
+      }
+
+      .chart .part.percent-61 .bar:after {
+        width: 61%;
+      }
+
+      .chart .part.percent-62 .bar:after {
+        width: 62%;
+      }
+
+      .chart .part.percent-63 .bar:after {
+        width: 63%;
+      }
+
+      .chart .part.percent-64 .bar:after {
+        width: 64%;
+      }
+
+      .chart .part.percent-65 .bar:after {
+        width: 65%;
+      }
+
+      .chart .part.percent-66 .bar:after {
+        width: 66%;
+      }
+
+      .chart .part.percent-67 .bar:after {
+        width: 67%;
+      }
+
+      .chart .part.percent-68 .bar:after {
+        width: 68%;
+      }
+
+      .chart .part.percent-69 .bar:after {
+        width: 69%;
+      }
+
+      .chart .part.percent-70 .bar:after {
+        width: 70%;
+      }
+
+      .chart .part.percent-71 .bar:after {
+        width: 71%;
+      }
+
+      .chart .part.percent-72 .bar:after {
+        width: 72%;
+      }
+
+      .chart .part.percent-73 .bar:after {
+        width: 73%;
+      }
+
+      .chart .part.percent-74 .bar:after {
+        width: 74%;
+      }
+
+      .chart .part.percent-75 .bar:after {
+        width: 75%;
+      }
+
+      .chart .part.percent-76 .bar:after {
+        width: 76%;
+      }
+
+      .chart .part.percent-77 .bar:after {
+        width: 77%;
+      }
+
+      .chart .part.percent-78 .bar:after {
+        width: 78%;
+      }
+
+      .chart .part.percent-79 .bar:after {
+        width: 79%;
+      }
 
-        /* pie chart */
-
-
-        .pie {
-            --p: 20;
-            --b: 22px;
-            --c: darkred;
-            --w: 100px;
-
-            width: var(--w);
-            aspect-ratio: 1;
-            position: relative;
-            display: inline-grid;
-            margin: 5px;
-            place-content: center;
-            font-size: 25px;
-            font-weight: bold;
-            font-family: sans-serif;
-            padding: 1em;
-            border-radius: 5px;
-
-        }
-
-        .pie:before,
-        .pie:after {
-            content: "";
-            position: absolute;
-            border-radius: 50%;
-        }
-
-        .pie:before {
-            inset: 0;
-            background:
-                radial-gradient(farthest-side, var(--c) 98%, #0000) top/var(--b) var(--b) no-repeat,
-                conic-gradient(var(--c) calc(var(--p)*1%), #0000 0);
-            -webkit-mask: radial-gradient(farthest-side, #0000 calc(99% - var(--b)), #000 calc(100% - var(--b)));
-            mask: radial-gradient(farthest-side, #0000 calc(99% - var(--b)), #000 calc(100% - var(--b)));
-        }
-
-        .pie:after {
-            inset: calc(50% - var(--b)/2);
-            background: var(--c);
-            transform: rotate(calc(var(--p)*3.6deg)) translateY(calc(50% - var(--w)/2));
-        }
-
-        .animate {
-            animation: p 1s .5s both;
-        }
-
-        .no-round:before {
-            background-size: 0 0, auto;
-        }
-
-        .no-round:after {
-            content: none;
-        }
-
-        @keyframes p {
-            from {
-                --p: 0
-            }
-        }
+      .chart .part.percent-80 .bar:after {
+        width: 80%;
+      }
+
+      .chart .part.percent-81 .bar:after {
+        width: 81%;
+      }
+
+      .chart .part.percent-82 .bar:after {
+        width: 82%;
+      }
+
+      .chart .part.percent-83 .bar:after {
+        width: 83%;
+      }
+
+      .chart .part.percent-84 .bar:after {
+        width: 84%;
+      }
+
+      .chart .part.percent-85 .bar:after {
+        width: 85%;
+      }
+
+      .chart .part.percent-86 .bar:after {
+        width: 86%;
+      }
+
+      .chart .part.percent-87 .bar:after {
+        width: 87%;
+      }
+
+      .chart .part.percent-88 .bar:after {
+        width: 88%;
+      }
+
+      .chart .part.percent-89 .bar:after {
+        width: 89%;
+      }
+
+      .chart .part.percent-90 .bar:after {
+        width: 90%;
+      }
+
+      .chart .part.percent-91 .bar:after {
+        width: 91%;
+      }
+
+      .chart .part.percent-92 .bar:after {
+        width: 92%;
+      }
+
+      .chart .part.percent-93 .bar:after {
+        width: 93%;
+      }
+
+      .chart .part.percent-94 .bar:after {
+        width: 94%;
+      }
+
+      .chart .part.percent-95 .bar:after {
+        width: 95%;
+      }
+
+      .chart .part.percent-96 .bar:after {
+        width: 96%;
+      }
+
+      .chart .part.percent-97 .bar:after {
+        width: 97%;
+      }
+
+      .chart .part.percent-98 .bar:after {
+        width: 98%;
+      }
+
+      .chart .part.percent-99 .bar:after {
+        width: 99%;
+      }
+
+      .chart .part.percent-100 .bar:after {
+        width: 100%;
+      }
+
+      @-webkit-keyframes grow {
+        from {
+          width: 0;
+        }
+      }
+
+      @keyframes grow {
+        from {
+          width: 0;
+        }
+      }
+
+      /* pie chart */
+
+      .pie {
+        --p: 20;
+        --b: 22px;
+        --c: darkred;
+        --w: 100px;
+
+        width: var(--w);
+        aspect-ratio: 1;
+        position: relative;
+        display: inline-grid;
+        margin: 5px;
+        place-content: center;
+        font-size: 25px;
+        font-weight: bold;
+        font-family: sans-serif;
+        padding: 1em;
+        border-radius: 5px;
+      }
+
+      .pie:before,
+      .pie:after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+      }
+
+      .pie:before {
+        inset: 0;
+        background: radial-gradient(farthest-side, var(--c) 98%, #0000)
+            top/var(--b) var(--b) no-repeat,
+          conic-gradient(var(--c) calc(var(--p) * 1%), #0000 0);
+        -webkit-mask: radial-gradient(
+          farthest-side,
+          #0000 calc(99% - var(--b)),
+          #000 calc(100% - var(--b))
+        );
+        mask: radial-gradient(
+          farthest-side,
+          #0000 calc(99% - var(--b)),
+          #000 calc(100% - var(--b))
+        );
+      }
+
+      .pie:after {
+        inset: calc(50% - var(--b) / 2);
+        background: var(--c);
+        transform: rotate(calc(var(--p) * 3.6deg))
+          translateY(calc(50% - var(--w) / 2));
+      }
+
+      .animate {
+        animation: p 1s 0.5s both;
+      }
+
+      .no-round:before {
+        background-size: 0 0, auto;
+      }
+
+      .no-round:after {
+        content: none;
+      }
+
+      @keyframes p {
+        from {
+          --p: 0;
+        }
+      }
     </style>
+  </head>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gauge.js/1.2.1/gauge.min.js"
-        integrity="sha512-CvDF0JVxliK2VV8gGA7qEEyRPcORRA2miPvpDhXvlfw0TpbGAmoQHMmEP2eziwKLsNz8PaoNfs4yjnlcpn4E3w=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-</head>
-
-<body>
-
-    <div style="display: flex; flex-wrap: wrap; flex-direction: row;">
-
-        <div class="gauge-container">
-            <canvas id="demo" data-min="0" data-max="100" data-val="" 42"></canvas>
-        </div>
-
-        <br />
-
-        <div class="bar-chart-container">
-            <h1>html chart</h1>
-            <div class="chart">
-                <div class="part percent-75">
-                    <div class="label">yes</div>
-                    <div class="bar red">aw
-                        <div class="label">75%</div>
-                    </div>
-                </div>
-                <div class="part percent-25">
-                    <div class="label">no</div>
-                    <div class="bar blue">aw
-                        <div class="label">25%</div>
-                    </div>
-                </div>
-                <div class="part percent-38">
-                    <div class="label">maybe</div>
-                    <div class="bar green">aw
-                        <div class="label">38% </div>
-                    </div>
-                </div>
-                <div class="part percent-42">
-                    <div class="label">HH</div>
-                    <div class="bar indigo">aw
-                        <div class="label">42% </div>
-                    </div>
-                </div>
+  <body>
+    <div style="display: flex; flex-wrap: wrap; flex-direction: row">
+      <div class="bar-chart-container">
+        <h1>html chart</h1>
+        <div class="chart">
+          <div class="part percent-75">
+            <div class="label">yes</div>
+            <div class="bar red">
+              aw
+              <div class="label">75%</div>
             </div>
+          </div>
+          <div class="part percent-25">
+            <div class="label">no</div>
+            <div class="bar blue">
+              aw
+              <div class="label">25%</div>
+            </div>
+          </div>
+          <div class="part percent-38">
+            <div class="label">maybe</div>
+            <div class="bar green">
+              aw
+              <div class="label">38%</div>
+            </div>
+          </div>
+          <div class="part percent-42">
+            <div class="label">HH</div>
+            <div class="bar indigo">
+              aw
+              <div class="label">42%</div>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <br />
+      <br />
 
-        <div class="gauge-container">
-            <div class="pie animate no-round" style="--p:75;--c:red;"> 75%</div>
-        </div>
-
+      <div class="gauge-container">
+        <div class="pie animate no-round" style="--p: 75; --c: red">75%</div>
+      </div>
     </div>
-
-    <script>
-        var opts = {
-            angle: 0.15, // The span of the gauge arc
-            lineWidth: 0.44, // The line thickness
-            radiusScale: 1, // Relative radius
-            limitMax: false,     // If false, max value increases automatically if value > maxValue
-            limitMin: false,     // If true, the min value of the gauge will be fixed
-            generateGradient: true,
-            highDpiSupport: true,
-        };
-        var target = document.getElementById("demo"); // your canvas element
-        var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
-
-        gauge.animationSpeed = 10;
-        gauge.maxValue = 3000; // set max gauge value
-        gauge.setMinValue(0); // set min value
-        gauge.set(1250); // set actual value
-
-    </script>
-
-
-</body>
-
+  </body>
 </html>
