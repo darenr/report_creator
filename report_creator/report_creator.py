@@ -306,9 +306,9 @@ class DataTable(Base):
         self,
         data: Union[pd.DataFrame, List[Dict]],
         label: Optional[str] = None,
+        wrap_text: bool = True,
         max_rows: int = -1,
         float_precision: int = 3,
-        **kwargs,
     ):
         Base.__init__(self, label=label)
 
@@ -326,10 +326,21 @@ class DataTable(Base):
         if label:
             styler.set_caption(label)
 
+        data_table_classes = [
+            "remove-all-styles",
+            "fancy_table",
+            "display",
+            "row-border",
+            "hover",
+            "responsive",
+        ]
+        if not wrap_text:
+            data_table_classes.append("nowrap")
+
         styler.format(precision=float_precision)
         styler.hide(axis="index")
         styler.set_table_attributes(
-            'class="remove-all-styles fancy_table display row-border hover responsive nowrap" cellspacing="0" style="width: 100%;"'
+            f'class="{" ".join(data_table_classes)} cellspacing="0" style="width: 100%;"'
         )
         self.table_html = styler.format(escape="html").to_html()
         logging.info(f"DataTable {len(df)} rows")

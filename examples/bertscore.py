@@ -107,7 +107,7 @@ def gen_report(
 
     with rc.ReportCreator(title=title, description=generic_description) as report:
         view = rc.Block(
-            rc.Table(data),
+            rc.Collapse(rc.DataTable(data, wrap_text=True), label="Big Ass Table"),
             rc.Select(
                 blocks=[
                     rc.Block(
