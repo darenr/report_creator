@@ -119,9 +119,9 @@ def gen_report(
                     of the evaluations scored at, or better than, {median_f1:0.3f}) with a standard deviation of <b>{f1_std:0.3f}</b>. The
                     lowest performing evaluation was <b>{min_f1:0.3f}</b> and the highest was <b>{max_f1:0.3f}</b>. The evaluation model
                     used to calculate {evaluation_metric} was <b>{evaluation_model}</b>
-                    <br><br>
+                    <br /><br />
                     <dd>
-                    <li><b>Model:</b> {model_name}</hli2>
+                    <li><b>Model:</b> {model_name}</li>
                     <li><b>Metric:</b> {evaluation_metric}</li>
                     <li><b>Dataset:</b> {dataset['name']}</li>
                     </dd>
@@ -158,12 +158,14 @@ def gen_report(
                                 label="Score Distribution",
                             )
                         ),
+                        rc.Separator(label="Parameters"),
                         rc.Collapse(
                             rc.Table(
                                 model_parms_to_table(model_params),
                             ),
                             label="Model Parameters",
                         ),
+                        rc.Separator(label="Results"),
                         rc.Collapse(
                             rc.DataTable(data, wrap_text=True),
                             label="Results Table",

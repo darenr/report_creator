@@ -7,6 +7,7 @@ import random
 import re
 import traceback
 from abc import ABC, abstractmethod
+from html.parser import HTMLParser
 from typing import Dict, List, Optional, Tuple, Union
 
 import matplotlib
@@ -17,6 +18,40 @@ from markdown import markdown
 from markupsafe import escape
 
 logging.basicConfig(level=logging.INFO)
+
+
+def check_html_tags_are_closed(html_content: str):
+    """Checks if any HTML tags are closed in the given string.
+
+    Args:
+        html_content (str): The HTML content to be checked.
+
+    Returns:
+        Tuple[bool, Optional[List[str]]]: A tuple containing a boolean value indicating if all tags are closed and a list of tags that are not closed.
+    """
+
+    class HTMLValidator(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.stack = []  # To keep track of opened tags
+
+        def handle_starttag(self, tag, attrs):
+            self.stack.append(tag)  # Add the tag to the stack when it opens
+
+        def handle_endtag(self, tag):
+            if self.stack and self.stack[-1] == tag:
+                self.stack.pop()  # Remove the tag from the stack when it closes
+            else:
+                print(f"Error: Unexpected closing tag {tag} or tag not opened.")
+
+        def validate_html(self, html):
+            self.feed(html)
+            if self.stack:
+                return (False, self.stack)  # Some tags are not closed
+            else:
+                return (True, None)
+
+    return HTMLValidator().validate_html(html_content)
 
 
 def markdown_to_html(text: str) -> str:
@@ -440,6 +475,9 @@ class Html(Base):
         Base.__init__(self, label=label)
         self.html = html
         self.css = css
+        status, errors = check_html_tags_are_closed(html)
+        if not status:
+            raise ValueError(f"HTML tags are not closed: {', '.join(errors)}")
         logging.info(f"HTML {len(self.html)} characters")
 
     @strip_whitespace
