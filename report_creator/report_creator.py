@@ -636,6 +636,12 @@ class Heading(Base):
         label: str,
         level: int = 1,
     ):
+        """Heading is a container for a heading. It can also take a level.
+
+        Args:
+            label (str): _description_
+            level (int, optional): _description_. Defaults to 1.
+        """
         Base.__init__(self, label=label)
         assert (
             level >= 1 and level <= 5
