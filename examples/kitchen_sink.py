@@ -143,6 +143,19 @@ if __name__ == "__main__":
                 label="Tab Group of Data Tables",
             ),
             rc.Separator(),
+            rc.Unformatted(
+                r"""
+ ___________________________________
+< This is an unformatted component >
+ -----------------------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+""",
+                label="Unformatted",
+            ),
             rc.Group(
                 rc.Image(
                     "https://midlibraryassets.b-cdn.net/638266c083c0cd991057c455/655f82d114b7bf12e5f2e5d0_Portrait%20of%20a%20Man%20with%20a%20Medal%20of%20Cosimo%20il%20Vecchio%20de%27%20Medici%20(1475)-p-800.jpg",

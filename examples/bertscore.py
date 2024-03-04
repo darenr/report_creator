@@ -139,14 +139,14 @@ def gen_report(
                                 label="Score Distribution",
                             )
                         ),
-                        rc.Separator(label="Parameters"),
+                        rc.Heading("Parameters", level=2),
                         rc.Collapse(
                             rc.Table(
                                 model_parms_to_table(model_params),
                             ),
                             label="Model Parameters",
                         ),
-                        rc.Separator(label="Results"),
+                        rc.Heading(label="Results", level=2),
                         rc.Collapse(
                             rc.DataTable(data, wrap_text=True),
                             label="Results Table",

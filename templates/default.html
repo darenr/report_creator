@@ -403,7 +403,11 @@
 
       (function () {
         // style any code blocks
-        hljs.highlightAll();
+        document
+          .querySelectorAll(".syntax-color, .codehilite pre code")
+          .forEach((element, key) => {
+            hljs.highlightElement(element);
+          });
 
         document.querySelectorAll(".defaultOpen").forEach(function (button) {
           button.click();

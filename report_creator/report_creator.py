@@ -488,7 +488,9 @@ class Html(Base):
         self.css = css
         status, errors = check_html_tags_are_closed(html)
         if not status:
-            raise ValueError(f"HTML tags are not closed: {', '.join(errors)}")
+            raise ValueError(
+                f"HTML component with label {self.label}, tags are not closed: {', '.join(errors)}"
+            )
         logging.info(f"HTML {len(self.html)} characters")
 
     @strip_whitespace
@@ -628,6 +630,28 @@ class Plot(Base):
 ##############################
 
 
+class Heading(Base):
+    def __init__(
+        self,
+        label: str,
+        level: int = 1,
+    ):
+        Base.__init__(self, label=label)
+        assert (
+            level >= 1 and level <= 5
+        ), f"heading level ({level}) must be between 1 and 5 (inclusive)"
+        assert label, "No heading label provided"
+        self.level = level
+        logging.info(f"Heading (h{level}): [{label}]")
+
+    @strip_whitespace
+    def to_html(self):
+        return f"<br /><h{self.level}>{self.label}</h{self.level}><br />"
+
+
+##############################
+
+
 class Separator(Base):
     def __init__(self, label: Optional[str] = None):
         """Separator is a container for a horizontal line. It can also take a label.
@@ -716,6 +740,30 @@ class Select(Base):
 ##############################
 
 
+class Unformatted(Base):
+    def __init__(self, text: str, label: Optional[str] = None):
+        """Unformatted is a container for any text that should be displayed verbatim with a non-proportional font.
+
+        Args:
+            text (str): _description_
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
+        Base.__init__(self, label=label)
+        self.text = text
+
+    @strip_whitespace
+    def to_html(self):
+        formatted_text = f"<pre><code>{self.text.strip()}</code></pre>"
+
+        if self.label:
+            return f"""<report-caption>{self.label}</report-caption><div>{formatted_text}</div>"""
+        else:
+            return f"""<div>{formatted_text}</div>"""
+
+
+##############################
+
+
 class Language(Base):
     def __init__(self, text: str, language: str, label: Optional[str] = None):
         """Language is a container for code. It can also take a label.
@@ -734,9 +782,9 @@ class Language(Base):
     @strip_whitespace
     def to_html(self):
         if self.label:
-            formatted_text = f"<pre><code class='language-{self.language}'>### {self.label}\n\n{self.text.strip()}</code></pre>"
+            formatted_text = f"<pre><code class='language-{self.language} syntax-color'>### {self.label}\n\n{self.text.strip()}</code></pre>"
         else:
-            formatted_text = f"<pre><code class='language-{self.language}'>{self.text.strip()}</code></pre>"
+            formatted_text = f"<pre><code class='language-{self.language} syntax-color'>{self.text.strip()}</code></pre>"
 
         return f"""<div class="code-block">{formatted_text}</div>"""
 
