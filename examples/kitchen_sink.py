@@ -1,9 +1,10 @@
-import report_creator as rc
 import logging
 
 import pandas as pd
 import plotly.express as px
 import yaml
+
+import report_creator as rc
 
 logging.basicConfig(level=logging.INFO)
 
@@ -19,16 +20,16 @@ if __name__ == "__main__":
     df2 = px.data.stocks()
     fig2 = px.line(df2, x="date", y=["GOOG", "AAPL", "NFLX", "MSFT"])
 
-    with open(__file__, "r") as f:
+    with open(__file__) as f:
         example_python = f.read()
 
-    with open("examples/example.yaml", "r") as f:
+    with open("examples/example.yaml") as f:
         datastructure = yaml.safe_load(f.read())
 
-    with open("examples/example.txt", "r") as f:
+    with open("examples/example.txt") as f:
         example_text = f.read()
 
-    with open("README.md", "r") as f:
+    with open("README.md") as f:
         example_md = f.read()
 
     # begin the use of the report_creator package
