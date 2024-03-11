@@ -1,3 +1,4 @@
+pip
 pandas
 pyarrow
 numpy
@@ -8,3 +9,4 @@ pyyaml
 plotly-express
 Jinja2
 humanize
+rouge-score
