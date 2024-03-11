@@ -25,30 +25,65 @@ def human_readable_model_created(model_details: dict) -> str:
     )
 
 
-def get_grade(rouge1: float, rouge2: float, rougeL: float) -> tuple[str, str]:
-    # What's a good ROUGE score? https://klu.ai/glossary/rouge-score
-    # A good ROUGE score varies by summarization task and metric.
-    #
-    # ROUGE-1 scores are excellent around 0.6, with scores, above 0.5 considered good and 0.4 to 0.5 moderate.
-    # ROUGE-2 scores above 0.4 are good, and 0.2 to 0.4 are moderate.
-    # ROUGE-L scores are good around 0.4 and low at 0.3 to 0.4.
+def grade_grade(rouge1: float, rouge2: float, rougeL: float) -> tuple[str, str]:
+    # Define the thresholds for each metric
+    rouge1_thresholds = [0.4, 0.3, 0.2]
+    rouge2_thresholds = [0.2, 0.15, 0.1]
+    rougeL_thresholds = [0.4, 0.3, 0.2]
 
-    # we pick the highest grade
+    # Initialize the score for each metric
+    rouge1_score = 0
+    rouge2_score = 0
+    rougeL_score = 0
 
-    text = """Per measuring the overlap between the model prediction and the human-produced reference. Rouge1 
-    uses unigrams, while Rouge2 uses bigrams (phrases), rougeL uses the summary longest common subsequence, while rougeLsum is a sentence level measure."""
+    # Calculate the score for ROUGE-1
+    if rouge1 >= rouge1_thresholds[0]:
+        rouge1_score = 4
+    elif rouge1 >= rouge1_thresholds[1]:
+        rouge1_score = 3
+    elif rouge1 >= rouge1_thresholds[2]:
+        rouge1_score = 2
+    else:
+        rouge1_score = 1
 
-    grade = (
-        "Excellent"
-        if rouge1 > 0.6 and rouge2 > 0.4 and rougeL > 0.4
-        else "Good"
-        if rouge1 > 0.5 and rouge2 > 0.4 and rougeL > 0.4
-        else "Moderate"
-        if rouge1 > 0.4 and rouge2 > 0.2 and rougeL > 0.3
-        else "Poor"
-    )
+    # Calculate the score for ROUGE-2
+    if rouge2 >= rouge2_thresholds[0]:
+        rouge2_score = 4
+    elif rouge2 >= rouge2_thresholds[1]:
+        rouge2_score = 3
+    elif rouge2 >= rouge2_thresholds[2]:
+        rouge2_score = 2
+    else:
+        rouge2_score = 1
 
-    return grade, text
+    # Calculate the score for ROUGE-L
+    if rougeL >= rougeL_thresholds[0]:
+        rougeL_score = 4
+    elif rougeL >= rougeL_thresholds[1]:
+        rougeL_score = 3
+    elif rougeL >= rougeL_thresholds[2]:
+        rougeL_score = 2
+    else:
+        rougeL_score = 1
+
+    # Calculate the average score
+    average_score = (rouge1_score + rouge2_score + rougeL_score) / 3
+
+    # Determine the grade based on the average score
+    if average_score >= 3.5:
+        grade = "Excellent"
+        explanation = "The ROUGE scores are consistently high across all metrics, indicating a strong similarity between the generated summary and the reference summary."
+    elif average_score >= 2.5:
+        grade = "Good"
+        explanation = "The ROUGE scores are above average, suggesting a reasonable similarity between the generated summary and the reference summary."
+    elif average_score >= 1.5:
+        grade = "Moderate"
+        explanation = "The ROUGE scores are moderate, indicating some similarity between the generated summary and the reference summary, but there is room for improvement."
+    else:
+        grade = "Poor"
+        explanation = "The ROUGE scores are low, suggesting a weak similarity between the generated summary and the reference summary. Consider revising the summarization approach."
+
+    return grade, explanation
 
 
 def gen_report(
@@ -108,7 +143,7 @@ def gen_report(
         prominent evaluation methods including BERTScore, BLEU, and ROUGE.
     """
 
-    grade, grade_description = get_grade(median_rouge1, median_rouge2, median_rougeL)
+    grade, grade_description = grade_grade(median_rouge1, median_rouge2, median_rougeL)
 
     with rc.ReportCreator(title=title, description=generic_description) as report:
         view = rc.Block(
