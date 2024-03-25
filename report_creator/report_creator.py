@@ -289,6 +289,7 @@ class Widget(Base):
                 s.hide()
             html += s._repr_html_()
         else:
+            print(type(self.widget))
             html += self.widget._repr_html_()
 
         html += "</div>"
