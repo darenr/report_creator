@@ -10,3 +10,6 @@ plotly-express
 Jinja2
 humanize
 rouge-score
+readme_renderer[md]
+readme_renderer[rst]
+readme_renderer[text]
