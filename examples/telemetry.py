@@ -21,6 +21,56 @@ duckdb.create_function("unquote", unquote)
 def gen_report(name: str, title: str, description: str):
     with rc.ReportCreator(title=title, description=description) as report:
         view = rc.Block(
+            rc.Group(
+                rc.Metric(
+                    heading="Number of Fine Tuning Jobs",
+                    value=duckdb.query(
+                        """
+                            select count(*) as val
+                            from t1
+                            where category = 'aqua/service/finetune/create'"""
+                    )
+                    .df()
+                    .val[0],
+                ),
+                rc.Metric(
+                    heading="Number of Evalution Jobs",
+                    value=duckdb.query(
+                        """
+                            select count(*) as val
+                            from t1
+                            where category = 'aqua/evaluation/create'"""
+                    )
+                    .df()
+                    .val[0],
+                ),
+                rc.Metric(
+                    heading="Number of Model Deployment",
+                    value=duckdb.query(
+                        """
+                            select count(*) as val
+                            from t1
+                            where category = 'aqua/service/deployment/create'"""
+                    )
+                    .df()
+                    .val[0],
+                ),
+            ),
+            rc.Plot(
+                duckdb.query(
+                    """
+                        select
+                            region,
+                            count(*) as val
+                        from t1
+                        group by region
+                        order by 2 desc
+                        limit 10"""
+                )
+                .df()
+                .plot.bar(x="region", y="val", rot=0),
+                label="Top Regions",
+            ),
             rc.Plot(
                 duckdb.query(
                     """
@@ -66,7 +116,7 @@ def gen_report(name: str, title: str, description: str):
                             where category = 'aqua/evaluation/create'
                             group by action
                             order by 2 desc
-                            limit 10"""
+                            limit 5"""
                     )
                     .df()
                     .plot.bar(
