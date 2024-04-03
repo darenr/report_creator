@@ -1,4 +1,6 @@
+import collections
 import logging
+import operator
 import urllib
 import warnings
 
@@ -19,43 +21,20 @@ duckdb.create_function("unquote", unquote)
 
 
 def gen_report(name: str, title: str, description: str):
+    # take all the telemetry categories and count each portion of the category
+
+    l2r = collections.defaultdict(lambda: 0)
+    for _, row in duckdb.query("select category, action from t1").df().iterrows():
+        parts = row.category.split("/") + [row.action]
+        for i in range(len(parts)):
+            prefix = "/".join(parts[: i + 1])
+            l2r[prefix] += 1
+
+    l2r_items = sorted(l2r.items(), key=operator.itemgetter(1), reverse=True)
+
     with rc.ReportCreator(title=title, description=description) as report:
         view = rc.Block(
-            rc.Group(
-                rc.Metric(
-                    heading="Number of Fine Tuning Jobs",
-                    value=duckdb.query(
-                        """
-                            select count(*) as val
-                            from t1
-                            where category = 'aqua/service/finetune/create'"""
-                    )
-                    .df()
-                    .val[0],
-                ),
-                rc.Metric(
-                    heading="Number of Evalution Jobs",
-                    value=duckdb.query(
-                        """
-                            select count(*) as val
-                            from t1
-                            where category = 'aqua/evaluation/create'"""
-                    )
-                    .df()
-                    .val[0],
-                ),
-                rc.Metric(
-                    heading="Number of Model Deployment",
-                    value=duckdb.query(
-                        """
-                            select count(*) as val
-                            from t1
-                            where category = 'aqua/service/deployment/create'"""
-                    )
-                    .df()
-                    .val[0],
-                ),
-            ),
+            rc.Group(*[rc.Metric(heading=k, value=v) for k, v in l2r_items]),
             rc.Plot(
                 duckdb.query(
                     """

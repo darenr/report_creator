@@ -14,6 +14,7 @@ from typing import Dict, List, Optional, Tuple, Union
 import matplotlib
 import pandas as pd
 import yaml
+import html
 from jinja2 import Environment, FileSystemLoader
 from markdown import markdown
 from markupsafe import escape
@@ -289,7 +290,6 @@ class Widget(Base):
                 s.hide()
             html += s._repr_html_()
         else:
-            print(type(self.widget))
             html += self.widget._repr_html_()
 
         html += "</div>"

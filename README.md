@@ -13,7 +13,7 @@ Library to assemble reports in HTML from various components using python
 * [x] allows markdown as input for text blocks
 * [x] allows html as input
 * [x] a few simple components for things like metrics ("Accuracy: 87%") from a triple of key, value, Optional[description]
-* [x] support for plotting figures, interactive (`plotly``) and `matplotlib`
+* [x] support for plotting figures, interactive `plotly` and `matplotlib`
 * [x] images (styled by the library)
 * [x] `json`/`yaml`/`python` code blocks with color syntax highlighting
 * [x] support tabs
@@ -22,28 +22,28 @@ Library to assemble reports in HTML from various components using python
 
 ## Example
 
-``` .python
+```python3
 
-    import report_creator as rc
+import report_creator as rc
 
-    with ReportCreator("My Report") as report:
+with ReportCreator("My Report") as report:
 
-        view = rc.Block(
-            Text("""It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of light, it was the season of darkness, it was the spring of hope, it was the winter of despair.""", 
-            label="Charles Dickens, A Tale of Two Cities"),
-            rc.Group(
-                rc.Metric(
-                    heading="Answer to Life, The Universe, and Everything",
-                    value="42",
-                ),
-                rc.Metric(
-                    heading="Author",
-                    value="Douglas Adams",
-                ),                
+    view = rc.Block(
+        Text("""It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of light, it was the season of darkness, it was the spring of hope, it was the winter of despair.""", 
+        label="Charles Dickens, A Tale of Two Cities"),
+        rc.Group(
+            rc.Metric(
+                heading="Answer to Life, The Universe, and Everything",
+                value="42",
             ),
-        )
+            rc.Metric(
+                heading="Author",
+                value="Douglas Adams",
+            ),                
+        ),
+    )
 
-        report.save(view, "report.html", theme="light")
+    report.save(view, "report.html", theme="light") # or "dark" for dark mode
 ```
 
 ## Development

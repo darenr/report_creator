@@ -14,7 +14,7 @@
     <!-- see https://highlightjs.org/examples -->
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/google-{{mode}}.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/summerfruit-{{mode}}.css"
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
@@ -96,7 +96,6 @@
         display: flex;
         flex-direction: column;
         padding: 10px;
-        margin: 10px;
         flex: 1;
         align-items: stretch;
       }
@@ -344,6 +343,9 @@
 
       .code-block {
         flex: 1;
+        height: 100%;
+        width: 90%;
+        box-sizing: border-box;
       }
 
       pre code.hljs {
