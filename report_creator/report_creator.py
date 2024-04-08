@@ -34,14 +34,14 @@ def check_html_tags_are_closed(html_content: str):
             super().__init__()
             self.stack = []  # To keep track of opened tags
 
-        def handle_starttag(self, tag, attrs):
+        def handle_starttag(self, tag, _):
             self.stack.append(tag)  # Add the tag to the stack when it opens
 
         def handle_endtag(self, tag):
             if self.stack and self.stack[-1] == tag:
                 self.stack.pop()  # Remove the tag from the stack when it closes
             else:
-                print(f"Error: Unexpected closing tag {tag} or tag not opened.")
+                logging.error(f"Unexpected closing tag {tag} or tag not opened.")
 
         def validate_html(self, html):
             self.feed(html)
@@ -58,7 +58,7 @@ def markdown_to_html(text: str) -> str:
 
     class HighlightRenderer(mistune.HTMLRenderer):
         # need to wrap code/pre inside a div that is styled with codehilite at rendertime
-        def block_code(self, code, info=None):
+        def block_code(self, code, **_):
             return (
                 "<div class='codehilite'><pre><code>"
                 + mistune.escape(code)
@@ -244,14 +244,11 @@ class Collapse(Base):
 
 
 class Widget(Base):
-    def __init__(
-        self, widget, index: Optional[bool] = False, label: Optional[str] = None
-    ):
+    def __init__(self, widget, *, label: Optional[str] = None):
         """Widget is a container for any component that supports the _repr_html_ method (anything written for Jupyter).
 
         Args:
             widget: A widget that supports the _repr_html_ method.
-            index (Optional[bool], optional): _description_. Defaults to False.
             label (Optional[str], optional): _description_. Defaults to None.
         """
         Base.__init__(self, label=label)
@@ -260,9 +257,8 @@ class Widget(Base):
                 f"Expected widget to have a _repr_html_ method, got {type(widget)} instead"
             )
         self.widget = widget
-        self.index = index
 
-        logging.info(f"Widget {type(self.widget)}")
+        logging.info(f"Widget: {self.widget.__class__.__name__ }")
 
     @strip_whitespace
     def to_html(self):
@@ -273,8 +269,7 @@ class Widget(Base):
 
         if isinstance(self.widget, pd.DataFrame):
             s = self.widget.style
-            if self.index is False:
-                s.hide()
+
             html += s._repr_html_()
         else:
             html += self.widget._repr_html_()
@@ -288,7 +283,7 @@ class Widget(Base):
 
 class MetricGroup(Base):
     def __init__(
-        self, df: pd.DataFrame, heading: str, value: str, label: Optional[str] = None
+        self, df: pd.DataFrame, heading: str, value: str, *, label: Optional[str] = None
     ):
         """MetricGroup is a container for a group of metrics. It takes a DataFrame with a heading and value column.
 
@@ -321,8 +316,9 @@ class Metric(Base):
         self,
         heading: str,
         value: Union[str, int, float],
-        unit=None,
-        float_precision=3,
+        *,
+        unit: Optional[str] = None,
+        float_precision: Optional[int] = 3,
         label: Optional[str] = None,
     ):
         """Metric is a container for a single metric. It takes a heading and a value.
@@ -371,8 +367,9 @@ class Table(Widget):
     def __init__(
         self,
         data: Union[pd.DataFrame, List[Dict]],
+        *,
         label: Optional[str] = None,
-        index: bool = False,
+        index: Optional[bool] = False,
     ):
         """Table is a simple container for a DataFrame (or table-like list of dictionaries.)
 
@@ -402,11 +399,12 @@ class DataTable(Base):
     def __init__(
         self,
         data: Union[pd.DataFrame, List[Dict]],
+        *,
         label: Optional[str] = None,
         wrap_text: bool = True,
-        index: bool = False,
-        max_rows: int = -1,
-        float_precision: int = 3,
+        index: Optional[bool] = False,
+        max_rows: Optional[int] = -1,
+        float_precision: Optional[int] = 3,
     ):
         """DataTable is a container for a DataFrame (or table-like list of dictionaries.) with search and sort capabilities.
 
@@ -463,7 +461,9 @@ class DataTable(Base):
 
 
 class Html(Base):
-    def __init__(self, html: str, css: str = None, label: Optional[str] = None):
+    def __init__(
+        self, html: str, *, css: Optional[str] = None, label: Optional[str] = None
+    ):
         """Html is a container for raw HTML. It can also take CSS.
 
         Args:
@@ -496,32 +496,42 @@ class Html(Base):
 class Image(Base):
     def __init__(
         self,
-        img: str,
-        link: str = None,
+        src: str,
+        *,
+        link_to: Optional[str] = None,
         label: Optional[str] = None,
-        extra_css: str = None,
+        extra_css: Optional[str] = None,
+        rounded: Optional[bool] = True,
     ):
         """Image is a container for an image. It can also take a link.
 
         Args:
-            img (str): _description_
-            link (str, optional): _description_. Defaults to None.
+            src (str):  a url where the image can be found, or a base_64 uri
+            link_to (str, optional): a url to go to if clicked. Defaults to not clickable.
             label (Optional[str], optional): _description_. Defaults to None.
             extra_css (str, optional): _description_. Defaults to None.
+            rounded (bool, optional): if set will clip the image to have rounded off corners
         """
-        Base.__init__(self, label=label or img)
-        self.img = img
-        self.link = link or img
+        Base.__init__(self, label=label)
+        self.src = src
+        self.link_to = link_to
         self.extra_css = extra_css or ""
-        logging.info(f"Image URL {img}, label: {self.label}")
+        self.rounded_css = "border-radius: 1rem;" if rounded else ""
+        logging.info(f"Image, label: {self.label}")
 
     @strip_whitespace
     def to_html(self):
         html = """<div class="image-block"><figure>"""
 
-        html += f"""<a href="{self.link}" target="_blank"><img src="{self.img}" style="{self.extra_css}" alt="{self.label}"></a>"""
+        image_markup = f"""<img src="{self.src}" style="{self.rounded_css} {self.extra_css}" alt="{self.label or self.src}">"""
+        if self.link_to:
+            html += f"""<a href="{self.link_to}" target="_blank">{image_markup}</a>"""
+        else:
+            html += image_markup
+
         if self.label:
             html += f"<figcaption><report-caption>{self.label}</report-caption></figcaption>"
+
         html += "</figure></div>"
 
         return html
@@ -531,7 +541,9 @@ class Image(Base):
 
 
 class Markdown(Base):
-    def __init__(self, text: str, label: Optional[str] = None, extra_css: str = None):
+    def __init__(
+        self, text: str, *, label: Optional[str] = None, extra_css: Optional[str] = None
+    ):
         """Markdown is a container for markdown text. It can also take extra CSS.
 
         Args:
@@ -568,7 +580,7 @@ class Plot(Base):
     # see https://plotly.com/python/interactive-html-export/
     # for how to make interactive
 
-    def __init__(self, fig, label: Optional[str] = None):
+    def __init__(self, fig, *, label: Optional[str] = None):
         """Plot is a container for a matplotlib or plotly figure. It can also take a label.
 
         Args:
@@ -579,7 +591,7 @@ class Plot(Base):
         self.fig = fig
         if isinstance(fig, matplotlib.axes.Axes):
             self.fig = fig.get_figure()
-        logging.info(f"Plot: {type(self.fig)} {self.label=}")
+        logging.info(f"Plot: {self.fig.__class__.__name__ } {self.label=}")
 
     @strip_whitespace
     def to_html(self) -> str:
@@ -622,7 +634,8 @@ class Heading(Base):
     def __init__(
         self,
         label: str,
-        level: int = 1,
+        *,
+        level: Optional[int] = 1,
     ):
         """Heading is a container for a heading. It can also take a level.
 
@@ -668,7 +681,9 @@ class Separator(Base):
 
 
 class Text(Base):
-    def __init__(self, text: str, label: Optional[str] = None, extra_css: str = None):
+    def __init__(
+        self, text: str, *, label: Optional[str] = None, extra_css: str = None
+    ):
         """Text is a container for raw text. It can also take extra CSS."""
         Base.__init__(self, label=label)
         self.text = text
@@ -694,7 +709,7 @@ class Text(Base):
 
 
 class Select(Base):
-    def __init__(self, blocks: List[Base], label: Optional[str] = None):
+    def __init__(self, blocks: List[Base], *, label: Optional[str] = None):
         """Select is a container for a group of components that will shown in tabs. It can also take an outer label.
 
         Args:
@@ -708,7 +723,7 @@ class Select(Base):
                 raise ValueError("All blocks must have a label to use in a Select")
 
         logging.info(
-            f"Select {len(self.blocks)} components: {', '.join([c.label for c in self.blocks])}"
+            f"Select {len(self.blocks)} tabs: {', '.join([c.label for c in self.blocks])}"
         )
 
     @strip_whitespace
@@ -735,7 +750,7 @@ class Select(Base):
 
 
 class Unformatted(Base):
-    def __init__(self, text: str, label: Optional[str] = None):
+    def __init__(self, text: str, *, label: Optional[str] = None):
         """Unformatted is a container for any text that should be displayed verbatim with a non-proportional font.
 
         Args:
@@ -759,7 +774,7 @@ class Unformatted(Base):
 
 
 class Language(Base):
-    def __init__(self, text: str, language: str, label: Optional[str] = None):
+    def __init__(self, text: str, language: str, *, label: Optional[str] = None):
         """Language is a container for code. It can also take a label.
 
         Args:
@@ -787,7 +802,7 @@ class Language(Base):
 
 
 class Python(Language):
-    def __init__(self, code: str, label: Optional[str] = None):
+    def __init__(self, code: str, *, label: Optional[str] = None):
         """Python is a container for python code. It can also take a label.
 
         Args:
@@ -802,7 +817,7 @@ class Python(Language):
 
 
 class Yaml(Language):
-    def __init__(self, data: Union[Dict, List], label: Optional[str] = None):
+    def __init__(self, data: Union[Dict, List], *, label: Optional[str] = None):
         """Yaml is a container for yaml. It can also take a label.
 
         Args:
@@ -821,7 +836,7 @@ class Yaml(Language):
 
 
 class Json(Language):
-    def __init__(self, data: Union[Dict, List], label: Optional[str] = None):
+    def __init__(self, data: Union[Dict, List], *, label: Optional[str] = None):
         """Json is a container for JSON data. It can also take a label.
 
         Args:
@@ -840,7 +855,7 @@ class Json(Language):
 
 
 class ReportCreator:
-    def __init__(self, title: str, description: Optional[str] = None):
+    def __init__(self, title: str, *, description: Optional[str] = None):
         """ReportCreator is a container for all components. It can also take a title and description."""
         self.title = title
         self.description = description
@@ -919,9 +934,9 @@ class ReportCreator:
             if prettify_html:
                 try:
                     # if beautifulsoup4 is installed we'll use it to prettify the generated html
-                    from bs4 import BeautifulSoup as bs
+                    from bs4 import BeautifulSoup
 
-                    soup = bs(html, features="lxml")
+                    soup = BeautifulSoup(html, features="lxml")
                     f.write(soup.prettify())
                 except ImportError:
                     f.write(html)
