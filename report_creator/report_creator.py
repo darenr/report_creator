@@ -14,7 +14,6 @@ from typing import Dict, List, Optional, Tuple, Union
 import matplotlib
 import pandas as pd
 import yaml
-import html
 from jinja2 import Environment, FileSystemLoader
 from markdown import markdown
 from markupsafe import escape
@@ -590,7 +589,7 @@ class Plot(Base):
         """
         Base.__init__(self, label=label)
         self.fig = fig
-        if hasattr(fig, "get_figure"):
+        if isinstance(fig, matplotlib.axes.Axes):
             self.fig = fig.get_figure()
         logging.info(f"Plot: {type(self.fig)} {self.label=}")
 
