@@ -3,8 +3,7 @@ pandas
 pyarrow
 numpy
 matplotlib
-markdown
-markdown-checklist
+mistune
 pyyaml
 plotly-express
 Jinja2

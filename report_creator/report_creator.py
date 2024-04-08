@@ -1,5 +1,4 @@
 import base64
-import importlib.util
 import io
 import json
 import logging
@@ -15,7 +14,6 @@ import matplotlib
 import pandas as pd
 import yaml
 from jinja2 import Environment, FileSystemLoader
-from markdown import markdown
 from markupsafe import escape
 
 logging.basicConfig(level=logging.INFO)
@@ -56,30 +54,20 @@ def check_html_tags_are_closed(html_content: str):
 
 
 def markdown_to_html(text: str) -> str:
-    """Converts markdown to html
+    import mistune
 
-    Args:
-        text (str): markdown text
-    """
+    class HighlightRenderer(mistune.HTMLRenderer):
+        # need to wrap code/pre inside a div that is styled with codehilite at rendertime
+        def block_code(self, code, info=None):
+            return (
+                "<div class='codehilite'><pre><code>"
+                + mistune.escape(code)
+                + "</code></pre></div>"
+            )
 
-    extensions = [
-        "markdown.extensions.fenced_code",
-        "markdown.extensions.tables",
-        "markdown_checklist.extension",
-        "markdown.extensions.codehilite",
-        "markdown.extensions.extra",
-        "markdown.extensions.nl2br",
-        "markdown.extensions.sane_lists",
-        "markdown.extensions.md_in_html",
-    ]
-
-    if importlib.util.find_spec("md4mathjax"):
-        extensions.append("md4mathjax")
-
-    return markdown(
-        text.strip(),
-        extensions=extensions,
-    ).strip()
+    return mistune.create_markdown(
+        renderer=HighlightRenderer(), plugins=["task_lists", "def_list", "math"]
+    )(text)
 
 
 def strip_whitespace(func):
