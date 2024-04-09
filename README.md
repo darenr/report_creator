@@ -8,15 +8,17 @@ Library to assemble reports in HTML from various components using python
 
 ## Features
 
-* [x] good pandas/dataframe support
-* [x] look modern
-* [x] allows markdown as input for text blocks
-* [x] allows html as input
-* [x] a few simple components for things like metrics ("Accuracy: 87%") from a triple of key, value, Optional[description]
-* [x] support for plotting figures, interactive `plotly` and `matplotlib`
+* [x] Good pandas/dataframe/table support
+* [x] Look modern
+* [x] Allows markdown as input for text blocks
+* [x] Allows html as input
+* [x] A few simple components for things like metrics ("Accuracy: 87%") from a triple of key, value, Optional[description]
+* [x] Support for plotting figures, interactive `plotly` and `matplotlib`
 * [x] images (styled by the library)
 * [x] `json`/`yaml`/`python` code blocks with color syntax highlighting
-* [x] support tabs
+* [x] Support tabs
+* [x] Add support for any Jupyter widget, any object that renders in a notebook should render to a report
+* [ ] Add word cloud support
 * [ ] Youtube embeds rc.Video(url: str, label: str)
 * [ ] File attachments (downloadable from page)
 
