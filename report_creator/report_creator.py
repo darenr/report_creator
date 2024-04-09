@@ -58,7 +58,9 @@ def markdown_to_html(text: str) -> str:
 
     class HighlightRenderer(mistune.HTMLRenderer):
         # need to wrap code/pre inside a div that is styled with codehilite at rendertime
-        def block_code(self, code, **_):
+        def block_code(
+            self, code, **_
+        ):  # **_ gathers unused key-value pairs (to avoid lint warning of unused param(s))
             return (
                 "<div class='codehilite'><pre><code>"
                 + mistune.escape(code)
