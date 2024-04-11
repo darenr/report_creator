@@ -8,4 +8,3 @@ pyyaml
 plotly-express
 Jinja2
 humanize
-rouge-score

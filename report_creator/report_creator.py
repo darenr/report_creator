@@ -591,7 +591,7 @@ class Plot(Base):
         """
         Base.__init__(self, label=label)
         self.fig = fig
-        if isinstance(fig, matplotlib.axes.Axes):
+        if hasattr(self.fig, "get_figure"):
             self.fig = fig.get_figure()
         logging.info(f"Plot: {self.fig.__class__.__name__ } {self.label=}")
 
@@ -627,6 +627,62 @@ class Plot(Base):
         html += "</div>"
 
         return html
+
+
+##############################
+
+
+class BarChart(Base):
+    def __init__(
+        self,
+        df: pd.DataFrame,
+        x: str,
+        y: str,
+        *,
+        dimension: Optional[str] = None,
+        label: Optional[str] = None,
+        **kwargs: Optional[Dict],
+    ):
+        """BarChart is a container for a plotly express bar chart.
+
+        Args:
+            df (pd.DataFrame): The data to be plotted.
+            x (str): The column to be plotted on the x-axis.
+            y (str): The column to be plotted on the y-axis.
+            dimension (Optional[str], optional): The column to be plotted on the dimension axis. Defaults to None.
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
+        Base.__init__(self, label=label)
+        self.df = df
+        self.x = x
+        self.y = y
+        self.kwargs = kwargs
+        assert x in df.columns, f"{x} not in df"
+        assert y in df.columns, f"{y} not in df"
+        if dimension:
+            assert dimension in df.columns, f"{dimension} not in df"
+            self.kwargs["color"] = dimension
+        if label:
+            self.kwargs["title"] = label
+
+        self.kwargs["template"] = "simple_white"
+
+        if "height" not in kwargs:
+            self.kwargs["height"] = 750
+
+        logging.info(f"BarChart {len(self.df)} rows, {x=}, {y=}, {label=}")
+
+    def to_html(self):
+        import plotly.express as px
+
+        fig = px.bar(self.df, x=self.x, y=self.y, **self.kwargs)
+        # fig.update_xaxes(tickangle=90)
+        fig.update_layout(
+            font_family="Helvetica Neue, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji, sans-serif"
+        )
+        fig.update_layout(font_size=15)
+
+        return fig.to_html(include_plotlyjs="cdn", full_html=False)
 
 
 ##############################
@@ -878,7 +934,7 @@ class ReportCreator:
             <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="{width}" height="{width}">
 
                 <style>
-                    text {{
+                    .icon_text_style {{
                         font-size: {fs}em;
                         font-family: lucida console, Fira Mono, monospace;
                         text-anchor: middle;
@@ -890,7 +946,7 @@ class ReportCreator:
                 </style>
 
                 <circle cx="{cx}" cy="{cy}" r="{r}" fill="{icon_color}" />
-                <text x="50%" y="50%" fill="{text_color}">{icon_text}</text>
+                <text class="icon_text_style" x="50%" y="50%" fill="{text_color}">{icon_text}</text>
             </svg>
         """.strip()
 

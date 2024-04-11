@@ -1,6 +1,5 @@
 import collections
 import logging
-import operator
 import urllib
 import warnings
 
@@ -30,106 +29,52 @@ def gen_report(name: str, title: str, description: str):
             prefix = "/".join(parts[: i + 1])
             l2r[prefix] += 1
 
-    l2r_items = sorted(l2r.items(), key=operator.itemgetter(1), reverse=True)
-
     with rc.ReportCreator(title=title, description=description) as report:
         view = rc.Block(
-            rc.Group(*[rc.Metric(heading=k, value=v) for k, v in l2r_items]),
-            rc.Plot(
-                duckdb.query(
-                    """
-                        select
-                            region,
-                            count(*) as val
-                        from t1
-                        group by region
-                        order by 2 desc
-                        limit 10"""
-                )
-                .df()
-                .plot.bar(x="region", y="val", rot=0),
-                label="Top Regions",
-            ),
-            rc.Plot(
-                duckdb.query(
-                    """
-                        select tenantName, count(*) as val
-                        from t1
-                        group by tenantName
-                        order by 2 desc
-                        limit 10"""
-                )
-                .df()
-                .plot.bar(x="tenantName", y="val", rot=0),
-                label="Top Tenant Names",
-            ),
             rc.Group(
-                rc.Plot(
+                rc.BarChart(
                     duckdb.query(
                         """
                             select
                                 action as model,
-                                count(*) as val
-                            from t1
-                            where category = 'aqua/custom/deployment/create'
-                            group by action
-                            order by 2 desc
-                            limit 10"""
-                    )
-                    .df()
-                    .plot.bar(
-                        x="model",
-                        y="val",
-                        figsize=(15, 10),
-                        fontsize=15,
-                    ),
-                    label="Top Models used for Deployment",
-                ),
-                rc.Plot(
-                    duckdb.query(
-                        """
-                            select
-                                action as model,
-                                count(*) as val
+                                count(*) as val,
+                                region
                             from t1
                             where category = 'aqua/evaluation/create'
-                            group by action
-                            order by 2 desc
-                            limit 5"""
-                    )
-                    .df()
-                    .plot.bar(
-                        x="model",
-                        y="val",
-                        figsize=(15, 10),
-                        fontsize=15,
-                    ),
-                    label="Top Models used for Evaluation",
+                            group by action, region
+                            order by 2 desc"""
+                    ).df(),
+                    x="model",
+                    y="val",
+                    dimension="region",
+                    label="Top Deployment Actions",
                 ),
-            ),
-            rc.DataTable(
-                duckdb.query(
-                    """
-                        select
-                            unquote(value) as error,
-                            count(*) as frequency
-                        from t1
-                        where category = 'aqua/error'
-                        group by value
-                        order by frequency desc
-                """
-                ).df(),
-                label="Most Common Errors",
+                rc.BarChart(
+                    duckdb.query(
+                        """
+                            select
+                                action as model,
+                                count(*) as val,
+                                region
+                            from t1
+                            where category = 'aqua/service/deployment/create'
+                            group by action, region
+                            order by 2 desc
+                            limit 10"""
+                    ).df(),
+                    x="model",
+                    y="val",
+                    dimension="region",
+                    label="Top Deployment Actions",
+                ),
             ),
         )
         report.save(view, name, mode="light")
 
 
-report_month, report_year = (3, 2024)
-
 if __name__ == "__main__":
     duckdb.query(
-        f"""
+        """
         create table t1 as
             select
                 epoch_ms(datetime) as date,
@@ -141,7 +86,6 @@ if __name__ == "__main__":
                 "authenticationType",
                 "tenantName"
             from read_json('20240327_aqua_telemetry_int.json')
-            where month(epoch_ms(datetime)) = {report_month} and year(epoch_ms(datetime)) = {report_year}
     """
     )
 
