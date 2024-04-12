@@ -12,6 +12,7 @@ from typing import Dict, List, Optional, Tuple, Union
 
 import matplotlib
 import pandas as pd
+import plotly.express as px
 import yaml
 from jinja2 import Environment, FileSystemLoader
 from markupsafe import escape
@@ -141,7 +142,7 @@ class Base(ABC):
         self.label = label
 
     @abstractmethod
-    def to_html(self):
+    def to_html(self) -> str:
         """Each component that derives from Base must implement this method"""
 
 
@@ -161,7 +162,7 @@ class Block(Base):
         logging.info(f"Block: {len(self.components)} components")
 
     @strip_whitespace
-    def to_html(self):
+    def to_html(self) -> str:
         html = "<block>"
 
         for component in self.components:
@@ -190,7 +191,7 @@ class Group(Base):
         logging.info(f"Group: {len(self.components)} components {label=}")
 
     @strip_whitespace
-    def to_html(self):
+    def to_html(self) -> str:
         html = "<div>"
 
         if self.label:
@@ -202,16 +203,12 @@ class Group(Base):
             html += """
                 <div class="group-item">
                     <div class="group-content">"""
-
             html += component.to_html()
+            html += """</div></div>"""
 
-            html += """
-                </div>
-                    </div>"""
+        html += "</div>"  # group
 
-        html += "</div>"
-
-        html += "</div>"
+        html += "</div>"  # outer block div
 
         return html
 
@@ -232,7 +229,7 @@ class Collapse(Base):
         logging.info(f"Collapse {len(self.components)} components, {label=}")
 
     @strip_whitespace
-    def to_html(self):
+    def to_html(self) -> str:
         html = f"<details><summary>{self.label}</summary>"
 
         for component in self.components:
@@ -263,7 +260,7 @@ class Widget(Base):
         logging.info(f"Widget: {self.widget.__class__.__name__ }")
 
     @strip_whitespace
-    def to_html(self):
+    def to_html(self) -> str:
         html = "<div class='report-widget'>"
 
         if self.label:
@@ -306,7 +303,7 @@ class MetricGroup(Base):
         logging.info(f"MetricGroup {len(df)} metrics")
 
     @strip_whitespace
-    def to_html(self):
+    def to_html(self) -> str:
         return self.g.to_html()
 
 
@@ -343,7 +340,7 @@ class Metric(Base):
         return f"Metric {self.heading=} {self.value=} {self.unit=} {self.label=}"
 
     @strip_whitespace
-    def to_html(self):
+    def to_html(self) -> str:
         if isinstance(self.value, (float)):
             value = round(self.value, self.float_precision)
         else:
@@ -436,7 +433,7 @@ class DataTable(Base):
 
         data_table_classes = [
             "remove-all-styles",
-            "fancy_table",
+            "fancy-table",
             "display",
             "row-border",
             "hover",
@@ -455,8 +452,8 @@ class DataTable(Base):
         logging.info(f"DataTable {len(df)} rows")
 
     @strip_whitespace
-    def to_html(self):
-        return f"<div class='dataTables_wrapper'><br/>{self.table_html}</div>"
+    def to_html(self) -> str:
+        return f"<div class='dataTables-wrapper'><br/>{self.table_html}</div>"
 
 
 ##############################
@@ -484,7 +481,7 @@ class Html(Base):
         logging.info(f"HTML {len(self.html)} characters")
 
     @strip_whitespace
-    def to_html(self):
+    def to_html(self) -> str:
         html = f"<style>{self.css}</style>" if self.css else ""
         if self.label:
             html += f"<report-caption>{self.label}</report-caption>"
@@ -522,7 +519,7 @@ class Image(Base):
         logging.info(f"Image, label: {self.label}")
 
     @strip_whitespace
-    def to_html(self):
+    def to_html(self) -> str:
         html = """<div class="image-block"><figure>"""
 
         image_markup = f"""<img src="{self.src}" style="{self.rounded_css} {self.extra_css}" alt="{self.label or self.src}">"""
@@ -564,8 +561,8 @@ class Markdown(Base):
         return markdown_to_html(text)
 
     @strip_whitespace
-    def to_html(self):
-        html = "<div class='markdown_wrapper'>"
+    def to_html(self) -> str:
+        html = "<div class='markdown-wrapper'>"
         if self.label:
             html += f"<report-caption>{self.label}</report-caption>"
         html += f'<div style="{self.extra_css}">'
@@ -597,7 +594,7 @@ class Plot(Base):
 
     @strip_whitespace
     def to_html(self) -> str:
-        html = "<div class='plot_wrapper'>"
+        html = "<div class='plot-wrapper'>"
 
         if self.label:
             html += f"<report-caption>{self.label}</report-caption>"
@@ -632,7 +629,33 @@ class Plot(Base):
 ##############################
 
 
-class BarChart(Base):
+class PxBase(Base):
+    def __init__(self, label: Optional[str] = None):
+        """PXBase is a container for all Plotly Express components.
+
+        Args:
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
+        Base.__init__(self, label=label)
+
+    @abstractmethod
+    def to_html(self) -> str:
+        """Each component that derives from PXBase must implement this method"""
+        pass
+
+    def apply_common_fig_options(self, fig):
+        fig.update_layout(
+            font_family="Helvetica Neue, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji, sans-serif"
+        )
+
+        fig.update_layout(font_size=15)
+        fig.update_layout(modebar_remove="lasso")
+
+    def wrap_html(self, html: str) -> str:
+        return f"<div class='plot-wrapper'>{html}</div>"
+
+
+class BarChart(PxBase):
     def __init__(
         self,
         df: pd.DataFrame,
@@ -672,17 +695,15 @@ class BarChart(Base):
 
         logging.info(f"BarChart {len(self.df)} rows, {x=}, {y=}, {label=}")
 
-    def to_html(self):
-        import plotly.express as px
-
+    def to_html(self) -> str:
         fig = px.bar(self.df, x=self.x, y=self.y, **self.kwargs)
         # fig.update_xaxes(tickangle=90)
-        fig.update_layout(
-            font_family="Helvetica Neue, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji, sans-serif"
-        )
-        fig.update_layout(font_size=15)
 
-        return fig.to_html(include_plotlyjs="cdn", full_html=False)
+        PxBase.apply_common_fig_options(self, fig)
+
+        return PxBase.wrap_html(
+            self, fig.to_html(include_plotlyjs="cdn", full_html=False)
+        )
 
 
 ##############################
@@ -710,7 +731,7 @@ class Heading(Base):
         logging.info(f"Heading (h{level}): [{label}]")
 
     @strip_whitespace
-    def to_html(self):
+    def to_html(self) -> str:
         return f"<br /><h{self.level}>{self.label}</h{self.level}><br />"
 
 
@@ -728,7 +749,7 @@ class Separator(Base):
         logging.info("Separator")
 
     @strip_whitespace
-    def to_html(self):
+    def to_html(self) -> str:
         if self.label:
             return f"<br /><hr /><report-caption>{self.label}</report-caption>"
         else:
@@ -750,12 +771,12 @@ class Text(Base):
         logging.info(f"Text {len(self.text)} characters")
 
     @strip_whitespace
-    def to_html(self):
-        formatted_text = f'<report_text style="{self.extra_css}">'
+    def to_html(self) -> str:
+        formatted_text = f'<report-text style="{self.extra_css}">'
         formatted_text += "".join(
             [f"<p>{p.strip()}</p>" for p in self.text.split("\n\n")]
         )
-        formatted_text += "</report_text>"
+        formatted_text += "</report-text>"
 
         if self.label:
             return f"""<report-caption>{self.label}</report-caption>{formatted_text}"""
@@ -785,7 +806,7 @@ class Select(Base):
         )
 
     @strip_whitespace
-    def to_html(self):
+    def to_html(self) -> str:
         html = f"<report-caption>{self.label}</report-caption>" if self.label else ""
 
         # assemble the button bar for the tabs
@@ -819,7 +840,7 @@ class Unformatted(Base):
         self.text = text
 
     @strip_whitespace
-    def to_html(self):
+    def to_html(self) -> str:
         formatted_text = f"<pre><code>{self.text.strip()}</code></pre>"
 
         if self.label:
@@ -847,7 +868,7 @@ class Language(Base):
         logging.info(f"{language} {len(self.text)} characters")
 
     @strip_whitespace
-    def to_html(self):
+    def to_html(self) -> str:
         if self.label:
             formatted_text = f"<pre><code class='language-{self.language} syntax-color'>### {self.label}\n\n{self.text.strip()}</code></pre>"
         else:

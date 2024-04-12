@@ -47,7 +47,7 @@ def gen_report(name: str, title: str, description: str):
                     x="model",
                     y="val",
                     dimension="region",
-                    label="Top Deployment Actions",
+                    label="Evaluations",
                 ),
                 rc.BarChart(
                     duckdb.query(
@@ -65,7 +65,7 @@ def gen_report(name: str, title: str, description: str):
                     x="model",
                     y="val",
                     dimension="region",
-                    label="Top Deployment Actions",
+                    label="Deployments",
                 ),
             ),
         )

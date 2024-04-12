@@ -209,7 +209,7 @@
         padding-left: 15px;
       }
 
-      report_text {
+      report-text {
         flex: 1;
         display: block;
         margin-top: 0.5em;
@@ -301,12 +301,13 @@
         text-indent: 20px;
       }
 
-      .easy-plot-block {
-        flex: 1;
-      }
-
       .image-block {
         flex: 1;
+        box-sizing: border-box;
+      }
+
+      .image-block figure {
+        margin: 0 !important;
       }
 
       .image-block img {
@@ -314,11 +315,11 @@
         object-fit: scale-down;
       }
 
-      div.plot_wrapper {
+      div.plot-wrapper {
         flex: 1;
       }
 
-      div.markdown_wrapper {
+      div.markdown-wrapper {
         flex: 1;
       }
 
@@ -326,7 +327,7 @@
         border-radius: 1rem;
       }
 
-      div.markdown_wrapper pre {
+      div.markdown-wrapper pre {
         white-space: pre-wrap;
       }
 
@@ -335,7 +336,7 @@
         display: block;
       }
 
-      div.dataTables_wrapper {
+      div.dataTables-wrapper {
         all: unset;
         min-width: 0;
         width: 100%;
@@ -426,7 +427,7 @@
         });
 
         // style tables
-        table = new DataTable("table.fancy_table", {
+        table = new DataTable("table.fancy-table", {
           dom: "Bfrtip",
           buttons: ["copyHtml5", "excelHtml5", "csvHtml5"],
           colReorder: true,
