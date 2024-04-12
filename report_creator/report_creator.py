@@ -650,9 +650,7 @@ class PxBase(Base):
 
         fig.update_layout(font_size=15)
         fig.update_layout(modebar_remove="lasso")
-
-    def wrap_html(self, html: str) -> str:
-        return f"<div class='plot-wrapper'>{html}</div>"
+        fig.update_xaxes(tickangle=90)
 
 
 class BarChart(PxBase):
@@ -688,22 +686,18 @@ class BarChart(PxBase):
         if label:
             self.kwargs["title"] = label
 
-        self.kwargs["template"] = "simple_white"
-
         if "height" not in kwargs:
             self.kwargs["height"] = 750
 
         logging.info(f"BarChart {len(self.df)} rows, {x=}, {y=}, {label=}")
 
+    @strip_whitespace
     def to_html(self) -> str:
         fig = px.bar(self.df, x=self.x, y=self.y, **self.kwargs)
-        # fig.update_xaxes(tickangle=90)
 
         PxBase.apply_common_fig_options(self, fig)
 
-        return PxBase.wrap_html(
-            self, fig.to_html(include_plotlyjs="cdn", full_html=False)
-        )
+        return fig.to_html(include_plotlyjs="cdn", full_html=False)
 
 
 ##############################
