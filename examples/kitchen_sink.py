@@ -14,11 +14,7 @@ if __name__ == "__main__":
     df1 = pd.DataFrame(columns=["Name", "Age"])
     df1.Name = ["Lizzie", "Julie", "Andrea"]
     df1.Age = [24, 18, 22]
-
-    fig1 = df1.plot.bar(x="Name", y="Age").get_figure()
-
     df2 = px.data.stocks()
-    fig2 = px.line(df2, x="date", y=["GOOG", "AAPL", "NFLX", "MSFT"])
 
     with open(__file__) as f:
         example_python = f.read()
@@ -92,8 +88,13 @@ if __name__ == "__main__":
             ),
             rc.Separator(),
             rc.Markdown(example_md, label="README.md"),
-            rc.Plot(fig1, label="Matplotlib Figure - People"),
-            rc.Plot(fig2, label="Plotly Figure - Stocks"),
+            rc.Widget(
+                df1.plot.bar(x="Name", y="Age"), label="Matplotlib Figure - People"
+            ),
+            rc.Widget(
+                px.line(df2, x="date", y=["GOOG", "AAPL", "NFLX", "MSFT"]),
+                label="Plotly Figure - Stocks",
+            ),
             rc.Separator(),
             rc.Html(
                 "<span>"

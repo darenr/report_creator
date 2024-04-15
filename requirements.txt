@@ -8,3 +8,5 @@ pyyaml
 plotly-express
 Jinja2
 humanize
+beautifulsoup4
+lxml

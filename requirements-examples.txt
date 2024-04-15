@@ -1,3 +1,4 @@
 pip
 rouge-score
-wordcloud
+bert-score
+duckdb

@@ -18,7 +18,8 @@ Library to assemble reports in HTML from various components using python
 * [x] `json`/`yaml`/`python` code blocks with color syntax highlighting
 * [x] Support tabs
 * [x] Add support for any Jupyter widget, any object that renders in a notebook should render to a report
-* [ ] Add word cloud support
+* [ ] Add built-in easy plotting that looks stylistically consistent with the report
+* [ ] Add word cloud support, maybe
 * [ ] Youtube embeds rc.Video(url: str, label: str)
 * [ ] File attachments (downloadable from page)
 

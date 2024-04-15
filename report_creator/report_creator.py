@@ -251,13 +251,10 @@ class Widget(Base):
             label (Optional[str], optional): _description_. Defaults to None.
         """
         Base.__init__(self, label=label)
-        if not hasattr(widget, "_repr_html_"):
-            raise ValueError(
-                f"Expected widget to have a _repr_html_ method, got {type(widget)} instead"
-            )
-        self.widget = widget
-
-        logging.info(f"Widget: {self.widget.__class__.__name__ }")
+        if hasattr(widget, "get_figure"):
+            self.widget = widget.get_figure()
+        else:
+            self.widget = widget
 
     @strip_whitespace
     def to_html(self) -> str:
@@ -267,9 +264,20 @@ class Widget(Base):
             html += f"<report-caption>{self.label}</report-caption>"
 
         if isinstance(self.widget, pd.DataFrame):
-            s = self.widget.style
+            html += self.widget.style._repr_html_()
+        elif isinstance(self.widget, matplotlib.figure.Figure):
+            tmp = io.BytesIO()
 
-            html += s._repr_html_()
+            self.widget.set_dpi(300)
+            self.widget.set_figwidth(10)
+            self.widget.tight_layout()
+            self.widget.savefig(tmp, format="png")
+            tmp.seek(0)
+            b64image = (
+                base64.b64encode(tmp.getvalue()).decode("utf-8").replace("\n", "")
+            )
+            html += f'<br/><img src="data:image/png;base64,{b64image}">'
+
         else:
             html += self.widget._repr_html_()
 
@@ -655,6 +663,9 @@ class PxBase(Base):
         return f"<div class='plot-wrapper'>{html}</div>"
 
 
+##############################
+
+
 class BarChart(PxBase):
     def __init__(
         self,
@@ -703,6 +714,25 @@ class BarChart(PxBase):
 
         return PxBase.wrap_html(
             self, fig.to_html(include_plotlyjs="cdn", full_html=False)
+        )
+
+
+##############################
+
+
+class PieChart(PxBase):
+    def __init__(
+        self,
+        df: pd.DataFrame,
+        x: str,
+        y: str,
+        *,
+        dimension: Optional[str] = None,
+        label: Optional[str] = None,
+        **kwargs: Optional[Dict],
+    ):
+        fig = px.pie(
+            df, values="pop", names="country", title="Population of European continent"
         )
 
 
