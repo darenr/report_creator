@@ -19,6 +19,23 @@ from markupsafe import escape
 
 logging.basicConfig(level=logging.INFO)
 
+import warnings
+
+preferred_fonts = [
+    "Helvetica Neue",
+    "system-ui",
+    "-apple-system",
+    "BlinkMacSystemFont",
+    "Segoe UI",
+    "Roboto",
+    "Oxygen",
+    "Ubuntu",
+    "Cantarell",
+    "Oracle Sans",
+    "Droid Sans",
+    "sans-serif",
+]
+
 
 def check_html_tags_are_closed(html_content: str):
     """Checks if any HTML tags are closed in the given string.
@@ -583,6 +600,18 @@ class Markdown(Base):
 ##############################
 
 
+class Plot:
+    def __init__(self):
+        warnings.warn(
+            "rc.Plot(..) is deprecated; use rc.Widget(..) instead, or one of the specific chart types like rc.BarChart(..), rc.HistogramChart(), or rc.PieChart(..)",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+
+##############################
+
+
 class PxBase(Base):
     def __init__(self, label: Optional[str] = None):
         """PXBase is a container for all Plotly Express components.
@@ -602,9 +631,9 @@ class PxBase(Base):
 
     def apply_common_fig_options(self, fig):
         fig.update_layout(
-            font_family="Helvetica Neue, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji, sans-serif"
+            font_family=", ".join(preferred_fonts),
+            title_font_family=", ".join(preferred_fonts),
         )
-
         fig.update_layout(font_size=15)
         fig.update_layout(modebar_remove="lasso")
         fig.update_xaxes(tickangle=90)

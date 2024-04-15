@@ -96,13 +96,23 @@ if __name__ == "__main__":
                 label="Plotly Figure - Stocks",
             ),
             rc.Separator(),
-            rc.PieChart(
-                px.data.gapminder()
-                .query("year == 2007")
-                .query("continent == 'Europe'"),
-                values="pop",
-                names="country",
-                label="Pie Chart - Population of European continent",
+            rc.Group(
+                rc.PieChart(
+                    px.data.gapminder()
+                    .query("year == 2007")
+                    .query("continent == 'Europe'"),
+                    values="pop",
+                    names="country",
+                    label="Pie Chart - 2007 Population of European continent",
+                ),
+                rc.PieChart(
+                    px.data.gapminder()
+                    .query("year == 2007")
+                    .query("continent == 'Americas'"),
+                    values="pop",
+                    names="country",
+                    label="Pie Chart - 2007 Population of American continent",
+                ),
             ),
             rc.Separator(),
             rc.Html(
