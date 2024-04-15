@@ -665,8 +665,11 @@ class PxBase(Base):
 
 ##############################
 
+# Charting Components
+
 
 class BarChart(PxBase):
+    # https://plotly.com/python/bar-charts/
     def __init__(
         self,
         df: pd.DataFrame,
@@ -721,22 +724,77 @@ class BarChart(PxBase):
 
 
 class PieChart(PxBase):
+    # https://plotly.com/python/pie-charts/
+
     def __init__(
         self,
         df: pd.DataFrame,
-        x: str,
-        y: str,
+        values: str,
+        names: str,
         *,
-        dimension: Optional[str] = None,
         label: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
-        fig = px.pie(
-            df, values="pop", names="country", title="Population of European continent"
+        Base.__init__(self, label=label)
+        self.df = df
+        self.values = values
+        self.names = names
+        self.kwargs = kwargs
+        assert values in df.columns, f"{values} not in df"
+        assert names in df.columns, f"{names} not in df"
+
+        if label:
+            self.kwargs["title"] = label
+
+        self.kwargs["template"] = "simple_white"
+
+        if "height" not in kwargs:
+            self.kwargs["height"] = 750
+
+        if "hole" not in kwargs:
+            self.kwargs["hole"] = 0.3
+
+        logging.info(f"PieChart {len(self.df)} rows, {values=}, {names=}, {label=}")
+
+    def to_html(self) -> str:
+        fig = px.pie(self.df, values=self.values, names=self.names, **self.kwargs)
+        fig.update_traces(textposition="inside", textinfo="percent+label")
+        fig.update_layout(uniformtext_minsize=10, uniformtext_mode="hide")
+
+        PxBase.apply_common_fig_options(self, fig)
+
+        return PxBase.wrap_html(
+            self, fig.to_html(include_plotlyjs="cdn", full_html=False)
         )
 
 
 ##############################
+
+
+class HistogramChart(PxBase):
+    # https://plotly.com/python/histograms/
+    def __init__(self, df: pd.DataFrame, x: str, *, label: Optional[str] = None):
+        """HistogramChart is a container for a plotly express histogram chart.
+
+        Args:
+            df (pd.DataFrame): The data to be plotted.
+            x (str): The column to be plotted on the x-axis.
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
+        Base.__init__(self, label=label)
+        self.df = df
+        self.x = x
+        assert x in df.columns, f"{x} not in df"
+        logging.info(f"HistogramChart {len(self.df)} rows, {x=}, {label=}")
+
+    def to_html(self) -> str:
+        fig = px.histogram(self.df, x=self.x)
+
+        PxBase.apply_common_fig_options(self, fig)
+
+        return PxBase.wrap_html(
+            self, fig.to_html(include_plotlyjs="cdn", full_html=False)
+        )
 
 
 class Heading(Base):

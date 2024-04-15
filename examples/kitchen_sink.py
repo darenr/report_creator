@@ -96,6 +96,15 @@ if __name__ == "__main__":
                 label="Plotly Figure - Stocks",
             ),
             rc.Separator(),
+            rc.PieChart(
+                px.data.gapminder()
+                .query("year == 2007")
+                .query("continent == 'Europe'"),
+                values="pop",
+                names="country",
+                label="Pie Chart - Population of European continent",
+            ),
+            rc.Separator(),
             rc.Html(
                 "<span>"
                 + "".join(
