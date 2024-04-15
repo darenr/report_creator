@@ -21,7 +21,6 @@ from .report_creator import (
     Markdown,
     Metric,
     MetricGroup,
-    Plot,
     Python,
     ReportCreator,
     Select,

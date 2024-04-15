@@ -132,7 +132,7 @@ def gen_report(
                             label="Metrics",
                         ),
                         rc.Group(
-                            rc.Plot(
+                            rc.Widget(
                                 df_results.boxplot(
                                     column="f1", by="categories"
                                 ).get_figure(),

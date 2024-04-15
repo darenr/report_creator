@@ -583,60 +583,6 @@ class Markdown(Base):
 ##############################
 
 
-class Plot(Base):
-    # see https://plotly.com/python/interactive-html-export/
-    # for how to make interactive
-
-    def __init__(self, fig, *, label: Optional[str] = None):
-        """Plot is a container for a matplotlib or plotly figure. It can also take a label.
-
-        Args:
-            fig: A matplotlib or plotly figure.
-            label (Optional[str], optional): _description_. Defaults to None.
-        """
-        Base.__init__(self, label=label)
-        self.fig = fig
-        if hasattr(self.fig, "get_figure"):
-            self.fig = fig.get_figure()
-        logging.info(f"Plot: {self.fig.__class__.__name__ } {self.label=}")
-
-    @strip_whitespace
-    def to_html(self) -> str:
-        html = "<div class='plot-wrapper'>"
-
-        if self.label:
-            html += f"<report-caption>{self.label}</report-caption>"
-
-        if isinstance(self.fig, matplotlib.figure.Figure):
-            tmp = io.BytesIO()
-            self.fig.set_figwidth(10)
-            self.fig.tight_layout()
-            self.fig.savefig(tmp, format="png")
-            tmp.seek(0)
-            b64image = (
-                base64.b64encode(tmp.getvalue()).decode("utf-8").replace("\n", "")
-            )
-            html += f'<br/><img src="data:image/png;base64,{b64image}">'
-        else:
-            import plotly
-
-            if isinstance(self.fig, plotly.graph_objs._figure.Figure):
-                tmp = io.StringIO()
-                self.fig.write_html(tmp)
-                html += tmp.getvalue()
-            else:
-                raise ValueError(
-                    f"Expected matplotlib.figure.Figure, got {type(self.fig)}, try obj.get_figure()"
-                )
-
-        html += "</div>"
-
-        return html
-
-
-##############################
-
-
 class PxBase(Base):
     def __init__(self, label: Optional[str] = None):
         """PXBase is a container for all Plotly Express components.
@@ -650,6 +596,9 @@ class PxBase(Base):
     def to_html(self) -> str:
         """Each component that derives from PXBase must implement this method"""
         pass
+
+    def wrap_html(self, html: str) -> str:
+        return f"<div class='plot-wrapper'>{html}</div>"
 
     def apply_common_fig_options(self, fig):
         fig.update_layout(
@@ -711,7 +660,9 @@ class BarChart(PxBase):
 
         PxBase.apply_common_fig_options(self, fig)
 
-        return fig.to_html(include_plotlyjs="cdn", full_html=False)
+        return PxBase.wrap_html(
+            self, fig.to_html(include_plotlyjs="cdn", full_html=False)
+        )
 
 
 ##############################

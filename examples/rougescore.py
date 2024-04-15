@@ -252,13 +252,13 @@ def gen_report(
                             label="rougeLsum- longest matching sequence of word (sentence level)",
                         ),
                         rc.Group(
-                            rc.Plot(
+                            rc.Widget(
                                 df_results.boxplot(
                                     column="rouge1", by="categories"
                                 ).get_figure(),
                                 label="ROUGE1 Score Distribution by category",
                             ),
-                            rc.Plot(
+                            rc.Widget(
                                 df_results.boxplot(
                                     column="rouge2", by="categories"
                                 ).get_figure(),
