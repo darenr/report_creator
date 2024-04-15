@@ -251,13 +251,10 @@ class Widget(Base):
             label (Optional[str], optional): _description_. Defaults to None.
         """
         Base.__init__(self, label=label)
-        if not hasattr(widget, "_repr_html_"):
-            raise ValueError(
-                f"Expected widget to have a _repr_html_ method, got {type(widget)} instead"
-            )
-        self.widget = widget
-
-        logging.info(f"Widget: {self.widget.__class__.__name__ }")
+        if hasattr(widget, "get_figure"):
+            self.widget = widget.get_figure()
+        else:
+            self.widget = widget
 
     @strip_whitespace
     def to_html(self) -> str:
@@ -267,9 +264,20 @@ class Widget(Base):
             html += f"<report-caption>{self.label}</report-caption>"
 
         if isinstance(self.widget, pd.DataFrame):
-            s = self.widget.style
+            html += self.widget.style._repr_html_()
+        elif isinstance(self.widget, matplotlib.figure.Figure):
+            tmp = io.BytesIO()
 
-            html += s._repr_html_()
+            self.widget.set_dpi(300)
+            self.widget.set_figwidth(10)
+            self.widget.tight_layout()
+            self.widget.savefig(tmp, format="png")
+            tmp.seek(0)
+            b64image = (
+                base64.b64encode(tmp.getvalue()).decode("utf-8").replace("\n", "")
+            )
+            html += f'<br/><img src="data:image/png;base64,{b64image}">'
+
         else:
             html += self.widget._repr_html_()
 
@@ -653,7 +661,13 @@ class PxBase(Base):
         fig.update_xaxes(tickangle=90)
 
 
+##############################
+
+# Charting Components
+
+
 class BarChart(PxBase):
+    # https://plotly.com/python/bar-charts/
     def __init__(
         self,
         df: pd.DataFrame,
@@ -701,6 +715,80 @@ class BarChart(PxBase):
 
 
 ##############################
+
+
+class PieChart(PxBase):
+    # https://plotly.com/python/pie-charts/
+
+    def __init__(
+        self,
+        df: pd.DataFrame,
+        values: str,
+        names: str,
+        *,
+        label: Optional[str] = None,
+        **kwargs: Optional[Dict],
+    ):
+        Base.__init__(self, label=label)
+        self.df = df
+        self.values = values
+        self.names = names
+        self.kwargs = kwargs
+        assert values in df.columns, f"{values} not in df"
+        assert names in df.columns, f"{names} not in df"
+
+        if label:
+            self.kwargs["title"] = label
+
+        self.kwargs["template"] = "simple_white"
+
+        if "height" not in kwargs:
+            self.kwargs["height"] = 750
+
+        if "hole" not in kwargs:
+            self.kwargs["hole"] = 0.3
+
+        logging.info(f"PieChart {len(self.df)} rows, {values=}, {names=}, {label=}")
+
+    def to_html(self) -> str:
+        fig = px.pie(self.df, values=self.values, names=self.names, **self.kwargs)
+        fig.update_traces(textposition="inside", textinfo="percent+label")
+        fig.update_layout(uniformtext_minsize=10, uniformtext_mode="hide")
+
+        PxBase.apply_common_fig_options(self, fig)
+
+        return PxBase.wrap_html(
+            self, fig.to_html(include_plotlyjs="cdn", full_html=False)
+        )
+
+
+##############################
+
+
+class HistogramChart(PxBase):
+    # https://plotly.com/python/histograms/
+    def __init__(self, df: pd.DataFrame, x: str, *, label: Optional[str] = None):
+        """HistogramChart is a container for a plotly express histogram chart.
+
+        Args:
+            df (pd.DataFrame): The data to be plotted.
+            x (str): The column to be plotted on the x-axis.
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
+        Base.__init__(self, label=label)
+        self.df = df
+        self.x = x
+        assert x in df.columns, f"{x} not in df"
+        logging.info(f"HistogramChart {len(self.df)} rows, {x=}, {label=}")
+
+    def to_html(self) -> str:
+        fig = px.histogram(self.df, x=self.x)
+
+        PxBase.apply_common_fig_options(self, fig)
+
+        return PxBase.wrap_html(
+            self, fig.to_html(include_plotlyjs="cdn", full_html=False)
+        )
 
 
 class Heading(Base):

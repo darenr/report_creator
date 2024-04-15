@@ -161,7 +161,7 @@ def gen_report(
 
 
 if __name__ == "__main__":
-    with open("report.json") as f:
+    with open("bert.json") as f:
         data, dataset, model_params, model_details, metric_results = itemgetter(
             "data", "dataset", "model_params", "model_details", "metric_results"
         )(json.load(f))

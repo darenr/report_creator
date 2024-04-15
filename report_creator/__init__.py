@@ -7,6 +7,8 @@ from .__meta__ import (
 )
 from .report_creator import (
     BarChart,
+    PieChart,
+    HistogramChart,
     Base,
     Block,
     Collapse,
