@@ -28,7 +28,7 @@ preferred_fonts = [
     "sans-serif",
 ]
 
-preferred_plotly_theme = "plotly_dark"
+preferred_plotly_theme = "simple_white"
 
 
 def check_html_tags_are_closed(html_content: str):
