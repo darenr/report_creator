@@ -23,18 +23,12 @@ import warnings
 
 preferred_fonts = [
     "Helvetica Neue",
-    "system-ui",
-    "-apple-system",
-    "BlinkMacSystemFont",
-    "Segoe UI",
     "Roboto",
-    "Oxygen",
-    "Ubuntu",
-    "Cantarell",
     "Oracle Sans",
-    "Droid Sans",
     "sans-serif",
 ]
+
+preferred_plotly_theme = "plotly_dark"
 
 
 def check_html_tags_are_closed(html_content: str):
@@ -603,7 +597,7 @@ class Markdown(Base):
 class Plot:
     def __init__(self):
         warnings.warn(
-            "rc.Plot(..) is deprecated; use rc.Widget(..) instead, or one of the specific chart types like rc.BarChart(..), rc.HistogramChart(), or rc.PieChart(..)",
+            "rc.Plot(..) is deprecated; use rc.Widget(..), or one of the specific chart types like rc.BarChart(..), rc.HistogramChart(), or rc.PieChart(..)",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -630,13 +624,20 @@ class PxBase(Base):
         return f"<div class='plot-wrapper'>{html}</div>"
 
     def apply_common_fig_options(self, fig):
-        fig.update_layout(
-            font_family=", ".join(preferred_fonts),
-            title_font_family=", ".join(preferred_fonts),
-        )
+        fig.update_layout(font_family=preferred_fonts[0])
+        fig.update_xaxes(title_font_family=preferred_fonts[0])
+
         fig.update_layout(font_size=15)
         fig.update_layout(modebar_remove="lasso")
         fig.update_xaxes(tickangle=90)
+        fig.update_layout(autosize=True)
+
+    def apply_common_kwargs(self, kwargs, label: Optional[str] = None):
+        if "template" not in kwargs:
+            kwargs["template"] = preferred_plotly_theme
+
+        if label and "title" not in kwargs:
+            kwargs["title"] = label
 
 
 ##############################
@@ -675,11 +676,8 @@ class BarChart(PxBase):
         if dimension:
             assert dimension in df.columns, f"{dimension} not in df"
             self.kwargs["color"] = dimension
-        if label:
-            self.kwargs["title"] = label
 
-        if "height" not in kwargs:
-            self.kwargs["height"] = 750
+        PxBase.apply_common_kwargs(self, kwargs, label)
 
         logging.info(f"BarChart {len(self.df)} rows, {x=}, {y=}, {label=}")
 
@@ -688,9 +686,10 @@ class BarChart(PxBase):
         fig = px.bar(self.df, x=self.x, y=self.y, **self.kwargs)
 
         PxBase.apply_common_fig_options(self, fig)
+        fig.update_layout(bargap=0.1)
 
         return PxBase.wrap_html(
-            self, fig.to_html(include_plotlyjs="cdn", full_html=False)
+            self, fig.to_html(include_plotlyjs=False, full_html=False)
         )
 
 
@@ -717,13 +716,7 @@ class PieChart(PxBase):
         assert values in df.columns, f"{values} not in df"
         assert names in df.columns, f"{names} not in df"
 
-        if label:
-            self.kwargs["title"] = label
-
-        self.kwargs["template"] = "simple_white"
-
-        if "height" not in kwargs:
-            self.kwargs["height"] = 750
+        PxBase.apply_common_kwargs(self, kwargs, label)
 
         if "hole" not in kwargs:
             self.kwargs["hole"] = 0.3
@@ -731,14 +724,19 @@ class PieChart(PxBase):
         logging.info(f"PieChart {len(self.df)} rows, {values=}, {names=}, {label=}")
 
     def to_html(self) -> str:
-        fig = px.pie(self.df, values=self.values, names=self.names, **self.kwargs)
+        fig = px.pie(
+            self.df,
+            values=self.values,
+            names=self.names,
+            **self.kwargs,
+        )
         fig.update_traces(textposition="inside", textinfo="percent+label")
         fig.update_layout(uniformtext_minsize=10, uniformtext_mode="hide")
 
         PxBase.apply_common_fig_options(self, fig)
 
         return PxBase.wrap_html(
-            self, fig.to_html(include_plotlyjs="cdn", full_html=False)
+            self, fig.to_html(include_plotlyjs=False, full_html=False)
         )
 
 
@@ -747,27 +745,46 @@ class PieChart(PxBase):
 
 class HistogramChart(PxBase):
     # https://plotly.com/python/histograms/
-    def __init__(self, df: pd.DataFrame, x: str, *, label: Optional[str] = None):
+    def __init__(
+        self,
+        df: pd.DataFrame,
+        x: str,
+        dimension: Optional[str] = None,
+        *,
+        label: Optional[str] = None,
+        **kwargs: Optional[Dict],
+    ):
         """HistogramChart is a container for a plotly express histogram chart.
 
         Args:
             df (pd.DataFrame): The data to be plotted.
             x (str): The column to be plotted on the x-axis.
+            dimension (Optional[str], optional): The column to be plotted on the dimension axis. Defaults to None.
             label (Optional[str], optional): _description_. Defaults to None.
         """
         Base.__init__(self, label=label)
         self.df = df
         self.x = x
+        self.kwargs = kwargs
+
         assert x in df.columns, f"{x} not in df"
+
+        if dimension:
+            assert dimension in df.columns, f"{dimension} not in df"
+            self.kwargs["color"] = dimension
+
+        PxBase.apply_common_kwargs(self, kwargs, label)
+
         logging.info(f"HistogramChart {len(self.df)} rows, {x=}, {label=}")
 
     def to_html(self) -> str:
-        fig = px.histogram(self.df, x=self.x)
+        fig = px.histogram(self.df, x=self.x, **self.kwargs)
+        fig.update_layout(bargap=0.1)
 
         PxBase.apply_common_fig_options(self, fig)
 
         return PxBase.wrap_html(
-            self, fig.to_html(include_plotlyjs="cdn", full_html=False)
+            self, fig.to_html(include_plotlyjs=False, full_html=False)
         )
 
 

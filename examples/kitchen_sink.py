@@ -99,20 +99,35 @@ if __name__ == "__main__":
             rc.Group(
                 rc.PieChart(
                     px.data.gapminder()
-                    .query("year == 2007")
+                    .query("year == 2002")
                     .query("continent == 'Europe'"),
                     values="pop",
                     names="country",
-                    label="Pie Chart - 2007 Population of European continent",
+                    label="Pie Chart - 2002 Population of European continent",
                 ),
                 rc.PieChart(
                     px.data.gapminder()
-                    .query("year == 2007")
+                    .query("year == 2002")
                     .query("continent == 'Americas'"),
                     values="pop",
                     names="country",
-                    label="Pie Chart - 2007 Population of American continent",
+                    label="Pie Chart - 2002 Population of American continent",
                 ),
+            ),
+            rc.Group(
+                rc.HistogramChart(
+                    px.data.tips(),
+                    x="total_bill",
+                    dimension="sex",
+                    label="Histogram of Total Bill",
+                ),
+            ),
+            rc.BarChart(
+                px.data.medals_long(),
+                x="nation",
+                y="count",
+                dimension="medal",
+                label="Bar Chart - Olympic Medals",
             ),
             rc.Separator(),
             rc.Html(
@@ -141,6 +156,13 @@ if __name__ == "__main__":
             rc.Separator(),
             rc.Select(
                 blocks=[
+                    rc.DataTable(
+                        px.data.gapminder()
+                        .query("year == 2002")
+                        .query("continent == 'Europe'"),
+                        label="2002 European Population",
+                        index=False,
+                    ),
                     rc.DataTable(px.data.iris(), label="Iris Petals", index=False),
                     rc.DataTable(
                         px.data.election(),
