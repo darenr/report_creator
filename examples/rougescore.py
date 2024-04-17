@@ -1,7 +1,6 @@
 import json
 import logging
 import warnings
-import html
 from datetime import datetime
 from operator import itemgetter
 
@@ -147,13 +146,10 @@ def gen_report(
 
     with rc.ReportCreator(title=title, description=generic_description) as report:
         view = rc.Block(
-            rc.Select(
-                blocks=[
-                    rc.Block(
-                        rc.Html(description, label="Evaluation Metric"),
-                        rc.Group(
-                            rc.Html(
-                                f"""<h2>Summary:</h2>The model <b>"{model_name}"</b> created {human_readable_model_created(model_details)} was
+            rc.Html(description, label="Evaluation Metric"),
+            rc.Group(
+                rc.Html(
+                    f"""<h2>Summary:</h2>The model <b>"{model_name}"</b> created {human_readable_model_created(model_details)} was
                     evaluated (<b>{evaluation_metric}</b>) against the <b>"{dataset['name']}"</b> dataset scoring an overal median F1 score
                     of <b>{median_rouge1:0.3f}</b> (meaning at least half
                     of the evaluations scored at, or better than, {median_rouge1:0.3f}) with a standard deviation of <b>{std_rouge1:0.3f}</b>. The
@@ -165,134 +161,125 @@ def gen_report(
                     <li><b>Dataset:</b> {dataset['name']}</li>
                     </dd>
                     """
-                            ),
-                            label=f"""Model: {model_name}""",
-                        ),
-                        rc.Group(
-                            rc.Metric(
-                                heading="Grade", value=grade, label=grade_description
-                            ),
-                            rc.Metric(
-                                heading="Evaluations",
-                                value=len(df_results),
-                                label=f"Number of {evaluation_metric} evaluations performed",
-                            ),
-                            label="Grade",
-                        ),
-                        rc.Group(
-                            rc.Metric(
-                                heading="Median",
-                                value=f"{median_rouge1:0.3f}",
-                                label="The mean overlap of unigrams (each word) between the system and reference summaries",
-                            ),
-                            rc.Metric(
-                                heading="Standard deviation (σ)",
-                                value=f"{std_rouge1:0.3f}",
-                                label="Standard deviation is a statistical measurement that indicates how spread out a set of data is in relation to its mean.",
-                            ),
-                            rc.Metric(
-                                heading="Min/Max",
-                                value=f"{min_rouge1:0.3f}/{max_rouge1:0.3f}",
-                                label="The minimum/maximum overlap of unigrams (each word) between the system and reference summaries",
-                            ),
-                            label="rouge1 - overlap of unigrams (each word)",
-                        ),
-                        rc.Group(
-                            rc.Metric(
-                                heading="Median",
-                                value=f"{median_rouge2:0.3f}",
-                                label="The mean overlap of bigrams (phrases) between the system and reference summaries",
-                            ),
-                            rc.Metric(
-                                heading="Standard deviation (σ)",
-                                value=f"{std_rouge2:0.3f}",
-                                label="Standard deviation is a statistical measurement that indicates how spread out a set of data is in relation to its mean.",
-                            ),
-                            rc.Metric(
-                                heading="Min/Max",
-                                value=f"{min_rouge2:0.3f}/{max_rouge2:0.3f}",
-                                label="The minimum/maximum overlap of unigrams (each word) between the system and reference summaries",
-                            ),
-                            label="rouge2 - overlap of bigrams (phrases)",
-                        ),
-                        rc.Group(
-                            rc.Metric(
-                                heading="Median",
-                                value=f"{median_rougeL:0.3f}",
-                                label="The mean measure of the longest matching sequence of words using longest common subsequences, computed as an average over individual sentences",
-                            ),
-                            rc.Metric(
-                                heading="Standard deviation (σ)",
-                                value=f"{std_rougeL:0.3f}",
-                                label="Standard deviation is a statistical measurement that indicates how spread out a set of data is in relation to its mean.",
-                            ),
-                            rc.Metric(
-                                heading="Min/Max",
-                                value=f"{min_rougeL:0.3f}/{max_rougeL:0.3f}",
-                                label="The minimum/maximum overlap of unigrams (each word) between the system and reference summaries",
-                            ),
-                            label="rougeL - longest matching sequence of words (summary level)",
-                        ),
-                        rc.Group(
-                            rc.Metric(
-                                heading="Median",
-                                value=f"{median_rougeLsum:0.3f}",
-                                label="The mean measure of the longest matching sequence of words using longest common subsequences, computed over the entire summary",
-                            ),
-                            rc.Metric(
-                                heading="Standard deviation (σ)",
-                                value=f"{std_rougeLsum:0.3f}",
-                                label="Standard deviation is a statistical measurement that indicates how spread out a set of data is in relation to its mean.",
-                            ),
-                            rc.Metric(
-                                heading="Min/Max",
-                                value=f"{min_rougeLsum:0.3f}/{max_rougeLsum:0.3f}",
-                                label="The minimum/maximum overlap of unigrams (each word) between the system and reference summaries",
-                            ),
-                            label="rougeLsum- longest matching sequence of word (sentence level)",
-                        ),
-                        rc.Group(
-                            rc.Widget(
-                                df_results.boxplot(
-                                    column="rouge1", by="categories"
-                                ).get_figure(),
-                                label="ROUGE1 Score Distribution by category",
-                            ),
-                            rc.Widget(
-                                df_results.boxplot(
-                                    column="rouge2", by="categories"
-                                ).get_figure(),
-                                label="ROUGE2 Score Distribution by category",
-                            ),
-                        ),
-                        rc.Group(
-                            rc.Html(
-                                f"{best_performers[['responses']].to_html(index=False, escape=True, justify='left')}{best_performers[['references']].to_html(index=False, escape=True, justify='left')}",
-                            ),
-                            label="Best Performing Evaluation",
-                        ),
-                        rc.Group(
-                            rc.Html(
-                                f"{worst_performers[['responses']].to_html(index=False, escape=True, justify='left')}{worst_performers[['references']].to_html(index=False, escape=True, justify='left')}",
-                            ),
-                            label="Worst Performing Evaluation",
-                        ),
-                        rc.Heading("Parameters", level=2),
-                        rc.Collapse(
-                            rc.Table(
-                                model_parms_to_table(model_params),
-                            ),
-                            label="Model Parameters",
-                        ),
-                        rc.Heading(label="Results", level=2),
-                        rc.Collapse(
-                            rc.DataTable(data, wrap_text=True),
-                            label="Results Table",
-                        ),
-                        label=evaluation_metric,
-                    )
-                ],
+                ),
+                label=f"""Model: {model_name}""",
             ),
+            rc.Group(
+                rc.Metric(heading="Grade", value=grade, label=grade_description),
+                rc.Metric(
+                    heading="Evaluations",
+                    value=len(df_results),
+                    label=f"Number of {evaluation_metric} evaluations performed",
+                ),
+                label="Grade",
+            ),
+            rc.Group(
+                rc.Metric(
+                    heading="Median",
+                    value=f"{median_rouge1:0.3f}",
+                    label="The mean overlap of unigrams (each word) between the system and reference summaries",
+                ),
+                rc.Metric(
+                    heading="Standard deviation (σ)",
+                    value=f"{std_rouge1:0.3f}",
+                    label="Standard deviation is a statistical measurement that indicates how spread out a set of data is in relation to its mean.",
+                ),
+                rc.Metric(
+                    heading="Min/Max",
+                    value=f"{min_rouge1:0.3f}/{max_rouge1:0.3f}",
+                    label="The minimum/maximum overlap of unigrams (each word) between the system and reference summaries",
+                ),
+                label="rouge1 - overlap of unigrams (each word)",
+            ),
+            rc.Group(
+                rc.Metric(
+                    heading="Median",
+                    value=f"{median_rouge2:0.3f}",
+                    label="The mean overlap of bigrams (phrases) between the system and reference summaries",
+                ),
+                rc.Metric(
+                    heading="Standard deviation (σ)",
+                    value=f"{std_rouge2:0.3f}",
+                    label="Standard deviation is a statistical measurement that indicates how spread out a set of data is in relation to its mean.",
+                ),
+                rc.Metric(
+                    heading="Min/Max",
+                    value=f"{min_rouge2:0.3f}/{max_rouge2:0.3f}",
+                    label="The minimum/maximum overlap of unigrams (each word) between the system and reference summaries",
+                ),
+                label="rouge2 - overlap of bigrams (phrases)",
+            ),
+            rc.Group(
+                rc.Metric(
+                    heading="Median",
+                    value=f"{median_rougeL:0.3f}",
+                    label="The mean measure of the longest matching sequence of words using longest common subsequences, computed as an average over individual sentences",
+                ),
+                rc.Metric(
+                    heading="Standard deviation (σ)",
+                    value=f"{std_rougeL:0.3f}",
+                    label="Standard deviation is a statistical measurement that indicates how spread out a set of data is in relation to its mean.",
+                ),
+                rc.Metric(
+                    heading="Min/Max",
+                    value=f"{min_rougeL:0.3f}/{max_rougeL:0.3f}",
+                    label="The minimum/maximum overlap of unigrams (each word) between the system and reference summaries",
+                ),
+                label="rougeL - longest matching sequence of words (summary level)",
+            ),
+            rc.Group(
+                rc.Metric(
+                    heading="Median",
+                    value=f"{median_rougeLsum:0.3f}",
+                    label="The mean measure of the longest matching sequence of words using longest common subsequences, computed over the entire summary",
+                ),
+                rc.Metric(
+                    heading="Standard deviation (σ)",
+                    value=f"{std_rougeLsum:0.3f}",
+                    label="Standard deviation is a statistical measurement that indicates how spread out a set of data is in relation to its mean.",
+                ),
+                rc.Metric(
+                    heading="Min/Max",
+                    value=f"{min_rougeLsum:0.3f}/{max_rougeLsum:0.3f}",
+                    label="The minimum/maximum overlap of unigrams (each word) between the system and reference summaries",
+                ),
+                label="rougeLsum- longest matching sequence of word (sentence level)",
+            ),
+            rc.Group(
+                rc.Widget(
+                    df_results.boxplot(column="rouge1", by="categories").get_figure(),
+                    label="ROUGE1 Score Distribution by category",
+                ),
+                rc.Widget(
+                    df_results.boxplot(column="rouge2", by="categories").get_figure(),
+                    label="ROUGE2 Score Distribution by category",
+                ),
+            ),
+            rc.Group(
+                rc.Html(
+                    f"{best_performers[['responses']].to_html(index=False, escape=True, justify='left')}{best_performers[['references']].to_html(index=False, escape=True, justify='left')}",
+                ),
+                label="Best Performing Evaluation",
+            ),
+            rc.Group(
+                rc.Html(
+                    f"{worst_performers[['responses']].to_html(index=False, escape=True, justify='left')}{worst_performers[['references']].to_html(index=False, escape=True, justify='left')}",
+                ),
+                label="Worst Performing Evaluation",
+            ),
+            rc.Heading("Parameters", level=2),
+            rc.Collapse(
+                rc.Table(
+                    model_parms_to_table(model_params),
+                ),
+                label="Model Parameters",
+            ),
+            rc.Heading(label="Results", level=2),
+            rc.Collapse(
+                rc.DataTable(data, wrap_text=True),
+                label="Results Table",
+            ),
+            label=evaluation_metric,
         )
         # save the report, light, dark, or auto mode (follow browser settings)
         report.save(view, name, mode="light")

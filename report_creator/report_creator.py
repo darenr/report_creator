@@ -28,7 +28,7 @@ preferred_fonts = [
     "sans-serif",
 ]
 
-preferred_plotly_theme = "simple_white"
+preferred_plotly_theme = "plotly_dark"
 
 
 def check_html_tags_are_closed(html_content: str):
@@ -211,11 +211,9 @@ class Group(Base):
         html += """<div class="group">"""
 
         for component in self.components:
-            html += """
-                <div class="group-item">
-                    <div class="group-content">"""
+            html += "<div class='group-content'>"
             html += component.to_html()
-            html += """</div></div>"""
+            html += "</div>"
 
         html += "</div>"  # group
 
@@ -620,9 +618,6 @@ class PxBase(Base):
         """Each component that derives from PXBase must implement this method"""
         pass
 
-    def wrap_html(self, html: str) -> str:
-        return f"<div class='plot-wrapper'>{html}</div>"
-
     def apply_common_fig_options(self, fig):
         fig.update_layout(font_family=preferred_fonts[0])
         fig.update_xaxes(title_font_family=preferred_fonts[0])
@@ -688,8 +683,8 @@ class BarChart(PxBase):
         PxBase.apply_common_fig_options(self, fig)
         fig.update_layout(bargap=0.1)
 
-        return PxBase.wrap_html(
-            self, fig.to_html(include_plotlyjs=False, full_html=False)
+        return fig.to_html(
+            include_plotlyjs=False, full_html=False, config={"responsive": True}
         )
 
 
@@ -735,8 +730,8 @@ class PieChart(PxBase):
 
         PxBase.apply_common_fig_options(self, fig)
 
-        return PxBase.wrap_html(
-            self, fig.to_html(include_plotlyjs=False, full_html=False)
+        return fig.to_html(
+            include_plotlyjs=False, full_html=False, config={"responsive": True}
         )
 
 
@@ -783,8 +778,8 @@ class HistogramChart(PxBase):
 
         PxBase.apply_common_fig_options(self, fig)
 
-        return PxBase.wrap_html(
-            self, fig.to_html(include_plotlyjs=False, full_html=False)
+        return fig.to_html(
+            include_plotlyjs=False, full_html=False, config={"responsive": True}
         )
 
 
