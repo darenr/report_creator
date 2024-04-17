@@ -12,14 +12,18 @@
     />
 
     <!-- see https://highlightjs.org/examples -->
+
+    <xlink
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/base16/summerfruit-{{mode}}.css"
+    />
+
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/base16/summerfruit-{{mode}}.css"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.css"
     />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/go.min.js"></script>
 
     <!-- DataTables use builder to add options https://datatables.net/download/ -->
     <link
@@ -164,7 +168,7 @@
       }
 
       .block-bordered {
-        border-left: 7px solid var(--focus) !important;
+        border-left: 3px solid var(--focus) !important;
         padding-left: 15px !important;
       }
 
@@ -196,7 +200,7 @@
         margin-bottom: 1em;
         font-size: 1.5em;
         font-weight: bold;
-        border-left: 10px solid var(--focus);
+        border-left: 3px solid var(--focus);
         padding-left: 15px;
       }
 
@@ -213,7 +217,7 @@
         margin-bottom: 1em;
         font-size: 1.5em;
         font-weight: bold;
-        border-left: 7px solid var(--focus);
+        border-left: 3px solid var(--focus);
         padding-left: 15px;
       }
 
@@ -334,14 +338,13 @@
       }
 
       .code-block {
-        flex: 1;
         height: 100%;
-        width: 90%;
         box-sizing: border-box;
       }
 
       pre code.hljs {
-        border: 1px solid var(--border);
+        <!-- border: 1px solid var(--border); -->
+        border-radius: 6px;
       }
 
       .report-widget {
