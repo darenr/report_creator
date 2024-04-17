@@ -29,7 +29,7 @@ preferred_fonts = [
     "sans-serif",
 ]
 
-preferred_plotly_theme = "plotly_dark"
+preferred_plotly_theme = "plotly_white"
 
 
 def check_html_tags_are_closed(html_content: str):
@@ -596,7 +596,7 @@ class Markdown(Base):
 class Plot:
     def __init__(self):
         warnings.warn(
-            "rc.Plot(..) is deprecated; use rc.Widget(..), or one of the specific chart types like rc.BarChart(..), rc.HistogramChart(), or rc.PieChart(..)",
+            "rc.Plot(..) is deprecated; use rc.Widget(..), or one of the specific chart types like rc.BarChart(..), rc.BoxChart(), or rc.PieChart(..)",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -628,9 +628,11 @@ class PxBase(Base):
         fig.update_xaxes(tickangle=90)
         fig.update_layout(autosize=True)
 
-    def apply_common_kwargs(self, kwargs, label: Optional[str] = None):
+    def apply_common_kwargs(
+        self, kwargs, label: Optional[str] = None, theme: Optional[str] = None
+    ):
         if "template" not in kwargs:
-            kwargs["template"] = preferred_plotly_theme
+            kwargs["template"] = theme or preferred_plotly_theme
 
         if label and "title" not in kwargs:
             kwargs["title"] = label
@@ -651,6 +653,7 @@ class BarChart(PxBase):
         *,
         dimension: Optional[str] = None,
         label: Optional[str] = None,
+        theme: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
         """BarChart is a container for a plotly express bar chart.
@@ -673,7 +676,7 @@ class BarChart(PxBase):
             assert dimension in df.columns, f"{dimension} not in df"
             self.kwargs["color"] = dimension
 
-        PxBase.apply_common_kwargs(self, kwargs, label)
+        PxBase.apply_common_kwargs(self, self.kwargs, label=label, theme=theme)
 
         logging.info(f"BarChart {len(self.df)} rows, {x=}, {y=}, {label=}")
 
@@ -702,6 +705,7 @@ class PieChart(PxBase):
         names: str,
         *,
         label: Optional[str] = None,
+        theme: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
         Base.__init__(self, label=label)
@@ -709,12 +713,13 @@ class PieChart(PxBase):
         self.values = values
         self.names = names
         self.kwargs = kwargs
+
         assert values in df.columns, f"{values} not in df"
         assert names in df.columns, f"{names} not in df"
 
-        PxBase.apply_common_kwargs(self, kwargs, label)
+        PxBase.apply_common_kwargs(self, self.kwargs, label=label, theme=theme)
 
-        if "hole" not in kwargs:
+        if "hole" not in self.kwargs:
             self.kwargs["hole"] = 0.3
 
         logging.info(f"PieChart {len(self.df)} rows, {values=}, {names=}, {label=}")
@@ -737,6 +742,46 @@ class PieChart(PxBase):
 
 
 ##############################
+class BoxChart(PxBase):
+    def __init__(
+        self,
+        df: pd.DataFrame,
+        y: Optional[str] = None,
+        dimension: Optional[str] = None,
+        *,
+        label: Optional[str] = None,
+        theme: Optional[str] = None,
+        **kwargs: Optional[Dict],
+    ):
+        Base.__init__(self, label=label)
+        self.df = df
+        self.y = y
+        self.kwargs = kwargs
+
+        assert y in df.columns, f"{y} not in df"
+        if dimension:
+            assert dimension in df.columns, f"{dimension} not in df"
+            self.kwargs["x"] = dimension
+
+        PxBase.apply_common_kwargs(self, self.kwargs, label=label, theme=theme)
+
+        logging.info(f"BoxChart {len(self.df)} rows, {y=}, {dimension=}, {label=}")
+
+    def to_html(self) -> str:
+        fig = px.box(
+            self.df,
+            y=self.y,
+            **self.kwargs,
+        )
+
+        PxBase.apply_common_fig_options(self, fig)
+
+        return fig.to_html(
+            include_plotlyjs=False, full_html=False, config={"responsive": True}
+        )
+
+
+##############################
 
 
 class HistogramChart(PxBase):
@@ -748,6 +793,7 @@ class HistogramChart(PxBase):
         dimension: Optional[str] = None,
         *,
         label: Optional[str] = None,
+        theme: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
         """HistogramChart is a container for a plotly express histogram chart.
@@ -769,7 +815,7 @@ class HistogramChart(PxBase):
             assert dimension in df.columns, f"{dimension} not in df"
             self.kwargs["color"] = dimension
 
-        PxBase.apply_common_kwargs(self, kwargs, label)
+        PxBase.apply_common_kwargs(self, kwargs, label=label, theme=theme)
 
         logging.info(f"HistogramChart {len(self.df)} rows, {x=}, {label=}")
 
@@ -884,7 +930,7 @@ class Select(Base):
     def to_html(self) -> str:
         html = f"<report-caption>{self.label}</report-caption>" if self.label else ""
 
-        # unique ID for select grouping. 
+        # unique ID for select grouping.
         # Ensures no clashes between different selects with the same block.label set
         # self.label may not be unique
         data_table_index = int(uuid4()) % 10000

@@ -9,6 +9,7 @@ from .report_creator import (
     BarChart,
     PieChart,
     HistogramChart,
+    BoxChart,
     Base,
     Block,
     Collapse,

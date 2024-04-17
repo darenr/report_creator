@@ -121,6 +121,12 @@ if __name__ == "__main__":
                     dimension="sex",
                     label="Histogram of Total Bill",
                 ),
+                rc.BoxChart(
+                    px.data.tips(),
+                    y="total_bill",
+                    dimension="time",
+                    label="Box Chart of Total Bill by Day",
+                ),
             ),
             rc.BarChart(
                 px.data.medals_long(),
