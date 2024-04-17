@@ -32,7 +32,7 @@ def gen_report(name: str, title: str, description: str):
     with rc.ReportCreator(title=title, description=description) as report:
         view = rc.Block(
             rc.Group(
-                rc.BarChart(
+                rc.Bar(
                     duckdb.query(
                         """
                             select
@@ -49,7 +49,7 @@ def gen_report(name: str, title: str, description: str):
                     dimension="region",
                     label="Evaluations",
                 ),
-                rc.BarChart(
+                rc.Bar(
                     duckdb.query(
                         """
                             select

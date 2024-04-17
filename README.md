@@ -20,6 +20,7 @@ Library to assemble reports in HTML from various components using python
 * [x] Add support for any Jupyter widget, any object that renders in a notebook should render to a report
 * [ ] Add built-in easy plotting that looks stylistically consistent with the report
 * [ ] Add bookmark anchors to blocks
+* [ ] Add a Table of Contents option based on labels of top-level-blocks
 * [ ] Youtube embeds rc.Video(url: str, label: str)
 * [ ] File attachments (downloadable from page)
 
@@ -42,7 +43,22 @@ with rc.ReportCreator("My Report") as report:
             rc.Metric(
                 heading="Author",
                 value="Douglas Adams",
-            ),                
+            ),   
+        ),
+        rc.Bar(
+                px.data.medals_long(),
+                x="nation",
+                y="count",
+                dimension="medal",
+                label="Bar Chart - Olympic Medals",
+        ),
+        rc.Scatter(
+            df=px.data.iris(),
+            x="sepal_width",
+            y="sepal_length",
+            dimension="species",
+            marginal="histogram",
+            label="Scatter Plot - Iris",
         ),
     )
 

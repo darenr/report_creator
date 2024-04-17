@@ -755,7 +755,7 @@ class Scatter(PxBase):
         dimension: Optional[str] = None,
         *,
         label: Optional[str] = None,
-        margin: Optional[str] = None,
+        marginal: Optional[str] = None,
         theme: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
@@ -768,16 +768,15 @@ class Scatter(PxBase):
         assert x in df.columns, f"{x} not in df"
         assert y in df.columns, f"{y} not in df"
 
-        if margin:
-            assert margin in [
-                None,
+        if marginal:
+            assert marginal in [
                 "histogram",
                 "violin",
                 "box",
                 "rug",
-            ], f"margins must be one of ['histogram', 'violin', 'box', 'rug']"
-            self.kwargs["margin_x"] = margin
-            self.kwargs["margin_y"] = margin
+            ], "marginal must be one of ['histogram', 'violin', 'box', 'rug']"
+            self.kwargs["marginal_x"] = marginal
+            self.kwargs["marginal_y"] = marginal
 
         if dimension:
             assert dimension in df.columns, f"{dimension} not in df"
@@ -793,8 +792,6 @@ class Scatter(PxBase):
             self.df,
             x=self.x,
             y=self.y,
-            marginal_x="histogram",
-            marginal_y="histogram",
             **self.kwargs,
         )
 

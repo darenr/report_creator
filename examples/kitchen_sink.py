@@ -140,7 +140,7 @@ if __name__ == "__main__":
                 x="sepal_width",
                 y="sepal_length",
                 dimension="species",
-                margin="historgram",
+                marginal="histogram",
                 label="Scatter Plot - Iris",
             ),
             rc.Separator(),
