@@ -28,10 +28,10 @@ Library to assemble reports in HTML from various components using python
 
 import report_creator as rc
 
-with ReportCreator("My Report") as report:
+with rc.ReportCreator("My Report") as report:
 
     view = rc.Block(
-        Text("""It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of light, it was the season of darkness, it was the spring of hope, it was the winter of despair.""", 
+        rc.Text("""It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of light, it was the season of darkness, it was the spring of hope, it was the winter of despair.""", 
         label="Charles Dickens, A Tale of Two Cities"),
         rc.Group(
             rc.Metric(
@@ -45,7 +45,7 @@ with ReportCreator("My Report") as report:
         ),
     )
 
-    report.save(view, "report.html", theme="light") # or "dark" for dark mode
+    report.save(view, "report.html", mode="light") # or "dark" for dark mode
 ```
 
 ## Development
