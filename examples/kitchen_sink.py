@@ -97,7 +97,7 @@ if __name__ == "__main__":
             ),
             rc.Separator(),
             rc.Group(
-                rc.PieChart(
+                rc.Pie(
                     px.data.gapminder()
                     .query("year == 2002")
                     .query("continent == 'Europe'"),
@@ -105,7 +105,7 @@ if __name__ == "__main__":
                     names="country",
                     label="Pie Chart - 2002 Population of European continent",
                 ),
-                rc.PieChart(
+                rc.Pie(
                     px.data.gapminder()
                     .query("year == 2002")
                     .query("continent == 'Americas'"),
@@ -115,25 +115,33 @@ if __name__ == "__main__":
                 ),
             ),
             rc.Group(
-                rc.HistogramChart(
+                rc.Histogram(
                     px.data.tips(),
                     x="total_bill",
                     dimension="sex",
                     label="Histogram of Total Bill",
                 ),
-                rc.BoxChart(
+                rc.Box(
                     px.data.tips(),
                     y="total_bill",
-                    dimension="time",
+                    dimension="day",
                     label="Box Chart of Total Bill by Day",
                 ),
             ),
-            rc.BarChart(
+            rc.Bar(
                 px.data.medals_long(),
                 x="nation",
                 y="count",
                 dimension="medal",
                 label="Bar Chart - Olympic Medals",
+            ),
+            rc.Scatter(
+                df=px.data.iris(),
+                x="sepal_width",
+                y="sepal_length",
+                dimension="species",
+                margin="historgram",
+                label="Scatter Plot - Iris",
             ),
             rc.Separator(),
             rc.Html(

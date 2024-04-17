@@ -29,7 +29,7 @@ preferred_fonts = [
     "sans-serif",
 ]
 
-preferred_plotly_theme = "plotly_white"
+preferred_plotly_theme = "plotly_dark"
 
 
 def check_html_tags_are_closed(html_content: str):
@@ -596,7 +596,7 @@ class Markdown(Base):
 class Plot:
     def __init__(self):
         warnings.warn(
-            "rc.Plot(..) is deprecated; use rc.Widget(..), or one of the specific chart types like rc.BarChart(..), rc.BoxChart(), or rc.PieChart(..)",
+            "rc.Plot(..) is deprecated; use rc.Widget(..), or one of the specific chart types like rc.Bar(..), rc.Box(), or rc.Pie(..)",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -643,7 +643,7 @@ class PxBase(Base):
 # Charting Components
 
 
-class BarChart(PxBase):
+class Bar(PxBase):
     # https://plotly.com/python/bar-charts/
     def __init__(
         self,
@@ -670,15 +670,17 @@ class BarChart(PxBase):
         self.x = x
         self.y = y
         self.kwargs = kwargs
+
         assert x in df.columns, f"{x} not in df"
         assert y in df.columns, f"{y} not in df"
+
         if dimension:
             assert dimension in df.columns, f"{dimension} not in df"
             self.kwargs["color"] = dimension
 
         PxBase.apply_common_kwargs(self, self.kwargs, label=label, theme=theme)
 
-        logging.info(f"BarChart {len(self.df)} rows, {x=}, {y=}, {label=}")
+        logging.info(f"Bar {len(self.df)} rows, {x=}, {y=}, {label=}")
 
     @strip_whitespace
     def to_html(self) -> str:
@@ -695,7 +697,7 @@ class BarChart(PxBase):
 ##############################
 
 
-class PieChart(PxBase):
+class Pie(PxBase):
     # https://plotly.com/python/pie-charts/
 
     def __init__(
@@ -722,7 +724,7 @@ class PieChart(PxBase):
         if "hole" not in self.kwargs:
             self.kwargs["hole"] = 0.3
 
-        logging.info(f"PieChart {len(self.df)} rows, {values=}, {names=}, {label=}")
+        logging.info(f"Pie {len(self.df)} rows, {values=}, {names=}, {label=}")
 
     def to_html(self) -> str:
         fig = px.pie(
@@ -742,7 +744,71 @@ class PieChart(PxBase):
 
 
 ##############################
-class BoxChart(PxBase):
+
+
+class Scatter(PxBase):
+    def __init__(
+        self,
+        df: pd.DataFrame,
+        x: str,
+        y: str,
+        dimension: Optional[str] = None,
+        *,
+        label: Optional[str] = None,
+        margin: Optional[str] = None,
+        theme: Optional[str] = None,
+        **kwargs: Optional[Dict],
+    ):
+        Base.__init__(self, label=label)
+        self.df = df
+        self.x = x
+        self.y = y
+        self.kwargs = kwargs
+
+        assert x in df.columns, f"{x} not in df"
+        assert y in df.columns, f"{y} not in df"
+
+        if margin:
+            assert margin in [
+                None,
+                "histogram",
+                "violin",
+                "box",
+                "rug",
+            ], f"margins must be one of ['histogram', 'violin', 'box', 'rug']"
+            self.kwargs["margin_x"] = margin
+            self.kwargs["margin_y"] = margin
+
+        if dimension:
+            assert dimension in df.columns, f"{dimension} not in df"
+            self.kwargs["color"] = dimension
+            self.kwargs["symbol"] = dimension
+
+        PxBase.apply_common_kwargs(self, self.kwargs, label=label, theme=theme)
+
+        logging.info(f"Scatter {len(self.df)} rows, {y=}, {dimension=}, {label=}")
+
+    def to_html(self) -> str:
+        fig = px.scatter(
+            self.df,
+            x=self.x,
+            y=self.y,
+            marginal_x="histogram",
+            marginal_y="histogram",
+            **self.kwargs,
+        )
+
+        PxBase.apply_common_fig_options(self, fig)
+
+        return fig.to_html(
+            include_plotlyjs=False, full_html=False, config={"responsive": True}
+        )
+
+
+##############################
+
+
+class Box(PxBase):
     def __init__(
         self,
         df: pd.DataFrame,
@@ -759,13 +825,15 @@ class BoxChart(PxBase):
         self.kwargs = kwargs
 
         assert y in df.columns, f"{y} not in df"
+
         if dimension:
             assert dimension in df.columns, f"{dimension} not in df"
             self.kwargs["x"] = dimension
+            self.kwargs["color"] = dimension
 
         PxBase.apply_common_kwargs(self, self.kwargs, label=label, theme=theme)
 
-        logging.info(f"BoxChart {len(self.df)} rows, {y=}, {dimension=}, {label=}")
+        logging.info(f"Box {len(self.df)} rows, {y=}, {dimension=}, {label=}")
 
     def to_html(self) -> str:
         fig = px.box(
@@ -776,6 +844,9 @@ class BoxChart(PxBase):
 
         PxBase.apply_common_fig_options(self, fig)
 
+        fig.update_traces(boxpoints="outliers")
+        fig.update_traces(notched=True)
+
         return fig.to_html(
             include_plotlyjs=False, full_html=False, config={"responsive": True}
         )
@@ -784,7 +855,7 @@ class BoxChart(PxBase):
 ##############################
 
 
-class HistogramChart(PxBase):
+class Histogram(PxBase):
     # https://plotly.com/python/histograms/
     def __init__(
         self,
@@ -817,7 +888,7 @@ class HistogramChart(PxBase):
 
         PxBase.apply_common_kwargs(self, kwargs, label=label, theme=theme)
 
-        logging.info(f"HistogramChart {len(self.df)} rows, {x=}, {label=}")
+        logging.info(f"Histogram {len(self.df)} rows, {x=}, {label=}")
 
     def to_html(self) -> str:
         fig = px.histogram(self.df, x=self.x, **self.kwargs)
