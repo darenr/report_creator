@@ -1051,20 +1051,13 @@ class ReportCreator:
     def __exit__(self, exc_type, exc_value, exc_traceback):
         pass
 
-    def save(
-        self, view: Base, path: str, prettify_html=True, mode: str = "light"
-    ) -> None:
+    def save(self, view: Base, path: str, prettify_html=True) -> None:
         if not isinstance(view, (Block, Group)):
             raise ValueError(
                 f"Expected view to be either Block, or Group object, got {type(view)} instead"
             )
 
-        if mode not in ["light", "dark"]:
-            raise ValueError(
-                f"Expected mode to be 'light' or 'dark', got {mode} instead"
-            )
-
-        logging.info(f"Saving report to {path} [{mode} mode]")
+        logging.info(f"Saving report to {path}")
 
         try:
             body = view.to_html()
@@ -1081,7 +1074,6 @@ class ReportCreator:
                 title=self.title or "Report",
                 description=self.description or "",
                 body=body,
-                mode=mode,
                 header_svg=self.svg_str,
             )
             if prettify_html:

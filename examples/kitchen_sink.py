@@ -217,5 +217,4 @@ if __name__ == "__main__":
             ),
         )
 
-        # save the report, light, dark, or auto mode (follow browser settings)
-        report.save(view, "kitchen_sink.html", mode="light")
+        report.save(view, "kitchen_sink.html")

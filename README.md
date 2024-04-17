@@ -20,7 +20,6 @@ Library to assemble reports in HTML from various components using python
 * [x] Add support for any Jupyter widget, any object that renders in a notebook should render to a report
 * [ ] Add built-in easy plotting that looks stylistically consistent with the report
 * [ ] Add bookmark anchors to blocks
-* [ ] Add light/dark mode options for plots and code blocks
 * [ ] Youtube embeds rc.Video(url: str, label: str)
 * [ ] File attachments (downloadable from page)
 
@@ -47,7 +46,7 @@ with ReportCreator("My Report") as report:
         ),
     )
 
-    report.save(view, "report.html", theme="light") # or "dark" for dark mode
+    report.save(view, "report.html") 
 ```
 
 ## Development

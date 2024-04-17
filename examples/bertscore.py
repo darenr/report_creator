@@ -157,7 +157,7 @@ def gen_report(
             ),
         )
         # save the report, light, dark, or auto mode (follow browser settings)
-        report.save(view, name, mode="light")
+        report.save(view, name)
 
 
 if __name__ == "__main__":

@@ -69,7 +69,7 @@ def gen_report(name: str, title: str, description: str):
                 ),
             ),
         )
-        report.save(view, name, mode="light")
+        report.save(view, name)
 
 
 if __name__ == "__main__":
