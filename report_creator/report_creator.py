@@ -9,6 +9,7 @@ import traceback
 from abc import ABC, abstractmethod
 from html.parser import HTMLParser
 from typing import Dict, List, Optional, Tuple, Union
+from uuid import uuid4
 
 import matplotlib
 import pandas as pd
@@ -883,16 +884,21 @@ class Select(Base):
     def to_html(self) -> str:
         html = f"<report-caption>{self.label}</report-caption>" if self.label else ""
 
+        # unique ID for select grouping. 
+        # Ensures no clashes between different selects with the same block.label set
+        # self.label may not be unique
+        data_table_index = int(uuid4()) % 10000
+
         # assemble the button bar for the tabs
         html += """<div class="tab">"""
         for i, block in enumerate(self.blocks):
             extra = "defaultOpen" if i == 0 else ""
-            html += f"""<button class="tablinks {extra}" onclick="openTab(event, '{block.label}')">{block.label}</button>"""
+            html += f"""<button class="tablinks {extra}" onclick="openTab(event, '{block.label}', {data_table_index})" data-table-index={data_table_index}>{block.label}</button>"""
         html += """</div>"""
 
         # assemble the tab contents
         for block in self.blocks:
-            html += f"""<div id="{block.label}" class="tabcontent">"""
+            html += f"""<div id="{block.label}" data-table-index={data_table_index} class="tabcontent">"""
             html += block.to_html()
             html += """</div>"""
 
