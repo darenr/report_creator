@@ -1336,7 +1336,7 @@ class ReportCreator:
             body = f"""<pre>{traceback.format_exc()}</pre>"""
 
         file_loader = FileSystemLoader(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../templates"
+            f"{os.path.dirname(os.path.abspath(__file__))}/templates"
         )
         template = Environment(loader=file_loader).get_template("default.html")
 
