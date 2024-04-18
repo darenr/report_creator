@@ -1,4 +1,0 @@
-pip
-rouge-score
-bert-score
-duckdb

@@ -12,13 +12,13 @@ Library to assemble reports in HTML from various components using python
 * [x] Look modern
 * [x] Allows markdown as input for text blocks
 * [x] Allows html as input
-* [x] A few simple components for things like metrics ("Accuracy: 87%") from a triple of key, value, Optional[description]
+* [x] A few simple components for things like metrics ("Accuracy: 87%") from a triple of key, value
 * [x] Support for plotting figures, interactive `plotly` and `matplotlib`
 * [x] images (styled by the library)
 * [x] `json`/`yaml`/`python` code blocks with color syntax highlighting
 * [x] Support tabs
 * [x] Add support for any Jupyter widget, any object that renders in a notebook should render to a report
-* [ ] Add built-in easy plotting that looks stylistically consistent with the report
+* [x] Add built-in easy plotting that looks stylistically consistent with the report
 * [ ] Add bookmark anchors to blocks
 * [ ] Add a Table of Contents option based on labels of top-level-blocks
 * [ ] Youtube embeds rc.Video(url: str, label: str)
@@ -76,10 +76,10 @@ pip install -r requirements.txt -U
 pip install beautifulsoup4 lxml
 
 # recommended installs for code hygiene
-pip install black isort
+pip install ruff
 
-# run kitchen_sink.py
-PYTHONPATH=. python examples/kitchen_sink.py
+# build "kitchen_sink" example
+make
 ```
 
 ## Dev Notes
@@ -87,9 +87,4 @@ PYTHONPATH=. python examples/kitchen_sink.py
 * The Blocks/Groups use css [flex](https://css-tricks.com/snippets/css/a-guide-to-flexbox/).
   * Blocks flow vertically (columns)
 * Groups flow horizontal (row).
-* to render math you'll need to `pip install md4mathjax`
-
-## Ideas
-
-* [html chart](https://codepen.io/sean_codes/pen/VNQVJE)
-* [css pie chart](https://codepen.io/t_afif/pen/XWaPXZO)
+* To render math you'll need to `pip install md4mathjax`

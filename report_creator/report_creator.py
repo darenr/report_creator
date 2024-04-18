@@ -113,11 +113,10 @@ def _random_color_generator(word: str) -> Tuple[str, str]:
     Args:
         word (str): word to generate color for
     """
-    seed = sum([ord(c) for c in word]) % 13
-    random.seed(seed)  # must be deterministic
-    r = random.randint(10, 245)
-    g = random.randint(10, 245)
-    b = random.randint(10, 245)
+    random.seed(word.encode())  # must be deterministic
+    r = random.randint(0, 255)
+    g = random.randint(0, 255)
+    b = random.randint(0, 255)
 
     background_color = f"#{r:02x}{g:02x}{b:02x}"
     text_color = "black" if (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.5 else "white"
@@ -178,9 +177,9 @@ class Block(Base):
         html = "<block>"
 
         for component in self.components:
-            html += "<block-article>"
+            html += "<block-component>"
             html += component.to_html()
-            html += "</block-article>"
+            html += "</block-component>"
 
         html += "</block>"
 
@@ -1067,9 +1066,9 @@ class Separator(Base):
             str: The HTML representation of the Separator.
         """
         if self.label:
-            return f"<br /><hr /><report-caption>{self.label}</report-caption>"
+            return f"<br><hr><report-caption>{self.label}</report-caption>"
         else:
-            return "<b r/><hr />"
+            return "<br><hr>"
 
 
 ##############################

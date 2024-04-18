@@ -193,9 +193,6 @@ if __name__ == "__main__":
                         label="Wind Intensity",
                         index=False,
                     ),
-                    rc.Table(
-                        px.data.wind().describe(), label="Wind Description", index=False
-                    ),
                 ],
                 label="Tab Group of Data Tables",
             ),
@@ -226,7 +223,6 @@ if __name__ == "__main__":
                 rc.Image(
                     "https://midlibraryassets.b-cdn.net/638266c083c0cd991057c455/655f82d0703381e47145077a_Idealised%20Portrait%20of%20a%20Lady%20(Portrait%20of%20Simonetta%20Vespucci%20as%20Nymph)%20(1480%E2%80%931485).jpg",
                     label="Portrait of Simonetta Vespucci",
-                    rounded=False,
                 ),
             ),
         )
