@@ -29,10 +29,10 @@ preferred_fonts = [
     "sans-serif",
 ]
 
-preferred_plotly_theme = "plotly_dark"
+preferred_plotly_theme = "plotly_white"
 
 
-def check_html_tags_are_closed(html_content: str):
+def _check_html_tags_are_closed(html_content: str):
     """Checks if any HTML tags are closed in the given string.
 
     Args:
@@ -66,7 +66,7 @@ def check_html_tags_are_closed(html_content: str):
     return HTMLValidator().validate_html(html_content)
 
 
-def markdown_to_html(text: str) -> str:
+def _markdown_to_html(text: str) -> str:
     import mistune
 
     class HighlightRenderer(mistune.HTMLRenderer):
@@ -107,7 +107,7 @@ def strip_whitespace(func):
     return wrapper
 
 
-def random_color_generator(word: str) -> Tuple[str, str]:
+def _random_color_generator(word: str) -> Tuple[str, str]:
     """returns auto selected (background_color, text_color) as tuple
 
     Args:
@@ -125,7 +125,7 @@ def random_color_generator(word: str) -> Tuple[str, str]:
     return background_color, text_color
 
 
-def convert_imgurl_to_datauri(imgurl: str) -> str:
+def _convert_imgurl_to_datauri(imgurl: str) -> str:
     """convert url to base64 datauri
 
     Args:
@@ -484,14 +484,14 @@ class Html(Base):
         """Html is a container for raw HTML. It can also take CSS.
 
         Args:
-            html (str): _description_
-            css (str, optional): _description_. Defaults to None.
-            label (Optional[str], optional): _description_. Defaults to None.
+            html (str): The raw HTML content.
+            css (str, optional): The CSS styles to be applied to the HTML. Defaults to None.
+            label (Optional[str], optional): The label for the HTML component. Defaults to None.
         """
         Base.__init__(self, label=label)
         self.html = html
         self.css = css
-        status, errors = check_html_tags_are_closed(html)
+        status, errors = _check_html_tags_are_closed(html)
         if not status:
             raise ValueError(
                 f"HTML component with label {self.label}, tags are not closed: {', '.join(errors)}"
@@ -523,11 +523,11 @@ class Image(Base):
         """Image is a container for an image. It can also take a link.
 
         Args:
-            src (str):  a url where the image can be found, or a base_64 uri
-            link_to (str, optional): a url to go to if clicked. Defaults to not clickable.
-            label (Optional[str], optional): _description_. Defaults to None.
-            extra_css (str, optional): _description_. Defaults to None.
-            rounded (bool, optional): if set will clip the image to have rounded off corners
+            src (str): a URL where the image can be found, or a base_64 URI.
+            link_to (str, optional): a URL to go to if clicked. Defaults to not clickable.
+            label (Optional[str], optional): a label for the image. Defaults to None.
+            extra_css (str, optional): additional CSS styles for the image. Defaults to None.
+            rounded (bool, optional): if set to True, the image will have rounded corners. Defaults to True.
         """
         Base.__init__(self, label=label)
         self.src = src
@@ -564,9 +564,9 @@ class Markdown(Base):
         """Markdown is a container for markdown text. It can also take extra CSS.
 
         Args:
-            text (str): _description_
-            label (Optional[str], optional): _description_. Defaults to None.
-            extra_css (str, optional): _description_. Defaults to None.
+            text (str): The markdown text to be displayed.
+            label (Optional[str], optional): The label for the markdown section. Defaults to None.
+            extra_css (str, optional): Additional CSS styles to be applied. Defaults to None.
         """
         Base.__init__(self, label=label)
         self.text = text
@@ -575,8 +575,8 @@ class Markdown(Base):
         logging.info(f"Markdown {len(self.text)} characters")
 
     @staticmethod
-    def markdown_to_html(text):
-        return markdown_to_html(text)
+    def _markdown_to_html(text):
+        return _markdown_to_html(text)
 
     @strip_whitespace
     def to_html(self) -> str:
@@ -584,7 +584,7 @@ class Markdown(Base):
         if self.label:
             html += f"<report-caption>{self.label}</report-caption>"
         html += f'<div style="{self.extra_css}">'
-        html += Markdown.markdown_to_html(self.text)
+        html += Markdown._markdown_to_html(self.text)
         html += "</div>"
         html += "</div>"
         return html
@@ -594,6 +594,12 @@ class Markdown(Base):
 
 
 class Plot:
+    """
+    A class representing a plot.
+
+    This class is deprecated. Please use `rc.Widget(..)` or one of the specific chart types like `rc.Bar(..)`, `rc.Box()`, or `rc.Pie(..)` instead.
+    """
+
     def __init__(self):
         warnings.warn(
             "rc.Plot(..) is deprecated; use rc.Widget(..), or one of the specific chart types like rc.Bar(..), rc.Box(), or rc.Pie(..)",
@@ -656,14 +662,20 @@ class Bar(PxBase):
         theme: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
-        """BarChart is a container for a plotly express bar chart.
+        """Bar is a container for a plotly express bar chart.
 
         Args:
             df (pd.DataFrame): The data to be plotted.
             x (str): The column to be plotted on the x-axis.
             y (str): The column to be plotted on the y-axis.
             dimension (Optional[str], optional): The column to be plotted on the dimension axis. Defaults to None.
-            label (Optional[str], optional): _description_. Defaults to None.
+            label (Optional[str], optional): The label for the bar chart. Defaults to None.
+            theme (Optional[str], optional): The theme to be applied to the bar chart. Defaults to None.
+            **kwargs (Optional[Dict], optional): Additional keyword arguments to be passed to the plotly express bar chart.
+
+        Raises:
+            AssertionError: If the specified columns (x, y, dimension) are not present in the DataFrame.
+
         """
         Base.__init__(self, label=label)
         self.df = df
@@ -698,8 +710,6 @@ class Bar(PxBase):
 
 
 class Pie(PxBase):
-    # https://plotly.com/python/pie-charts/
-
     def __init__(
         self,
         df: pd.DataFrame,
@@ -710,6 +720,16 @@ class Pie(PxBase):
         theme: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
+        """Pie is a container for a plotly express piue chart.
+
+        Args:
+            df (pd.DataFrame): The input DataFrame containing the data for the report.
+            values (str): The column name in the DataFrame representing the values for the report.
+            names (str): The column name in the DataFrame representing the names for the report.
+            label (Optional[str], optional): The label for the report. Defaults to None.
+            theme (Optional[str], optional): The theme for the report. Defaults to None.
+            **kwargs (Optional[Dict], optional): Additional keyword arguments for the report. Defaults to None.
+        """
         Base.__init__(self, label=label)
         self.df = df
         self.values = values
@@ -759,6 +779,19 @@ class Scatter(PxBase):
         theme: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
+        """
+        Scatter plot class for creating scatter plots.
+
+        Args:
+            df (pd.DataFrame): The DataFrame containing the data.
+            x (str): The column name for the x-axis data.
+            y (str): The column name for the y-axis data.
+            dimension (Optional[str], optional): The column name for the dimension data. Defaults to None.
+            label (Optional[str], optional): The label for the scatter plot. Defaults to None.
+            marginal (Optional[str], optional): The type of marginal plot to add. Must be one of ['histogram', 'violin', 'box', 'rug']. Defaults to None.
+            theme (Optional[str], optional): The theme for the scatter plot. Defaults to None.
+            **kwargs (Optional[Dict], optional): Additional keyword arguments to pass to the scatter plot. Defaults to None.
+        """
         Base.__init__(self, label=label)
         self.df = df
         self.x = x
@@ -788,6 +821,12 @@ class Scatter(PxBase):
         logging.info(f"Scatter {len(self.df)} rows, {y=}, {dimension=}, {label=}")
 
     def to_html(self) -> str:
+        """
+        Convert the scatter plot to an HTML string.
+
+        Returns:
+            str: The HTML representation of the scatter plot.
+        """
         fig = px.scatter(
             self.df,
             x=self.x,
@@ -816,6 +855,21 @@ class Box(PxBase):
         theme: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
+        """
+        Box plot class for creating scatter plots.
+
+        Args:
+            df (pd.DataFrame): The input DataFrame.
+            y (str, optional): The column name for the y-axis. Defaults to None.
+            dimension (str, optional): The column name for the dimension. Defaults to None.
+            label (str, optional): The label for the report. Defaults to None.
+            theme (str, optional): The theme for the report. Defaults to None.
+            **kwargs (dict, optional): Additional keyword arguments.
+
+        Raises:
+            AssertionError: If the y column is not present in the DataFrame.
+            AssertionError: If the dimension column is not present in the DataFrame (if specified).
+        """
         Base.__init__(self, label=label)
         self.df = df
         self.y = y
@@ -833,6 +887,13 @@ class Box(PxBase):
         logging.info(f"Box {len(self.df)} rows, {y=}, {dimension=}, {label=}")
 
     def to_html(self) -> str:
+        """
+        Convert the box plot to an HTML string.
+
+        Returns:
+        - str: The HTML string representation of the box plot.
+
+        """
         fig = px.box(
             self.df,
             y=self.y,
@@ -842,7 +903,6 @@ class Box(PxBase):
         PxBase.apply_common_fig_options(self, fig)
 
         fig.update_traces(boxpoints="outliers")
-        fig.update_traces(notched=True)
 
         return fig.to_html(
             include_plotlyjs=False, full_html=False, config={"responsive": True}
@@ -853,7 +913,35 @@ class Box(PxBase):
 
 
 class Histogram(PxBase):
-    # https://plotly.com/python/histograms/
+    """
+    A class representing a histogram plot.
+
+    Parameters:
+    - df (pd.DataFrame): The input DataFrame containing the data.
+    - x (str): The column name in the DataFrame to be plotted on the x-axis.
+    - dimension (Optional[str]): The column name in the DataFrame to be used for color dimension (optional).
+    - label (Optional[str]): The label for the plot (optional).
+    - theme (Optional[str]): The theme for the plot (optional).
+    - **kwargs (Optional[Dict]): Additional keyword arguments to be passed to the plotly histogram function.
+
+    Attributes:
+    - df (pd.DataFrame): The input DataFrame containing the data.
+    - x (str): The column name in the DataFrame to be plotted on the x-axis.
+    - kwargs (Optional[Dict]): Additional keyword arguments to be passed to the plotly histogram function.
+
+    Methods:
+    - to_html(): Generates the HTML representation of the histogram plot.
+
+    Example usage:
+    ```
+    df = pd.DataFrame({'values': [1, 2, 3, 4, 5]})
+    histogram = Histogram(df, 'values', label='Value Distribution')
+    html = histogram.to_html()
+    ```
+
+    For more information, refer to the Plotly documentation: https://plotly.com/python/histograms/
+    """
+
     def __init__(
         self,
         df: pd.DataFrame,
@@ -864,13 +952,20 @@ class Histogram(PxBase):
         theme: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
-        """HistogramChart is a container for a plotly express histogram chart.
+        """
+        Initialize the Histogram object.
 
         Args:
-            df (pd.DataFrame): The data to be plotted.
-            x (str): The column to be plotted on the x-axis.
-            dimension (Optional[str], optional): The column to be plotted on the dimension axis. Defaults to None.
-            label (Optional[str], optional): _description_. Defaults to None.
+            df (pd.DataFrame): The input DataFrame.
+            x (str): The column name to be used for the histogram.
+            dimension (Optional[str], optional): The column name to be used for coloring the histogram bars. Defaults to None.
+            label (Optional[str], optional): The label for the histogram. Defaults to None.
+            theme (Optional[str], optional): The theme to be applied to the histogram. Defaults to None.
+            **kwargs (Optional[Dict]): Additional keyword arguments.
+
+        Raises:
+            AssertionError: If `x` or `dimension` is not present in the DataFrame columns.
+
         """
         Base.__init__(self, label=label)
         self.df = df
@@ -887,6 +982,7 @@ class Histogram(PxBase):
 
         logging.info(f"Histogram {len(self.df)} rows, {x=}, {label=}")
 
+    @strip_whitespace
     def to_html(self) -> str:
         fig = px.histogram(self.df, x=self.x, **self.kwargs)
         fig.update_layout(bargap=0.1)
@@ -899,17 +995,37 @@ class Histogram(PxBase):
 
 
 class Heading(Base):
+    """
+    Represents a heading in a report.
+
+    Args:
+        label (str): The label or text of the heading.
+        level (Optional[int]): The level of the heading, ranging from 1 to 5 (inclusive). Defaults to 1.
+
+    Raises:
+        AssertionError: If the heading level is not between 1 and 5 (inclusive).
+        AssertionError: If no heading label is provided.
+
+    Attributes:
+        level (int): The level of the heading.
+    """
+
     def __init__(
         self,
         label: str,
         *,
         level: Optional[int] = 1,
     ):
-        """Heading is a container for a heading. It can also take a level.
+        """
+        Initialize a ReportCreator object.
 
         Args:
-            label (str): _description_
-            level (int, optional): _description_. Defaults to 1.
+            label (str): The heading label for the report.
+            level (Optional[int], optional): The heading level for the report. Must be between 1 and 5 (inclusive). Defaults to 1.
+
+        Raises:
+            AssertionError: If the heading level is not between 1 and 5 (inclusive).
+            AssertionError: If no heading label is provided.
         """
         Base.__init__(self, label=label)
         assert (
@@ -921,6 +1037,12 @@ class Heading(Base):
 
     @strip_whitespace
     def to_html(self) -> str:
+        """
+        Converts the heading to an HTML string.
+
+        Returns:
+            str: The HTML representation of the heading.
+        """
         return f"<br /><h{self.level}>{self.label}</h{self.level}><br />"
 
 
@@ -932,13 +1054,18 @@ class Separator(Base):
         """Separator is a container for a horizontal line. It can also take a label.
 
         Args:
-            label (Optional[str], optional): _description_. Defaults to None.
+            label (Optional[str], optional): The label to be displayed above the separator. Defaults to None.
         """
         Base.__init__(self, label=label)
         logging.info("Separator")
 
     @strip_whitespace
     def to_html(self) -> str:
+        """Converts the Separator object to its HTML representation.
+
+        Returns:
+            str: The HTML representation of the Separator.
+        """
         if self.label:
             return f"<br /><hr /><report-caption>{self.label}</report-caption>"
         else:
@@ -952,7 +1079,14 @@ class Text(Base):
     def __init__(
         self, text: str, *, label: Optional[str] = None, extra_css: str = None
     ):
-        """Text is a container for raw text. It can also take extra CSS."""
+        """
+        Initialize a Text object.
+
+        Args:
+            text (str): The text content of the report.
+            label (str, optional): The label for the report. Defaults to None.
+            extra_css (str, optional): Additional CSS styles for the report. Defaults to None.
+        """
         Base.__init__(self, label=label)
         self.text = text
         self.extra_css = extra_css or ""
@@ -961,6 +1095,12 @@ class Text(Base):
 
     @strip_whitespace
     def to_html(self) -> str:
+        """
+        Convert the Text object to HTML format.
+
+        Returns:
+            str: The Text object converted to HTML format.
+        """
         formatted_text = f'<report-text style="{self.extra_css}">'
         formatted_text += "".join(
             [f"<p>{p.strip()}</p>" for p in self.text.split("\n\n")]
@@ -1027,7 +1167,7 @@ class Unformatted(Base):
         """Unformatted is a container for any text that should be displayed verbatim with a non-proportional font.
 
         Args:
-            text (str): _description_
+            text (str): any text that should be displayed verbatim with a non-proportional font.
             label (Optional[str], optional): _description_. Defaults to None.
         """
         Base.__init__(self, label=label)
@@ -1048,20 +1188,13 @@ class Unformatted(Base):
 
 class Language(Base):
     def __init__(self, text: str, language: str, *, label: Optional[str] = None):
-        """Language is a container for code. It can also take a label.
-
-        Args:
-            text (str): _description_
-            language (str): _description_
-            label (Optional[str], optional): _description_. Defaults to None.
-        """
-
         Base.__init__(self, label=label)
         self.text = text
         self.language = language
         logging.info(f"{language} {len(self.text)} characters")
 
     @strip_whitespace
+    @abstractmethod
     def to_html(self) -> str:
         if self.label:
             formatted_text = f"<pre><code class='language-{self.language} syntax-color'>### {self.label}\n\n{self.text.strip()}</code></pre>"
@@ -1129,14 +1262,20 @@ class Json(Language):
 
 class ReportCreator:
     def __init__(self, title: str, *, description: Optional[str] = None):
-        """ReportCreator is a container for all components. It can also take a title and description."""
+        """
+        Initialize a ReportCreator object.
+
+        Args:
+            title (str): The title of the report.
+            description (str, optional): The description of the report. Defaults to None.
+        """
         self.title = title
         self.description = description
         logging.info(f"ReportCreator {self.title}")
 
         match = re.findall(r"[A-Z]", self.title)
         icon_text = "".join(match[:2]) if match else self.title[0]
-        icon_color, text_color = random_color_generator(self.title)
+        icon_color, text_color = _random_color_generator(self.title)
 
         width = 125
 
@@ -1146,24 +1285,24 @@ class ReportCreator:
         fs = int(r / 15)
 
         self.svg_str = f"""
-            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="{width}" height="{width}">
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="{width}" height="{width}">
 
-                <style>
-                    .icon_text_style {{
-                        font-size: {fs}em;
-                        font-family: lucida console, Fira Mono, monospace;
-                        text-anchor: middle;
-                        stroke-width: 1px;
-                        font-weight: bold;
-                        alignment-baseline: central;
-                    }}
+                    <style>
+                        .icon_text_style {{
+                            font-size: {fs}em;
+                            font-family: lucida console, Fira Mono, monospace;
+                            text-anchor: middle;
+                            stroke-width: 1px;
+                            font-weight: bold;
+                            alignment-baseline: central;
+                        }}
 
-                </style>
+                    </style>
 
-                <circle cx="{cx}" cy="{cy}" r="{r}" fill="{icon_color}" />
-                <text class="icon_text_style" x="50%" y="50%" fill="{text_color}">{icon_text}</text>
-            </svg>
-        """.strip()
+                    <circle cx="{cx}" cy="{cy}" r="{r}" fill="{icon_color}" />
+                    <text class="icon_text_style" x="50%" y="50%" fill="{text_color}">{icon_text}</text>
+                </svg>
+            """.strip()
 
     def __enter__(self):
         return self
@@ -1171,10 +1310,23 @@ class ReportCreator:
     def __exit__(self, exc_type, exc_value, exc_traceback):
         pass
 
-    def save(self, view: Base, path: str, prettify_html=True) -> None:
+    def save(self, view: Base, path: str, prettify_html=True, hljs_theme="vs") -> None:
+        """
+        Save the report to a file.
+
+        Args:
+            view (Base): The view object representing the report content.
+            path (str): The path to save the report file.
+            prettify_html (bool, optional): Whether to prettify the generated HTML. Defaults to True.
+            hljs_theme (str, optional): The theme for syntax highlighting. Defaults to "vs".
+
+        Raises:
+            ValueError: If the view object is not an instance of Block or Group.
+
+        """
         if not isinstance(view, (Block, Group)):
             raise ValueError(
-                f"Expected view to be either Block, or Group object, got {type(view)} instead"
+                f"Expected view to be either Block or Group object, got {type(view)} instead"
             )
 
         logging.info(f"Saving report to {path}")
@@ -1195,6 +1347,7 @@ class ReportCreator:
                 description=self.description or "",
                 body=body,
                 header_svg=self.svg_str,
+                hljs_theme=hljs_theme,
             )
             if prettify_html:
                 try:
