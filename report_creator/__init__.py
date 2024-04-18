@@ -6,9 +6,11 @@ from .__meta__ import (
     __version__,
 )
 from .report_creator import (
-    BarChart,
-    PieChart,
-    HistogramChart,
+    Bar,
+    Pie,
+    Histogram,
+    Box,
+    Scatter,
     Base,
     Block,
     Collapse,

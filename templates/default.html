@@ -8,14 +8,14 @@
 
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css"
+      href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css"
     />
 
     <!-- see https://highlightjs.org/examples -->
 
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.css"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/{{hljs_theme}}.css"
     />
     <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/languages/go.min.js"></script>
@@ -95,7 +95,7 @@
         flex-wrap: nowrap;
       }
 
-      block-article {
+      block-component {
         display: flex;
         flex-direction: column;
         padding: 10px;
@@ -163,7 +163,7 @@
       }
 
       .block-bordered {
-        border-left: 3px solid var(--focus) !important;
+        border-left: 5px solid var(--focus) !important;
         padding-left: 15px !important;
       }
 
@@ -171,12 +171,6 @@
         align-items: center;
         display: flex;
         gap: 25px;
-      }
-
-      header h1 {
-        font-size: 2.05em;
-        font-weight: bold;
-        text-align: left;
       }
 
       header header-text {
@@ -195,13 +189,11 @@
         margin-bottom: 1em;
         font-size: 1.5em;
         font-weight: bold;
-        border-left: 3px solid var(--focus);
+        border-left: 5px solid var(--focus);
         padding-left: 15px;
       }
 
       report-text {
-        flex: 1;
-        display: block;
         margin-top: 0.5em;
         margin-bottom: 1.5em;
         font-size: 1.1em;
@@ -212,7 +204,7 @@
         margin-bottom: 1em;
         font-size: 1.5em;
         font-weight: bold;
-        border-left: 3px solid var(--focus);
+        border-left: 5px solid var(--focus);
         padding-left: 15px;
       }
 
@@ -323,7 +315,6 @@
       }
 
       div.dataTables-wrapper {
-        all: unset;
         min-width: 0;
         width: 100%;
       }
@@ -338,8 +329,7 @@
       }
 
       pre code.hljs {
-        <!-- border: 1px solid var(--border); -->
-        border-radius: 6px;
+        border: 1px solid var(--border);
       }
 
       .report-widget {
@@ -383,31 +373,35 @@
         window.dispatchEvent(event);
       }
       function openTab(evt, tabName, tableIndex) {
-          // Declare variables
-          var i, tabcontent, tablinks;
+        // Declare variables
+        var i, tabcontent, tablinks;
 
-          // Get all elements with class="tabcontent" and hide them
-          tabcontent = document.querySelectorAll('.tabcontent[data-table-index="' + tableIndex + '"]');
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.querySelectorAll(
+          '.tabcontent[data-table-index="' + tableIndex + '"]'
+        );
 
-          // Hide all tab contents for the specified table index
-          for (i = 0; i < tabcontent.length; i++) {
-              tabcontent[i].style.display = "none";
-          }
+        // Hide all tab contents for the specified table index
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+        }
 
-          // Get all elements with class="tablinks" and remove the class "active"
-          tablinks = document.querySelectorAll('.tablinks[data-table-index="' + tableIndex + '"]');
-          for (i = 0; i < tablinks.length; i++) {
-              tablinks[i].classList.remove("active");
-          }
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.querySelectorAll(
+          '.tablinks[data-table-index="' + tableIndex + '"]'
+        );
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].classList.remove("active");
+        }
 
-          // Show the current tab, and add an "active" class to the button that opened the tab
-          for (i = 0; i < tabcontent.length; i++) {
-              if (tabcontent[i].id == tabName) {
-                  tabcontent[i].style.display = "block";
-              }
-          }
-          evt.currentTarget.classList.add("active");
-          triggerResize();
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        for (i = 0; i < tabcontent.length; i++) {
+            if (tabcontent[i].id == tabName) {
+                tabcontent[i].style.display = "block";
+            }
+        }
+        evt.currentTarget.classList.add("active");
+        triggerResize();
       }
       (function () {
         // style any code blocks

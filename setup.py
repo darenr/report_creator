@@ -10,19 +10,18 @@
 
 """Build and installation script for names_generator."""
 
-
 # standard libs
 import re
 
 from setuptools import find_packages, setup
 
 # get long description from README.rst
-with open("README.md", mode="r") as readme:
+with open("README.md") as readme:
     long_description = readme.read()
 
 
 # get package metadata by parsing __meta__ module
-with open("report_creator/__meta__.py", mode="r") as source:
+with open("report_creator/__meta__.py") as source:
     content = source.read().strip()
     metadata = {
         key: re.search(key + r'\s*=\s*[\'"]([^\'"]*)[\'"]', content).group(1)

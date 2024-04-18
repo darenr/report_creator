@@ -97,7 +97,7 @@ if __name__ == "__main__":
             ),
             rc.Separator(),
             rc.Group(
-                rc.PieChart(
+                rc.Pie(
                     px.data.gapminder()
                     .query("year == 2002")
                     .query("continent == 'Europe'"),
@@ -105,7 +105,7 @@ if __name__ == "__main__":
                     names="country",
                     label="Pie Chart - 2002 Population of European continent",
                 ),
-                rc.PieChart(
+                rc.Pie(
                     px.data.gapminder()
                     .query("year == 2002")
                     .query("continent == 'Americas'"),
@@ -115,19 +115,33 @@ if __name__ == "__main__":
                 ),
             ),
             rc.Group(
-                rc.HistogramChart(
+                rc.Histogram(
                     px.data.tips(),
                     x="total_bill",
                     dimension="sex",
                     label="Histogram of Total Bill",
                 ),
+                rc.Box(
+                    px.data.tips(),
+                    y="total_bill",
+                    dimension="day",
+                    label="Box Chart of Total Bill by Day",
+                ),
             ),
-            rc.BarChart(
+            rc.Bar(
                 px.data.medals_long(),
                 x="nation",
                 y="count",
                 dimension="medal",
                 label="Bar Chart - Olympic Medals",
+            ),
+            rc.Scatter(
+                df=px.data.iris(),
+                x="sepal_width",
+                y="sepal_length",
+                dimension="species",
+                marginal="histogram",
+                label="Scatter Plot - Iris",
             ),
             rc.Separator(),
             rc.Html(
@@ -179,9 +193,6 @@ if __name__ == "__main__":
                         label="Wind Intensity",
                         index=False,
                     ),
-                    rc.Table(
-                        px.data.wind().describe(), label="Wind Description", index=False
-                    ),
                 ],
                 label="Tab Group of Data Tables",
             ),
@@ -212,7 +223,6 @@ if __name__ == "__main__":
                 rc.Image(
                     "https://midlibraryassets.b-cdn.net/638266c083c0cd991057c455/655f82d0703381e47145077a_Idealised%20Portrait%20of%20a%20Lady%20(Portrait%20of%20Simonetta%20Vespucci%20as%20Nymph)%20(1480%E2%80%931485).jpg",
                     label="Portrait of Simonetta Vespucci",
-                    rounded=False,
                 ),
             ),
         )
