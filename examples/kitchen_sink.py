@@ -146,7 +146,13 @@ if __name__ == "__main__":
                         label="Scatter Plot - Iris",
                     ),
                 ],
-                label="Plots inside Tabs",
+                label="Tabbed Plots",
+            ),
+            rc.Line(
+                px.data.stocks(),
+                x="date",
+                y=["GOOG", "AAPL", "NFLX", "MSFT"],
+                label="Stock Plot",
             ),
             rc.Separator(),
             rc.Html(

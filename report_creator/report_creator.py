@@ -649,7 +649,6 @@ class PxBase(Base):
 
 
 class Bar(PxBase):
-    # https://plotly.com/python/bar-charts/
     def __init__(
         self,
         df: pd.DataFrame,
@@ -708,6 +707,79 @@ class Bar(PxBase):
 ##############################
 
 
+class Line(PxBase):
+    def __init__(
+        self,
+        df: pd.DataFrame,
+        x: str,
+        y: str,
+        *,
+        dimension: Optional[str] = None,
+        label: Optional[str] = None,
+        theme: Optional[str] = None,
+        **kwargs: Optional[Dict],
+    ):
+        """Line is a container for a plotly express line chart.
+
+        Args:
+            df (pd.DataFrame): The data to be plotted.
+            x (str): The column to be plotted on the x-axis.
+            y (str|list): The column(s) to be plotted on the y-axis.
+            dimension (Optional[str], optional): The column to be plotted on the dimension axis. Defaults to None.
+            label (Optional[str], optional): The label for the bar chart. Defaults to None.
+            theme (Optional[str], optional): The theme to be applied to the bar chart. Defaults to None.
+            **kwargs (Optional[Dict], optional): Additional keyword arguments to be passed to the plotly express line chart.
+
+        Raises:
+            AssertionError: If the specified columns (x, y, dimension) are not present in the DataFrame.
+
+        """
+        Base.__init__(self, label=label)
+        self.df = df
+        self.x = x
+        self.y = y
+        self.kwargs = kwargs
+
+        assert x in df.columns, f"{x} not in df"
+
+        if isinstance(y, list):
+            for y_ in y:
+                assert y_ in df.columns, f"{y_} not in df"
+        elif isinstance(y, str):
+            assert y in df.columns, f"{y} not in df"
+        else:
+            raise ValueError(f"y must be a string or a list of strings, got {type(y)}")
+
+        if dimension:
+            assert dimension in df.columns, f"{dimension} not in df"
+            self.kwargs["symbol"] = dimension
+            self.kwargs["color"] = dimension
+
+        if "line_shape" not in self.kwargs:
+            self.kwargs["line_shape"] = "linear"
+
+        if "markers" not in self.kwargs:
+            self.kwargs["markers"] = True
+
+        PxBase.apply_common_kwargs(self, self.kwargs, label=label, theme=theme)
+
+        logging.info(f"Line {len(self.df)} rows, {x=}, {y=}, {label=}")
+
+    @strip_whitespace
+    def to_html(self) -> str:
+        fig = px.line(self.df, x=self.x, y=self.y, **self.kwargs)
+
+        PxBase.apply_common_fig_options(self, fig)
+        fig.update_layout(bargap=0.1)
+
+        return fig.to_html(
+            include_plotlyjs=False, full_html=False, config={"responsive": True}
+        )
+
+
+##############################
+
+
 class Pie(PxBase):
     def __init__(
         self,
@@ -719,14 +791,14 @@ class Pie(PxBase):
         theme: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
-        """Pie is a container for a plotly express piue chart.
+        """Pie is a container for a plotly express pie chart.
 
         Args:
             df (pd.DataFrame): The input DataFrame containing the data for the report.
-            values (str): The column name in the DataFrame representing the values for the report.
-            names (str): The column name in the DataFrame representing the names for the report.
-            label (Optional[str], optional): The label for the report. Defaults to None.
-            theme (Optional[str], optional): The theme for the report. Defaults to None.
+            values (str): The column name in the DataFrame representing the values for the pie.
+            names (str): The column name in the DataFrame representing the names for the pie.
+            label (Optional[str], optional): The label for the pi. Defaults to None.
+            theme (Optional[str], optional): The theme for the pie. Defaults to None.
             **kwargs (Optional[Dict], optional): Additional keyword arguments for the report. Defaults to None.
         """
         Base.__init__(self, label=label)

@@ -10,6 +10,7 @@ from .report_creator import (
     Pie,
     Histogram,
     Box,
+    Line,
     Scatter,
     Base,
     Block,
