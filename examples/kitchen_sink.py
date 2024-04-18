@@ -128,20 +128,25 @@ if __name__ == "__main__":
                     label="Box Chart of Total Bill by Day",
                 ),
             ),
-            rc.Bar(
-                px.data.medals_long(),
-                x="nation",
-                y="count",
-                dimension="medal",
-                label="Bar Chart - Olympic Medals",
-            ),
-            rc.Scatter(
-                df=px.data.iris(),
-                x="sepal_width",
-                y="sepal_length",
-                dimension="species",
-                marginal="histogram",
-                label="Scatter Plot - Iris",
+            rc.Select(
+                blocks=[
+                    rc.Bar(
+                        px.data.medals_long(),
+                        x="nation",
+                        y="count",
+                        dimension="medal",
+                        label="Bar Chart - Olympic Medals",
+                    ),
+                    rc.Scatter(
+                        df=px.data.iris(),
+                        x="sepal_width",
+                        y="sepal_length",
+                        dimension="species",
+                        marginal="histogram",
+                        label="Scatter Plot - Iris",
+                    ),
+                ],
+                label="Plots inside Tabs",
             ),
             rc.Separator(),
             rc.Html(
