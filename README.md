@@ -84,6 +84,7 @@ make
 
 ## Dev Notes
 
+* **4/18/24 - no breaking changes**, all changes should go through standard deprecation policies
 * The Blocks/Groups use css [flex](https://css-tricks.com/snippets/css/a-guide-to-flexbox/).
   * Blocks flow vertically (columns)
 * Groups flow horizontal (row).
