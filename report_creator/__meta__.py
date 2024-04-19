@@ -1,5 +1,5 @@
-__version__ = "1.0.5"
+__version__ = "1.0.6"
 __authors__ = "Daren Race"
-__license__ = "MIT License"
+__license__ = "MIT"
 __contact__ = "daren.race@gmail.com"
 __description__ = "Produce self-contained HTML reports from Python"
