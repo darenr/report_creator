@@ -1,6 +1,7 @@
 # publish to PyPi
+pip install -q twine
 
-rm -rf dist build ads.egg-info
+rm -rf dist build *.egg-info
 find ./ -name '*.pyc' -exec rm -f {} \;
 find ./ -name 'Thumbs.db' -exec rm -f {} \;
 find ./ -name '*~' -exec rm -f {} \;
