@@ -238,4 +238,4 @@ if __name__ == "__main__":
             ),
         )
 
-        report.save(view, "kitchen_sink.html")
+        report.save(view, "index.html")
