@@ -2,12 +2,26 @@
 
 # standard libs
 import re
+from pathlib import Path
+from typing import List
 
 from setuptools import find_packages, setup
 
 # get long description from README.rst
 with open("README.md") as readme:
     long_description = readme.read()
+
+
+# include necessary deopendencies
+def get_install_requires() -> List[str]:
+    """Returns requirements.txt parsed to a list"""
+    fname = Path(__file__).parent / "requirements.txt"
+    targets = []
+    if fname.exists():
+        with open(fname) as f:
+            targets = f.read().splitlines()
+
+    return targets
 
 
 # get package metadata by parsing __meta__ module
@@ -35,12 +49,15 @@ setup(
     keywords="python, html, reports, report, creator, generator, markdown, yaml, plot, chart, table",
     url="https://github.com/darenr/report_creator",
     packages=find_packages(),
+    include_package_data=True,
+    package_data={"report_creator": ["templates/*"]},
     long_description=long_description,
     long_description_content_type="text/markdown",
+    install_requires=get_install_requires(),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Topic :: Software Development :: Libraries :: Application Frameworks",
-        'License :: OSI Approved :: MIT License',
+        "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
