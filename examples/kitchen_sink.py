@@ -171,6 +171,7 @@ if __name__ == "__main__":
                     frequency="B",
                     heading="Not Found",
                 ),
+                label="Log File Metrics",
             ),
             rc.Separator(),
             rc.Html(
