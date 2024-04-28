@@ -12,6 +12,7 @@ from .report_creator import (
     Box,
     Collapse,
     DataTable,
+    EventMetric,
     Group,
     Heading,
     Histogram,

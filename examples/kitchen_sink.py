@@ -154,6 +154,24 @@ if __name__ == "__main__":
                 y=["GOOG", "AAPL", "NFLX", "MSFT"],
                 label="Stock Plot",
             ),
+            rc.Group(
+                rc.EventMetric(
+                    pd.read_csv("examples/logs.csv"),
+                    condition="status == 200",
+                    color="green",
+                    date="time",
+                    frequency="B",
+                    heading="Successful Requests",
+                ),
+                rc.EventMetric(
+                    pd.read_csv("examples/logs.csv"),
+                    condition="status == 404",
+                    color="red",
+                    date="time",
+                    frequency="B",
+                    heading="Not Found",
+                ),
+            ),
             rc.Separator(),
             rc.Html(
                 "<span>"

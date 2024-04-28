@@ -11,6 +11,7 @@ from html.parser import HTMLParser
 from typing import Dict, List, Optional, Tuple, Union
 from uuid import uuid4
 
+import dateutil
 import matplotlib
 import pandas as pd
 import plotly.express as px
@@ -20,7 +21,6 @@ from markupsafe import escape
 
 logging.basicConfig(level=logging.INFO)
 
-import warnings
 
 preferred_fonts = [
     "Helvetica Neue",
@@ -304,9 +304,9 @@ class MetricGroup(Base):
         """MetricGroup is a container for a group of metrics. It takes a DataFrame with a heading and value column.
 
         Args:
-            df (pd.DataFrame): _description_
-            heading (str): _description_
-            value (str): _description_
+            df (pd.DataFrame): the DataFrame containing the data.
+            heading (str): the metric heading string
+            value (str): the column wuth the metric value
             label (Optional[str], optional): _description_. Defaults to None.
         """
         Base.__init__(self, label=label)
@@ -322,6 +322,115 @@ class MetricGroup(Base):
     @strip_whitespace
     def to_html(self) -> str:
         return self.g.to_html()
+
+
+##############################
+
+
+class EventMetric(Base):
+    """A special metric that shows the number of events that match a condition over time. Used or telemetry
+    or event tracking. The dataframe must have a column that's datelike. The column specified will be
+    converted to a datetime and used to group over. The condition, like "status=200" will be evaluated
+    for each row and converted to a 1 for true, or 0 for not true. The sum of these values will be the
+    period of frequency (daily, D, weekly, W etc) and plotted as a line chart along with showing the
+    count and percentage of the total.
+
+    """
+
+    def __init__(
+        self,
+        df: pd.DataFrame,
+        condition: str,
+        date: str,
+        frequency: str = "D",
+        color: str = "red",
+        heading: Optional[str] = None,
+        *,
+        label: Optional[str] = None,
+    ):
+        """_summary_
+
+        Args:
+            df (pd.DataFrame): the data
+            condition (str): an expression to evaluate like B==42
+            date (str, optional): the date column.
+            frequency (str, optional): the frequency to group over. Defaults to "D" (daily)
+            color (str, optional): _description_. Defaults to "red".
+            heading (Optional[str], optional): _description_. Defaults to None.
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
+        Base.__init__(self, label=label)
+
+        assert date in df.columns, f"index column {date} not in df"
+        self.df = df
+        self.date = date
+
+        self.freq = frequency
+
+        self.df[date] = self.df[date].apply(dateutil.parser.parse)
+
+        print(self.df)
+        print(self.df.dtypes)
+
+        self.condition = condition
+        self.color = color
+        self.heading = heading or f"{condition}"
+        self.yhat = "_Y_"
+
+        logging.info(f"EventMetric {len(df)} rows, fn: ({condition})")
+
+    @strip_whitespace
+    def to_html(self) -> str:
+        dfx = self.df.eval(f"{self.yhat} = {self.condition}")[[self.date, self.yhat]]
+        dfx[self.yhat] = dfx[self.yhat].astype(int)
+        dfx = dfx.groupby(pd.Grouper(key=self.date, freq=self.freq)).sum().reset_index()
+
+        agg_value = dfx["_Y_"].apply("sum")
+        agg_pct = round(100 * (agg_value / len(self.df)))
+
+        fig = px.line(
+            dfx,
+            x=self.date,
+            y=self.yhat,
+            line_shape="spline",
+            height=90,
+            template="simple_white",
+        )
+
+        # fill area under curve
+        fig.update_traces(
+            fill="tonexty",
+            fillcolor=self.color,
+            line_color=self.color,
+            hoverinfo="skip",
+            hovertemplate=None,
+        )
+        fig.update_xaxes(visible=False, showticklabels=False, title=None)
+        fig.update_yaxes(visible=False, showticklabels=False, title=None)
+        fig.update_layout(margin={"t": 0, "l": 0, "b": 0, "r": 0})
+
+        fig_html = fig.to_html(
+            include_plotlyjs=False,
+            full_html=False,
+            config={"responsive": True, "displayModeBar": False},
+        )
+
+        description = (
+            f"<div class='metric-description'>{self.label}</div>" if self.label else ""
+        )
+
+        return f"""
+            <div class="metric">
+                <p>{self.heading}</p>
+                <table>
+                    <tr>
+                    <td width=40% style="vertical-align: middle;"><h1>{agg_value:d} ({agg_pct:d}%)</h1></td>
+                    <td style="vertical-align: middle;">{fig_html}</td>
+                    </tr>
+                </table>
+                {description}
+            </div>
+        """
 
 
 ##############################
@@ -587,24 +696,6 @@ class Markdown(Base):
         html += "</div>"
         html += "</div>"
         return html
-
-
-##############################
-
-
-class Plot:
-    """
-    A class representing a plot.
-
-    This class is deprecated. Please use `rc.Widget(..)` or one of the specific chart types like `rc.Bar(..)`, `rc.Box()`, or `rc.Pie(..)` instead.
-    """
-
-    def __init__(self):
-        warnings.warn(
-            "rc.Plot(..) is deprecated; use rc.Widget(..), or one of the specific chart types like rc.Bar(..), rc.Box(), or rc.Pie(..)",
-            DeprecationWarning,
-            stacklevel=2,
-        )
 
 
 ##############################

@@ -9,4 +9,5 @@ plotly-express
 Jinja2
 humanize
 beautifulsoup4
+python-dateutil
 lxml
