@@ -29,6 +29,7 @@ from .report_creator import (
     Scatter,
     Select,
     Separator,
+    Sql,
     Table,
     Text,
     Unformatted,

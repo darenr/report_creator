@@ -1384,6 +1384,86 @@ class Python(Language):
 ##############################
 
 
+class Sql(Language):
+    @staticmethod
+    def format_sql(sql: str) -> str:
+        BLOCK_STATEMENTS = [
+            "create.*?table",  # regex for all variants, e.g. CREATE OR REPLACE TABLE
+            "create.*?view",  # regex for all variants, e.g. CREATE OR REPLACE VIEW
+            "select distinct",
+            "select",
+            "from",
+            "left join",
+            "inner join",
+            "outer join",
+            "right join",
+            "union",
+            "on",
+            "where",
+            "group by",
+            "order by",
+            "asc",
+            "desc",
+            "limit",
+            "offset",
+            "insert.*?into",
+            "update",
+            "set",
+            "delete",
+            "drop",
+            "alter",
+            "add",
+            "modify",
+            "rename",
+            "truncate",
+            "begin",
+            "commit",
+            "rollback",
+            "grant",
+            "revoke",
+        ]
+        RESERVED_WORDS = ["as"]
+
+        sql = re.sub(r"(?<!['\"]),\s*(?!['\"])", ",\n\t", sql, flags=re.DOTALL)
+
+        for reserved_word in RESERVED_WORDS:
+            sql = re.sub(
+                rf"(?<!['\"]){reserved_word}(?!['\"])",
+                reserved_word.upper(),
+                sql,
+                flags=re.DOTALL,
+            )
+
+        def format_block_statement(matchobj):
+            return f"\n{matchobj.group(0).strip()}\n\t".upper()
+
+        for statement in BLOCK_STATEMENTS:
+            sql = re.sub(
+                rf"(?<!['\"])^|\s+{statement}\s+|$(?!['\"])",
+                format_block_statement,  # add newline before each statement, upper case
+                sql,
+                flags=re.IGNORECASE | re.DOTALL,
+            )
+        return sql
+
+    def __init__(
+        self, code: str, *, prettify: Optional[bool] = True, label: Optional[str] = None
+    ):
+        """Sql is a container for SQL code. It can also take a label.
+
+        Args:
+            code (str): your SQL code
+            prettify (Optional[bool], optional): _description_. Defaults to True.
+            label (Optional[str], optional): _description_. Defaults to None.
+        """
+        Language.__init__(
+            self, Sql.format_sql(code) if prettify else code, "sql", label=label
+        )
+
+
+##############################
+
+
 class Yaml(Language):
     def __init__(self, data: Union[Dict, List], *, label: Optional[str] = None):
         """Yaml is a container for yaml. It can also take a label.
@@ -1394,7 +1474,7 @@ class Yaml(Language):
         """
         Language.__init__(
             self,
-            yaml.dump(data, indent=2),
+            yaml.dump(data, indent=2, Dumper=yaml.SafeDumper),
             "yaml",
             label=label,
         )

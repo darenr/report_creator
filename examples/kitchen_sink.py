@@ -25,6 +25,9 @@ if __name__ == "__main__":
     with open("examples/example.txt") as f:
         example_text = f.read()
 
+    with open("examples/example.sql") as f:
+        example_sql = f.read()
+
     with open("README.md") as f:
         example_md = f.read()
 
@@ -84,6 +87,11 @@ if __name__ == "__main__":
                 rc.Json(
                     datastructure,
                     label="Kubernetes Creating a Deployment as JSON",
+                ),
+                rc.Sql(
+                    example_sql,
+                    prettify=True,
+                    label="Example SQL",
                 ),
             ),
             rc.Separator(),

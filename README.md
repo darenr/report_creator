@@ -3,6 +3,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](https://www.apache.org/licenses/LICENSE-2.0)
 [![PyPI Version](https://img.shields.io/pypi/v/report_creator.svg?style=for-the-badge&color=blue)](https://pypi.org/project/report_creator)
 [![Python Versions](https://img.shields.io/pypi/pyversions/report_creator.svg?logo=python&logoColor=white&style=for-the-badge)](https://pypi.org/project/report_creator)
+[![Python Stats](https://img.shields.io/pypi/dw/report_creator?logo=python&logoColor=white&style=for-the-badge)](https://pypi.org/project/report_creator)
 
 Library to assemble reports in HTML from various components using python
 
@@ -70,7 +71,7 @@ with rc.ReportCreator("My Report") as report:
 ## Development
 
 ``` .python
-conda create --name rc python=3.9
+conda create --name rc python=3.12
 conda activate rc
 pip install -r requirements.txt -U
 
@@ -81,11 +82,13 @@ pip install beautifulsoup4 lxml
 pip install ruff
 
 # build "kitchen_sink" example
-
 make
 
 # install local package
 pip install -e .
+
+# see dependency tree
+pipdeptree --exclude pip,pipdeptree,setuptools,wheel,twine
 
 ```
 

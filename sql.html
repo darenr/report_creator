@@ -1,36 +1,23 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>{{title}}</title>
-
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css"
-    />
-
-    <!-- see https://highlightjs.org/examples -->
-
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/{{hljs_theme}}.css"
-    />
-    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
-
-    <!-- DataTables use builder to add options https://datatables.net/download/ -->
-    <link
-      href="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-html5-2.4.2/cr-1.7.0/r-2.5.0/datatables.min.css"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-html5-2.4.2/cr-1.7.0/r-2.5.0/datatables.min.js"></script>
-
-    <script
-      src="https://cdn.plot.ly/plotly-2.30.0.min.js"
-      charset="utf-8"
-    ></script>
-    <!--
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   SQL Report
+  </title>
+  <link href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css" rel="stylesheet"/>
+  <!-- see https://highlightjs.org/examples -->
+  <link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/vs.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js">
+  </script>
+  <!-- DataTables use builder to add options https://datatables.net/download/ -->
+  <link href="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-html5-2.4.2/cr-1.7.0/r-2.5.0/datatables.min.css" rel="stylesheet"/>
+  <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-html5-2.4.2/cr-1.7.0/r-2.5.0/datatables.min.js">
+  </script>
+  <script charset="utf-8" src="https://cdn.plot.ly/plotly-2.30.0.min.js">
+  </script>
+  <!--
 
             variables, for example: style: color: var(--links)
 
@@ -57,9 +44,8 @@
 
             https://github.com/kognise/water.css#theming
         -->
-
-    <style>
-      :root {
+  <style>
+   :root {
         --focus: red;
       }
 
@@ -331,12 +317,6 @@
         border: 1px solid var(--border);
       }
 
-      pre {
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        box-sizing: border-box;
-      }
-
       .report-widget {
         width: 100%;
       }
@@ -354,26 +334,65 @@
         font-size: 0.8em;
         color: var(--text-muted);
       }
-    </style>
-  </head>
-
-  <body>
-    <header>
-      <div class="letter-icon">{{header_svg|safe}}</div>
-      <div class="header-text">
-        <h1>{{title}}</h1>
-        {% if description %}
-        <div class="report-description"><p>{{description}}</p></div>
-        {% endif %}
-      </div>
-    </header>
-
-    <hr />
-
-    <div class="container">{{body}}</div>
-
-    <script>
-      function triggerResize() {
+  </style>
+ </head>
+ <body>
+  <header>
+   <div class="letter-icon">
+    <svg height="125" version="1.1" width="125" xmlns="http://www.w3.org/2000/svg">
+     <style>
+      .icon_text_style {
+                            font-size: 4em;
+                            font-family: lucida console, Fira Mono, monospace;
+                            text-anchor: middle;
+                            stroke-width: 1px;
+                            font-weight: bold;
+                            alignment-baseline: central;
+                        }
+     </style>
+     <circle cx="62.5" cy="62.5" fill="#7b01ee" r="62.5">
+     </circle>
+     <text class="icon_text_style" fill="white" x="50%" y="50%">
+      SQ
+     </text>
+    </svg>
+   </div>
+   <div class="header-text">
+    <h1>
+     SQL Report
+    </h1>
+    <div class="report-description">
+     <p>
+      All the things
+     </p>
+    </div>
+   </div>
+  </header>
+  <hr/>
+  <div class="container">
+   <block>
+    <block-component>
+     <div class="code-block">
+      <pre><code class="language-sql syntax-color">CREATE OR REPLACE VIEW	sh_customers_dim_view AS
+SELECT	a.cust_id,
+	a.cust_lASt_name || ', ' || a.cust_first_name AS customer_name,
+	a.cust_city || ', ' || a.cust_state_province || ', ' || a.country_id AS city_id,
+	a.cust_city AS city_name,
+	a.cust_state_province || ', ' || a.country_id AS state_province_id,
+	a.cust_state_province AS state_province_name,
+	b.country_id,
+	b.country_name,
+	b.country_subregion AS subregion,
+	b.country_region AS region
+FROM	sh.customers a,
+	sh.countries b
+WHERE	a.country_id = b.country_id;</code></pre>
+     </div>
+    </block-component>
+   </block>
+  </div>
+  <script>
+   function triggerResize() {
         let event = new Event("resize");
         window.dispatchEvent(event);
       }
@@ -432,6 +451,6 @@
         // plotly doesn't properly resize on page load, so trigger responsive event
         triggerResize();
       })();
-    </script>
-  </body>
+  </script>
+ </body>
 </html>
