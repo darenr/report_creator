@@ -18,6 +18,7 @@ import plotly.express as px
 import yaml
 from jinja2 import Environment, FileSystemLoader
 from markupsafe import escape
+from pandas.api.types import is_datetime64_any_dtype as is_datetime
 
 logging.basicConfig(level=logging.INFO)
 
@@ -367,10 +368,9 @@ class EventMetric(Base):
 
         self.freq = frequency
 
-        self.df[date] = self.df[date].apply(dateutil.parser.parse)
-
-        print(self.df)
-        print(self.df.dtypes)
+        if not is_datetime(self.df[date]):
+            logging.info(f"EventMetric converting {date} to datetime")
+            self.df[date] = self.df[date].apply(dateutil.parser.parse)
 
         self.condition = condition
         self.color = color
