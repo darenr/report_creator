@@ -177,7 +177,7 @@ if __name__ == "__main__":
                     color="red",
                     date="time",
                     frequency="B",
-                    heading="Not Found",
+                    heading="Not Found Requests",
                 ),
                 label="Log File Metrics",
             ),

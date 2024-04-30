@@ -386,14 +386,13 @@ class EventMetric(Base):
         dfx = dfx.groupby(pd.Grouper(key=self.date, freq=self.freq)).sum().reset_index()
 
         agg_value = dfx["_Y_"].apply("sum")
-        agg_pct = round(100 * (agg_value / len(self.df)))
 
         fig = px.line(
             dfx,
             x=self.date,
             y=self.yhat,
             line_shape="spline",
-            height=90,
+            height=135,
             template="simple_white",
         )
 
@@ -402,12 +401,20 @@ class EventMetric(Base):
             fill="tonexty",
             fillcolor=self.color,
             line_color=self.color,
-            hoverinfo="skip",
             hovertemplate=None,
         )
-        fig.update_xaxes(visible=False, showticklabels=False, title=None)
-        fig.update_yaxes(visible=False, showticklabels=False, title=None)
         fig.update_layout(margin={"t": 0, "l": 0, "b": 0, "r": 0})
+        fig.update_xaxes(
+            visible=True,
+            showticklabels=True,
+            title=None,
+            tickformat="%m/%d",
+        )
+        fig.update_yaxes(
+            visible=True,
+            showticklabels=True,
+            title=None,
+        )
 
         fig_html = fig.to_html(
             include_plotlyjs=False,
@@ -416,16 +423,18 @@ class EventMetric(Base):
         )
 
         description = (
-            f"<div class='metric-description'>{self.label}</div>" if self.label else ""
+            f"<div class='metric-description'><p>{self.label}</p></div>"
+            if self.label
+            else ""
         )
 
         return f"""
             <div class="metric">
                 <p>{self.heading}</p>
-                <table>
+                <table style="margin-top: 15px;">
                     <tr>
-                    <td width=40% style="vertical-align: middle;"><h1>{agg_value:d} ({agg_pct:d}%)</h1></td>
-                    <td style="vertical-align: middle;">{fig_html}</td>
+                    <td width=20% style="text-align: center; vertical-align: center;"><h1>{agg_value:d}</h1></td>
+                    <td style="vertical-align: bottom;">{fig_html}</td>
                     </tr>
                 </table>
                 {description}
@@ -473,7 +482,9 @@ class Metric(Base):
             value = self.value
 
         description = (
-            f"<div class='metric-description'>{self.label}</div>" if self.label else ""
+            f"<div class='metric-description'><p>{self.label}</p></div>"
+            if self.label
+            else ""
         )
 
         return f"""
