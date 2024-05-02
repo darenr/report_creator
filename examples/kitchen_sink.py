@@ -34,7 +34,8 @@ if __name__ == "__main__":
     # begin the use of the report_creator package
 
     with rc.ReportCreator(
-        title="Kitchen Sink Report", description="All the things"
+        title="Kitchen Sink Report",
+        description="All the things",
     ) as report:
         view = rc.Block(
             rc.Collapse(
