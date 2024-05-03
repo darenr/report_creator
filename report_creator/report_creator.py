@@ -12,6 +12,7 @@ from typing import Dict, List, Optional, Tuple, Union
 from uuid import uuid4
 
 import dateutil
+import humanize
 import matplotlib
 import pandas as pd
 import plotly.express as px
@@ -19,6 +20,7 @@ import yaml
 from jinja2 import Environment, FileSystemLoader
 from markupsafe import escape
 from pandas.api.types import is_datetime64_any_dtype as is_datetime
+from datetime import datetime
 
 logging.basicConfig(level=logging.INFO)
 
@@ -450,7 +452,7 @@ class Metric(Base):
     def __init__(
         self,
         heading: str,
-        value: Union[str, int, float],
+        value: Union[str, int, float, datetime],
         *,
         unit: Optional[str] = None,
         float_precision: Optional[int] = 3,
@@ -477,10 +479,14 @@ class Metric(Base):
 
     @strip_whitespace
     def to_html(self) -> str:
-        if isinstance(self.value, (float)):
-            value = round(self.value, self.float_precision)
+        if isinstance(self.value, (int)):
+            value_str = humanize.intword(self.value)
+        elif isinstance(self.value, (float)):
+            value_str = round(self.value, self.float_precision)
+        elif isinstance(self.value, datetime):
+            value_str = self.value.strftime("%Y-%m-%d")
         else:
-            value = self.value
+            value_str = str(self.value)
 
         description = (
             f"<div class='metric-description'><p>{self.label}</p></div>"
@@ -491,7 +497,7 @@ class Metric(Base):
         return f"""
             <div class="metric">
                 <p>{self.heading}</p>
-                <h1>{value}{self.unit}</h1>
+                <h1>{value_str}{self.unit}</h1>
                 {description}
             </div>
         """
@@ -1608,7 +1614,7 @@ class ReportCreator:
                         <style>
                             .icon_text_style {{
                                 font-size: {fs}em;
-                                font-family: lucida console, Fira Mono, monospace;
+                                font-family: roboto, lucida console, Fira Mono, monospace;
                                 text-anchor: middle;
                                 stroke-width: 1px;
                                 font-weight: bold;

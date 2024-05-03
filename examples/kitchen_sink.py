@@ -1,3 +1,4 @@
+import datetime
 import logging
 
 import pandas as pd
@@ -50,6 +51,10 @@ if __name__ == "__main__":
                     heading="Accuracy",
                     value=0.95,
                     label="Number of correct predictions by Total number of predictions",
+                ),
+                rc.Metric(
+                    heading="Today",
+                    value=datetime.datetime.now(),
                 ),
                 rc.Metric(
                     heading="Ultimate Answer",
