@@ -197,9 +197,6 @@ if __name__ == "__main__":
                     r="r",
                     label="Radar Plot - Gemini Pro MultiMedQA",
                 ),
-                rc.Text(
-                    "Gemini Pro excelled in Biostatistics, Epidemiology, Cell Biology, Gastroenterology, and Obstetrics & Gynecology, achieving 100% accuracy, but showed moderate performance in Anatomy, Medicine, and Pharmacology, with significant limitations in Cardiology, Dermatology, and Forensic Medicine."
-                ),
             ),
             rc.Separator(),
             rc.Html(

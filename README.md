@@ -22,7 +22,7 @@ Library to assemble reports in HTML from various components using python
 * [x] Add support for any Jupyter widget, any object that renders in a notebook should render to a report
 * [x] Add built-in easy plotting that looks stylistically consistent with the report
 * [x] Add option to change the report icon based on a github account avatar
-* [ ] Add Radar chart (https://plotly.com/python/radar-chart/)
+* [x] Add Radar chart (https://plotly.com/python/radar-chart/)
 * [x] Add a metric type for timeseries data which should some aggregate function of the data, and plot over time.
 * [ ] Add choropleth map plot type
 * [ ] Add bookmark anchors to blocks
@@ -52,15 +52,14 @@ with rc.ReportCreator("My Report") as report:
                 value="Douglas Adams",
             ),   
         ),
-        rc.Bar(
-                px.data.medals_long(),
-                x="nation",
-                y="count",
-                dimension="medal",
-                label="Bar Chart - Olympic Medals",
+        rc.Bar(px.data.medals_long(),
+               x="nation",
+               y="count",
+               dimension="medal",
+               label="Bar Chart - Olympic Medals",
         ),
         rc.Scatter(
-            df=px.data.iris(),
+            px.data.iris(),
             x="sepal_width",
             y="sepal_length",
             dimension="species",
@@ -78,9 +77,6 @@ with rc.ReportCreator("My Report") as report:
 conda create --name rc python=3.12
 conda activate rc
 pip install -r requirements.txt -U
-
-# optionally for pretty html generation
-pip install beautifulsoup4 lxml
 
 # recommended installs for code hygiene
 pip install ruff
