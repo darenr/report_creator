@@ -33,10 +33,7 @@ if __name__ == "__main__":
 
     # begin the use of the report_creator package
 
-    with rc.ReportCreator(
-        title="Kitchen Sink Report",
-        description="All the things",
-    ) as report:
+    with rc.ReportCreator(title="Kitchen Sink", description="All the things") as report:
         view = rc.Block(
             rc.Collapse(
                 rc.Python(example_python, label="kitchen_sink.py"),
@@ -85,15 +82,12 @@ if __name__ == "__main__":
                     datastructure,
                     label="Kubernetes Creating a Deployment as YAML",
                 ),
-                rc.Json(
-                    datastructure,
-                    label="Kubernetes Creating a Deployment as JSON",
-                ),
                 rc.Sql(
                     example_sql,
                     prettify=True,
                     label="Example SQL",
                 ),
+                label="Code Examples with color syntax highlighting (YAML, JSON, Python, Java etc.)",
             ),
             rc.Separator(),
             rc.Markdown(example_md, label="README.md"),
@@ -181,6 +175,31 @@ if __name__ == "__main__":
                     heading="Not Found Requests",
                 ),
                 label="Log File Metrics",
+            ),
+            rc.Group(
+                rc.Radar(
+                    pd.DataFrame(
+                        {
+                            "r": [86.1, 80.4, 73.7, 88.7, 97.0, 85.2, 93.8, 97.2],
+                            "theta": [
+                                "MedQA",
+                                "PubMedQA",
+                                "MedMCQA",
+                                "MMLU Clinical",
+                                "MMLU Genetics",
+                                "MMLU Anatomy",
+                                "MMLU Medicine",
+                                "MMLU Biology",
+                            ],
+                        }
+                    ),
+                    theta="theta",
+                    r="r",
+                    label="Radar Plot - Gemini Pro MultiMedQA",
+                ),
+                rc.Text(
+                    "Gemini Pro excelled in Biostatistics, Epidemiology, Cell Biology, Gastroenterology, and Obstetrics & Gynecology, achieving 100% accuracy, but showed moderate performance in Anatomy, Medicine, and Pharmacology, with significant limitations in Cardiology, Dermatology, and Forensic Medicine."
+                ),
             ),
             rc.Separator(),
             rc.Html(
