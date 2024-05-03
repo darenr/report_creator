@@ -72,11 +72,33 @@ if __name__ == "__main__":
                 ),
                 label="Grouped Metrics",
             ),
-            rc.MetricGroup(
-                df1,
-                heading="Name",
-                value="Age",
-                label="Metrics Group from DataFrame",
+            rc.Group(
+                rc.MetricGroup(
+                    df1,
+                    heading="Name",
+                    value="Age",
+                    label="Metrics Group from DataFrame",
+                ),
+                rc.Table(df1, label="Table of DataFrame"),
+            ),
+            rc.Group(
+                rc.EventMetric(
+                    pd.read_csv("examples/logs.csv"),
+                    condition="status == 200",
+                    color="green",
+                    date="time",
+                    frequency="B",
+                    heading="Successful Requests",
+                ),
+                rc.EventMetric(
+                    pd.read_csv("examples/logs.csv"),
+                    condition="status == 404",
+                    color="red",
+                    date="time",
+                    frequency="B",
+                    heading="Not Found Requests",
+                ),
+                label="Log File Metrics",
             ),
             rc.Text(
                 example_text,
@@ -161,25 +183,6 @@ if __name__ == "__main__":
                 x="date",
                 y=["GOOG", "AAPL", "NFLX", "MSFT"],
                 label="Stock Plot",
-            ),
-            rc.Group(
-                rc.EventMetric(
-                    pd.read_csv("examples/logs.csv"),
-                    condition="status == 200",
-                    color="green",
-                    date="time",
-                    frequency="B",
-                    heading="Successful Requests",
-                ),
-                rc.EventMetric(
-                    pd.read_csv("examples/logs.csv"),
-                    condition="status == 404",
-                    color="red",
-                    date="time",
-                    frequency="B",
-                    heading="Not Found Requests",
-                ),
-                label="Log File Metrics",
             ),
             rc.Group(
                 rc.Radar(
