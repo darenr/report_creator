@@ -30,6 +30,7 @@ Library to assemble reports in HTML from various components using python
 * [ ] Add styled section for Executive Summary
 * [ ] Youtube embeds rc.Video(url: str, label: str)
 * [ ] File attachments (downloadable from page)
+* [ ] Write some documentation!
 
 ## Example
 
