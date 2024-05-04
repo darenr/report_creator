@@ -19,7 +19,7 @@
     />
     <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
 
-    {% if include_datatable %}
+    {% if include_datatables %}
 
     <!-- DataTables use builder to add options https://datatables.net/download/ -->
     <link
@@ -425,7 +425,7 @@
           button.click();
         });
 
-        {% if include_datatable %}
+        {% if include_datatables %}
 
         // style tables
         table = new DataTable("table.fancy-table", {

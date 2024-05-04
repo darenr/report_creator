@@ -123,7 +123,7 @@ if __name__ == "__main__":
             ),
             rc.Widget(
                 px.line(df2, x="date", y=["GOOG", "AAPL", "NFLX", "MSFT"]),
-                label="Plotly Figure - Stocks",
+                label="rc.Widget() of a Plotly Figure",
             ),
             rc.Separator(),
             rc.Group(
@@ -184,28 +184,25 @@ if __name__ == "__main__":
                 y=["GOOG", "AAPL", "NFLX", "MSFT"],
                 label="Stock Plot",
             ),
-            rc.Group(
-                rc.Radar(
-                    pd.DataFrame(
-                        {
-                            "r": [86.1, 80.4, 73.7, 88.7, 97.0, 85.2, 93.8, 97.2],
-                            "theta": [
-                                "MedQA",
-                                "PubMedQA",
-                                "MedMCQA",
-                                "MMLU Clinical",
-                                "MMLU Genetics",
-                                "MMLU Anatomy",
-                                "MMLU Medicine",
-                                "MMLU Biology",
-                            ],
-                        }
-                    ),
-                    theta="theta",
-                    r="r",
-                    label="Radar Plot - Gemini Pro MultiMedQA",
+            rc.Radar(
+                pd.DataFrame(
+                    {
+                        "r": [86.1, 80.4, 73.7, 88.7, 97.0, 85.2, 93.8, 97.2],
+                        "theta": [
+                            "MedQA",
+                            "PubMedQA",
+                            "MedMCQA",
+                            "MMLU Clinical",
+                            "MMLU Genetics",
+                            "MMLU Anatomy",
+                            "MMLU Medicine",
+                            "MMLU Biology",
+                        ],
+                    }
                 ),
-                rc.Table(df1, label="Table of DataFrame"),
+                theta="theta",
+                r="r",
+                label="Radar Plot - Gemini Pro MultiMedQA",
             ),
             rc.Separator(),
             rc.Html(
