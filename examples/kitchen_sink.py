@@ -205,6 +205,7 @@ if __name__ == "__main__":
                     r="r",
                     label="Radar Plot - Gemini Pro MultiMedQA",
                 ),
+                rc.Table(df1, label="Table of DataFrame"),
             ),
             rc.Separator(),
             rc.Html(

@@ -7,6 +7,7 @@ import random
 import re
 import traceback
 from abc import ABC, abstractmethod
+from datetime import datetime
 from html.parser import HTMLParser
 from typing import Dict, List, Optional, Tuple, Union
 from uuid import uuid4
@@ -16,11 +17,11 @@ import humanize
 import matplotlib
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objs as go
 import yaml
 from jinja2 import Environment, FileSystemLoader
 from markupsafe import escape
 from pandas.api.types import is_datetime64_any_dtype as is_datetime
-from datetime import datetime
 
 logging.basicConfig(level=logging.INFO)
 
@@ -263,7 +264,12 @@ class Widget(Base):
             label (Optional[str], optional): _description_. Defaults to None.
         """
         Base.__init__(self, label=label)
-        if hasattr(widget, "get_figure"):
+        if isinstance(widget, go.Figure):
+            self.widget = widget
+            PxBase.apply_common_fig_options(self.widget)
+            self.widget.update_layout(template=preferred_plotly_theme)
+
+        elif hasattr(widget, "get_figure"):
             self.widget = widget.get_figure()
         else:
             self.widget = widget
@@ -397,7 +403,7 @@ class EventMetric(Base):
             height=135,
             template="simple_white",
         )
-        PxBase.apply_common_fig_options(self, fig)
+        PxBase.apply_common_fig_options(fig)
 
         # fill area under curve
         fig.update_traces(
@@ -733,7 +739,8 @@ class PxBase(Base):
         """Each component that derives from PXBase must implement this method"""
         pass
 
-    def apply_common_fig_options(self, fig):
+    @staticmethod
+    def apply_common_fig_options(fig):
         fig.update_layout(
             font_family=preferred_fonts[0],
             autosize=True,
@@ -741,8 +748,9 @@ class PxBase(Base):
         )
         fig.update_xaxes(title_font_family=preferred_fonts[0], tickangle=90)
 
+    @staticmethod
     def apply_common_kwargs(
-        self, kwargs, label: Optional[str] = None, theme: Optional[str] = None
+        kwargs, label: Optional[str] = None, theme: Optional[str] = None
     ):
         if "template" not in kwargs:
             kwargs["template"] = theme or preferred_plotly_theme
@@ -764,7 +772,6 @@ class Radar(PxBase):
         r: Optional[str] = "r",
         *,
         label: Optional[str] = None,
-        theme: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
         Base.__init__(self, label=label)
@@ -776,7 +783,7 @@ class Radar(PxBase):
         assert theta in df.columns, f"{theta} not in df"
         assert r in df.columns, f"{r} not in df"
 
-        PxBase.apply_common_kwargs(self, self.kwargs, label=label)
+        PxBase.apply_common_kwargs(self.kwargs, label=label)
 
         logging.info(f"Radar {len(self.df)} rows, {theta}, {r=}, {label=}")
 
@@ -790,8 +797,7 @@ class Radar(PxBase):
             **self.kwargs,
         )
 
-        PxBase.apply_common_fig_options(self, fig)
-        fig.update_traces(fill="toself")
+        PxBase.apply_common_fig_options(fig)
 
         return fig.to_html(
             include_plotlyjs=False, full_html=False, config={"responsive": True}
@@ -810,7 +816,6 @@ class Bar(PxBase):
         *,
         dimension: Optional[str] = None,
         label: Optional[str] = None,
-        theme: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
         """Bar is a container for a plotly express bar chart.
@@ -821,7 +826,6 @@ class Bar(PxBase):
             y (str): The column to be plotted on the y-axis.
             dimension (Optional[str], optional): The column to be plotted on the dimension axis. Defaults to None.
             label (Optional[str], optional): The label for the bar chart. Defaults to None.
-            theme (Optional[str], optional): The theme to be applied to the bar chart. Defaults to None.
             **kwargs (Optional[Dict], optional): Additional keyword arguments to be passed to the plotly express bar chart.
 
         Raises:
@@ -841,7 +845,7 @@ class Bar(PxBase):
             assert dimension in df.columns, f"{dimension} not in df"
             self.kwargs["color"] = dimension
 
-        PxBase.apply_common_kwargs(self, self.kwargs, label=label, theme=theme)
+        PxBase.apply_common_kwargs(self.kwargs, label=label)
 
         logging.info(f"Bar {len(self.df)} rows, {x=}, {y=}, {label=}")
 
@@ -849,7 +853,7 @@ class Bar(PxBase):
     def to_html(self) -> str:
         fig = px.bar(self.df, x=self.x, y=self.y, **self.kwargs)
 
-        PxBase.apply_common_fig_options(self, fig)
+        PxBase.apply_common_fig_options(fig)
         fig.update_layout(bargap=0.1)
 
         return fig.to_html(
@@ -869,7 +873,6 @@ class Line(PxBase):
         *,
         dimension: Optional[str] = None,
         label: Optional[str] = None,
-        theme: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
         """Line is a container for a plotly express line chart.
@@ -880,7 +883,6 @@ class Line(PxBase):
             y (str|list): The column(s) to be plotted on the y-axis.
             dimension (Optional[str], optional): The column to be plotted on the dimension axis. Defaults to None.
             label (Optional[str], optional): The label for the bar chart. Defaults to None.
-            theme (Optional[str], optional): The theme to be applied to the bar chart. Defaults to None.
             **kwargs (Optional[Dict], optional): Additional keyword arguments to be passed to the plotly express line chart.
 
         Raises:
@@ -914,7 +916,7 @@ class Line(PxBase):
         if "markers" not in self.kwargs:
             self.kwargs["markers"] = True
 
-        PxBase.apply_common_kwargs(self, self.kwargs, label=label, theme=theme)
+        PxBase.apply_common_kwargs(self.kwargs, label=label)
 
         logging.info(f"Line {len(self.df)} rows, {x=}, {y=}, {label=}")
 
@@ -922,7 +924,7 @@ class Line(PxBase):
     def to_html(self) -> str:
         fig = px.line(self.df, x=self.x, y=self.y, **self.kwargs)
 
-        PxBase.apply_common_fig_options(self, fig)
+        PxBase.apply_common_fig_options(fig)
         fig.update_layout(bargap=0.1)
 
         return fig.to_html(
@@ -941,7 +943,6 @@ class Pie(PxBase):
         names: str,
         *,
         label: Optional[str] = None,
-        theme: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
         """Pie is a container for a plotly express pie chart.
@@ -951,7 +952,6 @@ class Pie(PxBase):
             values (str): The column name in the DataFrame representing the values for the pie.
             names (str): The column name in the DataFrame representing the names for the pie.
             label (Optional[str], optional): The label for the pi. Defaults to None.
-            theme (Optional[str], optional): The theme for the pie. Defaults to None.
             **kwargs (Optional[Dict], optional): Additional keyword arguments for the report. Defaults to None.
         """
         Base.__init__(self, label=label)
@@ -963,7 +963,7 @@ class Pie(PxBase):
         assert values in df.columns, f"{values} not in df"
         assert names in df.columns, f"{names} not in df"
 
-        PxBase.apply_common_kwargs(self, self.kwargs, label=label, theme=theme)
+        PxBase.apply_common_kwargs(self.kwargs, label=label)
 
         if "hole" not in self.kwargs:
             self.kwargs["hole"] = 0.3
@@ -980,7 +980,7 @@ class Pie(PxBase):
         fig.update_traces(textposition="inside", textinfo="percent+label")
         fig.update_layout(uniformtext_minsize=10, uniformtext_mode="hide")
 
-        PxBase.apply_common_fig_options(self, fig)
+        PxBase.apply_common_fig_options(fig)
 
         return fig.to_html(
             include_plotlyjs=False, full_html=False, config={"responsive": True}
@@ -1000,7 +1000,6 @@ class Scatter(PxBase):
         *,
         label: Optional[str] = None,
         marginal: Optional[str] = None,
-        theme: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
         """
@@ -1013,7 +1012,6 @@ class Scatter(PxBase):
             dimension (Optional[str], optional): The column name for the dimension data. Defaults to None.
             label (Optional[str], optional): The label for the scatter plot. Defaults to None.
             marginal (Optional[str], optional): The type of marginal plot to add. Must be one of ['histogram', 'violin', 'box', 'rug']. Defaults to None.
-            theme (Optional[str], optional): The theme for the scatter plot. Defaults to None.
             **kwargs (Optional[Dict], optional): Additional keyword arguments to pass to the scatter plot. Defaults to None.
         """
         Base.__init__(self, label=label)
@@ -1040,7 +1038,7 @@ class Scatter(PxBase):
             self.kwargs["color"] = dimension
             self.kwargs["symbol"] = dimension
 
-        PxBase.apply_common_kwargs(self, self.kwargs, label=label, theme=theme)
+        PxBase.apply_common_kwargs(self.kwargs, label=label)
 
         logging.info(f"Scatter {len(self.df)} rows, {y=}, {dimension=}, {label=}")
 
@@ -1058,7 +1056,7 @@ class Scatter(PxBase):
             **self.kwargs,
         )
 
-        PxBase.apply_common_fig_options(self, fig)
+        PxBase.apply_common_fig_options(fig)
 
         return fig.to_html(
             include_plotlyjs=False, full_html=False, config={"responsive": True}
@@ -1076,7 +1074,6 @@ class Box(PxBase):
         dimension: Optional[str] = None,
         *,
         label: Optional[str] = None,
-        theme: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
         """
@@ -1087,7 +1084,6 @@ class Box(PxBase):
             y (str, optional): The column name for the y-axis. Defaults to None.
             dimension (str, optional): The column name for the dimension. Defaults to None.
             label (str, optional): The label for the report. Defaults to None.
-            theme (str, optional): The theme for the report. Defaults to None.
             **kwargs (dict, optional): Additional keyword arguments.
 
         Raises:
@@ -1106,7 +1102,7 @@ class Box(PxBase):
             self.kwargs["x"] = dimension
             self.kwargs["color"] = dimension
 
-        PxBase.apply_common_kwargs(self, self.kwargs, label=label, theme=theme)
+        PxBase.apply_common_kwargs(self.kwargs, label=label)
 
         logging.info(f"Box {len(self.df)} rows, {y=}, {dimension=}, {label=}")
 
@@ -1124,7 +1120,7 @@ class Box(PxBase):
             **self.kwargs,
         )
 
-        PxBase.apply_common_fig_options(self, fig)
+        PxBase.apply_common_fig_options(fig)
 
         fig.update_traces(boxpoints="outliers")
 
@@ -1145,7 +1141,6 @@ class Histogram(PxBase):
     - x (str): The column name in the DataFrame to be plotted on the x-axis.
     - dimension (Optional[str]): The column name in the DataFrame to be used for color dimension (optional).
     - label (Optional[str]): The label for the plot (optional).
-    - theme (Optional[str]): The theme for the plot (optional).
     - **kwargs (Optional[Dict]): Additional keyword arguments to be passed to the plotly histogram function.
 
     Attributes:
@@ -1173,7 +1168,6 @@ class Histogram(PxBase):
         dimension: Optional[str] = None,
         *,
         label: Optional[str] = None,
-        theme: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
         """
@@ -1184,7 +1178,6 @@ class Histogram(PxBase):
             x (str): The column name to be used for the histogram.
             dimension (Optional[str], optional): The column name to be used for coloring the histogram bars. Defaults to None.
             label (Optional[str], optional): The label for the histogram. Defaults to None.
-            theme (Optional[str], optional): The theme to be applied to the histogram. Defaults to None.
             **kwargs (Optional[Dict]): Additional keyword arguments.
 
         Raises:
@@ -1202,7 +1195,7 @@ class Histogram(PxBase):
             assert dimension in df.columns, f"{dimension} not in df"
             self.kwargs["color"] = dimension
 
-        PxBase.apply_common_kwargs(self, kwargs, label=label, theme=theme)
+        PxBase.apply_common_kwargs(kwargs, label=label)
 
         logging.info(f"Histogram {len(self.df)} rows, {x=}, {label=}")
 
@@ -1211,7 +1204,7 @@ class Histogram(PxBase):
         fig = px.histogram(self.df, x=self.x, **self.kwargs)
         fig.update_layout(bargap=0.1)
 
-        PxBase.apply_common_fig_options(self, fig)
+        PxBase.apply_common_fig_options(fig)
 
         return fig.to_html(
             include_plotlyjs=False, full_html=False, config={"responsive": True}
@@ -1634,7 +1627,7 @@ class ReportCreator:
     def __exit__(self, exc_type, exc_value, exc_traceback):
         pass
 
-    def save(self, view: Base, path: str, prettify_html=True, hljs_theme="vs") -> None:
+    def save(self, view: Base, path: str, prettify_html=True) -> None:
         """
         Save the report to a file.
 
@@ -1642,7 +1635,6 @@ class ReportCreator:
             view (Base): The view object representing the report content.
             path (str): The path to save the report file.
             prettify_html (bool, optional): Whether to prettify the generated HTML. Defaults to True.
-            hljs_theme (str, optional): The theme for syntax highlighting. Defaults to "vs".
 
         Raises:
             ValueError: If the view object is not an instance of Block or Group.
@@ -1672,11 +1664,11 @@ class ReportCreator:
                 author=self.author or "",
                 body=body,
                 header_logo=self.header_str,
-                hljs_theme=hljs_theme,
+                include_plotly="plotly-graph-div" in body,
+                include_datatables="dataTables-wrapper" in body,
             )
             if prettify_html:
                 try:
-                    # if beautifulsoup4 is installed we'll use it to prettify the generated html
                     from bs4 import BeautifulSoup
 
                     soup = BeautifulSoup(html, features="lxml")

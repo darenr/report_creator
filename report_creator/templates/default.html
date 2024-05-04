@@ -15,9 +15,11 @@
 
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/{{hljs_theme}}.css"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/vs.css"
     />
     <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+
+    {% if include_datatable %}
 
     <!-- DataTables use builder to add options https://datatables.net/download/ -->
     <link
@@ -26,10 +28,8 @@
     />
     <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-html5-2.4.2/cr-1.7.0/r-2.5.0/datatables.min.js"></script>
 
-    <script
-      src="https://cdn.plot.ly/plotly-2.30.0.min.js"
-      charset="utf-8"
-    ></script>
+    {% endif %}
+
     <!--
 
             variables, for example: style: color: var(--links)
@@ -368,6 +368,15 @@
 
     <div class="container">{{body}}</div>
 
+    {% if include_plotly %}
+
+    <script
+      src="https://cdn.plot.ly/plotly-2.30.0.min.js"
+      charset="utf-8"
+    ></script>
+
+    {% endif %}
+
     <script>
       function triggerResize() {
         let event = new Event("resize");
@@ -416,6 +425,8 @@
           button.click();
         });
 
+        {% if include_datatable %}
+
         // style tables
         table = new DataTable("table.fancy-table", {
           dom: "Bfrtip",
@@ -424,6 +435,8 @@
           responsive: true,
           stripeClasses: [],
         });
+
+        {% endif %}
 
         // plotly doesn't properly resize on page load, so trigger responsive event
         triggerResize();
