@@ -28,6 +28,13 @@
     />
     <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-html5-2.4.2/cr-1.7.0/r-2.5.0/datatables.min.js"></script>
 
+    {% endif %} {% if include_plotly %}
+
+    <script
+      src="https://cdn.plot.ly/plotly-2.30.0.min.js"
+      charset="utf-8"
+    ></script>
+
     {% endif %}
 
     <!--
@@ -367,15 +374,6 @@
     <hr />
 
     <div class="container">{{body}}</div>
-
-    {% if include_plotly %}
-
-    <script
-      src="https://cdn.plot.ly/plotly-2.30.0.min.js"
-      charset="utf-8"
-    ></script>
-
-    {% endif %}
 
     <script>
       function triggerResize() {

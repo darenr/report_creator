@@ -33,7 +33,40 @@ preferred_fonts = [
     "sans-serif",
 ]
 
-preferred_plotly_theme = "plotly_dark"
+import plotly.io as pio
+
+pio.templates.default = "presentation"
+
+pio.templates["rc"] = go.layout.Template(
+    # LAYOUT
+    layout={
+        # Fonts
+        # Note - 'family' must be a single string, NOT a list or dict!
+        "title": {
+            "font": {
+                "family": "Roboto",
+                "color": "#333",
+            }
+        },
+        "font": {
+            "family": "Roboto, Sans-serif",
+            "size": 16,
+            "color": "#333",
+        },
+        "colorway": [
+            "#CAFEF6",
+            "#FDEB25",
+            "#E01C02",
+            "#107E7D",
+            "#495867",
+            "#FF69EB",
+        ],
+        # Keep adding others as needed below
+        "hovermode": "x unified",
+    },
+)
+pio.templates.default = "rc"
+# pio.templates.default = "presentation"
 
 
 def _check_html_tags_are_closed(html_content: str):
@@ -267,7 +300,6 @@ class Widget(Base):
         if isinstance(widget, go.Figure):
             self.widget = widget
             PxBase.apply_common_fig_options(self.widget)
-            self.widget.update_layout(template=preferred_plotly_theme)
 
         elif hasattr(widget, "get_figure"):
             self.widget = widget.get_figure()
@@ -752,9 +784,6 @@ class PxBase(Base):
     def apply_common_kwargs(
         kwargs, label: Optional[str] = None, theme: Optional[str] = None
     ):
-        if "template" not in kwargs:
-            kwargs["template"] = theme or preferred_plotly_theme
-
         if label and "title" not in kwargs:
             kwargs["title"] = label
 
