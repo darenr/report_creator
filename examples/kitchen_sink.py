@@ -184,26 +184,6 @@ if __name__ == "__main__":
                 y=["GOOG", "AAPL", "NFLX", "MSFT"],
                 label="Stock Plot",
             ),
-            rc.Radar(
-                pd.DataFrame(
-                    {
-                        "r": [86.1, 80.4, 73.7, 88.7, 97.0, 85.2, 93.8, 97.2],
-                        "theta": [
-                            "MedQA",
-                            "PubMedQA",
-                            "MedMCQA",
-                            "MMLU Clinical",
-                            "MMLU Genetics",
-                            "MMLU Anatomy",
-                            "MMLU Medicine",
-                            "MMLU Biology",
-                        ],
-                    }
-                ),
-                theta="theta",
-                r="r",
-                label="Radar Plot - Gemini Pro MultiMedQA",
-            ),
             rc.Separator(),
             rc.Html(
                 "<span>"

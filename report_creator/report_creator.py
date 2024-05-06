@@ -33,36 +33,34 @@ preferred_fonts = [
     "sans-serif",
 ]
 
+import matplotlib as mpl
+from cycler import cycler
+
+report_creator_colors = [
+    "#01befe",
+    "#ffdd00",
+    "#ff7d00",
+    "#ff006d",
+    "#adff02",
+    "#8f00ff",
+]
+
+mpl.rcParams["axes.prop_cycle"] = cycler("color", report_creator_colors)
+
 import plotly.io as pio
 
-pio.templates.default = "presentation"
-
 pio.templates["rc"] = go.layout.Template(
-    # LAYOUT
     layout={
-        # Fonts
-        # Note - 'family' must be a single string, NOT a list or dict!
         "title": {
             "font": {
                 "family": "Roboto",
-                "color": "#333",
             }
         },
         "font": {
             "family": "Roboto, Sans-serif",
             "size": 16,
-            "color": "#333",
         },
-        "colorway": [
-            "#CAFEF6",
-            "#FDEB25",
-            "#E01C02",
-            "#107E7D",
-            "#495867",
-            "#FF69EB",
-        ],
-        # Keep adding others as needed below
-        "hovermode": "x unified",
+        "colorway": report_creator_colors,
     },
 )
 pio.templates.default = "rc"
@@ -272,7 +270,7 @@ class Collapse(Base):
         """
         Base.__init__(self, label=label)
         self.components = components
-        logging.info(f"Collapse {len(self.components)} components, {label=}")
+        logging.info(f"Collapse: {len(self.components)} components, {label=}")
 
     @strip_whitespace
     def to_html(self) -> str:
@@ -358,7 +356,7 @@ class MetricGroup(Base):
             *[Metric(row[heading], row[value]) for _, row in df.iterrows()], label=label
         )
 
-        logging.info(f"MetricGroup {len(df)} metrics")
+        logging.info(f"MetricGroup: {len(df)} metrics")
 
     @strip_whitespace
     def to_html(self) -> str:
@@ -417,7 +415,7 @@ class EventMetric(Base):
         self.heading = heading or f"{condition}"
         self.yhat = "_Y_"
 
-        logging.info(f"EventMetric {len(df)} rows, fn: ({condition})")
+        logging.info(f"EventMetric: {len(df)} rows, fn: ({condition})")
 
     @strip_whitespace
     def to_html(self) -> str:
@@ -510,7 +508,7 @@ class Metric(Base):
         self.float_precision = float_precision
         self.value = value
         self.unit = unit or ""
-        logging.info(f"Metric {self.heading} {self.value}")
+        logging.info(f"Metric: {self.heading} {self.value}")
 
     def __str__(self) -> str:
         return f"Metric {self.heading=} {self.value=} {self.unit=} {self.label=}"
@@ -631,7 +629,7 @@ class DataTable(Base):
             f'class="{" ".join(data_table_classes)} cellspacing="0" style="width: 100%;"'
         )
         self.table_html = styler.format(escape="html").to_html()
-        logging.info(f"DataTable {len(df)} rows")
+        logging.info(f"DataTable: {len(df)} rows")
 
     @strip_whitespace
     def to_html(self) -> str:
@@ -660,7 +658,7 @@ class Html(Base):
             raise ValueError(
                 f"HTML component with label {self.label}, tags are not closed: {', '.join(errors)}"
             )
-        logging.info(f"HTML {len(self.html)} characters")
+        logging.info(f"HTML: {len(self.html)} characters")
 
     @strip_whitespace
     def to_html(self) -> str:
@@ -698,7 +696,7 @@ class Image(Base):
         self.link_to = link_to
         self.extra_css = extra_css or ""
         self.rounded_css = "border-radius: 1rem;" if rounded else ""
-        logging.info(f"Image, label: {self.label}")
+        logging.info(f"Image: label: {self.label}")
 
     @strip_whitespace
     def to_html(self) -> str:
@@ -736,7 +734,7 @@ class Markdown(Base):
         self.text = text
         self.extra_css = extra_css or ""
 
-        logging.info(f"Markdown {len(self.text)} characters")
+        logging.info(f"Markdown: {len(self.text)} characters")
 
     @staticmethod
     def _markdown_to_html(text):
@@ -792,47 +790,6 @@ class PxBase(Base):
 
 # Charting Components
 
-
-class Radar(PxBase):
-    def __init__(
-        self,
-        df: pd.DataFrame,
-        theta: Optional[str] = "theta",
-        r: Optional[str] = "r",
-        *,
-        label: Optional[str] = None,
-        **kwargs: Optional[Dict],
-    ):
-        Base.__init__(self, label=label)
-        self.df = df
-        self.theta = theta
-        self.r = r
-        self.kwargs = kwargs
-
-        assert theta in df.columns, f"{theta} not in df"
-        assert r in df.columns, f"{r} not in df"
-
-        PxBase.apply_common_kwargs(self.kwargs, label=label)
-
-        logging.info(f"Radar {len(self.df)} rows, {theta}, {r=}, {label=}")
-
-    @strip_whitespace
-    def to_html(self) -> str:
-        fig = px.line_polar(
-            self.df,
-            theta=self.theta,
-            r=self.r,
-            line_close=True,
-            **self.kwargs,
-        )
-
-        PxBase.apply_common_fig_options(fig)
-
-        return fig.to_html(
-            include_plotlyjs=False, full_html=False, config={"responsive": True}
-        )
-
-
 ##############################
 
 
@@ -876,7 +833,7 @@ class Bar(PxBase):
 
         PxBase.apply_common_kwargs(self.kwargs, label=label)
 
-        logging.info(f"Bar {len(self.df)} rows, {x=}, {y=}, {label=}")
+        logging.info(f"Bar: {len(self.df)} rows, {x=}, {y=}, {label=}")
 
     @strip_whitespace
     def to_html(self) -> str:
@@ -947,7 +904,7 @@ class Line(PxBase):
 
         PxBase.apply_common_kwargs(self.kwargs, label=label)
 
-        logging.info(f"Line {len(self.df)} rows, {x=}, {y=}, {label=}")
+        logging.info(f"Line: {len(self.df)} rows, {x=}, {y=}, {label=}")
 
     @strip_whitespace
     def to_html(self) -> str:
@@ -997,7 +954,7 @@ class Pie(PxBase):
         if "hole" not in self.kwargs:
             self.kwargs["hole"] = 0.3
 
-        logging.info(f"Pie {len(self.df)} rows, {values=}, {names=}, {label=}")
+        logging.info(f"Pie: {len(self.df)} rows, {values=}, {names=}, {label=}")
 
     def to_html(self) -> str:
         fig = px.pie(
@@ -1069,7 +1026,7 @@ class Scatter(PxBase):
 
         PxBase.apply_common_kwargs(self.kwargs, label=label)
 
-        logging.info(f"Scatter {len(self.df)} rows, {y=}, {dimension=}, {label=}")
+        logging.info(f"Scatter: {len(self.df)} rows, {y=}, {dimension=}, {label=}")
 
     def to_html(self) -> str:
         """
@@ -1133,7 +1090,7 @@ class Box(PxBase):
 
         PxBase.apply_common_kwargs(self.kwargs, label=label)
 
-        logging.info(f"Box {len(self.df)} rows, {y=}, {dimension=}, {label=}")
+        logging.info(f"Box: {len(self.df)} rows, {y=}, {dimension=}, {label=}")
 
     def to_html(self) -> str:
         """
@@ -1226,7 +1183,7 @@ class Histogram(PxBase):
 
         PxBase.apply_common_kwargs(kwargs, label=label)
 
-        logging.info(f"Histogram {len(self.df)} rows, {x=}, {label=}")
+        logging.info(f"Histogram: {len(self.df)} rows, {x=}, {label=}")
 
     @strip_whitespace
     def to_html(self) -> str:
@@ -1279,7 +1236,7 @@ class Heading(Base):
         ), f"heading level ({level}) must be between 1 and 5 (inclusive)"
         assert label, "No heading label provided"
         self.level = level
-        logging.info(f"Heading (h{level}): [{label}]")
+        logging.info(f"Heading: (h{level}): [{label}]")
 
     @strip_whitespace
     def to_html(self) -> str:
@@ -1303,7 +1260,7 @@ class Separator(Base):
             label (Optional[str], optional): The label to be displayed above the separator. Defaults to None.
         """
         Base.__init__(self, label=label)
-        logging.info("Separator")
+        logging.info(f"Separator: {label=}")
 
     @strip_whitespace
     def to_html(self) -> str:
@@ -1337,7 +1294,7 @@ class Text(Base):
         self.text = text
         self.extra_css = extra_css or ""
 
-        logging.info(f"Text {len(self.text)} characters")
+        logging.info(f"Text: {len(self.text)} characters")
 
     @strip_whitespace
     def to_html(self) -> str:
@@ -1377,7 +1334,7 @@ class Select(Base):
                 raise ValueError("All blocks must have a label to use in a Select")
 
         logging.info(
-            f"Select {len(self.blocks)} tabs: {', '.join([c.label for c in self.blocks])}"
+            f"Select: {len(self.blocks)} tabs: {', '.join([c.label for c in self.blocks])}"
         )
 
     @strip_whitespace
@@ -1437,7 +1394,7 @@ class Language(Base):
         Base.__init__(self, label=label)
         self.text = text
         self.language = language
-        logging.info(f"{language} {len(self.text)} characters")
+        logging.info(f"{language}: {len(self.text)} characters")
 
     @strip_whitespace
     @abstractmethod
@@ -1613,7 +1570,7 @@ class ReportCreator:
         self.description = description
         self.author = author
 
-        logging.info(f"ReportCreator {self.title} {self.description}")
+        logging.info(f"ReportCreator: {self.title} {self.description}")
 
         if github:
             logging.info(f"GitHub: {github}")

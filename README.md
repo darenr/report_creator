@@ -22,8 +22,8 @@ Library to assemble reports in HTML from various components using python
 * [x] Add support for any Jupyter widget, any object that renders in a notebook should render to a report
 * [x] Add built-in easy plotting that looks stylistically consistent with the report
 * [x] Add option to change the report icon based on a github account avatar
-* [x] Add Radar chart (https://plotly.com/python/radar-chart/)
 * [x] Add a metric type for timeseries data which should some aggregate function of the data, and plot over time.
+* [ ] Add Radar chart
 * [ ] Add choropleth map plot type
 * [ ] Add bookmark anchors to blocks
 * [ ] Add a Table of Contents option based on labels of top-level-blocks
