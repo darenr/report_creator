@@ -1,4 +1,4 @@
-__version__ = "1.0.16"
+__version__ = "1.0.17"
 __authors__ = "Daren Race"
 __license__ = "MIT"
 __contact__ = "daren.race@gmail.com"
