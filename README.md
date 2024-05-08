@@ -23,6 +23,8 @@ Library to assemble reports in HTML from various components using python
 * [x] Add built-in easy plotting that looks stylistically consistent with the report
 * [x] Add option to change the report icon based on a github account avatar
 * [x] Add a metric type for timeseries data which should some aggregate function of the data, and plot over time.
+* [ ] Add Calendar
+* [ ] Add build time spell check
 * [ ] Add Radar chart
 * [ ] Add choropleth map plot type
 * [ ] Add bookmark anchors to blocks

@@ -63,8 +63,9 @@ pio.templates["rc"] = go.layout.Template(
         "colorway": report_creator_colors,
     },
 )
+
+
 pio.templates.default = "rc"
-# pio.templates.default = "presentation"
 
 
 def _check_html_tags_are_closed(html_content: str):
@@ -779,9 +780,7 @@ class PxBase(Base):
         fig.update_xaxes(title_font_family=preferred_fonts[0], tickangle=90)
 
     @staticmethod
-    def apply_common_kwargs(
-        kwargs, label: Optional[str] = None, theme: Optional[str] = None
-    ):
+    def apply_common_kwargs(kwargs, label: Optional[str] = None):
         if label and "title" not in kwargs:
             kwargs["title"] = label
 
