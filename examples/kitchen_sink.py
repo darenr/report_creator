@@ -35,7 +35,7 @@ if __name__ == "__main__":
     # begin the use of the report_creator package
 
     with rc.ReportCreator(
-        title="Kitchen Sink", description="All the things", theme="presentation"
+        title="Kitchen Sink", description="All the things", theme="rc"
     ) as report:
         view = rc.Block(
             rc.Collapse(
@@ -135,7 +135,7 @@ if __name__ == "__main__":
                     .query("continent == 'Europe'"),
                     values="pop",
                     names="country",
-                    label="Pie Chart - 2002 Population of European continent",
+                    label="rc.Pie Chart - 2002 Population of European continent",
                 ),
                 rc.Pie(
                     px.data.gapminder()
@@ -143,7 +143,7 @@ if __name__ == "__main__":
                     .query("continent == 'Americas'"),
                     values="pop",
                     names="country",
-                    label="Pie Chart - 2002 Population of American continent",
+                    label="rc.Pie Chart - 2002 Population of American continent",
                 ),
             ),
             rc.Group(
@@ -151,13 +151,13 @@ if __name__ == "__main__":
                     px.data.tips(),
                     x="total_bill",
                     dimension="sex",
-                    label="Histogram of Total Bill",
+                    label="rc.Histogram() Chart of Total Bill",
                 ),
                 rc.Box(
                     px.data.tips(),
                     y="total_bill",
                     dimension="day",
-                    label="Box Chart of Total Bill by Day",
+                    label="rc.Box() Chart of Total Bill by Day Dimension",
                 ),
             ),
             rc.Select(

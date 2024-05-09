@@ -24,27 +24,13 @@ from jinja2 import Environment, FileSystemLoader
 from markupsafe import escape
 from pandas.api.types import is_datetime64_any_dtype as is_datetime
 
+from .themes import get_rc_theme, preferred_fonts, report_creator_colors
+
 logging.basicConfig(level=logging.INFO)
 
 
-preferred_fonts = [
-    "Roboto",
-    "Helvetica Neue",
-    "Oracle Sans",
-    "sans-serif",
-]
-
 import matplotlib as mpl
 from cycler import cycler
-
-report_creator_colors = [
-    "#01befe",
-    "#ffdd00",
-    "#ff7d00",
-    "#ff006d",
-    "#adff02",
-    "#8f00ff",
-]
 
 mpl.rcParams["axes.prop_cycle"] = cycler("color", report_creator_colors)
 
@@ -762,8 +748,24 @@ class PxBase(Base):
 
     @staticmethod
     def apply_common_kwargs(kwargs, label: Optional[str] = None):
+        def insert_br_tags(text: str, n: int = 8):
+            words = text.split()
+            output = []
+            current_line = []
+
+            for word in words:
+                current_line.append(word)
+                if len(current_line) == n:
+                    output.append(" ".join(current_line))
+                    current_line = []
+
+            if current_line:  # Add any remaining words
+                output.append(" ".join(current_line))
+
+            return "<br>".join(output)  # Join the lines with <br> tag
+
         if label and "title" not in kwargs:
-            kwargs["title"] = label
+            kwargs["title"] = insert_br_tags(label, n=8)
 
 
 ##############################
@@ -1554,11 +1556,7 @@ class ReportCreator:
 
         logging.info(f"ReportCreator: {self.title} {self.description}")
 
-        pio.templates["rc"] = go.layout.Template(
-            layout={
-                "colorway": report_creator_colors,
-            },
-        )
+        pio.templates["rc"] = get_rc_theme()
 
         assert (
             theme in pio.templates
