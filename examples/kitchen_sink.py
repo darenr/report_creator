@@ -196,19 +196,11 @@ if __name__ == "__main__":
                     <circle cx="50" cy="50" r="40" stroke="lightgrey" stroke-width="0.5" fill="{color}" />
                 </svg>
                 """
-                        for color in (
-                            "red",
-                            "orange",
-                            "yellow",
-                            "green",
-                            "indigo",
-                            "violet",
-                            "blue",
-                        )
+                        for color in rc.report_creator_colors
                     ]
                 )
                 + "</span>",
-                label="HTML Showing SVG Circles with black border",
+                label="HTML SVG Circles of Report Creator Colors",
             ),
             rc.Separator(),
             rc.Select(

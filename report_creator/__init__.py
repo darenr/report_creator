@@ -35,4 +35,5 @@ from .report_creator import (
     Unformatted,
     Widget,
     Yaml,
+    report_creator_colors,
 )
