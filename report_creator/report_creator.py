@@ -13,11 +13,13 @@ from uuid import uuid4
 import dateutil
 import humanize
 import matplotlib
+import matplotlib as mpl
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
 import plotly.io as pio
 import yaml
+from cycler import cycler
 from jinja2 import Environment, FileSystemLoader
 from markupsafe import escape
 from pandas.api.types import is_datetime64_any_dtype as is_datetime
@@ -31,12 +33,6 @@ from .utilities import (
 )
 
 logging.basicConfig(level=logging.INFO)
-
-
-import matplotlib as mpl
-from cycler import cycler
-
-mpl.rcParams["axes.prop_cycle"] = cycler("color", report_creator_colors)
 
 
 class Base(ABC):
@@ -1498,10 +1494,15 @@ class ReportCreator:
                 """.strip()
 
     def __enter__(self):
+        """Save the original color schema"""
+        self.default_colors = mpl.rcParams["axes.prop_cycle"].by_key()["color"]
+        mpl.rcParams["axes.prop_cycle"] = cycler("color", report_creator_colors)
+
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
-        pass
+        """Restore the original color schema"""
+        mpl.rcParams["axes.prop_cycle"] = cycler("color", self.default_colors)
 
     def save(self, view: Base, path: str, prettify_html: Optional[bool] = True) -> None:
         """
