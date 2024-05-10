@@ -410,6 +410,7 @@ class Table(Widget):
         *,
         label: Optional[str] = None,
         index: Optional[bool] = False,
+        float_precision: Optional[int] = 2,
     ):
         """Table is a simple container for a DataFrame (or table-like list of dictionaries.)
 
@@ -417,6 +418,7 @@ class Table(Widget):
             data (Union[pd.DataFrame, List[Dict]]): _description_
             label (Optional[str], optional): _description_. Defaults to None.
             index (bool, optional): _description_. Defaults to False.
+            float_precision (int, optional): _description_. Defaults to 3.
         """
         if isinstance(data, list):
             df = pd.DataFrame(data)
@@ -429,7 +431,9 @@ class Table(Widget):
 
         s = df.style if index else df.style.hide()
 
-        Widget.__init__(self, s.format(escape="html"), label=label)
+        Widget.__init__(
+            self, s.format(escape="html", precision=float_precision), label=label
+        )
 
 
 ##############################
@@ -444,7 +448,7 @@ class DataTable(Base):
         wrap_text: bool = True,
         index: Optional[bool] = False,
         max_rows: Optional[int] = -1,
-        float_precision: Optional[int] = 3,
+        float_precision: Optional[int] = 2,
     ):
         """DataTable is a container for a DataFrame (or table-like list of dictionaries.) with search and sort capabilities.
 
@@ -482,13 +486,15 @@ class DataTable(Base):
         if not wrap_text:
             data_table_classes.append("nowrap")
 
-        styler.format(precision=float_precision)
         if not index:
             styler.hide(axis="index")
+
         styler.set_table_attributes(
             f'class="{" ".join(data_table_classes)} cellspacing="0" style="width: 100%;"'
         )
-        self.table_html = styler.format(escape="html").to_html()
+        self.table_html = styler.format(
+            escape="html", precision=float_precision
+        ).to_html()
         logging.info(f"DataTable: {len(df)} rows")
 
     @strip_whitespace

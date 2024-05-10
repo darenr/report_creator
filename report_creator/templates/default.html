@@ -314,6 +314,12 @@
         all: unset;
       }
 
+      div.dt-layout-cell caption {
+        border: unset;
+        padding: unset;
+        font-size: unset;
+      }
+
       table.dataTable {
         width: 100% !important;
         margin: 0;
@@ -428,8 +434,6 @@
           button.click();
         });
 
-        {% if include_datatables %}
-
         // style tables
         table = new DataTable("table.fancy-table", {
           layout: {
@@ -442,8 +446,6 @@
           autoWidth: true,
           stripeClasses: [],
         });
-
-        {% endif %}
 
         // plotly doesn't properly resize on page load, so trigger responsive event
         triggerResize();
