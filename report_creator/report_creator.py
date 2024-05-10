@@ -1541,7 +1541,6 @@ class ReportCreator:
                 body=body,
                 header_logo=self.header_str,
                 include_plotly="plotly-graph-div" in body,
-                include_datatables="dataTables-wrapper" in body,
             )
             if prettify_html:
                 try:

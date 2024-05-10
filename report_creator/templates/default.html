@@ -15,11 +15,9 @@
 
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/vs.css"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/vs.css"
     />
-    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
-
-    {% if include_datatables %}
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js"></script>
 
     <!-- DataTables use builder to add options https://datatables.net/download/ -->
     <link
@@ -30,16 +28,11 @@
     <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/r-3.0.2/rr-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/sl-2.0.1/datatables.min.js"></script>
     <!-- end datatables imports -->
 
-    {% endif %} {% if include_plotly %}
+    {% if include_plotly %}
 
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.32.0/plotly.min.js"
-      integrity="sha512-Aw/O5tGIneAFOqDUyrKBgoMFuUnM8AN+JIYAeG0anjDbCRCeyTY6S41Kvnp07K1pz7HSUNYe/a+a/Ub9raDHXg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js/dist/plotly.min.js"></script>
 
-    {% endif %}
+    {% endif %} {% if include_vega %} {% endif %}
 
     <!--
 
@@ -444,7 +437,6 @@
           colReorder: true,
           responsive: true,
           autoWidth: true,
-          stripeClasses: [],
         });
 
         // plotly doesn't properly resize on page load, so trigger responsive event
