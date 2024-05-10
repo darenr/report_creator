@@ -556,7 +556,7 @@ class Image(Base):
         self.src = src
         self.link_to = link_to
         self.extra_css = extra_css or ""
-        self.rounded_css = "border-radius: 1rem;" if rounded else ""
+        self.rounded_css = "border-radius: 0.5rem;" if rounded else ""
         logging.info(f"Image: label: {self.label}")
 
     @strip_whitespace

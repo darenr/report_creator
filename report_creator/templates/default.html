@@ -22,19 +22,13 @@
     {% if include_datatables %}
 
     <!-- DataTables use builder to add options https://datatables.net/download/ -->
-
-    <!-- <link
-      href="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-html5-2.4.2/cr-1.7.0/r-2.5.0/datatables.min.css"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-1.13.8/b-2.4.2/b-html5-2.4.2/cr-1.7.0/r-2.5.0/datatables.min.js"></script> -->
-
     <link
-      href="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.0.7/b-3.0.2/b-html5-3.0.2/cr-2.0.2/r-3.0.2/sc-2.4.2/sb-1.7.1/sp-2.3.1/sl-2.0.1/datatables.min.css"
+      href="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/r-3.0.2/rr-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/sl-2.0.1/datatables.min.css"
       rel="stylesheet"
     />
 
-    <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.0.7/b-3.0.2/b-html5-3.0.2/cr-2.0.2/r-3.0.2/sc-2.4.2/sb-1.7.1/sp-2.3.1/sl-2.0.1/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/r-3.0.2/rr-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/sl-2.0.1/datatables.min.js"></script>
+    <!-- end datatables imports -->
 
     {% endif %} {% if include_plotly %}
 
@@ -437,7 +431,7 @@
         // style tables
         table = new DataTable("table.fancy-table", {
           dom: "Bfrtip",
-          buttons: ["copyHtml5", "excelHtml5", "csvHtml5"],
+          buttons: ["copyHtml5", "excelHtml5", "csvHtml5", "print"],
           colReorder: true,
           responsive: true,
           stripeClasses: [],
