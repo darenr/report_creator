@@ -473,7 +473,6 @@ class DataTable(Base):
             styler.set_caption(label)
 
         data_table_classes = [
-            "remove-all-styles",
             "fancy-table",
             "display",
             "row-border",
@@ -1478,7 +1477,7 @@ class ReportCreator:
                         <style>
                             .icon_text_style {{
                                 font-size: {fs}em;
-                                font-family: roboto, lucida console, Fira Mono, monospace;
+                                font-family: Verdana, lucida console, Fira Mono, monospace;
                                 text-anchor: middle;
                                 stroke-width: 1px;
                                 font-weight: bold;
