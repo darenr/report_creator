@@ -731,7 +731,7 @@ class Line(PxBase):
         self,
         df: pd.DataFrame,
         x: str,
-        y: str,
+        y: Union[str, List[str]],
         *,
         dimension: Optional[str] = None,
         label: Optional[str] = None,
@@ -742,7 +742,7 @@ class Line(PxBase):
         Args:
             df (pd.DataFrame): The data to be plotted.
             x (str): The column to be plotted on the x-axis.
-            y (str|list): The column(s) to be plotted on the y-axis.
+            y (Union[str, List[str]]): The column(s) to be plotted on the y-axis.
             dimension (Optional[str], optional): The column to be plotted on the dimension axis. Defaults to None.
             label (Optional[str], optional): The label for the bar chart. Defaults to None.
             **kwargs (Optional[Dict], optional): Additional keyword arguments to be passed to the plotly express line chart.
@@ -760,8 +760,9 @@ class Line(PxBase):
         assert x in df.columns, f"{x} not in df"
 
         if isinstance(y, list):
-            for y_ in y:
-                assert y_ in df.columns, f"{y_} not in df"
+            for _ in y:
+                assert _ in df.columns, f"{_} not in df"
+
         elif isinstance(y, str):
             assert y in df.columns, f"{y} not in df"
         else:
