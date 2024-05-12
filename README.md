@@ -24,14 +24,14 @@ Library to assemble reports in HTML from various components using python
 * [x] Add option to change the report icon based on a github account avatar
 * [x] Add a metric type for timeseries data which should some aggregate function of the data, and plot over time.
 * [ ] Add Calendar
-* [ ] Add build time spell check
+* [ ] Add `yfinance` plots/tables (maybe)
 * [ ] Add Radar chart
 * [ ] Add choropleth map plot type
 * [ ] Add bookmark anchors to blocks
 * [ ] Add a Table of Contents option based on labels of top-level-blocks
 * [ ] Add styled section for Executive Summary
 * [ ] Youtube embeds rc.Video(url: str, label: str)
-* [ ] File attachments (downloadable from page)
+* [ ] File attachments (downloadable any data from page)
 * [ ] Write some documentation!
 
 ## Example
