@@ -7,12 +7,13 @@ preferred_fonts = [
 ]
 
 report_creator_colors = [
-    "#01befe",
-    "#ffdd00",
-    "#FFA500",
-    "#ff006d",
-    "#adff02",
-    "#8f00ff",
+    "#5fd83d",
+    "#44a124",
+    "#f31a7c",
+    "#ffb617",
+    "#d18f06",
+    "#1f6f05",
+    "#1a1100",
 ]
 
 
