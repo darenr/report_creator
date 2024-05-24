@@ -16,7 +16,7 @@ title_shape.text = "Air-speed Velocity of Unladen Swallows"
 tf = body_shape.text_frame
 
 for i in range(5):
-    p = tf if i == 0 else tf.add_paragraph()
+    p = tf.add_paragraph()
 
     p.text = f"bullet {i}"
     p.level = 0
