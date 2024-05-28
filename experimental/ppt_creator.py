@@ -2,7 +2,7 @@ from pptx import Presentation
 
 # pip install python-pptx
 
-prs = Presentation()
+prs = Presentation("starter.potx")
 bullet_slide_layout = prs.slide_layouts[1]
 
 slide = prs.slides.add_slide(bullet_slide_layout)
