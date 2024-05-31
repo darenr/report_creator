@@ -11,3 +11,4 @@ humanize
 beautifulsoup4
 python-dateutil
 lxml
+ollama

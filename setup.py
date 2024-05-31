@@ -64,4 +64,5 @@ setup(
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
     ],
+    extras_require={"ai": ["ollama"]},
 )
