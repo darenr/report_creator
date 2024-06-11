@@ -23,6 +23,7 @@ Library to assemble reports in HTML from various components using python
 * [x] Add built-in easy plotting that looks stylistically consistent with the report
 * [x] Add option to change the report icon based on a github account avatar
 * [x] Add a metric type for timeseries data which should some aggregate function of the data, and plot over time.
+* [ ] Add a status metric that supports up to a handful of k/v pairs (k=task, v=status)
 * [ ] Add Calendar
 * [ ] Add `yfinance` plots/tables (maybe)
 * [ ] Add Radar chart
