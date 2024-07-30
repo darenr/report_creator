@@ -103,3 +103,4 @@ pipdeptree --exclude pip,pipdeptree,setuptools,wheel,twine
   * Blocks flow vertically (columns)
 * Groups flow horizontal (row).
 * To render math you'll need to `pip install md4mathjax`
+* [Design ideas](https://survey.stackoverflow.co/2024/)
