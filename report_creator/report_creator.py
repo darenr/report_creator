@@ -1206,8 +1206,9 @@ class Select(Base):
         """
         Base.__init__(self, label=label)
         self.blocks = blocks
-        for blocks in self.blocks:
-            if not blocks.label:
+
+        for b in self.blocks:
+            if not b.label:
                 raise ValueError("All blocks must have a label to use in a Select")
 
         logging.info(
