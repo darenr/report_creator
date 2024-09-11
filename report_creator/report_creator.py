@@ -280,7 +280,8 @@ class EventMetric(Base):
         dfx[self.yhat] = dfx[self.yhat].astype(int)
         dfx = dfx.groupby(pd.Grouper(key=self.date, freq=self.freq)).sum().reset_index()
 
-        agg_value = dfx["_Y_"].apply("sum")
+        # For an empty dataframe summing a series doesn't return 0
+        agg_value = dfx["_Y_"].apply("sum") if not dfx.empty else 0
 
         fig = px.line(
             dfx,
