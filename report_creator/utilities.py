@@ -65,7 +65,8 @@ def _markdown_to_html(text: str) -> str:
             )
 
     return mistune.create_markdown(
-        renderer=HighlightRenderer(), plugins=["task_lists", "def_list", "math"]
+        renderer=HighlightRenderer(),
+        plugins=["task_lists", "def_list", "math", "table"],
     )(text)
 
 
