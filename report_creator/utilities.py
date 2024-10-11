@@ -3,6 +3,7 @@ import random
 from html.parser import HTMLParser
 from typing import Tuple
 from urllib.parse import urlparse
+from .theming import report_creator_colors
 
 logging.basicConfig(level=logging.INFO)
 
@@ -90,6 +91,24 @@ def _strip_whitespace(func):
             return result
 
     return wrapper
+
+
+def _random_light_color_generator(word: str) -> Tuple[str, str]:
+    """returns auto selected light background_color
+
+    Args:
+        word (str): word to generate color for
+    """
+    random.seed(word.encode())  # must be deterministic
+
+    def lighten_color(hex_color, factor=0.64):
+        """Lightens a hex color by a given factor (0.0 to 1.0)."""
+        hex_color = hex_color.lstrip("#")
+        rgb = [int(hex_color[i : i + 2], 16) for i in (0, 2, 4)]
+        light_rgb = [int((1 - factor) * c + factor * 255) for c in rgb]
+        return "#{:02x}{:02x}{:02x}".format(*light_rgb)
+
+    return lighten_color(random.choice(report_creator_colors)), "black"
 
 
 def _random_color_generator(word: str) -> Tuple[str, str]:

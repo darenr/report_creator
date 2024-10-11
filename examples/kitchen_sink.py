@@ -35,7 +35,10 @@ if __name__ == "__main__":
     # begin the use of the report_creator package
 
     with rc.ReportCreator(
-        title="Kitchen Sink", description="All the things", theme="rc"
+        title="Kitchen Sink",
+        description="All the things",
+        theme="rc",
+        code_theme="github-dark",
     ) as report:
         view = rc.Block(
             rc.Collapse(
@@ -47,30 +50,43 @@ if __name__ == "__main__":
                     heading="Chances of rain",
                     value="84",
                     unit="%",
+                    colored=True,
                 ),
-                rc.Metric(heading="Loss", value=0.1),
+                rc.Metric(
+                    heading="Loss",
+                    value=0.1,
+                    colored=True,
+                ),
                 rc.Metric(
                     heading="Accuracy",
                     value=0.95,
                     label="Number of correct predictions by Total number of predictions",
+                    colored=True,
                 ),
                 rc.Metric(
                     heading="Today",
                     value=datetime.datetime.now(),
+                    colored=True,
                 ),
                 rc.Metric(
                     heading="Ultimate Answer",
                     value="42",
+                    colored=True,
                 ),
                 rc.Metric(
                     heading="Confidence",
                     value=95,
                     unit="%",
                     label="How likely is this to be correct.",
+                    colored=True,
                 ),
                 rc.Metric(
                     heading="Author",
                     value="Douglas Adams",
+                    label="""Douglas Noel Adams was an English author, humourist, and screenwriter, best known
+                            for The Hitchhiker's Guide to the Galaxy. Originally a 1978 BBC radio comedy, The
+                            Hitchhiker's Guide to the Galaxy developed into a "trilogy" of five books which
+                            sold more than 15 million copies in his lifetime.""",
                 ),
                 label="Grouped Metrics",
             ),

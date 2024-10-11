@@ -15,7 +15,7 @@
 
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/vs.css"
+      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/{{code_theme}}.css"
     />
     <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js"></script>
 
@@ -122,7 +122,7 @@
 
       div.round-bordered {
         border: 1px solid var(--border);
-        border-radius: 0.5rem;
+        border-radius: 0.75rem;
         padding: 20px;
       }
 
@@ -130,7 +130,7 @@
         padding: 10px;
         padding-left: 25px;
         border: 1px solid var(--border);
-        border-radius: 0.5rem;
+        border-radius: 0.75rem;
         height: 100%;
         width: 100%;
         box-sizing: border-box;
@@ -139,10 +139,12 @@
       .metric h1 {
         margin-top: 0;
         white-space: nowrap;
+        font-size: 2.6rem;
+        font-weight: 600;
       }
 
       .metric p {
-        color: var(--text-muted);
+        color: var(--text-main);
         margin-top: 0;
         margin-bottom: 0;
       }
@@ -209,7 +211,7 @@
         padding-left: 5%;
         padding-right: 5%;
 
-        font-family: Verdana, system-ui, -apple-system, sans-serif;
+        font-family: "Tahoma", system-ui, -apple-system, sans-serif;
 
         font-weight: 400;
         font-style: normal;
@@ -287,7 +289,7 @@
       }
 
       .rounded {
-        border-radius: 0.5rem;
+        border-radius: 0.75rem;
       }
 
       div.markdown-wrapper pre {
@@ -360,7 +362,7 @@
       }
 
       .plotly-graph-div {
-        border-radius: 0.5rem;
+        border-radius: 0.75rem;
         overflow: hidden;
       }
     </style>

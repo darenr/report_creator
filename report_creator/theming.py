@@ -14,6 +14,7 @@ report_creator_colors = [
     "#f31a7c",
     "#d18f06",
     "#1f6f05",
+    "#AFEEEE",
     "#1a1100",
 ]
 
