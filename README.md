@@ -102,4 +102,3 @@ pipdeptree --exclude pip,pipdeptree,setuptools,wheel,twine
 * To render math you'll need to `pip install md4mathjax`
 * Ideas:
   * [Great Design](https://survey.stackoverflow.co/2024/)
-  * [Diagrams](https://mermaid.js.org/syntax/examples.html)

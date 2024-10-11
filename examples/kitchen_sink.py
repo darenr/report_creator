@@ -1,5 +1,6 @@
 import datetime
 import logging
+import textwrap
 
 import pandas as pd
 import plotly.express as px
@@ -39,6 +40,7 @@ if __name__ == "__main__":
         description="All the things",
         theme="rc",
         code_theme="github-dark",
+        diagram_theme="dark",
     ) as report:
         view = rc.Block(
             rc.Collapse(
@@ -248,6 +250,22 @@ if __name__ == "__main__":
                 label="Tab Group of Data Tables",
             ),
             rc.Separator(),
+            rc.Diagram(
+                src="""
+                    erDiagram
+                        CUSTOMER }|..|{ DELIVERY-ADDRESS : has
+                        CUSTOMER ||--o{ ORDER : places
+                        CUSTOMER ||--o{ INVOICE : "liable for"
+                        DELIVERY-ADDRESS ||--o{ ORDER : receives
+                        INVOICE ||--|{ ORDER : covers
+                        ORDER ||--|{ ORDER-ITEM : includes
+                        PRODUCT-CATEGORY ||--|{ PRODUCT : contains
+                        PRODUCT ||--o{ ORDER-ITEM : "ordered in"
+
+
+                """,
+                label="Entity relationship diagram",
+            ),
             rc.Unformatted(
                 r"""
  ___________________________________

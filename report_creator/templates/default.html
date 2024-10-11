@@ -31,6 +31,10 @@
     <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-2.1.8/b-3.1.2/b-colvis-3.1.2/b-html5-3.1.2/b-print-3.1.2/cr-2.0.4/r-3.0.3/rr-1.5.0/sc-2.4.3/sb-1.8.1/sp-2.3.3/sl-2.1.0/datatables.min.js"></script>
     <!-- end datatables imports -->
 
+    <!-- mermaid js -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11.3.0/dist/mermaid.min.js"></script>
+    <!-- end of mermaid js -->
+
     {% if include_plotly %}
 
     <script src="https://cdn.jsdelivr.net/npm/plotly.js/dist/plotly.min.js"></script>
@@ -270,6 +274,15 @@
         text-indent: 20px;
       }
 
+      .diagram-block {
+        flex: 1;
+        box-sizing: border-box;
+      }
+
+      .diagram-block figure {
+        margin: 0 !important;
+      }
+
       .image-block {
         flex: 1;
         box-sizing: border-box;
@@ -442,6 +455,12 @@
           colReorder: true,
           responsive: true,
           autoWidth: true,
+        });
+
+        mermaid.initialize({
+          startOnLoad: true,
+          securityLevel: "loose",
+          theme: "{{diagram_theme}}",
         });
 
         // plotly doesn't properly resize on page load, so trigger responsive event
