@@ -1,8 +1,8 @@
-import base64
 import logging
 import random
 from html.parser import HTMLParser
 from typing import Tuple
+from urllib.parse import urlparse
 
 logging.basicConfig(level=logging.INFO)
 
@@ -70,7 +70,7 @@ def _markdown_to_html(text: str) -> str:
     )(text)
 
 
-def strip_whitespace(func):
+def _strip_whitespace(func):
     """
     A decorator that strips leading and trailing whitespace from the result of a function.
 
@@ -109,20 +109,40 @@ def _random_color_generator(word: str) -> Tuple[str, str]:
     return background_color, text_color
 
 
+def _get_url_root(url):
+    # Parse the URL into components
+    parsed_url = urlparse(url)
+
+    # Reconstruct the root URL (scheme + netloc)
+    root_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
+
+    return root_url
+
+
 def _convert_imgurl_to_datauri(imgurl: str) -> str:
     """convert url to base64 datauri
 
     Args:
         imgurl (str): url of the image
     """
-    from io import BytesIO
+
+    import base64
+    import mimetypes
 
     import requests
-    from PIL import Image
 
-    response = requests.get(imgurl)
-    img = Image.open(BytesIO(response.content))
-    buffered = BytesIO()
-    img.save(buffered, format="JPEG")
-    img_str = base64.b64encode(buffered.getvalue())
-    return f"data:image/jpeg;base64,{img_str.decode('utf-8')}"
+    headers = {"Referer": _get_url_root(imgurl)}
+
+    response = requests.get(imgurl, headers=headers)
+    response.raise_for_status()  # Check if the download was successful
+
+    # Detect the MIME type of the file from the URL
+    mime_type, _ = mimetypes.guess_type(imgurl)
+
+    # Encode the content as base64
+    base64_content = base64.b64encode(response.content).decode("utf-8")
+
+    # Create the Data URI
+    data_uri = f"data:{mime_type};base64,{base64_content}"
+
+    return data_uri

@@ -250,14 +250,17 @@ if __name__ == "__main__":
                     "https://assets.midlibrary.io/6629522db4ea3030cf8c4f18/6629522eb4ea3030cf8c5df2_Portrait%20of%20a%20Man%20with%20a%20Medal%20of%20Cosimo%20il%20Vecchio%20de%27%20Medici%20(1475).jpg",
                     label="Portrait of a Man with a Medal (1475)",
                     link_to="https://midlibrary.io/focus/sandro-botticelli",
+                    convert_to_base64=True,
                 ),
                 rc.Image(
                     "https://assets.midlibrary.io/6629522db4ea3030cf8c4f18/6629522eb4ea3030cf8c5df1_Detail%20of%20The%20Spring%20(Flora)%20(late%201470s%20or%20early%201480s).jpg",
                     label="The Spring, Flora (late 1470s or early 1480s)",
+                    convert_to_base64=True,
                 ),
                 rc.Image(
                     "https://assets.midlibrary.io/6629522db4ea3030cf8c4f18/6629522eb4ea3030cf8c5df0_Idealised%20Portrait%20of%20a%20Lady%20(Portrait%20of%20Simonetta%20Vespucci%20as%20Nymph)%20(1480%E2%80%931485).jpg",
                     label="Portrait of Simonetta Vespucci",
+                    convert_to_base64=True,
                 ),
             ),
         )

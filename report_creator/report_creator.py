@@ -27,9 +27,10 @@ from pandas.api.types import is_datetime64_any_dtype as is_datetime
 from .theming import get_rc_theme, preferred_fonts, report_creator_colors
 from .utilities import (
     _check_html_tags_are_closed,
+    _convert_imgurl_to_datauri,
     _markdown_to_html,
     _random_color_generator,
-    strip_whitespace,
+    _strip_whitespace,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -64,7 +65,7 @@ class Block(Base):
         self.components = components
         logging.info(f"Block: {len(self.components)} components")
 
-    @strip_whitespace
+    @_strip_whitespace
     def to_html(self) -> str:
         html = "<block>"
 
@@ -93,7 +94,7 @@ class Group(Base):
         self.components = components
         logging.info(f"Group: {len(self.components)} components {label=}")
 
-    @strip_whitespace
+    @_strip_whitespace
     def to_html(self) -> str:
         html = "<div>"
 
@@ -129,7 +130,7 @@ class Collapse(Base):
         self.components = components
         logging.info(f"Collapse: {len(self.components)} components, {label=}")
 
-    @strip_whitespace
+    @_strip_whitespace
     def to_html(self) -> str:
         html = f"<details><summary>{self.label}</summary>"
 
@@ -161,7 +162,7 @@ class Widget(Base):
         else:
             self.widget = widget
 
-    @strip_whitespace
+    @_strip_whitespace
     def to_html(self) -> str:
         html = "<div class='report-widget'>"
 
@@ -215,7 +216,7 @@ class MetricGroup(Base):
 
         logging.info(f"MetricGroup: {len(df)} metrics")
 
-    @strip_whitespace
+    @_strip_whitespace
     def to_html(self) -> str:
         return self.g.to_html()
 
@@ -274,7 +275,7 @@ class EventMetric(Base):
 
         logging.info(f"EventMetric: {len(df)} rows, fn: ({condition})")
 
-    @strip_whitespace
+    @_strip_whitespace
     def to_html(self) -> str:
         dfx = self.df.eval(f"{self.yhat} = {self.condition}")[[self.date, self.yhat]]
         dfx[self.yhat] = dfx[self.yhat].astype(int)
@@ -371,7 +372,7 @@ class Metric(Base):
     def __str__(self) -> str:
         return f"Metric {self.heading=} {self.value=} {self.unit=} {self.label=}"
 
-    @strip_whitespace
+    @_strip_whitespace
     def to_html(self) -> str:
         if isinstance(self.value, (int)):
             value_str = humanize.intword(self.value)
@@ -494,7 +495,7 @@ class DataTable(Base):
         ).to_html()
         logging.info(f"DataTable: {len(df)} rows")
 
-    @strip_whitespace
+    @_strip_whitespace
     def to_html(self) -> str:
         return f"<div class='dataTables-wrapper'><br/>{self.table_html}</div>"
 
@@ -523,7 +524,7 @@ class Html(Base):
             )
         logging.info(f"HTML: {len(self.html)} characters")
 
-    @strip_whitespace
+    @_strip_whitespace
     def to_html(self) -> str:
         html = f"<style>{self.css}</style>" if self.css else ""
         if self.label:
@@ -544,6 +545,7 @@ class Image(Base):
         label: Optional[str] = None,
         extra_css: Optional[str] = None,
         rounded: Optional[bool] = True,
+        convert_to_base64: Optional[bool] = False,
     ):
         """Image is a container for an image. It can also take a link.
 
@@ -553,15 +555,22 @@ class Image(Base):
             label (Optional[str], optional): a label for the image. Defaults to None.
             extra_css (str, optional): additional CSS styles for the image. Defaults to None.
             rounded (bool, optional): if set to True, the image will have rounded corners. Defaults to True.
+            convert_to_base64 (bool, optional): if set to True, the src will be fetched at create time and replaced with a base64 encoded image. Defaults to False.
         """
         Base.__init__(self, label=label)
         self.src = src
         self.link_to = link_to
         self.extra_css = extra_css or ""
         self.rounded_css = "border-radius: 0.5rem;" if rounded else ""
+        if convert_to_base64:
+            logging.info(f"Converting {src} to base64")
+            try:
+                self.src = _convert_imgurl_to_datauri(src)
+            except Exception as e:
+                logging.error(f"Error converting {src} to base64: {e}")
         logging.info(f"Image: label: {self.label}")
 
-    @strip_whitespace
+    @_strip_whitespace
     def to_html(self) -> str:
         html = """<div class="image-block"><figure>"""
 
@@ -603,7 +612,7 @@ class Markdown(Base):
     def _markdown_to_html(text):
         return _markdown_to_html(text)
 
-    @strip_whitespace
+    @_strip_whitespace
     def to_html(self) -> str:
         html = "<div class='markdown-wrapper'>"
         if self.label:
@@ -712,7 +721,7 @@ class Bar(PxBase):
 
         logging.info(f"Bar: {len(self.df)} rows, {x=}, {y=}, {label=}")
 
-    @strip_whitespace
+    @_strip_whitespace
     def to_html(self) -> str:
         fig = px.bar(self.df, x=self.x, y=self.y, **self.kwargs)
 
@@ -784,7 +793,7 @@ class Line(PxBase):
 
         logging.info(f"Line: {len(self.df)} rows, {x=}, {y=}, {label=}")
 
-    @strip_whitespace
+    @_strip_whitespace
     def to_html(self) -> str:
         fig = px.line(self.df, x=self.x, y=self.y, **self.kwargs)
 
@@ -1063,7 +1072,7 @@ class Histogram(PxBase):
 
         logging.info(f"Histogram: {len(self.df)} rows, {x=}, {label=}")
 
-    @strip_whitespace
+    @_strip_whitespace
     def to_html(self) -> str:
         fig = px.histogram(self.df, x=self.x, **self.kwargs)
         fig.update_layout(bargap=0.1)
@@ -1116,7 +1125,7 @@ class Heading(Base):
         self.level = level
         logging.info(f"Heading: (h{level}): [{label}]")
 
-    @strip_whitespace
+    @_strip_whitespace
     def to_html(self) -> str:
         """
         Converts the heading to an HTML string.
@@ -1140,7 +1149,7 @@ class Separator(Base):
         Base.__init__(self, label=label)
         logging.info(f"Separator: {label=}")
 
-    @strip_whitespace
+    @_strip_whitespace
     def to_html(self) -> str:
         """Converts the Separator object to its HTML representation.
 
@@ -1174,7 +1183,7 @@ class Text(Base):
 
         logging.info(f"Text: {len(self.text)} characters")
 
-    @strip_whitespace
+    @_strip_whitespace
     def to_html(self) -> str:
         """
         Convert the Text object to HTML format.
@@ -1216,7 +1225,7 @@ class Select(Base):
             f"Select: {len(self.blocks)} tabs: {', '.join([c.label for c in self.blocks])}"
         )
 
-    @strip_whitespace
+    @_strip_whitespace
     def to_html(self) -> str:
         html = f"<report-caption>{self.label}</report-caption>" if self.label else ""
 
@@ -1255,7 +1264,7 @@ class Unformatted(Base):
         Base.__init__(self, label=label)
         self.text = text
 
-    @strip_whitespace
+    @_strip_whitespace
     def to_html(self) -> str:
         formatted_text = f"<pre><code>{self.text.strip()}</code></pre>"
 
@@ -1275,7 +1284,7 @@ class Language(Base):
         self.language = language
         logging.info(f"{language}: {len(self.text)} characters")
 
-    @strip_whitespace
+    @_strip_whitespace
     @abstractmethod
     def to_html(self) -> str:
         if self.label:
