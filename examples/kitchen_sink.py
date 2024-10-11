@@ -40,7 +40,7 @@ if __name__ == "__main__":
         description="All the things",
         theme="rc",
         code_theme="github-dark",
-        diagram_theme="dark",
+        diagram_theme="default",
     ) as report:
         view = rc.Block(
             rc.Collapse(
@@ -85,7 +85,7 @@ if __name__ == "__main__":
                 rc.Metric(
                     heading="Author",
                     value="Douglas Adams",
-                    label="""Douglas Noel Adams was an English author, humourist, and screenwriter, best known
+                    label="""Douglas Adams was an English author, humourist, and screenwriter, best known
                             for The Hitchhiker's Guide to the Galaxy. Originally a 1978 BBC radio comedy, The
                             Hitchhiker's Guide to the Galaxy developed into a "trilogy" of five books which
                             sold more than 15 million copies in his lifetime.""",
@@ -252,19 +252,78 @@ if __name__ == "__main__":
             rc.Separator(),
             rc.Diagram(
                 src="""
-                    erDiagram
-                        CUSTOMER }|..|{ DELIVERY-ADDRESS : has
-                        CUSTOMER ||--o{ ORDER : places
-                        CUSTOMER ||--o{ INVOICE : "liable for"
-                        DELIVERY-ADDRESS ||--o{ ORDER : receives
-                        INVOICE ||--|{ ORDER : covers
-                        ORDER ||--|{ ORDER-ITEM : includes
-                        PRODUCT-CATEGORY ||--|{ PRODUCT : contains
-                        PRODUCT ||--o{ ORDER-ITEM : "ordered in"
+mindmap
+  root((Artificial Intelligence))
+    subtopic1(Machine Learning)
+      subtopic1a(Supervised Learning)
+        subtopic1a1(Linear Regression)
+        subtopic1a2(Decision Trees)
+        subtopic1a3(SVM)
+      subtopic1b(Unsupervised Learning)
+        subtopic1b1(Clustering)
+        subtopic1b2(Dimensionality Reduction)
+      subtopic1c(Reinforcement Learning)
+        subtopic1c1(Q-Learning)
+        subtopic1c2(Deep Q-Networks)
+        subtopic1c3(Policy Gradient)
+    subtopic2(Neural Networks)
+      subtopic2a(Feedforward Networks)
+        subtopic2a1(Activation Functions)
+        subtopic2a2(Backpropagation)
+      subtopic2b(Recurrent Networks)
+        subtopic2b1(LSTM)
+        subtopic2b2(GRU)
+      subtopic2c(Convolutional Networks)
+        subtopic2c1(Image Classification)
+        subtopic2c2(Object Detection)
+    subtopic3(Natural Language Processing)
+      subtopic3a(Tokenization)
+      subtopic3b(Word Embeddings)
+        subtopic3b1(Word2Vec)
+        subtopic3b2(GloVe)
+      subtopic3c(Transformers)
+        subtopic3c1(BERT)
+        subtopic3c2(GPT)
+    subtopic4(Computer Vision)
+      subtopic4a(Image Recognition)
+      subtopic4b(Semantic Segmentation)
+      subtopic4c(Object Detection)
+    subtopic5(Generative Models)
+      subtopic5a(GANs)
+        subtopic5a1(Discriminator)
+        subtopic5a2(Generator)
+      subtopic5b(VAEs)
+        subtopic5b1(Latent Space)
+        subtopic5b2(Reconstruction)
+    subtopic6(Ethics in AI)
+      subtopic6a(Bias)
+      subtopic6b(Privacy)
+      subtopic6c(Transparency)
+      subtopic6d(Accountability)
 
 
                 """,
-                label="Entity relationship diagram",
+                label="Example AI Mind Map Diagram",
+            ),
+            rc.Diagram(
+                src="""
+                    gitGraph:
+                        commit "Daren"
+                        branch newbranch
+                        checkout newbranch
+                        commit id:"1111"
+                        commit tag:"test"
+                        checkout main
+                        commit type: HIGHLIGHT
+                        commit
+                        merge newbranch
+                        commit
+                        branch b2
+                        commit
+
+
+                """,
+                label="Example Git Graph",
             ),
             rc.Unformatted(
                 r"""
