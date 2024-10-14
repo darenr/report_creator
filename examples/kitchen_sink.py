@@ -57,7 +57,6 @@ if __name__ == "__main__":
                 rc.Metric(
                     heading="Loss",
                     value=0.1,
-                    colored=True,
                 ),
                 rc.Metric(
                     heading="Accuracy",
@@ -68,19 +67,16 @@ if __name__ == "__main__":
                 rc.Metric(
                     heading="Today",
                     value=datetime.datetime.now(),
-                    colored=True,
                 ),
                 rc.Metric(
                     heading="Ultimate Answer",
                     value="42",
-                    colored=True,
                 ),
                 rc.Metric(
                     heading="Confidence",
                     value=95,
                     unit="%",
                     label="How likely is this to be correct.",
-                    colored=True,
                 ),
                 rc.Metric(
                     heading="Author",
@@ -307,20 +303,26 @@ mindmap
             ),
             rc.Diagram(
                 src="""
-                    gitGraph:
-                        commit "Daren"
-                        branch newbranch
-                        checkout newbranch
-                        commit id:"1111"
-                        commit tag:"test"
-                        checkout main
-                        commit type: HIGHLIGHT
-                        commit
-                        merge newbranch
-                        commit
-                        branch b2
-                        commit
-
+                    gitGraph
+                    commit id: "Initial commit"
+                    branch develop
+                    commit id: "Set up project structure"
+                    branch feature/awesome-feature
+                    commit id: "Started awesome feature"
+                    commit id: "Added more functionality to awesome feature"
+                    checkout develop
+                    commit id: "Updated project dependencies"
+                    branch feature/new-feature
+                    commit id: "Started new feature"
+                    checkout feature/awesome-feature
+                    commit id: "Finished awesome feature"
+                    checkout develop
+                    merge feature/awesome-feature tag: "v1.0"
+                    checkout feature/new-feature
+                    commit id: "Continued new feature"
+                    checkout develop
+                    merge feature/new-feature
+                    commit id: "Release v1.1"
 
                 """,
                 label="Example Git Graph",

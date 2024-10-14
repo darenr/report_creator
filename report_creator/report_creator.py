@@ -6,6 +6,7 @@ import os
 import re
 import traceback
 from abc import ABC, abstractmethod
+from collections import defaultdict
 from datetime import datetime
 from typing import Dict, List, Optional, Union
 from uuid import uuid4
@@ -507,7 +508,7 @@ class DataTable(Base):
 
     @_strip_whitespace
     def to_html(self) -> str:
-        return f"<div class='dataTables-wrapper'><br/>{self.table_html}</div>"
+        return f"<div class='dataTables-wrapper include_datatable'><br/>{self.table_html}</div>"
 
 
 ##############################
@@ -554,7 +555,8 @@ class Diagram(Base):
         label: Optional[str] = None,
         extra_css: Optional[str] = None,
     ):
-        """Diagram is a container for a mermaid diagram.
+        """Diagram is a container for a mermaid js diagram. For examples of the syntax please see https://mermaid.js.org/syntax/examples.html
+        Note also that ChatGPT is able to create the diagrams for you simply by describing them in text. The kitchen sink example is an example of this.
 
         Args:
             src (str): The mermaid source code.
@@ -562,6 +564,7 @@ class Diagram(Base):
             extra_css (str, optional): Additional CSS styles to be applied. Defaults to None.
         """
         Base.__init__(self, label=label)
+
         self.src = src
         self.extra_css = extra_css or ""
         logging.info(f"Diagram: {len(self.src)} characters")
@@ -576,7 +579,7 @@ class Diagram(Base):
         if self.label:
             html += f"<figcaption><report-caption>{self.label}</report-caption></figcaption>"
 
-        html += f"<div class='mermaid'>{self.src}</div>"
+        html += f"<div class='mermaid include_mermaid'>{self.src}</div>"
 
         html += "</figure></div>"
 
@@ -1342,7 +1345,7 @@ class Language(Base):
         else:
             formatted_text = f"<pre><code class='language-{self.language} syntax-color'>{self.text.strip()}</code></pre>"
 
-        return f"""<div class="code-block">{formatted_text}</div>"""
+        return f"""<div class="code-block include_hljs">{formatted_text}</div>"""
 
 
 ##############################
@@ -1606,6 +1609,15 @@ class ReportCreator:
         )
         template = Environment(loader=file_loader).get_template("default.html")
 
+        include_plotly = "plotly-graph-div" in body
+        include_datatable = "include_datatable" in body
+        include_mermaid = "include_mermaid" in body
+        include_hljs = "include_hljs" in body
+
+        logging.info(
+            f"ReportCreator: {include_plotly=}, {include_datatable=}, {include_mermaid=}, {include_hljs=}"
+        )
+
         with open(path, "w") as f:
             html = template.render(
                 title=self.title or "Report",
@@ -1613,7 +1625,10 @@ class ReportCreator:
                 author=self.author or "",
                 body=body,
                 header_logo=self.header_str,
-                include_plotly="plotly-graph-div" in body,
+                include_plotly=include_plotly,
+                include_datatable=include_datatable,
+                include_mermaid=include_mermaid,
+                include_hljs=include_hljs,
                 code_theme=self.code_theme,
                 diagram_theme=self.diagram_theme,
             )
@@ -1628,3 +1643,7 @@ class ReportCreator:
 
             else:
                 f.write(html)
+
+            logging.info(
+                f'ReportCreator created {path}, size: {humanize.naturalsize(len(html), binary=True)}, title: "{self.title}"'
+            )

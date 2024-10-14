@@ -11,6 +11,9 @@
       href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css"
     />
 
+    <!-- hightlight.js -->
+    {% if include_hljs %}
+
     <!-- see https://highlightjs.org/examples -->
 
     <link
@@ -18,6 +21,11 @@
       href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/{{code_theme}}.css"
     />
     <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js"></script>
+
+    {% endif %}
+
+    <!-- DataTable -->
+    {% if include_datatable %}
 
     <!-- DataTables use builder to add options https://datatables.net/download/ 
       use JQuery3, JSZip, DataTables, Buttons, ColVis, ColReorder, HTML5, Print, Responsive, Scroller, Select, SearchBuilder, SearchPanes
@@ -29,17 +37,22 @@
     />
 
     <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-2.1.8/b-3.1.2/b-colvis-3.1.2/b-html5-3.1.2/b-print-3.1.2/cr-2.0.4/r-3.0.3/rr-1.5.0/sc-2.4.3/sb-1.8.1/sp-2.3.3/sl-2.1.0/datatables.min.js"></script>
-    <!-- end datatables imports -->
 
-    <!-- mermaid js -->
+    {% endif %}
+
+    <!-- Mermaid JS -->
+    {% if include_mermaid %}
+
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-    <!-- end of mermaid js -->
 
+    {% endif %}
+
+    <!-- Plotly -->
     {% if include_plotly %}
 
     <script src="https://cdn.jsdelivr.net/npm/plotly.js/dist/plotly.min.js"></script>
 
-    {% endif %} {% if include_vega %} {% endif %}
+    {% endif %}
 
     <!--
 
@@ -373,11 +386,6 @@
         font-size: 0.8em;
         color: var(--text-muted);
       }
-
-      .plotly-graph-div {
-        border-radius: 0.75rem;
-        overflow: hidden;
-      }
     </style>
   </head>
 
@@ -434,16 +442,25 @@
         triggerResize();
       }
       (function () {
+
+        // Initialize highlight.js, mermaid.js, dataTables.js etc comnditionally
+
+        {% if include_hljs %}
+
         // style any code blocks
         document
           .querySelectorAll(".syntax-color, .codehilite pre code")
           .forEach((element, key) => {
             hljs.highlightElement(element);
           });
+        {% endif %}
+
 
         document.querySelectorAll(".defaultOpen").forEach(function (button) {
           button.click();
         });
+
+        {% if include_datatable %}
 
         // style tables
         table = new DataTable("table.fancy-table", {
@@ -457,11 +474,17 @@
           autoWidth: true,
         });
 
+        {% endif %}
+
+        {% if include_mermaid %}
+
         mermaid.initialize({
           startOnLoad: true,
           securityLevel: "loose",
           theme: "{{diagram_theme}}",
         });
+
+        {% endif %}
 
         // plotly doesn't properly resize on page load, so trigger responsive event
         triggerResize();
