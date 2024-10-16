@@ -5,6 +5,7 @@ numpy
 matplotlib
 mistune
 pyyaml
+plotly
 plotly-express
 Jinja2
 humanize
