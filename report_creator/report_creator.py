@@ -6,7 +6,6 @@ import os
 import re
 import traceback
 from abc import ABC, abstractmethod
-from collections import defaultdict
 from datetime import datetime
 from typing import Dict, List, Optional, Union
 from uuid import uuid4
@@ -181,9 +180,7 @@ class Widget(Base):
             self.widget.tight_layout()
             self.widget.savefig(tmp, format="png")
             tmp.seek(0)
-            b64image = (
-                base64.b64encode(tmp.getvalue()).decode("utf-8").replace("\n", "")
-            )
+            b64image = base64.b64encode(tmp.getvalue()).decode("utf-8").replace("\n", "")
             html += f'<br/><img src="data:image/png;base64,{b64image}">'
 
         else:
@@ -197,9 +194,7 @@ class Widget(Base):
 
 
 class MetricGroup(Base):
-    def __init__(
-        self, df: pd.DataFrame, heading: str, value: str, *, label: Optional[str] = None
-    ):
+    def __init__(self, df: pd.DataFrame, heading: str, value: str, *, label: Optional[str] = None):
         """MetricGroup is a container for a group of metrics. It takes a DataFrame with a heading and value column.
 
         Args:
@@ -212,9 +207,7 @@ class MetricGroup(Base):
         assert heading in df.columns, f"heading {heading} not in df"
         assert value in df.columns, f"value {value} not in df"
 
-        self.g = Group(
-            *[Metric(row[heading], row[value]) for _, row in df.iterrows()], label=label
-        )
+        self.g = Group(*[Metric(row[heading], row[value]) for _, row in df.iterrows()], label=label)
 
         logging.info(f"MetricGroup: {len(df)} metrics")
 
@@ -322,11 +315,7 @@ class EventMetric(Base):
             config={"responsive": True, "displayModeBar": False},
         )
 
-        description = (
-            f"<div class='metric-description'><p>{self.label}</p></div>"
-            if self.label
-            else ""
-        )
+        description = f"<div class='metric-description'><p>{self.label}</p></div>" if self.label else ""
 
         return f"""
             <div class="metric">
@@ -388,11 +377,7 @@ class Metric(Base):
         else:
             value_str = str(self.value)
 
-        description = (
-            f"<div class='metric-description'><p>{self.label}</p></div>"
-            if self.label
-            else ""
-        )
+        description = f"<div class='metric-description'><p>{self.label}</p></div>" if self.label else ""
 
         if self.colored:
             bk_color, _ = _random_light_color_generator(f"{self.heading}")
@@ -434,15 +419,11 @@ class Table(Widget):
         elif isinstance(data, pd.DataFrame):
             df = data
         else:
-            raise ValueError(
-                f"Expected data to be a list or pd.DataFrame, got {type(data)}"
-            )
+            raise ValueError(f"Expected data to be a list or pd.DataFrame, got {type(data)}")
 
         s = df.style if index else df.style.hide()
 
-        Widget.__init__(
-            self, s.format(escape="html", precision=float_precision), label=label
-        )
+        Widget.__init__(self, s.format(escape="html", precision=float_precision), label=label)
 
 
 ##############################
@@ -476,9 +457,7 @@ class DataTable(Base):
         elif isinstance(data, pd.DataFrame):
             df = data
         else:
-            raise ValueError(
-                f"Expected data to be a list or pd.DataFrame, got {type(data)}"
-            )
+            raise ValueError(f"Expected data to be a list or pd.DataFrame, got {type(data)}")
 
         styler = df.head(max_rows).style if max_rows > 0 else df.style
 
@@ -498,12 +477,8 @@ class DataTable(Base):
         if not index:
             styler.hide(axis="index")
 
-        styler.set_table_attributes(
-            f'class="{" ".join(data_table_classes)} cellspacing="0" style="width: 100%;"'
-        )
-        self.table_html = styler.format(
-            escape="html", precision=float_precision
-        ).to_html()
+        styler.set_table_attributes(f'class="{" ".join(data_table_classes)} cellspacing="0" style="width: 100%;"')
+        self.table_html = styler.format(escape="html", precision=float_precision).to_html()
         logging.info(f"DataTable: {len(df)} rows")
 
     @_strip_whitespace
@@ -515,9 +490,7 @@ class DataTable(Base):
 
 
 class Html(Base):
-    def __init__(
-        self, html: str, *, css: Optional[str] = None, label: Optional[str] = None
-    ):
+    def __init__(self, html: str, *, css: Optional[str] = None, label: Optional[str] = None):
         """Html is a container for raw HTML. It can also take CSS.
 
         Args:
@@ -530,9 +503,7 @@ class Html(Base):
         self.css = css
         status, errors = _check_html_tags_are_closed(html)
         if not status:
-            raise ValueError(
-                f"HTML component with label {self.label}, tags are not closed: {', '.join(errors)}"
-            )
+            raise ValueError(f"HTML component with label {self.label}, tags are not closed: {', '.join(errors)}")
         logging.info(f"HTML: {len(self.html)} characters")
 
     @_strip_whitespace
@@ -627,7 +598,9 @@ class Image(Base):
     def to_html(self) -> str:
         html = """<div class="image-block"><figure>"""
 
-        image_markup = f"""<img src="{self.src}" style="{self.rounded_css} {self.extra_css}" alt="{self.label or self.src}">"""
+        image_markup = (
+            f"""<img src="{self.src}" style="{self.rounded_css} {self.extra_css}" alt="{self.label or self.src}">"""
+        )
         if self.link_to:
             html += f"""<a href="{self.link_to}" target="_blank">{image_markup}</a>"""
         else:
@@ -645,9 +618,7 @@ class Image(Base):
 
 
 class Markdown(Base):
-    def __init__(
-        self, text: str, *, label: Optional[str] = None, extra_css: Optional[str] = None
-    ):
+    def __init__(self, text: str, *, label: Optional[str] = None, extra_css: Optional[str] = None):
         """Markdown is a container for markdown text. It can also take extra CSS.
 
         Args:
@@ -781,9 +752,7 @@ class Bar(PxBase):
         PxBase.apply_common_fig_options(fig)
         fig.update_layout(bargap=0.1)
 
-        return fig.to_html(
-            include_plotlyjs=False, full_html=False, config={"responsive": True}
-        )
+        return fig.to_html(include_plotlyjs=False, full_html=False, config={"responsive": True})
 
 
 ##############################
@@ -853,9 +822,7 @@ class Line(PxBase):
         PxBase.apply_common_fig_options(fig)
         fig.update_layout(bargap=0.1)
 
-        return fig.to_html(
-            include_plotlyjs=False, full_html=False, config={"responsive": True}
-        )
+        return fig.to_html(include_plotlyjs=False, full_html=False, config={"responsive": True})
 
 
 ##############################
@@ -908,9 +875,7 @@ class Pie(PxBase):
 
         PxBase.apply_common_fig_options(fig)
 
-        return fig.to_html(
-            include_plotlyjs=False, full_html=False, config={"responsive": True}
-        )
+        return fig.to_html(include_plotlyjs=False, full_html=False, config={"responsive": True})
 
 
 ##############################
@@ -984,9 +949,7 @@ class Scatter(PxBase):
 
         PxBase.apply_common_fig_options(fig)
 
-        return fig.to_html(
-            include_plotlyjs=False, full_html=False, config={"responsive": True}
-        )
+        return fig.to_html(include_plotlyjs=False, full_html=False, config={"responsive": True})
 
 
 ##############################
@@ -1050,9 +1013,7 @@ class Box(PxBase):
 
         fig.update_traces(boxpoints="outliers")
 
-        return fig.to_html(
-            include_plotlyjs=False, full_html=False, config={"responsive": True}
-        )
+        return fig.to_html(include_plotlyjs=False, full_html=False, config={"responsive": True})
 
 
 ##############################
@@ -1132,9 +1093,7 @@ class Histogram(PxBase):
 
         PxBase.apply_common_fig_options(fig)
 
-        return fig.to_html(
-            include_plotlyjs=False, full_html=False, config={"responsive": True}
-        )
+        return fig.to_html(include_plotlyjs=False, full_html=False, config={"responsive": True})
 
 
 class Heading(Base):
@@ -1171,9 +1130,7 @@ class Heading(Base):
             AssertionError: If no heading label is provided.
         """
         Base.__init__(self, label=label)
-        assert (
-            level >= 1 and level <= 5
-        ), f"heading level ({level}) must be between 1 and 5 (inclusive)"
+        assert level >= 1 and level <= 5, f"heading level ({level}) must be between 1 and 5 (inclusive)"
         assert label, "No heading label provided"
         self.level = level
         logging.info(f"Heading: (h{level}): [{label}]")
@@ -1219,9 +1176,7 @@ class Separator(Base):
 
 
 class Text(Base):
-    def __init__(
-        self, text: str, *, label: Optional[str] = None, extra_css: str = None
-    ):
+    def __init__(self, text: str, *, label: Optional[str] = None, extra_css: str = None):
         """
         Initialize a Text object.
 
@@ -1245,9 +1200,7 @@ class Text(Base):
             str: The Text object converted to HTML format.
         """
         formatted_text = f'<report-text style="{self.extra_css}">'
-        formatted_text += "".join(
-            [f"<p>{p.strip()}</p>" for p in self.text.split("\n\n")]
-        )
+        formatted_text += "".join([f"<p>{p.strip()}</p>" for p in self.text.split("\n\n")])
         formatted_text += "</report-text>"
 
         if self.label:
@@ -1274,9 +1227,7 @@ class Select(Base):
             if not b.label:
                 raise ValueError("All blocks must have a label to use in a Select")
 
-        logging.info(
-            f"Select: {len(self.blocks)} tabs: {', '.join([c.label for c in self.blocks])}"
-        )
+        logging.info(f"Select: {len(self.blocks)} tabs: {', '.join([c.label for c in self.blocks])}")
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -1343,7 +1294,9 @@ class Language(Base):
         if self.label:
             formatted_text = f"<pre><code class='language-{self.language} syntax-color'>### {self.label}\n\n{self.text.strip()}</code></pre>"
         else:
-            formatted_text = f"<pre><code class='language-{self.language} syntax-color'>{self.text.strip()}</code></pre>"
+            formatted_text = (
+                f"<pre><code class='language-{self.language} syntax-color'>{self.text.strip()}</code></pre>"
+            )
 
         return f"""<div class="code-block include_hljs">{formatted_text}</div>"""
 
@@ -1442,9 +1395,7 @@ class Sql(Language):
             prettify (Optional[bool], optional): _description_. Defaults to True.
             label (Optional[str], optional): _description_. Defaults to None.
         """
-        Language.__init__(
-            self, Sql.format_sql(code) if prettify else code, "sql", label=label
-        )
+        Language.__init__(self, Sql.format_sql(code) if prettify else code, "sql", label=label)
 
 
 ##############################
@@ -1526,16 +1477,16 @@ class ReportCreator:
 
         pio.templates["rc"] = get_rc_theme()
 
-        assert (
-            theme in pio.templates
-        ), f"Theme {theme} not in {', '.join(pio.templates.keys())}"
+        assert theme in pio.templates, f"Theme {theme} not in {', '.join(pio.templates.keys())}"
 
         pio.templates.default = theme
         # pio.templates.default = "plotly_dark"
 
         if github:
             logging.info(f"GitHub: {github}")
-            self.header_str = f"""<img src="https://avatars.githubusercontent.com/{github}?s=125" style="border-radius: 50%;">"""
+            self.header_str = (
+                f"""<img src="https://avatars.githubusercontent.com/{github}?s=125" style="border-radius: 50%;">"""
+            )
         else:
             match = re.findall(r"[A-Z]", self.title)
             icon_text = "".join(match[:2]) if match else self.title[0]
@@ -1593,9 +1544,7 @@ class ReportCreator:
 
         """
         if not isinstance(view, (Block, Group)):
-            raise ValueError(
-                f"Expected view to be either Block or Group object, got {type(view)} instead"
-            )
+            raise ValueError(f"Expected view to be either Block or Group object, got {type(view)} instead")
 
         logging.info(f"Saving report to {path}")
 
@@ -1604,9 +1553,7 @@ class ReportCreator:
         except ValueError:
             body = f"""<pre>{traceback.format_exc()}</pre>"""
 
-        file_loader = FileSystemLoader(
-            f"{os.path.dirname(os.path.abspath(__file__))}/templates"
-        )
+        file_loader = FileSystemLoader(f"{os.path.dirname(os.path.abspath(__file__))}/templates")
         template = Environment(loader=file_loader).get_template("default.html")
 
         include_plotly = "plotly-graph-div" in body
@@ -1614,9 +1561,7 @@ class ReportCreator:
         include_mermaid = "include_mermaid" in body
         include_hljs = "include_hljs" in body
 
-        logging.info(
-            f"ReportCreator: {include_plotly=}, {include_datatable=}, {include_mermaid=}, {include_hljs=}"
-        )
+        logging.info(f"ReportCreator: {include_plotly=}, {include_datatable=}, {include_mermaid=}, {include_hljs=}")
 
         with open(path, "w") as f:
             html = template.render(

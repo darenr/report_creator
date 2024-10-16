@@ -3,6 +3,7 @@ import random
 from html.parser import HTMLParser
 from typing import Tuple
 from urllib.parse import urlparse
+
 from .theming import report_creator_colors
 
 logging.basicConfig(level=logging.INFO)
@@ -59,11 +60,7 @@ def _markdown_to_html(text: str) -> str:
         def block_code(
             self, code, **_
         ):  # **_ gathers unused key-value pairs (to avoid lint warning of unused param(s))
-            return (
-                "<div class='codehilite'><pre><code>"
-                + mistune.escape(code)
-                + "</code></pre></div>"
-            )
+            return "<div class='codehilite'><pre><code>" + mistune.escape(code) + "</code></pre></div>"
 
     return mistune.create_markdown(
         renderer=HighlightRenderer(),

@@ -1,5 +1,9 @@
+line-length = 120
+
+
 [lint.per-file-ignores]
 "__init__.py" = ["F401"]
+
 
 [lint]
 extend-ignore = ["E402", "N806", "N803"]

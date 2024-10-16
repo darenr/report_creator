@@ -1,6 +1,5 @@
 import datetime
 import logging
-import textwrap
 
 import pandas as pd
 import plotly.express as px
@@ -134,9 +133,7 @@ if __name__ == "__main__":
             ),
             rc.Separator(),
             rc.Markdown(example_md, label="README.md"),
-            rc.Widget(
-                df1.plot.bar(x="Name", y="Age"), label="Matplotlib Figure - People"
-            ),
+            rc.Widget(df1.plot.bar(x="Name", y="Age"), label="Matplotlib Figure - People"),
             rc.Widget(
                 px.line(df2, x="date", y=["GOOG", "AAPL", "NFLX", "MSFT"]),
                 label="rc.Widget() of a Plotly Figure",
@@ -144,17 +141,13 @@ if __name__ == "__main__":
             rc.Separator(),
             rc.Group(
                 rc.Pie(
-                    px.data.gapminder()
-                    .query("year == 2002")
-                    .query("continent == 'Europe'"),
+                    px.data.gapminder().query("year == 2002").query("continent == 'Europe'"),
                     values="pop",
                     names="country",
                     label="rc.Pie Chart - 2002 Population of European continent",
                 ),
                 rc.Pie(
-                    px.data.gapminder()
-                    .query("year == 2002")
-                    .query("continent == 'Americas'"),
+                    px.data.gapminder().query("year == 2002").query("continent == 'Americas'"),
                     values="pop",
                     names="country",
                     label="rc.Pie Chart - 2002 Population of American continent",
@@ -220,9 +213,7 @@ if __name__ == "__main__":
             rc.Select(
                 blocks=[
                     rc.DataTable(
-                        px.data.gapminder()
-                        .query("year == 2002")
-                        .query("continent == 'Europe'"),
+                        px.data.gapminder().query("year == 2002").query("continent == 'Europe'"),
                         label="2002 European Population",
                         index=False,
                     ),
