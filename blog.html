@@ -8,6 +8,10 @@
   </title>
   <link href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css" rel="stylesheet"/>
   <!-- hightlight.js -->
+  <!-- see https://highlightjs.org/examples -->
+  <link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/github-dark.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js">
+  </script>
   <!-- DataTable -->
   <!-- Mermaid JS -->
   <!-- Plotly -->
@@ -378,210 +382,211 @@
      <div class="markdown-wrapper">
       <div style="">
        <h2>
-        Sending Pictures Through The Air: A Deep Dive into Ham Radio SSTV
+        Demystifying SSTV: A Deep Dive into Sending and Receiving Images on Ham Radio
        </h2>
        <p>
-        SSTV, or Slow-Scan Television, is a fascinating hobby within ham radio that allows you to send and receive images over RF waves. This blog post delves into the technical intricacies of SSTV, covering signal modulation, common modes, decoding techniques, and practical implementation.
-       </p>
-       <h3>
-        The Basics: How SSTV Works
-       </h3>
-       <p>
-        SSTV transmits images as a series of analog signals.  Unlike conventional television broadcasting, which sends continuous video frames at high frequencies, SSTV breaks down an image into scan lines, each represented by a varying audio tone. These tones are then modulated onto a carrier wave and transmitted over amateur radio bands.
+        Amateur radio, or "ham radio," offers a unique platform for communication beyond traditional voice calls. One fascinating aspect is Slow-Scan Television (SSTV), a technology enabling the transmission of images over radio waves. This blog post delves into the technical intricacies of SSTV, exploring how it works, its components, and practical examples for sending and receiving images.
        </p>
        <p>
         <strong>
-         Here's a simplified overview:
+         Understanding SSTV Fundamentals:
+        </strong>
+       </p>
+       <p>
+        SSTV operates by converting an image into a series of digital signals that are then transmitted at a slow rate, typically around 30-120 baud (bits per second). The received signal is decoded back into an image on the receiver end.  Here's a breakdown of key concepts:
+       </p>
+       <ul>
+        <li>
+         <p>
+          <strong>
+           Image Encoding:
+          </strong>
+          Images are transformed into data using various algorithms. Common formats include:
+         </p>
+         <ul>
+          <li>
+           <strong>
+            Black and White:
+           </strong>
+           Converted to a series of pixels representing black (0) and white (1).
+          </li>
+          <li>
+           <strong>
+            Gray Scale:
+           </strong>
+           Uses multiple bits per pixel to represent shades of gray.
+          </li>
+          <li>
+           <strong>
+            Color:
+           </strong>
+           Requires more complex encoding schemes, often using combinations of primary colors.
+          </li>
+         </ul>
+        </li>
+        <li>
+         <p>
+          <strong>
+           Signal Modulation:
+          </strong>
+          The digital data is then modulated onto a carrier wave using techniques like:
+         </p>
+         <ul>
+          <li>
+           <strong>
+            AM (Amplitude Modulation):
+           </strong>
+           Alters the amplitude of the carrier wave based on the data.
+          </li>
+          <li>
+           <strong>
+            FM (Frequency Modulation):
+           </strong>
+           Varies the frequency of the carrier wave according to the data.
+          </li>
+         </ul>
+        </li>
+        <li>
+         <p>
+          <strong>
+           Transmission Speed:
+          </strong>
+          The transmission rate, measured in baud, directly impacts image quality and clarity. Lower speeds result in coarser images but require less bandwidth.
+         </p>
+        </li>
+        <li>
+         <p>
+          <strong>
+           Reception and Decoding:
+          </strong>
+          The received modulated signal is demodulated, converted back into digital data, and then decoded into an image using a dedicated SSTV receiver or software.
+         </p>
+        </li>
+       </ul>
+       <p>
+        <strong>
+         SSTV Hardware Components:
         </strong>
        </p>
        <ol>
         <li>
          <strong>
-          Image Digitization:
+          Transceiver:
          </strong>
-         The input image is converted into digital data, typically a 64x64 or 128x128 pixel resolution.
+         A standard ham radio transceiver with appropriate frequency range and modulation capabilities (AM/FM).
         </li>
         <li>
          <strong>
-          Data Encoding:
+          Computer Interface:
          </strong>
-         Each pixel value is mapped to a specific audio tone frequency (or code). Variations in brightness correspond to different frequencies.
+         Connects the computer to the transceiver for controlling transmission, reception, and image processing.
         </li>
         <li>
          <strong>
-          Audio Modulation:
+          Audio Processor:
          </strong>
-         The encoded tones are applied to a carrier wave using Amplitude Modulation (AM) or Frequency Modulation (FM). This creates the RF signal ready for transmission.
+         Converts digital data into audio signals suitable for transmission via the radio.
         </li>
         <li>
          <strong>
-          Transmission:
+          SSTV Software:
          </strong>
-         The modulated RF signal is transmitted over a chosen amateur radio band frequency.
+         Provides tools for encoding images, setting transmission parameters, receiving and decoding signals, and displaying images. Popular options include:
+         <ul>
+          <li>
+           <strong>
+            MMSSTV:
+           </strong>
+           A widely used open-source software with a user-friendly interface.
+          </li>
+          <li>
+           <strong>
+            Fldigi SSTV:
+           </strong>
+           Offers advanced features and support for various image formats.
+          </li>
+         </ul>
+        </li>
+        <li>
+         <strong>
+          Display/Monitor:
+         </strong>
+         Used to view the received images.
         </li>
        </ol>
        <p>
         <strong>
-         Reception:
+         Sending Images with SSTV:
         </strong>
-        On the receiving end, a specialized receiver demodulates the incoming RF signal, extracts the audio tones, and converts them back into digital data representing the image. Finally, this data is displayed as an image on a computer screen or other display device.
        </p>
-       <h3>
-        Popular SSTV Modes
-       </h3>
+       <ol>
+        <li>
+         <strong>
+          Image Preparation:
+         </strong>
+         Choose an image file suitable for SSTV transmission (commonly BMP, JPG, PNG). Resize and optimize it based on desired resolution and transmission speed. 2.
+         <strong>
+          Software Configuration:
+         </strong>
+         Select your desired transmission parameters within the SSTV software (mode, speed, frequency), configure audio output settings, and choose the image file. 3.
+         <strong>
+          Transmission Control:
+         </strong>
+         Initiate transmission through the software interface. It will encode the image into digital data, modulate it onto the carrier wave, and send it via your transceiver.
+        </li>
+       </ol>
        <p>
-        Several standardized modes exist for SSTV transmission. Here are some common ones:
+        <strong>
+         Receiving Images with SSTV:
+        </strong>
        </p>
-       <table>
-        <thead>
-         <tr>
-          <th>
-           Mode
-          </th>
-          <th>
-           Description
-          </th>
-          <th>
-           Bandwidth
-          </th>
-          <th>
-           Image Size
-          </th>
-          <th>
-           Data Rate
-          </th>
-         </tr>
-        </thead>
-        <tbody>
-         <tr>
-          <td>
-           <strong>
-            RTTY
-           </strong>
-          </td>
-          <td>
-           Robust and widely used, often employing 1200 baud signaling.
-          </td>
-          <td>
-           ~500 Hz
-          </td>
-          <td>
-           64x64 pixels
-          </td>
-          <td>
-           ~30 images per hour
-          </td>
-         </tr>
-         <tr>
-          <td>
-           <strong>
-            FAX
-           </strong>
-          </td>
-          <td>
-           Developed for facsimile transmission, capable of higher resolution images.
-          </td>
-          <td>
-           ~3 kHz
-          </td>
-          <td>
-           Up to 200x200 pixels
-          </td>
-          <td>
-           Several images per minute
-          </td>
-         </tr>
-        </tbody>
-       </table>
-       <h3>
-        SSTV Software: Bringing the Images to Life
-       </h3>
+       <ol>
+        <li>
+         <strong>
+          Receiver Setup:
+         </strong>
+         Tune your transceiver to the appropriate frequency and set it for AM or FM reception.
+        </li>
+        <li>
+         <strong>
+          Software Configuration:
+         </strong>
+         Configure your SSTV software to receive on the same frequency and mode used for transmission. 3.
+         <strong>
+          Signal Capture:
+         </strong>
+         The software will capture the received modulated signal, demodulate it, decode the digital data, and display the reconstructed image.
+        </li>
+       </ol>
        <p>
-        Numerous software packages facilitate SSTV communication. These programs handle image encoding, demodulation, and display. Some popular choices include:
+        <strong>
+         Code Snippet (Illustrative Example using MMSSTV API):
+        </strong>
        </p>
-       <ul>
-        <li>
-         <strong>
-          MORS-SSTV:
-         </strong>
-         A comprehensive program with support for various modes, audio output options, and logging capabilities.
-        </li>
-        <li>
-         <strong>
-          Fldigi:
-         </strong>
-         A versatile platform that supports multiple digital modes, including SSTV.
-        </li>
-        <li>
-         <strong>
-          Virtual Audio Cable (VAC):
-         </strong>
-         Used to route audio signals between different software applications, essential for integrating SSTV with other tools.
-        </li>
-       </ul>
-       <h3>
-        Hardware Requirements: Getting Started with SSTV
-       </h3>
+       <div class="codehilite">
+        <pre><code># Import necessary libraries
+from mmsstv import MMSSTV
+
+# Create an instance of the MMSSTV class
+sstv = MMSSTV()
+
+# Configure transmission parameters
+sstv.set_mode("STANDARD")
+sstv.set_speed(120)  
+
+# Load and transmit the image
+sstv.send_image("my_image.jpg") 
+
+
+</code></pre>
+       </div>
        <p>
-        To engage in SSTV, you'll need the following:
+        <strong>
+         Conclusion:
+        </strong>
        </p>
-       <ul>
-        <li>
-         <strong>
-          Ham Radio License:
-         </strong>
-         Required to operate on amateur radio bands.
-        </li>
-        <li>
-         <strong>
-          Transceiver:
-         </strong>
-         A capable HF or VHF/UHF transceiver with audio output and input jacks.
-        </li>
-        <li>
-         <strong>
-          Computer:
-         </strong>
-         A computer with suitable software installed for image encoding, demodulation, and display.
-        </li>
-        <li>
-         <strong>
-          Audio Interface:
-         </strong>
-         An interface connects the computer's audio output to your transceiver's audio inputs.
-        </li>
-       </ul>
-       <h3>
-        Troubleshooting SSTV Issues:
-       </h3>
        <p>
-        Common issues encountered in SSTV include:
-       </p>
-       <ul>
-        <li>
-         <strong>
-          Weak Signal Reception:
-         </strong>
-         Ensure proper antenna placement and alignment for optimal signal strength. Consider using a directional antenna for targeted reception.
-        </li>
-        <li>
-         <strong>
-          Audio Crosstalk:
-         </strong>
-         Noise interference can disrupt the audio tones. Employ noise filtering techniques or use shielded cables to minimize unwanted signals.
-        </li>
-        <li>
-         <strong>
-          Image Distortion:
-         </strong>
-         Check your software settings, ensure accurate image scaling, and verify the transmission bandwidth aligns with the receiving equipment.
-        </li>
-       </ul>
-       <h3>
-        Conclusion:
-       </h3>
-       <p>
-        SSTV offers a unique and rewarding way to explore the world of ham radio. By understanding the technical principles behind SSTV signal modulation, decoding techniques, and common modes, you can unlock the fascinating world of sending and receiving images through the airwaves. Whether you're a seasoned ham operator or just starting out, SSTV provides a captivating experience that combines technology and communication in an intriguing way.
+        SSTV offers a captivating way to explore the possibilities of ham radio beyond voice communication. It provides a platform for visual storytelling, sharing images across continents, and experiencing the satisfaction of building and operating your own imaging system. This blog post has provided a technical overview of SSTV, highlighting its fundamental principles, hardware components, and practical aspects of image transmission and reception. As technology advances, we can expect further refinements in SSTV, leading to even higher-resolution images and more innovative applications in the ham radio community.
        </p>
       </div>
      </div>
@@ -627,6 +632,14 @@
 
         // Initialize highlight.js, mermaid.js, dataTables.js etc comnditionally
 
+        
+
+        // style any code blocks
+        document
+          .querySelectorAll(".syntax-color, .codehilite pre code")
+          .forEach((element, key) => {
+            hljs.highlightElement(element);
+          });
         
 
 
