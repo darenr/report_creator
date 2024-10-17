@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Using ham radio SSTV to send and receive images
+  </title>
+  <link href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css" rel="stylesheet"/>
+  <!-- hightlight.js -->
+  <!-- DataTable -->
+  <!-- Mermaid JS -->
+  <!-- Plotly -->
+  <!--
+
+            variables, for example: style: color: var(--links)
+
+                --background-body
+                --background
+                --background-alt
+                --selection
+                --text-main
+                --text-bright
+                --text-muted
+                --links
+                --focus
+                --border
+                --code
+                --animation-duration
+                --button-hover
+                --scrollbar-thumb
+                --scrollbar-thumb-hover
+                --form-placeholder
+                --form-text
+                --variable
+                --highlight
+                --select-arrow
+
+            https://github.com/kognise/water.css#theming
+        -->
+  <style>
+   :root {
+        --focus: red;
+        --button-hover: black;
+      }
+
+      html {
+        font-smooth: auto !important;
+        -webkit-font-smoothing: antialiased !important;
+        -moz-osx-font-smoothing: grayscale !important;
+      }
+
+      input:disabled {
+        opacity: unset;
+      }
+
+      details {
+        background-color: var(--background-body);
+        margin: 0;
+      }
+
+      summary {
+        background-color: var(--background-body);
+        margin-left: -20px !important;
+      }
+
+      /* end water undos */
+
+      block {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        min-width: 0;
+        width: 100%;
+        flex-wrap: nowrap;
+      }
+
+      block-component {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        flex: 1;
+        align-items: stretch;
+      }
+
+      .group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1em;
+      }
+
+      .group > * {
+        flex: 1 1 300px;
+      }
+
+      div.round-bordered {
+        border: 1px solid var(--border);
+        border-radius: 0.75rem;
+        padding: 20px;
+      }
+
+      .metric {
+        padding: 10px;
+        padding-left: 25px;
+        border: 1px solid var(--border);
+        border-radius: 0.75rem;
+        height: 100%;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .metric h1 {
+        margin-top: 0;
+        white-space: nowrap;
+        font-size: 2.6rem;
+        font-weight: 600;
+      }
+
+      .metric p {
+        color: var(--text-main);
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      .block-bordered {
+        border-left: 10px solid var(--focus) !important;
+        padding-left: 15px !important;
+      }
+
+      header {
+        align-items: center;
+        display: flex;
+        gap: 25px;
+      }
+
+      header header-text {
+        display: flex;
+        flex-direction: column;
+      }
+
+      header letter-icon {
+        display: flex;
+        flex-direction: column;
+      }
+
+      report-caption {
+        display: block;
+        margin-top: 0.5em;
+        margin-bottom: 1em;
+        font-size: 1.5em;
+        font-weight: bold;
+        border-left: 5px solid var(--focus);
+        padding-left: 15px;
+      }
+
+      report-text {
+        margin-top: 0.5em;
+        margin-bottom: 1.5em;
+        font-size: 1.1em;
+      }
+
+      caption {
+        margin-top: 0.5em;
+        margin-bottom: 1em;
+        font-size: 1.5em;
+        font-weight: bold;
+        border-left: 5px solid var(--focus);
+        padding-left: 15px;
+      }
+
+      select:not([multiple]):not([size]) {
+        padding-right: 1.5rem;
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+
+      body {
+        max-width: 90%;
+        width: 90%;
+        margin: 20px auto;
+        padding-left: 5%;
+        padding-right: 5%;
+
+        font-family: "Tahoma", system-ui, -apple-system, sans-serif;
+
+        font-weight: 400;
+        font-style: normal;
+        line-height: 1.4;
+        word-wrap: break-word;
+        text-rendering: optimizeLegibility;
+      }
+
+      /* Style the tab */
+      .tab {
+        overflow: hidden;
+        border-bottom: 3px solid var(--button-hover);
+      }
+
+      /* Style the buttons that are used to open the tab content */
+      .tab button {
+        font-weight: normal;
+
+        background: var(--background-body) !important;
+        color: var(--text-muted);
+
+        float: left;
+
+        cursor: pointer;
+        transition: 0.1s;
+        margin: 0 !important;
+        border-radius: 0;
+        border: none;
+        outline: none;
+        box-shadow: none !important;
+      }
+
+      .tab button:hover {
+        color: var(--text-bright);
+      }
+
+      .tab button.active {
+        background: var(--button-hover) !important;
+        color: white;
+        border-top-right-radius: 0.25em;
+        border-top-left-radius: 0.25em;
+      }
+
+      /* Style the tab content */
+      .tabcontent {
+        display: none;
+        width: 100%;
+        border: 0.5px solid var(--border);
+        box-sizing: border-box;
+        border-bottom-left-radius: 0.5rem;
+        border-bottom-right-radius: 0.5rem;
+        padding: 20px;
+      }
+
+      .indented-text-block {
+        text-indent: 20px;
+      }
+
+      .diagram-block {
+        flex: 1;
+        box-sizing: border-box;
+      }
+
+      .diagram-block figure {
+        margin: 0 !important;
+      }
+
+      .image-block {
+        flex: 1;
+        box-sizing: border-box;
+      }
+
+      .image-block figure {
+        margin: 0 !important;
+      }
+
+      .image-block img {
+        height: 500px;
+        object-fit: scale-down;
+      }
+
+      div.markdown-wrapper {
+        flex: 1;
+      }
+
+      .rounded {
+        border-radius: 0.75rem;
+      }
+
+      div.markdown-wrapper pre {
+        white-space: pre-wrap;
+      }
+
+      .remove-all-styles {
+        all: unset;
+        display: block;
+      }
+
+      div.dataTables-wrapper {
+        min-width: 0;
+        width: 100% "!important";
+        display: table;
+        margin: 0;
+      }
+
+      div.dt-search input {
+        all: unset;
+      }
+
+      div.dt-layout-cell caption {
+        border: unset;
+        padding: unset;
+        font-size: unset;
+      }
+
+      table.dataTable {
+        width: 100% !important;
+        margin: 0;
+        padding: 0;
+      }
+
+      table.dataTable tbody tr {
+        font-weight: normal;
+      }
+
+      .code-block {
+        height: 100%;
+        box-sizing: border-box;
+      }
+
+      pre code.hljs {
+        border: 1px solid var(--border);
+      }
+
+      pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        box-sizing: border-box;
+      }
+
+      .report-widget {
+        width: 100%;
+      }
+
+      .report-widget table {
+        display: block;
+        max-width: -moz-fit-content;
+        max-width: fit-content;
+        overflow-x: auto;
+        white-space: nowrap;
+        border: none;
+      }
+
+      .component-description {
+        font-size: 0.8em;
+        color: var(--text-muted);
+      }
+  </style>
+ </head>
+ <body>
+  <header>
+   <div class="letter-icon">
+    <svg height="125" version="1.1" width="125" xmlns="http://www.w3.org/2000/svg">
+     <style>
+      .icon_text_style {
+                                font-size: 4em;
+                                font-family: Verdana, lucida console, Fira Mono, monospace;
+                                text-anchor: middle;
+                                stroke-width: 1px;
+                                font-weight: bold;
+                                alignment-baseline: central;
+                            }
+     </style>
+     <circle cx="62.5" cy="62.5" fill="#28cf77" r="62.5">
+     </circle>
+     <text class="icon_text_style" fill="black" x="50%" y="50%">
+      US
+     </text>
+    </svg>
+   </div>
+   <div class="header-text">
+    <h1>
+     Using ham radio SSTV to send and receive images
+    </h1>
+   </div>
+  </header>
+  <hr/>
+  <div class="container">
+   <block>
+    <block-component>
+     <div class="markdown-wrapper">
+      <div style="">
+       <h2>
+        Sending Pictures Through The Air: A Deep Dive into Ham Radio SSTV
+       </h2>
+       <p>
+        SSTV, or Slow-Scan Television, is a fascinating hobby within ham radio that allows you to send and receive images over RF waves. This blog post delves into the technical intricacies of SSTV, covering signal modulation, common modes, decoding techniques, and practical implementation.
+       </p>
+       <h3>
+        The Basics: How SSTV Works
+       </h3>
+       <p>
+        SSTV transmits images as a series of analog signals.  Unlike conventional television broadcasting, which sends continuous video frames at high frequencies, SSTV breaks down an image into scan lines, each represented by a varying audio tone. These tones are then modulated onto a carrier wave and transmitted over amateur radio bands.
+       </p>
+       <p>
+        <strong>
+         Here's a simplified overview:
+        </strong>
+       </p>
+       <ol>
+        <li>
+         <strong>
+          Image Digitization:
+         </strong>
+         The input image is converted into digital data, typically a 64x64 or 128x128 pixel resolution.
+        </li>
+        <li>
+         <strong>
+          Data Encoding:
+         </strong>
+         Each pixel value is mapped to a specific audio tone frequency (or code). Variations in brightness correspond to different frequencies.
+        </li>
+        <li>
+         <strong>
+          Audio Modulation:
+         </strong>
+         The encoded tones are applied to a carrier wave using Amplitude Modulation (AM) or Frequency Modulation (FM). This creates the RF signal ready for transmission.
+        </li>
+        <li>
+         <strong>
+          Transmission:
+         </strong>
+         The modulated RF signal is transmitted over a chosen amateur radio band frequency.
+        </li>
+       </ol>
+       <p>
+        <strong>
+         Reception:
+        </strong>
+        On the receiving end, a specialized receiver demodulates the incoming RF signal, extracts the audio tones, and converts them back into digital data representing the image. Finally, this data is displayed as an image on a computer screen or other display device.
+       </p>
+       <h3>
+        Popular SSTV Modes
+       </h3>
+       <p>
+        Several standardized modes exist for SSTV transmission. Here are some common ones:
+       </p>
+       <table>
+        <thead>
+         <tr>
+          <th>
+           Mode
+          </th>
+          <th>
+           Description
+          </th>
+          <th>
+           Bandwidth
+          </th>
+          <th>
+           Image Size
+          </th>
+          <th>
+           Data Rate
+          </th>
+         </tr>
+        </thead>
+        <tbody>
+         <tr>
+          <td>
+           <strong>
+            RTTY
+           </strong>
+          </td>
+          <td>
+           Robust and widely used, often employing 1200 baud signaling.
+          </td>
+          <td>
+           ~500 Hz
+          </td>
+          <td>
+           64x64 pixels
+          </td>
+          <td>
+           ~30 images per hour
+          </td>
+         </tr>
+         <tr>
+          <td>
+           <strong>
+            FAX
+           </strong>
+          </td>
+          <td>
+           Developed for facsimile transmission, capable of higher resolution images.
+          </td>
+          <td>
+           ~3 kHz
+          </td>
+          <td>
+           Up to 200x200 pixels
+          </td>
+          <td>
+           Several images per minute
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <h3>
+        SSTV Software: Bringing the Images to Life
+       </h3>
+       <p>
+        Numerous software packages facilitate SSTV communication. These programs handle image encoding, demodulation, and display. Some popular choices include:
+       </p>
+       <ul>
+        <li>
+         <strong>
+          MORS-SSTV:
+         </strong>
+         A comprehensive program with support for various modes, audio output options, and logging capabilities.
+        </li>
+        <li>
+         <strong>
+          Fldigi:
+         </strong>
+         A versatile platform that supports multiple digital modes, including SSTV.
+        </li>
+        <li>
+         <strong>
+          Virtual Audio Cable (VAC):
+         </strong>
+         Used to route audio signals between different software applications, essential for integrating SSTV with other tools.
+        </li>
+       </ul>
+       <h3>
+        Hardware Requirements: Getting Started with SSTV
+       </h3>
+       <p>
+        To engage in SSTV, you'll need the following:
+       </p>
+       <ul>
+        <li>
+         <strong>
+          Ham Radio License:
+         </strong>
+         Required to operate on amateur radio bands.
+        </li>
+        <li>
+         <strong>
+          Transceiver:
+         </strong>
+         A capable HF or VHF/UHF transceiver with audio output and input jacks.
+        </li>
+        <li>
+         <strong>
+          Computer:
+         </strong>
+         A computer with suitable software installed for image encoding, demodulation, and display.
+        </li>
+        <li>
+         <strong>
+          Audio Interface:
+         </strong>
+         An interface connects the computer's audio output to your transceiver's audio inputs.
+        </li>
+       </ul>
+       <h3>
+        Troubleshooting SSTV Issues:
+       </h3>
+       <p>
+        Common issues encountered in SSTV include:
+       </p>
+       <ul>
+        <li>
+         <strong>
+          Weak Signal Reception:
+         </strong>
+         Ensure proper antenna placement and alignment for optimal signal strength. Consider using a directional antenna for targeted reception.
+        </li>
+        <li>
+         <strong>
+          Audio Crosstalk:
+         </strong>
+         Noise interference can disrupt the audio tones. Employ noise filtering techniques or use shielded cables to minimize unwanted signals.
+        </li>
+        <li>
+         <strong>
+          Image Distortion:
+         </strong>
+         Check your software settings, ensure accurate image scaling, and verify the transmission bandwidth aligns with the receiving equipment.
+        </li>
+       </ul>
+       <h3>
+        Conclusion:
+       </h3>
+       <p>
+        SSTV offers a unique and rewarding way to explore the world of ham radio. By understanding the technical principles behind SSTV signal modulation, decoding techniques, and common modes, you can unlock the fascinating world of sending and receiving images through the airwaves. Whether you're a seasoned ham operator or just starting out, SSTV provides a captivating experience that combines technology and communication in an intriguing way.
+       </p>
+      </div>
+     </div>
+    </block-component>
+   </block>
+  </div>
+  <script>
+   function triggerResize() {
+        window.dispatchEvent(new Event("resize"));
+      }
+      function openTab(evt, tabName, tableIndex) {
+        // Declare variables
+        var i, tabcontent, tablinks;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.querySelectorAll(
+          '.tabcontent[data-table-index="' + tableIndex + '"]'
+        );
+
+        // Hide all tab contents for the specified table index
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+        }
+
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.querySelectorAll(
+          '.tablinks[data-table-index="' + tableIndex + '"]'
+        );
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].classList.remove("active");
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        for (i = 0; i < tabcontent.length; i++) {
+          if (tabcontent[i].id == tabName) {
+            tabcontent[i].style.display = "block";
+          }
+        }
+        evt.currentTarget.classList.add("active");
+        triggerResize();
+      }
+      (function () {
+
+        // Initialize highlight.js, mermaid.js, dataTables.js etc comnditionally
+
+        
+
+
+        document.querySelectorAll(".defaultOpen").forEach(function (button) {
+          button.click();
+        });
+
+        
+
+        
+
+        // plotly doesn't properly resize on page load, so trigger responsive event
+        triggerResize();
+      })();
+  </script>
+ </body>
+</html>

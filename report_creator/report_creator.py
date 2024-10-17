@@ -1452,7 +1452,7 @@ class ReportCreator:
         github: Optional[str] = None,
         theme: Optional[str] = "rc",
         code_theme: Optional[str] = "github-dark",
-        diagram_theme: Optional[str] = "default",
+        diagram_theme: Optional[str] = "neutral",
     ):
         """
         Initialize a ReportCreator object.
@@ -1559,7 +1559,7 @@ class ReportCreator:
         include_plotly = "plotly-graph-div" in body
         include_datatable = "include_datatable" in body
         include_mermaid = "include_mermaid" in body
-        include_hljs = "include_hljs" in body
+        include_hljs = "codehilite" in body
 
         logging.info(f"ReportCreator: {include_plotly=}, {include_datatable=}, {include_mermaid=}, {include_hljs=}")
 
