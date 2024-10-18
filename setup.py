@@ -46,7 +46,7 @@ setup(
     author_email=metadata["__contact__"],
     description=metadata["__description__"],
     license=metadata["__license__"],
-    keywords="python, html, reports, report, creator, generator, markdown, yaml, plot, chart, table, ai",
+    keywords="python, html, reports, report, creator, generator, markdown, yaml, plot, chart, table, blog",
     url="https://github.com/darenr/report_creator",
     packages=find_packages(),
     include_package_data=True,
@@ -63,6 +63,6 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
     ],
-    extras_require={"ai": ["ollama"]},
 )
