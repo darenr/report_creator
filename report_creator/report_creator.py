@@ -1065,7 +1065,7 @@ class Histogram(PxBase):
             x (str): The column name to be used for the histogram.
             dimension (Optional[str], optional): The column name to be used for coloring the histogram bars. Defaults to None.
             label (Optional[str], optional): The label for the histogram. Defaults to None.
-            **kwargs (Optional[Dict]): Additional keyword arguments.
+            kwargs (Optional[Dict]): Additional keyword arguments.
 
         Raises:
             AssertionError: If `x` or `dimension` is not present in the DataFrame columns.
