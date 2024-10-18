@@ -23,6 +23,7 @@ Library to assemble reports in HTML from various components using python
 * [x] Add built-in easy plotting that looks stylistically consistent with the report
 * [x] Add option to change the report icon based on a github account avatar
 * [x] Add a metric type for timeseries data which should some aggregate function of the data, and plot over time.
+* [x] Add diagram component with Mermaid JS
 * [ ] Add a status metric that supports up to a handful of k/v pairs (k=task, v=status)
 * [ ] Add Calendar
 * [ ] Add `yfinance` plots/tables (maybe)
@@ -96,7 +97,15 @@ pipdeptree --exclude pip,pipdeptree,setuptools,wheel,twine
 
 ```
 
+## Publish
+
+* run `publish.sh`
+
 ## Dev Notes
 
 * **4/18/24 - no breaking changes**, all changes should go through standard deprecation policies
 * To render math you'll need to `pip install md4mathjax`
+
+## Docs
+
+pip install sphinx sphinx-autodoc-typehints sphinx_rtd_theme sphinx_copybutton --upgrade
