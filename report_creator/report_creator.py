@@ -38,12 +38,13 @@ logging.basicConfig(level=logging.INFO)
 
 
 class Base(ABC):
-    def __init__(self, label: Optional[str] = None):
-        """Abstract Base Class for all components
+    """Abstract Base Class for all components
 
-        Args:
-            label (Optional[str], optional): _description_. Defaults to None.
-        """
+    Args:
+        label (Optional[str], optional): _description_. Defaults to None.
+    """
+
+    def __init__(self, label: Optional[str] = None):
         self.label = label
 
     @abstractmethod
@@ -55,13 +56,14 @@ class Base(ABC):
 
 
 class Block(Base):
-    def __init__(self, *components: Base, label: Optional[str] = None):
-        """Block is a container for vertically stacked components
+    """Block is a container for vertically stacked components
 
-        Args:
-            components (Base): _description_
-            label (Optional[str], optional): _description_. Defaults to None.
-        """
+    Args:
+        components (Base): _description_
+        label (Optional[str], optional): _description_. Defaults to None.
+    """
+
+    def __init__(self, *components: Base, label: Optional[str] = None):
         Base.__init__(self, label=label)
         self.components = components
         logging.info(f"Block: {len(self.components)} components")
@@ -84,13 +86,14 @@ class Block(Base):
 
 
 class Group(Base):
-    def __init__(self, *components: Base, label: Optional[str] = None):
-        """Group is a container for horizontally stacked components
+    """Group is a container for horizontally stacked components
 
-        Args:
-            components (Base): _description_
-            label (Optional[str], optional): _description_. Defaults to None.
-        """
+    Args:
+        components (Base): _description_
+        label (Optional[str], optional): _description_. Defaults to None.
+    """
+
+    def __init__(self, *components: Base, label: Optional[str] = None):
         Base.__init__(self, label=label)
         self.components = components
         logging.info(f"Group: {len(self.components)} components {label=}")
@@ -120,13 +123,14 @@ class Group(Base):
 
 
 class Collapse(Base):
-    def __init__(self, *components: Base, label: Optional[str] = None):
-        """Collapse is a container for vertically stacked components that can be collapsed
+    """Collapse is a container for vertically stacked components that can be collapsed
 
-        Args:
-            components (Base): _description_
-            label (Optional[str], optional): _description_. Defaults to None.
-        """
+    Args:
+        components (Base): _description_
+        label (Optional[str], optional): _description_. Defaults to None.
+    """
+
+    def __init__(self, *components: Base, label: Optional[str] = None):
         Base.__init__(self, label=label)
         self.components = components
         logging.info(f"Collapse: {len(self.components)} components, {label=}")
@@ -146,13 +150,14 @@ class Collapse(Base):
 
 
 class Widget(Base):
-    def __init__(self, widget, *, label: Optional[str] = None):
-        """Widget is a container for any component that supports the _repr_html_ method (anything written for Jupyter).
+    """Widget is a container for any component that supports the _repr_html_ method (anything written for Jupyter).
 
-        Args:
-            widget: A widget that supports the _repr_html_ method.
-            label (Optional[str], optional): _description_. Defaults to None.
-        """
+    Args:
+        widget: A widget that supports the _repr_html_ method.
+        label (Optional[str], optional): _description_. Defaults to None.
+    """
+
+    def __init__(self, widget, *, label: Optional[str] = None):
         Base.__init__(self, label=label)
         if isinstance(widget, go.Figure):
             self.widget = widget
@@ -194,15 +199,16 @@ class Widget(Base):
 
 
 class MetricGroup(Base):
-    def __init__(self, df: pd.DataFrame, heading: str, value: str, *, label: Optional[str] = None):
-        """MetricGroup is a container for a group of metrics. It takes a DataFrame with a heading and value column.
+    """MetricGroup is a container for a group of metrics. It takes a DataFrame with a heading and value column.
 
-        Args:
-            df (pd.DataFrame): the DataFrame containing the data.
-            heading (str): the metric heading string
-            value (str): the column wuth the metric value
-            label (Optional[str], optional): _description_. Defaults to None.
-        """
+    Args:
+        df (pd.DataFrame): the DataFrame containing the data.
+        heading (str): the metric heading string
+        value (str): the column wuth the metric value
+        label (Optional[str], optional): _description_. Defaults to None.
+    """
+
+    def __init__(self, df: pd.DataFrame, heading: str, value: str, *, label: Optional[str] = None):
         Base.__init__(self, label=label)
         assert heading in df.columns, f"heading {heading} not in df"
         assert value in df.columns, f"value {value} not in df"
@@ -227,6 +233,14 @@ class EventMetric(Base):
     period of frequency (daily, D, weekly, W etc) and plotted as a line chart along with showing the
     count and percentage of the total.
 
+    Args:
+        df (pd.DataFrame): the data
+        condition (str): an expression to evaluate like B==42
+        date (str, optional): the date column.
+        frequency (str, optional): the frequency to group over. Defaults to "D" (daily)
+        color (str, optional): _description_. Defaults to "red".
+        heading (Optional[str], optional): _description_. Defaults to None.
+        label (Optional[str], optional): _description_. Defaults to None.
     """
 
     def __init__(
@@ -240,17 +254,6 @@ class EventMetric(Base):
         *,
         label: Optional[str] = None,
     ):
-        """_summary_
-
-        Args:
-            df (pd.DataFrame): the data
-            condition (str): an expression to evaluate like B==42
-            date (str, optional): the date column.
-            frequency (str, optional): the frequency to group over. Defaults to "D" (daily)
-            color (str, optional): _description_. Defaults to "red".
-            heading (Optional[str], optional): _description_. Defaults to None.
-            label (Optional[str], optional): _description_. Defaults to None.
-        """
         Base.__init__(self, label=label)
 
         assert date in df.columns, f"index column {date} not in df"
@@ -335,6 +338,17 @@ class EventMetric(Base):
 
 
 class Metric(Base):
+    """Metric is a container for a single metric. It takes a heading and a value.
+
+    Args:
+        heading (str): _description_
+        value (Union[str, int, float]): _description_
+        unit ([type], optional): _description_. Defaults to None.
+        float_precision (int, optional): limit the precision (number of decimal digits). Defaults to 3.
+        label (Optional[str], optional): _description_. Defaults to None.
+        colored (Optional[bool], optional): to use a colorful background or not. Defaults to False.
+    """
+
     def __init__(
         self,
         heading: str,
@@ -345,16 +359,6 @@ class Metric(Base):
         label: Optional[str] = None,
         colored: Optional[bool] = False,
     ):
-        """Metric is a container for a single metric. It takes a heading and a value.
-
-        Args:
-            heading (str): _description_
-            value (Union[str, int, float]): _description_
-            unit ([type], optional): _description_. Defaults to None.
-            float_precision (int, optional): limit the precision (number of decimal digits). Defaults to 3.
-            label (Optional[str], optional): _description_. Defaults to None.
-            colored (Optional[bool], optional): to use a colorful background or not. Defaults to False.
-        """
         Base.__init__(self, label=label)
         self.heading = heading
         self.float_precision = float_precision
@@ -398,6 +402,15 @@ class Metric(Base):
 
 
 class Table(Widget):
+    """Table is a simple container for a DataFrame (or table-like list of dictionaries.)
+
+    Args:
+        data (Union[pd.DataFrame, List[Dict]]): _description_
+        label (Optional[str], optional): _description_. Defaults to None.
+        index (bool, optional): _description_. Defaults to False.
+        float_precision (int, optional): _description_. Defaults to 3.
+    """
+
     def __init__(
         self,
         data: Union[pd.DataFrame, List[Dict]],
@@ -406,14 +419,6 @@ class Table(Widget):
         index: Optional[bool] = False,
         float_precision: Optional[int] = 2,
     ):
-        """Table is a simple container for a DataFrame (or table-like list of dictionaries.)
-
-        Args:
-            data (Union[pd.DataFrame, List[Dict]]): _description_
-            label (Optional[str], optional): _description_. Defaults to None.
-            index (bool, optional): _description_. Defaults to False.
-            float_precision (int, optional): _description_. Defaults to 3.
-        """
         if isinstance(data, list):
             df = pd.DataFrame(data)
         elif isinstance(data, pd.DataFrame):
@@ -430,6 +435,17 @@ class Table(Widget):
 
 
 class DataTable(Base):
+    """DataTable is a container for a DataFrame (or table-like list of dictionaries.) with search and sort capabilities.
+
+    Args:
+        data (Union[pd.DataFrame, List[Dict]]): _description_
+        label (Optional[str], optional): _description_. Defaults to None.
+        wrap_text (bool, optional): _description_. Defaults to True.
+        index (bool, optional): _description_. Defaults to False.
+        max_rows (int, optional): _description_. Defaults to -1.
+        float_precision (int, optional): _description_. Defaults to 3.
+    """
+
     def __init__(
         self,
         data: Union[pd.DataFrame, List[Dict]],
@@ -440,16 +456,6 @@ class DataTable(Base):
         max_rows: Optional[int] = -1,
         float_precision: Optional[int] = 2,
     ):
-        """DataTable is a container for a DataFrame (or table-like list of dictionaries.) with search and sort capabilities.
-
-        Args:
-            data (Union[pd.DataFrame, List[Dict]]): _description_
-            label (Optional[str], optional): _description_. Defaults to None.
-            wrap_text (bool, optional): _description_. Defaults to True.
-            index (bool, optional): _description_. Defaults to False.
-            max_rows (int, optional): _description_. Defaults to -1.
-            float_precision (int, optional): _description_. Defaults to 3.
-        """
         Base.__init__(self, label=label)
 
         if isinstance(data, list):
@@ -490,14 +496,15 @@ class DataTable(Base):
 
 
 class Html(Base):
-    def __init__(self, html: str, *, css: Optional[str] = None, label: Optional[str] = None):
-        """Html is a container for raw HTML. It can also take CSS.
+    """Html is a container for raw HTML. It can also include CSS.
 
-        Args:
-            html (str): The raw HTML content.
-            css (str, optional): The CSS styles to be applied to the HTML. Defaults to None.
-            label (Optional[str], optional): The label for the HTML component. Defaults to None.
-        """
+    Args:
+        html (str): The raw HTML content.
+        css (str, optional): The CSS styles to be applied to the HTML. Defaults to None.
+        label (Optional[str], optional): The label for the HTML component. Defaults to None.
+    """
+
+    def __init__(self, html: str, *, css: Optional[str] = None, label: Optional[str] = None):
         Base.__init__(self, label=label)
         self.html = html
         self.css = css
@@ -519,6 +526,15 @@ class Html(Base):
 
 
 class Diagram(Base):
+    """Diagram is a container for a mermaid js diagram. For examples of the syntax please see https://mermaid.js.org/syntax/examples.html
+    Note also that ChatGPT is able to create the diagrams for you simply by describing them in text. The kitchen sink example is an example of this.
+
+    Args:
+        src (str): The mermaid source code.
+        label (Optional[str], optional): The label for the diagram. Defaults to None.
+        extra_css (str, optional): Additional CSS styles to be applied. Defaults to None.
+    """
+
     def __init__(
         self,
         src: str,
@@ -526,14 +542,6 @@ class Diagram(Base):
         label: Optional[str] = None,
         extra_css: Optional[str] = None,
     ):
-        """Diagram is a container for a mermaid js diagram. For examples of the syntax please see https://mermaid.js.org/syntax/examples.html
-        Note also that ChatGPT is able to create the diagrams for you simply by describing them in text. The kitchen sink example is an example of this.
-
-        Args:
-            src (str): The mermaid source code.
-            label (Optional[str], optional): The label for the diagram. Defaults to None.
-            extra_css (str, optional): Additional CSS styles to be applied. Defaults to None.
-        """
         Base.__init__(self, label=label)
 
         self.src = src
@@ -561,6 +569,17 @@ class Diagram(Base):
 
 
 class Image(Base):
+    """Image is a container for an image. It can also take a link.
+
+    Args:
+        src (str): a URL where the image can be found, or a base_64 URI.
+        link_to (str, optional): a URL to go to if clicked. Defaults to not clickable.
+        label (Optional[str], optional): a label for the image. Defaults to None.
+        extra_css (str, optional): additional CSS styles for the image. Defaults to None.
+        rounded (bool, optional): if set to True, the image will have rounded corners. Defaults to True.
+        convert_to_base64 (bool, optional): if set to True, the src will be fetched at create time and replaced with a base64 encoded image. Defaults to False.
+    """
+
     def __init__(
         self,
         src: str,
@@ -571,16 +590,6 @@ class Image(Base):
         rounded: Optional[bool] = True,
         convert_to_base64: Optional[bool] = False,
     ):
-        """Image is a container for an image. It can also take a link.
-
-        Args:
-            src (str): a URL where the image can be found, or a base_64 URI.
-            link_to (str, optional): a URL to go to if clicked. Defaults to not clickable.
-            label (Optional[str], optional): a label for the image. Defaults to None.
-            extra_css (str, optional): additional CSS styles for the image. Defaults to None.
-            rounded (bool, optional): if set to True, the image will have rounded corners. Defaults to True.
-            convert_to_base64 (bool, optional): if set to True, the src will be fetched at create time and replaced with a base64 encoded image. Defaults to False.
-        """
         Base.__init__(self, label=label)
         self.src = src
         self.link_to = link_to
@@ -618,14 +627,15 @@ class Image(Base):
 
 
 class Markdown(Base):
-    def __init__(self, text: str, *, label: Optional[str] = None, extra_css: Optional[str] = None):
-        """Markdown is a container for markdown text. It can also take extra CSS.
+    """Markdown is a container for markdown text. It can also take extra CSS.
 
-        Args:
-            text (str): The markdown text to be displayed.
-            label (Optional[str], optional): The label for the markdown section. Defaults to None.
-            extra_css (str, optional): Additional CSS styles to be applied. Defaults to None.
-        """
+    Args:
+        text (str): The markdown text to be displayed.
+        label (Optional[str], optional): The label for the markdown section. Defaults to None.
+        extra_css (str, optional): Additional CSS styles to be applied. Defaults to None.
+    """
+
+    def __init__(self, text: str, *, label: Optional[str] = None, extra_css: Optional[str] = None):
         Base.__init__(self, label=label)
         self.text = text
         self.extra_css = extra_css or ""
@@ -653,11 +663,6 @@ class Markdown(Base):
 
 class PxBase(Base):
     def __init__(self, label: Optional[str] = None):
-        """PXBase is a container for all Plotly Express components.
-
-        Args:
-            label (Optional[str], optional): _description_. Defaults to None.
-        """
         Base.__init__(self, label=label)
 
     @abstractmethod
@@ -704,6 +709,21 @@ class PxBase(Base):
 
 
 class Bar(PxBase):
+    """Bar is a container for a plotly express bar chart.
+
+    Args:
+        df (pd.DataFrame): The data to be plotted.
+        x (str): The column to be plotted on the x-axis.
+        y (str): The column to be plotted on the y-axis.
+        dimension (Optional[str], optional): The column to be plotted on the dimension axis. Defaults to None.
+        label (Optional[str], optional): The label for the bar chart. Defaults to None.
+        **kwargs (Optional[Dict], optional): Additional keyword arguments to be passed to the plotly express bar chart.
+
+    Raises:
+        AssertionError: If the specified columns (x, y, dimension) are not present in the DataFrame.
+
+    """
+
     def __init__(
         self,
         df: pd.DataFrame,
@@ -714,20 +734,6 @@ class Bar(PxBase):
         label: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
-        """Bar is a container for a plotly express bar chart.
-
-        Args:
-            df (pd.DataFrame): The data to be plotted.
-            x (str): The column to be plotted on the x-axis.
-            y (str): The column to be plotted on the y-axis.
-            dimension (Optional[str], optional): The column to be plotted on the dimension axis. Defaults to None.
-            label (Optional[str], optional): The label for the bar chart. Defaults to None.
-            **kwargs (Optional[Dict], optional): Additional keyword arguments to be passed to the plotly express bar chart.
-
-        Raises:
-            AssertionError: If the specified columns (x, y, dimension) are not present in the DataFrame.
-
-        """
         Base.__init__(self, label=label)
         self.df = df
         self.x = x
@@ -759,6 +765,21 @@ class Bar(PxBase):
 
 
 class Line(PxBase):
+    """Line is a container for a plotly express line chart.
+
+    Args:
+        df (pd.DataFrame): The data to be plotted.
+        x (str): The column to be plotted on the x-axis.
+        y (Union[str, List[str]]): The column(s) to be plotted on the y-axis.
+        dimension (Optional[str], optional): The column to be plotted on the dimension axis. Defaults to None.
+        label (Optional[str], optional): The label for the bar chart. Defaults to None.
+        **kwargs (Optional[Dict], optional): Additional keyword arguments to be passed to the plotly express line chart.
+
+    Raises:
+        AssertionError: If the specified columns (x, y, dimension) are not present in the DataFrame.
+
+    """
+
     def __init__(
         self,
         df: pd.DataFrame,
@@ -769,20 +790,6 @@ class Line(PxBase):
         label: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
-        """Line is a container for a plotly express line chart.
-
-        Args:
-            df (pd.DataFrame): The data to be plotted.
-            x (str): The column to be plotted on the x-axis.
-            y (Union[str, List[str]]): The column(s) to be plotted on the y-axis.
-            dimension (Optional[str], optional): The column to be plotted on the dimension axis. Defaults to None.
-            label (Optional[str], optional): The label for the bar chart. Defaults to None.
-            **kwargs (Optional[Dict], optional): Additional keyword arguments to be passed to the plotly express line chart.
-
-        Raises:
-            AssertionError: If the specified columns (x, y, dimension) are not present in the DataFrame.
-
-        """
         Base.__init__(self, label=label)
         self.df = df
         self.x = x
@@ -829,6 +836,16 @@ class Line(PxBase):
 
 
 class Pie(PxBase):
+    """Pie is a container for a plotly express pie chart.
+
+    Args:
+        df (pd.DataFrame): The input DataFrame containing the data for the report.
+        values (str): The column name in the DataFrame representing the values for the pie.
+        names (str): The column name in the DataFrame representing the names for the pie.
+        label (Optional[str], optional): The label for the pi. Defaults to None.
+        **kwargs (Optional[Dict], optional): Additional keyword arguments for the report. Defaults to None.
+    """
+
     def __init__(
         self,
         df: pd.DataFrame,
@@ -838,15 +855,6 @@ class Pie(PxBase):
         label: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
-        """Pie is a container for a plotly express pie chart.
-
-        Args:
-            df (pd.DataFrame): The input DataFrame containing the data for the report.
-            values (str): The column name in the DataFrame representing the values for the pie.
-            names (str): The column name in the DataFrame representing the names for the pie.
-            label (Optional[str], optional): The label for the pi. Defaults to None.
-            **kwargs (Optional[Dict], optional): Additional keyword arguments for the report. Defaults to None.
-        """
         Base.__init__(self, label=label)
         self.df = df
         self.values = values
@@ -882,6 +890,19 @@ class Pie(PxBase):
 
 
 class Scatter(PxBase):
+    """
+    Scatter plot class for creating scatter plots.
+
+    Args:
+        df (pd.DataFrame): The DataFrame containing the data.
+        x (str): The column name for the x-axis data.
+        y (str): The column name for the y-axis data.
+        dimension (Optional[str], optional): The column name for the dimension data. Defaults to None.
+        label (Optional[str], optional): The label for the scatter plot. Defaults to None.
+        marginal (Optional[str], optional): The type of marginal plot to add. Must be one of ['histogram', 'violin', 'box', 'rug']. Defaults to None.
+        **kwargs (Optional[Dict], optional): Additional keyword arguments to pass to the scatter plot. Defaults to None.
+    """
+
     def __init__(
         self,
         df: pd.DataFrame,
@@ -893,18 +914,6 @@ class Scatter(PxBase):
         marginal: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
-        """
-        Scatter plot class for creating scatter plots.
-
-        Args:
-            df (pd.DataFrame): The DataFrame containing the data.
-            x (str): The column name for the x-axis data.
-            y (str): The column name for the y-axis data.
-            dimension (Optional[str], optional): The column name for the dimension data. Defaults to None.
-            label (Optional[str], optional): The label for the scatter plot. Defaults to None.
-            marginal (Optional[str], optional): The type of marginal plot to add. Must be one of ['histogram', 'violin', 'box', 'rug']. Defaults to None.
-            **kwargs (Optional[Dict], optional): Additional keyword arguments to pass to the scatter plot. Defaults to None.
-        """
         Base.__init__(self, label=label)
         self.df = df
         self.x = x
@@ -956,6 +965,21 @@ class Scatter(PxBase):
 
 
 class Box(PxBase):
+    """
+    Box plot class for creating scatter plots.
+
+    Args:
+        df (pd.DataFrame): The input DataFrame.
+        y (str, optional): The column name for the y-axis. Defaults to None.
+        dimension (str, optional): The column name for the dimension. Defaults to None.
+        label (str, optional): The label for the report. Defaults to None.
+        **kwargs (dict, optional): Additional keyword arguments.
+
+    Raises:
+        AssertionError: If the y column is not present in the DataFrame.
+        AssertionError: If the dimension column is not present in the DataFrame (if specified).
+    """
+
     def __init__(
         self,
         df: pd.DataFrame,
@@ -965,20 +989,6 @@ class Box(PxBase):
         label: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
-        """
-        Box plot class for creating scatter plots.
-
-        Args:
-            df (pd.DataFrame): The input DataFrame.
-            y (str, optional): The column name for the y-axis. Defaults to None.
-            dimension (str, optional): The column name for the dimension. Defaults to None.
-            label (str, optional): The label for the report. Defaults to None.
-            **kwargs (dict, optional): Additional keyword arguments.
-
-        Raises:
-            AssertionError: If the y column is not present in the DataFrame.
-            AssertionError: If the dimension column is not present in the DataFrame (if specified).
-        """
         Base.__init__(self, label=label)
         self.df = df
         self.y = y
@@ -1023,27 +1033,12 @@ class Histogram(PxBase):
     """
     A class representing a histogram plot.
 
-    Parameters:
-    - df (pd.DataFrame): The input DataFrame containing the data.
-    - x (str): The column name in the DataFrame to be plotted on the x-axis.
-    - dimension (Optional[str]): The column name in the DataFrame to be used for color dimension (optional).
-    - label (Optional[str]): The label for the plot (optional).
-    - **kwargs (Optional[Dict]): Additional keyword arguments to be passed to the plotly histogram function.
-
-    Attributes:
-    - df (pd.DataFrame): The input DataFrame containing the data.
-    - x (str): The column name in the DataFrame to be plotted on the x-axis.
-    - kwargs (Optional[Dict]): Additional keyword arguments to be passed to the plotly histogram function.
-
-    Methods:
-    - to_html(): Generates the HTML representation of the histogram plot.
-
-    Example usage:
-    ```
-    df = pd.DataFrame({'values': [1, 2, 3, 4, 5]})
-    histogram = Histogram(df, 'values', label='Value Distribution')
-    html = histogram.to_html()
-    ```
+    Args:
+        df (pd.DataFrame): The input DataFrame.
+        x (str): The column name to be used for the histogram.
+        dimension (Optional[str], optional): The column name to be used for coloring the histogram bars. Defaults to None.
+        label (Optional[str], optional): The label for the histogram. Defaults to None.
+        kwargs (Optional[Dict]): Additional keyword arguments.
 
     For more information, refer to the Plotly documentation: https://plotly.com/python/histograms/
     """
@@ -1057,20 +1052,6 @@ class Histogram(PxBase):
         label: Optional[str] = None,
         **kwargs: Optional[Dict],
     ):
-        """
-        Initialize the Histogram object.
-
-        Args:
-            df (pd.DataFrame): The input DataFrame.
-            x (str): The column name to be used for the histogram.
-            dimension (Optional[str], optional): The column name to be used for coloring the histogram bars. Defaults to None.
-            label (Optional[str], optional): The label for the histogram. Defaults to None.
-            kwargs (Optional[Dict]): Additional keyword arguments.
-
-        Raises:
-            AssertionError: If `x` or `dimension` is not present in the DataFrame columns.
-
-        """
         Base.__init__(self, label=label)
         self.df = df
         self.x = x
@@ -1118,17 +1099,6 @@ class Heading(Base):
         *,
         level: Optional[int] = 1,
     ):
-        """
-        Initialize a ReportCreator object.
-
-        Args:
-            label (str): The heading label for the report.
-            level (Optional[int], optional): The heading level for the report. Must be between 1 and 5 (inclusive). Defaults to 1.
-
-        Raises:
-            AssertionError: If the heading level is not between 1 and 5 (inclusive).
-            AssertionError: If no heading label is provided.
-        """
         Base.__init__(self, label=label)
         assert level >= 1 and level <= 5, f"heading level ({level}) must be between 1 and 5 (inclusive)"
         assert label, "No heading label provided"
@@ -1150,12 +1120,13 @@ class Heading(Base):
 
 
 class Separator(Base):
-    def __init__(self, label: Optional[str] = None):
-        """Separator is a container for a horizontal line. It can also take a label.
+    """Separator is a container for a horizontal line. It can also take a label.
 
-        Args:
-            label (Optional[str], optional): The label to be displayed above the separator. Defaults to None.
-        """
+    Args:
+        label (Optional[str], optional): The label to be displayed above the separator. Defaults to None.
+    """
+
+    def __init__(self, label: Optional[str] = None):
         Base.__init__(self, label=label)
         logging.info(f"Separator: {label=}")
 
@@ -1176,15 +1147,16 @@ class Separator(Base):
 
 
 class Text(Base):
-    def __init__(self, text: str, *, label: Optional[str] = None, extra_css: str = None):
-        """
-        Initialize a Text object.
+    """
+    Initialize a Text object.
 
-        Args:
-            text (str): The text content of the report.
-            label (str, optional): The label for the report. Defaults to None.
-            extra_css (str, optional): Additional CSS styles for the report. Defaults to None.
-        """
+    Args:
+        text (str): The text content of the report.
+        label (str, optional): The label for the report. Defaults to None.
+        extra_css (str, optional): Additional CSS styles for the report. Defaults to None.
+    """
+
+    def __init__(self, text: str, *, label: Optional[str] = None, extra_css: str = None):
         Base.__init__(self, label=label)
         self.text = text
         self.extra_css = extra_css or ""
@@ -1213,13 +1185,14 @@ class Text(Base):
 
 
 class Select(Base):
-    def __init__(self, blocks: List[Base], *, label: Optional[str] = None):
-        """Select is a container for a group of components that will shown in tabs. It can also take an outer label.
+    """Select is a container for a group of components that will shown in tabs. It can also take an outer label.
 
-        Args:
-            blocks (List[Base]): _description_
-            label (Optional[str], optional): _description_. Defaults to None.
-        """
+    Args:
+        blocks (List[Base]): _description_
+        label (Optional[str], optional): _description_. Defaults to None.
+    """
+
+    def __init__(self, blocks: List[Base], *, label: Optional[str] = None):
         Base.__init__(self, label=label)
         self.blocks = blocks
 
@@ -1258,13 +1231,14 @@ class Select(Base):
 
 
 class Unformatted(Base):
-    def __init__(self, text: str, *, label: Optional[str] = None):
-        """Unformatted is a container for any text that should be displayed verbatim with a non-proportional font.
+    """Unformatted is a container for any text that should be displayed verbatim with a non-proportional font.
 
-        Args:
-            text (str): any text that should be displayed verbatim with a non-proportional font.
-            label (Optional[str], optional): _description_. Defaults to None.
-        """
+    Args:
+        text (str): any text that should be displayed verbatim with a non-proportional font.
+        label (Optional[str], optional): _description_. Defaults to None.
+    """
+
+    def __init__(self, text: str, *, label: Optional[str] = None):
         Base.__init__(self, label=label)
         self.text = text
 
@@ -1305,14 +1279,14 @@ class Language(Base):
 
 
 class Python(Language):
+    """Python is a container for python code. It can also take a label.
+
+    Args:
+        code (str): _description_
+        label (Optional[str], optional): _description_. Defaults to None.
+    """
+
     def __init__(self, code: str, *, label: Optional[str] = None):
-        """Python is a container for python code. It can also take a label.
-
-        Args:
-            code (str): _description_
-            label (Optional[str], optional): _description_. Defaults to None.
-        """
-
         Language.__init__(self, escape(code), "python", label=label)
 
 
@@ -1320,6 +1294,14 @@ class Python(Language):
 
 
 class Sql(Language):
+    """Sql is a container for SQL code. It can also take a label.
+
+    Args:
+        code (str): your SQL code
+        prettify (Optional[bool], optional): _description_. Defaults to True.
+        label (Optional[str], optional): _description_. Defaults to None.
+    """
+
     @staticmethod
     def format_sql(sql: str) -> str:
         BLOCK_STATEMENTS = [
@@ -1388,13 +1370,6 @@ class Sql(Language):
         prettify: Optional[bool] = False,
         label: Optional[str] = None,
     ):
-        """Sql is a container for SQL code. It can also take a label.
-
-        Args:
-            code (str): your SQL code
-            prettify (Optional[bool], optional): _description_. Defaults to True.
-            label (Optional[str], optional): _description_. Defaults to None.
-        """
         Language.__init__(self, Sql.format_sql(code) if prettify else code, "sql", label=label)
 
 
@@ -1402,13 +1377,14 @@ class Sql(Language):
 
 
 class Yaml(Language):
-    def __init__(self, data: Union[Dict, List], *, label: Optional[str] = None):
-        """Yaml is a container for yaml. It can also take a label.
+    """Yaml is a container for yaml. It can also take a label.
 
-        Args:
-            data (Union[Dict, List]): _description_
-            label (Optional[str], optional): _description_. Defaults to None.
-        """
+    Args:
+        data (Union[Dict, List]): _description_
+        label (Optional[str], optional): _description_. Defaults to None.
+    """
+
+    def __init__(self, data: Union[Dict, List], *, label: Optional[str] = None):
         Language.__init__(
             self,
             yaml.dump(data, indent=2, Dumper=yaml.SafeDumper),
@@ -1421,13 +1397,14 @@ class Yaml(Language):
 
 
 class Json(Language):
-    def __init__(self, data: Union[Dict, List], *, label: Optional[str] = None):
-        """Json is a container for JSON data. It can also take a label.
+    """Json is a container for JSON data. It can also take a label.
 
-        Args:
-            data (Union[Dict, List]): _description_
-            label (Optional[str], optional): _description_. Defaults to None.
-        """
+    Args:
+        data (Union[Dict, List]): _description_
+        label (Optional[str], optional): _description_. Defaults to None.
+    """
+
+    def __init__(self, data: Union[Dict, List], *, label: Optional[str] = None):
         Language.__init__(
             self,
             json.dumps(data, indent=2),
@@ -1439,10 +1416,21 @@ class Json(Language):
 ##############################
 
 
-##############################
-
-
 class ReportCreator:
+    """
+    Initialize a ReportCreator object.
+
+    Args:
+        title (str): The title of the report.
+        description (str, optional): The description of the report. Defaults to None.
+        author (str, optional): The author of the report. Defaults to None.
+        github (str, optional): The GitHub username to use as the report icon. Defaults to None
+        which will use an autogenerated icon based on the title.
+        theme (str, optional): The theme to use for the report. Defaults to "rc".
+        code_theme (str, optional): The code theme to use for the report. Defaults to "github-dark".
+        diagram_theme (str, optional): The mermaid theme (https://mermaid.js.org/config/theming.html#available-themes) to use Defaults to "default", options: "neo", "neo-dark", "dark", "neutral", "forest", & "base".
+    """
+
     def __init__(
         self,
         title: str,
@@ -1454,19 +1442,6 @@ class ReportCreator:
         code_theme: Optional[str] = "github-dark",
         diagram_theme: Optional[str] = "neutral",
     ):
-        """
-        Initialize a ReportCreator object.
-
-        Args:
-            title (str): The title of the report.
-            description (str, optional): The description of the report. Defaults to None.
-            author (str, optional): The author of the report. Defaults to None.
-            github (str, optional): The GitHub username to use as the report icon. Defaults to None
-            which will use an autogenerated icon based on the title.
-            theme (str, optional): The theme to use for the report. Defaults to "rc".
-            code_theme (str, optional): The code theme to use for the report. Defaults to "github-dark".
-            diagram_theme (str, optional): The mermaid theme (https://mermaid.js.org/config/theming.html#available-themes) to use Defaults to "default", options: "neo", "neo-dark", "dark", "neutral", "forest", & "base".
-        """
         self.title = title
         self.description = description
         self.author = author

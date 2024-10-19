@@ -109,3 +109,4 @@ pipdeptree --exclude pip,pipdeptree,setuptools,wheel,twine
 ## Docs
 
 pip install sphinx sphinx-autodoc-typehints sphinx_rtd_theme sphinx_copybutton --upgrade
+

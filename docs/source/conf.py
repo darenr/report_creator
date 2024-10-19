@@ -28,6 +28,7 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
+    "sphinx_autodoc_typehints",
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
 ]
@@ -38,13 +39,10 @@ exclude_patterns = []
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_static_path = ["_static"]
-
 html_theme = "sphinx_rtd_theme"
 
 html_theme_options = {
     "logo_only": True,
-    # Toc options
     "sticky_navigation": True,
     "navigation_depth": 4,
     "includehidden": True,
