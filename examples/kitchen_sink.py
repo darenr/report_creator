@@ -351,4 +351,4 @@ mindmap
             ),
         )
 
-        report.save(view, "examples/kitchen_sink.html")
+        report.save(view, "index.html")
