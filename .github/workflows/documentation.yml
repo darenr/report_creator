@@ -13,10 +13,10 @@ jobs:
       - uses: actions/setup-python@v5
       - name: Install dependencies
         run: |
-          pip install sphinx sphinx-autodoc-typehints piccolo_theme sphinx_copybutton --upgrade
+          python3 -m pip install sphinx sphinx-autodoc-typehints piccolo_theme sphinx_copybutton --upgrade
       - name: Sphinx build
         run: |
-          sphinx-build doc _build
+          cd docs && make html
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
