@@ -8,9 +8,6 @@ build:
 sphinx:
    configuration: docs/source/conf.py
 
-formats:
-   - html
-
 conda:
   environment: docs/environment.yml
 
