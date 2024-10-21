@@ -10,7 +10,6 @@ import os
 import sys
 
 add_path = os.path.abspath("../../../report_creator")
-assert os.path.exists(add_path)
 sys.path.insert(0, add_path)
 
 
