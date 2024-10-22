@@ -8,7 +8,8 @@ Creator. This tool allows you to create a report in a few simple steps. You can 
 can also add a chart to the report. The Report Creator will generate a report in HTML format that you can share with others.
 
 There is a ``kitchen_sink.py`` example in the ``examples`` directory that demonstrates how to use the Report Creator. The 
-example produces this `kitchen_sink.html <//kitchen_sink.html>`_
+example produces this report:
+
 
 Contents
 --------

@@ -43,4 +43,4 @@ htmlhelp_basename = "SphinxGitHubActionTestdoc"
 html_theme = "piccolo_theme"
 pygments_style = "github-dark"
 
-html_theme_options = {"show_theme_credit": False, "globaltoc_collapse": False, "data-theme": "light"}
+html_theme_options = {"show_theme_credit": False, "globaltoc_collapse": False}
