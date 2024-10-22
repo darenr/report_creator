@@ -4,7 +4,8 @@ author: "Daren Race"
 branding:
   icon: "upload-cloud"
   color: "orange"
-
+on:
+  push
 runs:
   using: "composite"
   steps:
