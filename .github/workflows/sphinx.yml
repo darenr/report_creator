@@ -16,9 +16,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: Make conda environment
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
-          python-version: 3.10
+          python-version: 3.11
           environment-file: docs/environment.yml
           auto-update-conda: false
           auto-activate-base: false
