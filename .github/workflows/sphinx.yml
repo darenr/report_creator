@@ -28,7 +28,7 @@ jobs:
         run: |
           python setup.py install
       - name: pushing to gh-pages
-        shell: bash
+        shell: bash -l {0}
         run: |
           cd docs && make html
       - name: pushing to gh-pages
