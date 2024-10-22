@@ -6,7 +6,8 @@ branding:
   color: "orange"
 on:
   push
-runs:
+
+jobs:
   using: "composite"
   steps:
     - name: setting the committer name and email
