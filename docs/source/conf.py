@@ -36,3 +36,5 @@ exclude_patterns = []
 
 html_copy_source = False
 html_show_sourcelink = False
+
+html_theme = "sphinx_book_theme"

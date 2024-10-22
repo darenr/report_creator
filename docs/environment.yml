@@ -5,6 +5,7 @@ dependencies:
   - pip
   - pip:
       - sphinx
+      - sphinx-readable-theme
       - sphinx_copybutton
       - sphinx_rtd_theme
       - sphinx-autodoc-typehints

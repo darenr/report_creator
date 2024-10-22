@@ -108,5 +108,5 @@ pipdeptree --exclude pip,pipdeptree,setuptools,wheel,twine
 
 ## Docs
 
-pip install sphinx sphinx-autodoc-typehints piccolo_theme sphinx_copybutton --upgrade
+pip install sphinx sphinx-autodoc-typehints sphinx-book-theme sphinx_copybutton --upgrade
 
