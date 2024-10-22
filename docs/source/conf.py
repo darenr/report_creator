@@ -30,17 +30,9 @@ extensions = [
     "sphinx_autodoc_typehints",
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
-    "sphinx.ext.githubpages",
 ]
 templates_path = ["_templates"]
 exclude_patterns = []
 
 html_copy_source = False
 html_show_sourcelink = False
-
-htmlhelp_basename = "SphinxGitHubActionTestdoc"
-
-html_theme = "piccolo_theme"
-pygments_style = "github-dark"
-
-html_theme_options = {"show_theme_credit": False, "globaltoc_collapse": False}
