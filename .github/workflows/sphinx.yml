@@ -31,7 +31,7 @@ jobs:
         uses: uibcdf/action-sphinx-docs-to-gh-pages@v2.1.0
         with:
           branch: main
-          dir_docs: docs
+          dir_docs: docs/source
           sphinx-apidoc-opts: '--separate -o . ../'
           sphinx-apidoc-exclude: '../*setup* ../*.ipynb'
           sphinx-opts: ''
