@@ -34,6 +34,23 @@ jobs:
       - name: pushing to gh-pages
         shell: bash
         run: |
-          git add -f docs/build/html
-          git commit -m "docs push"
-          git push origin `git subtree split --prefix "docs/build/html" "main"`:gh-pages --force
+          echo ::group::Create README for gh-pages
+          SHA=$GITHUB_SHA
+          echo "$SHA $GITHUB_EVENT_NAME"
+          if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
+            SHA=$(cat "$GITHUB_EVENT_PATH" | jq -r .pull_request.head.sha)
+          fi
+          DIR_HTML="docs/build/html/"
+          echo "#GitHub Pages" > "$DIR_HTML/README.md"
+          echo "" >> "$DIR_HTML/README.md"
+          echo "Last update of sphinx html documentation from [$SHORT_SHA](https://github.com/$GITHUB_REPOSITORY/tree/$SHA)" >> "$DIR_HTML/README.md"
+          cat "$DIR_HTML/README.md"
+          echo ::endgroup::
+          echo ::group::Create .nojekyll in case 'sphinx.ext.githubpages' is not used
+          touch "$DIR_HTML"/.nojekyll
+          echo ::endgroup::
+          echo ::group::Push to gh-pages
+          git add -f "$DIR_HTML"
+          git commit -m "From $GITHUB_REF $SHA"
+          git push origin `git subtree split --prefix "$DIR_HTML" "main"`:gh-pages --force
+          echo ::endgroup::
