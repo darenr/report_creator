@@ -1,39 +1,9 @@
 name: 'Sphinx docs to GitHub Pages'
 description: 'Automatic Sphinx html docs compilation and deployment through the gh-pages branch.'
-author: "Diego Prada-Gracia"
+author: "Daren Race"
 branding:
   icon: "upload-cloud"
   color: "orange"
-inputs:
-  branch:
-    description: Name of the branch where the sphinx documentation is located
-    required: false
-    default: 'main'
-  branch-checkout-args:
-    description: >-
-      Arguments to pass to `git checkout`: `git checkout ${checkout-args} "${branch}"`
-    required: false
-    default: ''
-  dir_docs:
-    description: Path where the sphinx documentation is located
-    required: false
-    default: 'docs'
-  sphinx-apidoc:
-    description: With sphinx-apidoc
-    required: false
-    default: true
-  sphinx-apidoc-exclude:
-    description: Files/directories to exclude from sphinx-apidoc
-    require: false
-    default: '*setup* tests*'
-  sphinx-apidoc-opts:
-    description: Options for sphinx-apidoc (default outputs to dir_docs and searches for modules one level up)
-    require: false
-    default: '-o . ../'
-  sphinx-opts:
-    description: Compilation options for sphinx-build
-    required: false
-    default: ''
 
 runs:
   using: "composite"
@@ -70,24 +40,13 @@ runs:
       id: to-branch-with-docs
       shell: bash
       run: |
-           git checkout ${{ inputs.branch-checkout-args }} "${{ inputs.branch }}"
-    - name: sphinx apidoc generation
-      shell: bash -l {0}
-      working-directory: ./${{ inputs.dir_docs }}
-      run: |
-        echo ::group::Sphinx apidocs generation
-        if "${{ inputs.sphinx-apidoc }}"; then
-          sphinx-apidoc ${{ inputs.sphinx-apidoc-opts }}  ${{ inputs.sphinx-apidoc-exclude }}
-        else
-          echo "Step disabled"
-        fi
-        echo ::endgroup::
+           git checkout main
     - name: sphinx html docs compilation
       shell: bash -l {0}      # This is needed to work with conda here. See:https://github.com/marketplace/actions/setup-miniconda#IMPORTANT
-      working-directory: ./${{ inputs.dir_docs }}
+      working-directory: docs
       run: |
         echo ::group::Sphinx docs compilation
-        cd docs & make html
+        make html
         echo ::endgroup::
     - name: pushing to gh-pages
       shell: bash
@@ -99,11 +58,7 @@ runs:
           SHA=$(cat "$GITHUB_EVENT_PATH" | jq -r .pull_request.head.sha)
         fi
         SHORT_SHA="$(git rev-parse --short "$SHA")"
-        if [ "${{ inputs.dir_docs }}" == "." ]; then
-          DIR_HTML="_build/html/"
-        else
-          DIR_HTML="${{ inputs.dir_docs }}/_build/html/"
-        fi
+        DIR_HTML="docs/build/html/"
         echo "#GitHub Pages" > "$DIR_HTML/README.md"
         echo "" >> "$DIR_HTML/README.md"
         echo "Last update of sphinx html documentation from [$SHORT_SHA](https://github.com/$GITHUB_REPOSITORY/tree/$SHA)" >> "$DIR_HTML/README.md"
