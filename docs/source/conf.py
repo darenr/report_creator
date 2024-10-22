@@ -40,18 +40,7 @@ html_show_sourcelink = False
 
 htmlhelp_basename = "SphinxGitHubActionTestdoc"
 
+html_theme = "piccolo_theme"
+pygments_style = "github-dark"
 
-# -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
-html_theme = "sphinx_rtd_theme"
-
-html_theme_options = {
-    "logo_only": True,
-    # Toc options
-    "sticky_navigation": True,
-    "navigation_depth": 4,
-    "includehidden": True,
-    "titles_only": False,
-    "display_version": True,
-}
+html_theme_options = {"show_theme_credit": False, "globaltoc_collapse": False, "data-theme": "light"}
