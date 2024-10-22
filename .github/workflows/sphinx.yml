@@ -30,6 +30,10 @@ jobs:
       - name: pushing to gh-pages
         shell: bash
         run: |
+          cd docs && make html
+      - name: pushing to gh-pages
+        shell: bash
+        run: |
           git add -f build/docs/html
           git commit -m "docs push"
           git push origin `git subtree split --prefix "build/docs/html" "main"`:gh-pages --force
