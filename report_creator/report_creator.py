@@ -32,6 +32,7 @@ from .utilities import (
     _random_color_generator,
     _random_light_color_generator,
     _strip_whitespace,
+    _generate_anchor_id,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -103,7 +104,7 @@ class Group(Base):
         html = "<div>"
 
         if self.label:
-            html += f"<report-caption>{self.label}</report-caption>"
+            html += f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption></a>"
 
         html += """<div class="group">"""
 

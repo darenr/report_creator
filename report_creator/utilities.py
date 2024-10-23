@@ -1,5 +1,6 @@
 import logging
 import random
+import uuid
 from html.parser import HTMLParser
 from typing import Tuple
 from urllib.parse import urlparse
@@ -7,6 +8,10 @@ from urllib.parse import urlparse
 from .theming import report_creator_colors
 
 logging.basicConfig(level=logging.INFO)
+
+
+def _generate_anchor_id(text: str) -> str:
+    return uuid.uuid5(uuid.NAMESPACE_DNS, text).hex
 
 
 def _check_html_tags_are_closed(html_content: str):

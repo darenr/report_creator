@@ -1,4 +1,3 @@
-pip
 pandas
 pyarrow
 numpy
@@ -14,4 +13,3 @@ python-dateutil
 lxml
 requests
 pillow
-ollama
