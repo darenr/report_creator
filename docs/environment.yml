@@ -13,3 +13,4 @@ dependencies:
       - nbsphinx
       - recommonmark
       - sphinx-markdown-tables
+      - sphinxcontrib-mermaid

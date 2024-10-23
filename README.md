@@ -24,8 +24,8 @@ Library to assemble reports in HTML from various components using python
 * [x] Add option to change the report icon based on a github account avatar
 * [x] Add a metric type for timeseries data which should some aggregate function of the data, and plot over time.
 * [x] Add diagram component with Mermaid JS
-* [ ] Add a status metric that supports up to a handful of k/v pairs (k=task, v=status)
-* [ ] Add Calendar
+* [x] Write some documentation!
+* [x] Add a status metric that supports up to a handful of k/v pairs (k=task, v=status)
 * [ ] Add `yfinance` plots/tables (maybe)
 * [ ] Add Radar chart
 * [ ] Add choropleth map plot type
@@ -34,7 +34,6 @@ Library to assemble reports in HTML from various components using python
 * [ ] Add styled section for Executive Summary
 * [ ] Youtube embeds rc.Video(url: str, label: str)
 * [ ] File attachments (downloadable any data from page)
-* [ ] Write some documentation!
 
 ## Example
 

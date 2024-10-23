@@ -17,9 +17,6 @@ project = "report_creator"
 copyright = "2024, Daren Race"
 author = "Daren Race"
 
-# -- General configuration ---------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
-
 extensions = [
     "sphinx.ext.duration",
     "sphinx.ext.doctest",
@@ -30,6 +27,7 @@ extensions = [
     "sphinx_autodoc_typehints",
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
+    "sphinxcontrib.mermaid",
 ]
 templates_path = ["_templates"]
 exclude_patterns = []
@@ -38,3 +36,5 @@ html_copy_source = False
 html_show_sourcelink = False
 
 html_theme = "sphinx_book_theme"
+
+mermaid_params = ["--theme", "forest"]

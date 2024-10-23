@@ -26,8 +26,8 @@ if __name__ == "__main__":
     with open("examples/example.txt") as f:
         example_text = f.read()
 
-    with open("examples/example.sql") as f:
-        example_sql = f.read()
+    with open("examples/example.java") as f:
+        example_java = f.read()
 
     with open("README.md") as f:
         example_md = f.read()
@@ -38,7 +38,7 @@ if __name__ == "__main__":
         title="Kitchen Sink",
         description="All the things",
         theme="rc",
-        code_theme="github-dark",
+        code_theme="ir-black",
         diagram_theme="default",
     ) as report:
         view = rc.Block(
@@ -119,17 +119,13 @@ if __name__ == "__main__":
                 example_text,
                 label="Ready Player One",
             ),
-            rc.Group(
-                rc.Yaml(
-                    datastructure,
-                    label="Kubernetes Creating a Deployment as YAML",
-                ),
-                rc.Sql(
-                    example_sql,
-                    prettify=True,
-                    label="Example SQL",
-                ),
-                label="Code Examples with color syntax highlighting (YAML, JSON, Python, Java etc.)",
+            rc.Yaml(
+                datastructure,
+                label="Kubernetes Creating a Deployment as YAML",
+            ),
+            rc.Java(
+                example_java,
+                label="Example Java",
             ),
             rc.Separator(),
             rc.Markdown(example_md, label="README.md"),

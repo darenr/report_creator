@@ -19,6 +19,7 @@ from .report_creator import (
     Histogram,
     Html,
     Image,
+    Java,
     Json,
     Line,
     Markdown,
