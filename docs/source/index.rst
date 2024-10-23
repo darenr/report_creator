@@ -2,33 +2,30 @@
 
 .. meta::
     :description lang=en:
-        Oracle Accelerated Data Science SDK (ORACLE-ADS)
-        is a Python library that is part of the Oracle Cloud Infrastructure Data Science service. ORACLE-ADS is the client
-        library and CLI for Machine learning engineers to work with Cloud Infrastructure (CPU and GPU VMs, Storage etc, Spark) for Data, Models,
-        Notebooks, Pipelines and Jobs.
-
-Oracle Accelerated Data Science (ADS)
-=====================================
-|PyPI|_ |Python|_ |Notebook Examples|_
-
-.. |PyPI| image:: https://img.shields.io/pypi/v/oracle-ads.svg?style=for-the-badge&logo=pypi&logoColor=white
-..  _PyPI: https://pypi.org/project/oracle-ads/
-.. |Python| image:: https://img.shields.io/pypi/pyversions/oracle-ads.svg?style=for-the-badge&logo=pypi&logoColor=white
-..  _Python: https://pypi.org/project/oracle-ads/
-.. |Notebook Examples| image:: https://img.shields.io/badge/docs-notebook--examples-blue?style=for-the-badge&logo=pypi&logoColor=white
-..  _Notebook Examples: https://github.com/oracle-samples/oci-data-science-ai-samples/tree/master/notebook_examples
+        Report creator is a library to create self contained HTML reports from python code.
 
 Report Creator
 ==============
+|PyPI|_ |Python|_
+
+.. |PyPI| image:: https://img.shields.io/pypi/v/report_creator.svg?style=for-the-badge&logo=pypi&logoColor=white
+..  _PyPI: https://pypi.org/project/report_creator/
+.. |Python| image:: https://img.shields.io/pypi/pyversions/report_creator.svg?style=for-the-badge&logo=pypi&logoColor=white
+..  _Python: https://pypi.org/project/report_creators/
+
 
 When you have data to share and want to be able to create a report that is easy to read and understand, you can use the Report 
 Creator. This tool allows you to create a report in a few simple steps. You can add a title, a description, and a table of data. You 
 can also add a chart to the report. The Report Creator will generate a report in HTML format that you can share with others.
 
-``kitchen_sink.py`` is an example in the ``examples`` directory that demonstrates every component, and many of the options. The report
-created by that can be seen |kitchen_sink_location_link|.
+|kitchen_sink_location_source| is an example in the ``examples`` folder that demonstrates every component, and many of 
+the options. The report created from that can be seen |kitchen_sink_location_output|.
 
-.. |kitchen_sink_location_link| raw:: html
+.. |kitchen_sink_location_source| raw:: html
+
+   <a href="https://github.com/darenr/report_creator/blob/main/examples/kitchen_sink.py" target="_blank">kitchen_sink.py</a>
+
+.. |kitchen_sink_location_output| raw:: html
 
    <a href="https://darenr.github.io/report_creator/" target="_blank">here</a>
 

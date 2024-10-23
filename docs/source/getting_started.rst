@@ -107,6 +107,14 @@ can also use a label which can serve as a description. Some times you have your 
 expand the rows, in this case the component ``rc.MetricGroup()`` takes a dataframe and the column names for the headings and value, 
 a component will be created *for each row.*
 
+.. code-block:: python3
+
+   rc.Metric(
+      heading="Chances of rain",
+      value="84",
+      unit="%",
+   )
+
 Miscellaneous
 -------------
 
@@ -127,16 +135,5 @@ to include diagrams in |mermaid_location_link| ``rc.Diagram()``
          B --> D{Rhombus}
          C --> D
       """)
-
-
-Produces:
-
-.. mermaid::
-
-   graph LR
-      A[Square Rect] -- Link text --> B((Circle))
-      A --> C(Round Rect)
-      B --> D{Rhombus}
-      C --> D
 
 
