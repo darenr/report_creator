@@ -174,7 +174,7 @@ class Widget(Base):
         html = "<div class='report-widget'>"
 
         if self.label:
-            html += f"<report-caption>{self.label}</report-caption>"
+            html += f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption>"
 
         if isinstance(self.widget, pd.DataFrame):
             html += self.widget.style._repr_html_()
@@ -518,7 +518,7 @@ class Html(Base):
     def to_html(self) -> str:
         html = f"<style>{self.css}</style>" if self.css else ""
         if self.label:
-            html += f"<report-caption>{self.label}</report-caption>"
+            html += f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption>"
         html += "<div>" + self.html + "</div>"
         return html
 
@@ -557,7 +557,7 @@ class Diagram(Base):
         """
 
         if self.label:
-            html += f"<figcaption><report-caption>{self.label}</report-caption></figcaption>"
+            html += f"<figcaption><report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption></figcaption>"
 
         html += f"<div class='mermaid include_mermaid'>{self.src}</div>"
 
@@ -617,7 +617,7 @@ class Image(Base):
             html += image_markup
 
         if self.label:
-            html += f"<figcaption><report-caption>{self.label}</report-caption></figcaption>"
+            html += f"<figcaption><report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption></figcaption>"
 
         html += "</figure></div>"
 
@@ -651,7 +651,7 @@ class Markdown(Base):
     def to_html(self) -> str:
         html = "<div class='markdown-wrapper include_hljs'>"
         if self.label:
-            html += f"<report-caption>{self.label}</report-caption>"
+            html += f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption>"
         html += f'<div style="{self.extra_css}">'
         html += Markdown._markdown_to_html(self.text)
         html += "</div>"
@@ -1139,7 +1139,7 @@ class Separator(Base):
             str: The HTML representation of the Separator.
         """
         if self.label:
-            return f"<br><hr><report-caption>{self.label}</report-caption>"
+            return f"<br><hr><report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption>"
         else:
             return "<br><hr>"
 
@@ -1177,7 +1177,7 @@ class Text(Base):
         formatted_text += "</report-text>"
 
         if self.label:
-            return f"""<report-caption>{self.label}</report-caption>{formatted_text}"""
+            return f"""<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption>{formatted_text}"""
         else:
             return formatted_text
 
@@ -1205,7 +1205,11 @@ class Select(Base):
 
     @_strip_whitespace
     def to_html(self) -> str:
-        html = f"<report-caption>{self.label}</report-caption>" if self.label else ""
+        html = (
+            f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption>"
+            if self.label
+            else ""
+        )
 
         # unique ID for select grouping.
         # Ensures no clashes between different selects with the same block.label set
@@ -1248,7 +1252,7 @@ class Unformatted(Base):
         formatted_text = f"<pre><code>{self.text.strip()}</code></pre>"
 
         if self.label:
-            return f"""<report-caption>{self.label}</report-caption><div>{formatted_text}</div>"""
+            return f"""<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption><div>{formatted_text}</div>"""
         else:
             return f"""<div>{formatted_text}</div>"""
 
