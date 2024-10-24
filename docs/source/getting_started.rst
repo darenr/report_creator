@@ -58,8 +58,15 @@ Flow
 
 With an instance of ``rc.ReportCreator()`` you add components, there are two container components, one that lays out vertically, called
 ``rc.Block()`` and one that lays out child components horizontally in a flow called ``rc.Group()``. Every component allows for a 
-label that is styled approprite to the component. A special container called ``rc.Select()`` is used to show tabs. It should be noted that 
-for reports that are printed the ``rc.Select()`` component might not be suitable.
+label that is styled approprite to the component. 
+
+Tabs
+----
+
+A container called ``rc.Select()`` is used to show tabs. It should be noted that for reports that are printed the ``rc.Select()`` component might not be suitable.
+
+.. image:: images/select.png
+  :alt: rc.Select()
 
 Text
 ----
@@ -68,11 +75,15 @@ There are three types of text components, ``rc.Text()``, ``rc.Html()``, and ``rc
 for plain text, ``rc.Html()`` is to be used if you already have html, while ``rc.Markdown()`` is very flexible, the markdown is the 
 GitHub extended syntax, tables will be rendered properly, and code in Markdown will be styled to match code in the code components.
 
+
 Code
 ----
 
 There are components for ``rc.Yaml()``, ``rc.Json()``, ``rc.Python()``, ``rc.Java()``, and ``rc.Sql()``,  each will format and
 will render with color syntax highlighting.
+
+.. image:: images/code.png
+  :alt: rc.Java()
 
 Images
 ------
@@ -88,6 +99,18 @@ Charts
 There are a number of charting components, ``rc.Bar()``, ``rc.Scatter()``, ``rc.Histogram()``, ``rc.Box()``, ``rc.Line()``, and ``rc.Pie()``.
 These are wrappers around plotly express componets. There is also a ``rc.Widget()`` component that can be used anywhere 
 the object supports the ``repr_html`` that is used by Jupyter notebooks (for example ``matplotlib`` object)
+
+.. code-block:: python3
+
+      rc.Histogram(
+         px.data.tips(),
+         x="total_bill",
+         dimension="sex",
+         label="rc.Histogram() Chart of Total Bill",
+      )
+
+.. image:: images/chart.png
+  :alt: rc.Histogram()
 
 Tables
 ------
@@ -113,7 +136,11 @@ a component will be created *for each row.*
       heading="Chances of rain",
       value="84",
       unit="%",
+      label="Probability of rain in the next 24 hours using a weather model trained on historical data.",
    )
+
+.. image:: images/metric.png
+  :alt: rc.Metric()
 
 Miscellaneous
 -------------
@@ -136,4 +163,5 @@ to include diagrams in |mermaid_location_link| ``rc.Diagram()``
          C --> D
       """)
 
-
+.. image:: images/diagram.png
+  :alt: rc.Diagram()

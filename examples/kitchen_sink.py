@@ -51,7 +51,7 @@ if __name__ == "__main__":
                     heading="Chances of rain",
                     value="84",
                     unit="%",
-                    colored=True,
+                    label="Probability of rain in the next 24 hours using a weather model trained on historical data.",
                 ),
                 rc.Metric(
                     heading="Loss",
@@ -290,27 +290,11 @@ mindmap
             ),
             rc.Diagram(
                 src="""
-                    gitGraph
-                    commit id: "Initial commit"
-                    branch develop
-                    commit id: "Set up project structure"
-                    branch feature/awesome-feature
-                    commit id: "Started awesome feature"
-                    commit id: "Added more functionality to awesome feature"
-                    checkout develop
-                    commit id: "Updated project dependencies"
-                    branch feature/new-feature
-                    commit id: "Started new feature"
-                    checkout feature/awesome-feature
-                    commit id: "Finished awesome feature"
-                    checkout develop
-                    merge feature/awesome-feature tag: "v1.0"
-                    checkout feature/new-feature
-                    commit id: "Continued new feature"
-                    checkout develop
-                    merge feature/new-feature
-                    commit id: "Release v1.1"
-
+                    graph LR
+                        A[Square Rect] -- Link text --> B((Circle))
+                        A --> C(Round Rect)
+                        B --> D{Rhombus}
+                        C --> D
                 """,
                 label="Example Git Graph",
             ),
