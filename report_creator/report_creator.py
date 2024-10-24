@@ -28,11 +28,11 @@ from .theming import get_rc_theme, preferred_fonts, report_creator_colors
 from .utilities import (
     _check_html_tags_are_closed,
     _convert_imgurl_to_datauri,
+    _generate_anchor_id,
     _markdown_to_html,
     _random_color_generator,
     _random_light_color_generator,
     _strip_whitespace,
-    _generate_anchor_id,
 )
 
 logging.basicConfig(level=logging.INFO)
