@@ -117,7 +117,7 @@ if __name__ == "__main__":
             ),
             rc.Text(
                 example_text,
-                label="Ready Player One",
+                label="Alice’s Adventures in Wonderland",
             ),
             rc.Yaml(
                 datastructure,

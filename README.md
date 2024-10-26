@@ -20,7 +20,7 @@ Library to assemble reports in HTML from various components using python
 * [x] A few simple components for things like metrics ("Accuracy: 87%") from a triple of key, value
 * [x] Support for plotting figures, interactive `plotly` and `matplotlib`
 * [x] images (styled by the library)
-* [x] `json`/`yaml`/`python` code blocks with color syntax highlighting
+* [x] `json`/`yaml`/`python`/`java` code blocks with color syntax highlighting
 * [x] Support tabs
 * [x] Add support for any Jupyter widget, any object that renders in a notebook should render to a report
 * [x] Add built-in easy plotting that looks stylistically consistent with the report
@@ -29,10 +29,10 @@ Library to assemble reports in HTML from various components using python
 * [x] Add diagram component with Mermaid JS
 * [x] Write some documentation!
 * [x] Add a status metric that supports up to a handful of k/v pairs (k=task, v=status)
+* [x] Add bookmark anchors to blocks
 * [ ] Add `yfinance` plots/tables (maybe)
 * [ ] Add Radar chart
 * [ ] Add choropleth map plot type
-* [ ] Add bookmark anchors to blocks
 * [ ] Add a Table of Contents option based on labels of top-level-blocks
 * [ ] Add styled section for Executive Summary
 * [ ] Youtube embeds rc.Video(url: str, label: str)

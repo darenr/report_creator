@@ -1147,39 +1147,7 @@ class Separator(Base):
 ##############################
 
 
-class Text(Base):
-    """
-    Initialize a Text object.
-
-    Args:
-        text (str): The text content of the report.
-        label (str, optional): The label for the report. Defaults to None.
-        extra_css (str, optional): Additional CSS styles for the report. Defaults to None.
-    """
-
-    def __init__(self, text: str, *, label: Optional[str] = None, extra_css: str = None):
-        Base.__init__(self, label=label)
-        self.text = text
-        self.extra_css = extra_css or ""
-
-        logging.info(f"Text: {len(self.text)} characters")
-
-    @_strip_whitespace
-    def to_html(self) -> str:
-        """
-        Convert the Text object to HTML format.
-
-        Returns:
-            str: The Text object converted to HTML format.
-        """
-        formatted_text = f'<report-text style="{self.extra_css}">'
-        formatted_text += "".join([f"<p>{p.strip()}</p>" for p in self.text.split("\n\n")])
-        formatted_text += "</report-text>"
-
-        if self.label:
-            return f"""<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption>{formatted_text}"""
-        else:
-            return formatted_text
+class Text(Markdown): ...
 
 
 ##############################
