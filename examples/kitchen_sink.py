@@ -61,7 +61,6 @@ if __name__ == "__main__":
                     heading="Accuracy",
                     value=0.95,
                     label="Number of correct predictions by Total number of predictions",
-                    colored=True,
                 ),
                 rc.Metric(
                     heading="Today",
