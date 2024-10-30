@@ -30,6 +30,8 @@ Library to assemble reports in HTML from various components using python
 * [x] Write some documentation!
 * [x] Add a status metric that supports up to a handful of k/v pairs (k=task, v=status)
 * [x] Add bookmark anchors to blocks
+* [ ] [Visx](https://airbnb.io/visx/gallery)
+* [ ] [Icons](https://fonts.google.com/icons?selected=Material+Symbols+Outlined:search:FILL@0;wght@400;GRAD@0;opsz@24&icon.size=24&icon.color=%23e8eaed)
 * [ ] Add `yfinance` plots/tables (maybe)
 * [ ] Add Radar chart
 * [ ] Add choropleth map plot type
