@@ -320,8 +320,6 @@
         display: block;
       }
 
-    
-
       div.dt-search input {
         all: unset;
       }
@@ -368,6 +366,12 @@
         font-size: 0.8em;
         color: var(--text-muted);
       }
+
+      footer {
+        text-align: center;
+        padding: 3px;
+      }
+
     </style>
   </head>
 
@@ -388,6 +392,13 @@
     
 
     <div class="container">{{body}}</div>
+
+
+    {% if footer %}
+      <footer>
+        <p>{{footer}}</p>
+      </footer>
+    {% endif %}
 
     <script>
       function triggerResize() {

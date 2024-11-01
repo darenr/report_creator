@@ -1,5 +1,5 @@
-import logging
 import datetime
+import logging
 
 import pandas as pd
 import plotly.express as px
@@ -36,10 +36,11 @@ if __name__ == "__main__":
 
     with rc.ReportCreator(
         title="Kitchen Sink",
-        description="All the things",
+        description="**All** the *things*",
         theme="rc",
         code_theme="ir-black",
         diagram_theme="default",
+        footer="Install the package with `pip install report-creator`",
     ) as report:
         view = rc.Block(
             rc.Collapse(
@@ -282,8 +283,7 @@ mindmap
       subtopic6b(Privacy)
       subtopic6c(Transparency)
       subtopic6d(Accountability)
-
-
+      subtopic6e(Fairness)
                 """,
                 label="Example AI Mind Map Diagram",
             ),

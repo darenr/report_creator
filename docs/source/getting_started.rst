@@ -20,7 +20,11 @@ Example Usage
 
    import report_creator as rc
 
-   with rc.ReportCreator("My Report") as report:
+   with rc.ReportCreator(
+      title="My Report",
+      description="This is a report created with report_creator",
+      footer="This is the footer",
+   ) as report:
 
       view = rc.Block(
          rc.Text("""It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of light, it was the season of darkness, it was the spring of hope, it was the winter of despair.""", 

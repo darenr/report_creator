@@ -30,6 +30,7 @@ Library to assemble reports in HTML from various components using python
 * [x] Write documentation!
 * [x] Add a status metric that supports up to a handful of k/v pairs (k=task, v=status)
 * [x] Add bookmark anchors to blocks
+* [x] Add Footer block
 * [ ] Add Radar chart
 * [ ] Add choropleth map plot type
 * [ ] Youtube embeds rc.Video(url: str, label: str)
@@ -41,8 +42,11 @@ Library to assemble reports in HTML from various components using python
 
 import report_creator as rc
 
-with rc.ReportCreator("My Report") as report:
-
+with rc.ReportCreator(
+    title="My Report",
+    description="This is a report created with report_creator",
+    footer="This is the footer",
+) as report:
     view = rc.Block(
         rc.Text("""It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of light, it was the season of darkness, it was the spring of hope, it was the winter of despair.""", 
         label="Charles Dickens, A Tale of Two Cities"),
