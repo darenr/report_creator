@@ -80,10 +80,14 @@ if __name__ == "__main__":
                 rc.Metric(
                     heading="Author",
                     value="Douglas Adams",
-                    label="""Douglas Adams was an English author, humourist, and screenwriter, best known
-                            for The Hitchhiker's Guide to the Galaxy. Originally a 1978 BBC radio comedy, The
-                            Hitchhiker's Guide to the Galaxy developed into a "trilogy" of five books which
-                            sold more than 15 million copies in his lifetime.""",
+                    label="""
+                    Douglas Adams was an English author, humourist, and screenwriter, best known for The Hitchhiker's 
+                    Guide to the Galaxy. Originally a 1978 BBC radio comedy, **The Hitchhiker's Guide to the Galaxy** 
+                    developed into a "trilogy" of five books which sold more than 15 million copies in his lifetime.
+
+                    Adams was a self-proclaimed "radical atheist", an advocate for environmentalism and conservation, 
+                    and a lover of fast cars, technological innovation, and the Apple Macintosh.
+                    """,
                 ),
                 label="Grouped Metrics",
             ),

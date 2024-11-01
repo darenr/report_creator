@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import re
+import textwrap
 import traceback
 from abc import ABC, abstractmethod
 from datetime import datetime
@@ -356,7 +357,7 @@ class Metric(Base):
         label: Optional[str] = None,
         colored: Optional[bool] = False,
     ):
-        Base.__init__(self, label=label)
+        Base.__init__(self, label=textwrap.dedent(label) if label else None)
         self.heading = heading
         self.float_precision = float_precision
         self.value = value
@@ -378,7 +379,7 @@ class Metric(Base):
         else:
             value_str = str(self.value)
 
-        description = f"<div class='metric-description'><p>{self.label}</p></div>" if self.label else ""
+        description = f"<div class='metric-description'>{_markdown_to_html(self.label)}</div>" if self.label else ""
 
         if self.colored:
             bk_color, _ = _random_light_color_generator(f"{self.heading}")
@@ -1429,11 +1430,11 @@ class ReportCreator:
         footer: Optional[str] = None,
     ):
         self.title = title
-        self.description = _markdown_to_html(description) if description else None
+        self.description = description
         self.author = author
         self.code_theme = code_theme
         self.diagram_theme = diagram_theme
-        self.footer = _markdown_to_html(footer) if footer else None
+        self.footer = footer
 
         logging.info(f"ReportCreator: {self.title} {self.description}")
 
@@ -1525,7 +1526,7 @@ class ReportCreator:
         with open(path, "w") as f:
             html = template.render(
                 title=self.title or "Report",
-                description=self.description or "",
+                description=_markdown_to_html(self.description) if self.description else "",
                 author=self.author or "",
                 body=body,
                 header_logo=self.header_str,
@@ -1535,7 +1536,7 @@ class ReportCreator:
                 include_hljs=include_hljs,
                 code_theme=self.code_theme,
                 diagram_theme=self.diagram_theme,
-                footer=self.footer,
+                footer=_markdown_to_html(self.footer) if self.footer else None,
             )
             if prettify_html:
                 try:
