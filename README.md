@@ -19,7 +19,7 @@ Library to assemble reports in HTML from various components using python
 * [x] Allows html as input
 * [x] A few simple components for things like metrics ("Accuracy: 87%") from a triple of key, value
 * [x] Support for plotting figures, interactive `plotly` and `matplotlib`
-* [x] images (styled by the library)
+* [x] images (styled by the library) with an option to fetch at report build time (no fetch on render)
 * [x] `json`/`yaml`/`python`/`java` code blocks with color syntax highlighting
 * [x] Support tabs
 * [x] Add support for any Jupyter widget, any object that renders in a notebook should render to a report
@@ -27,16 +27,11 @@ Library to assemble reports in HTML from various components using python
 * [x] Add option to change the report icon based on a github account avatar
 * [x] Add a metric type for timeseries data which should some aggregate function of the data, and plot over time.
 * [x] Add diagram component with Mermaid JS
-* [x] Write some documentation!
+* [x] Write documentation!
 * [x] Add a status metric that supports up to a handful of k/v pairs (k=task, v=status)
 * [x] Add bookmark anchors to blocks
-* [ ] [Visx](https://airbnb.io/visx/gallery)
-* [ ] [Icons](https://fonts.google.com/icons?selected=Material+Symbols+Outlined:search:FILL@0;wght@400;GRAD@0;opsz@24&icon.size=24&icon.color=%23e8eaed)
-* [ ] Add `yfinance` plots/tables (maybe)
 * [ ] Add Radar chart
 * [ ] Add choropleth map plot type
-* [ ] Add a Table of Contents option based on labels of top-level-blocks
-* [ ] Add styled section for Executive Summary
 * [ ] Youtube embeds rc.Video(url: str, label: str)
 * [ ] File attachments (downloadable any data from page)
 
