@@ -14,6 +14,14 @@ def _generate_anchor_id(text: str) -> str:
     return uuid.uuid5(uuid.NAMESPACE_DNS, text).hex
 
 
+def _is_number(x):
+    try:
+        float(x)
+        return True
+    except ValueError:
+        return False
+
+
 def _check_html_tags_are_closed(html_content: str):
     """Checks if any HTML tags are closed in the given string.
 

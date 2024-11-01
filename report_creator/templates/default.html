@@ -47,7 +47,6 @@
     {% endif %}
 
     <!--
-
             variables, for example: style: color: var(--links)
 
                 --background-body
@@ -148,8 +147,9 @@
       .metric h1 {
         margin-top: 0;
         white-space: nowrap;
-        font-size: 2.6rem;
+        font-size: 2.75rem;
         font-weight: 600;
+        font-family: monospace;
       }
 
       .metric p {
@@ -181,8 +181,8 @@
 
       report-caption {
         display: block;
-        margin-top: 0.5em;
-        margin-bottom: 1em;
+        margin-top: 0.75em;
+        margin-bottom: 1.2em;
         font-size: 1.5em;
         font-weight: bold;
         border-left: 5px solid var(--focus);
@@ -226,9 +226,6 @@
 
         font-family: "Tahoma", system-ui, -apple-system, sans-serif;
 
-        font-weight: 400;
-        font-style: normal;
-        line-height: 1.4;
         word-wrap: break-word;
         text-rendering: optimizeLegibility;
       }
@@ -388,6 +385,7 @@
     </header>
 
     <hr />
+    
 
     <div class="container">{{body}}</div>
 

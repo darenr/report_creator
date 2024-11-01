@@ -33,6 +33,7 @@ from .utilities import (
     _random_color_generator,
     _random_light_color_generator,
     _strip_whitespace,
+    _is_number,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -323,13 +324,9 @@ class EventMetric(Base):
 
         return f"""
             <div class="metric">
-                <p>{self.heading}</p>
-                <table style="margin-top: 15px;">
-                    <tr>
-                    <td width=20% style="text-align: center; vertical-align: center;"><h1>{agg_value:d}</h1></td>
-                    <td style="vertical-align: bottom;">{fig_html}</td>
-                    </tr>
-                </table>
+                <p>{self.heading}:</p>
+                <div><h1>{agg_value:d}</h1></div>
+                <div>{fig_html}</div>
                 {description}
             </div>
         """
@@ -390,9 +387,11 @@ class Metric(Base):
         else:
             style = ""
 
+        icon = "data_exploration" if _is_number(value_str) else "info"
+
         return f"""
             <div class="metric" {style}>
-                <p>{self.heading}</p>
+                <p>{self.heading}:</p>
                 <h1>{value_str}{self.unit}</h1>
                 <p>{description}</p>
             </div>
@@ -1455,7 +1454,7 @@ class ReportCreator:
             icon_text = "".join(match[:2]) if match else self.title[0]
             icon_color, text_color = _random_color_generator(self.title)
 
-            width = 125
+            width = 150
 
             cx = width / 2
             cy = width / 2

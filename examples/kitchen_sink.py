@@ -1,5 +1,5 @@
-import datetime
 import logging
+import datetime
 
 import pandas as pd
 import plotly.express as px
@@ -63,8 +63,8 @@ if __name__ == "__main__":
                     label="Number of correct predictions by Total number of predictions",
                 ),
                 rc.Metric(
-                    heading="Today",
-                    value=datetime.datetime.now(),
+                    heading="Date",
+                    value=datetime.datetime.now().strftime("%Y-%m-%d"),
                 ),
                 rc.Metric(
                     heading="Ultimate Answer",
