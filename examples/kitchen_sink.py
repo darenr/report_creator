@@ -65,7 +65,7 @@ if __name__ == "__main__":
                 ),
                 rc.Metric(
                     heading="Date",
-                    value=datetime.datetime.now().strftime("%Y-%m-%d"),
+                    value=datetime.datetime.now().strftime("%d-%b-%y").upper(),
                 ),
                 rc.Metric(
                     heading="Ultimate Answer",
