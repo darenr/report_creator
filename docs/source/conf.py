@@ -28,6 +28,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
     "sphinxcontrib.mermaid",
+    "sphinx.ext.inheritance_diagram",
 ]
 templates_path = ["_templates"]
 exclude_patterns = []
@@ -39,18 +40,13 @@ html_theme = "sphinx_book_theme"
 
 mermaid_params = ["--theme", "forest"]
 
+html_logo = "https://raw.githubusercontent.com/darenr/report_creator/refs/heads/main/rc-logo.png"
+
+
 html_theme_options = {
     "repository_url": "https://github.com/darenr/report_creator",
     "use_repository_button": True,
     "use_issues_button": True,
     "use_download_button": True,
     "path_to_docs": "docs/source",
-    "icon_links": [
-        {
-            "name": "GitHub",
-            "url": "https://github.com/darenr/report_creator",
-            "icon": "https://raw.githubusercontent.com/pydata/pydata-sphinx-theme/main/docs/_static/pandas-square.svg",
-            "type": "url",
-        }
-    ],
 }
