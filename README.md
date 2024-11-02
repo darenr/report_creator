@@ -4,7 +4,6 @@
 [![PyPI Version](https://img.shields.io/pypi/v/report_creator.svg?style=for-the-badge&color=blue)](https://pypi.org/project/report_creator)
 [![Python Versions](https://img.shields.io/pypi/pyversions/report_creator.svg?logo=python&logoColor=white&style=for-the-badge)](https://pypi.org/project/report_creator)
 [![Python Stats](https://img.shields.io/pypi/dw/report_creator?style=for-the-badge)](https://pypi.org/project/report_creator)
-[![Repo Size](https://img.shields.io/github/repo-size/darenr/report_creator?style=for-the-badge)](https://pypi.org/project/report_creator)
 
 ![Logo](./rc-logo.png)
 
