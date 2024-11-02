@@ -6,7 +6,7 @@
 [![Python Stats](https://img.shields.io/pypi/dw/report_creator?style=for-the-badge)](https://pypi.org/project/report_creator)
 [![Repo Size](https://img.shields.io/github/repo-size/darenr/report_creator?style=for-the-badge)](https://pypi.org/project/report_creator)
 
-![Logo](./rc-logo.pn)
+![Logo](./rc-logo.png)
 
 - [Documentation](https://report-creator.readthedocs.io/en/latest)
 - [Getting Started](https://report-creator.readthedocs.io/en/latest/getting_started.html)
