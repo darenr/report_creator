@@ -9,8 +9,7 @@
 [![Python Stats](https://img.shields.io/pypi/dw/report_creator?style=for-the-badge)](https://pypi.org/project/report_creator)
 [![Repo Size](https://img.shields.io/github/repo-size/darenr/report_creator?style=for-the-badge)](https://pypi.org/project/report_creator)
 
-![logo](./rc-logo.png)
-
+<img src="./rc-logo.png" width=256>
 
 Library to assemble reports in HTML from various components using python
 
