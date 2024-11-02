@@ -34,6 +34,7 @@ from .utilities import (
     _random_color_generator,
     _random_light_color_generator,
     _strip_whitespace,
+    _ellipsis_url,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -594,7 +595,6 @@ class Image(Base):
         self.extra_css = extra_css or ""
         self.rounded_css = "border-radius: 0.75rem;" if rounded else ""
         if convert_to_base64:
-            logging.info(f"Converting {src} to base64")
             try:
                 self.src = _convert_imgurl_to_datauri(src)
             except Exception as e:
@@ -1523,7 +1523,7 @@ class ReportCreator:
 
         logging.info(f"ReportCreator: {include_plotly=}, {include_datatable=}, {include_mermaid=}, {include_hljs=}")
 
-        with open(path, "w") as f:
+        with open(path, "w", encoding="utf-8") as f:
             html = template.render(
                 title=self.title or "Report",
                 description=_markdown_to_html(self.description) if self.description else "",

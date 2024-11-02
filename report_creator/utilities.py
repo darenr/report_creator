@@ -56,6 +56,19 @@ def _check_html_tags_are_closed(html_content: str):
     return HTMLValidator().validate_html(html_content)
 
 
+def _ellipsis_url(url, max_length=45):
+    """Truncates a URL to a given maximum length, adding an ellipsis in the middle."""
+
+    if len(url) <= max_length:
+        return url
+
+    # Calculate the length of each part of the URL
+    start_length = max_length // 2 - 3  # Leave room for the ellipsis
+    end_length = max_length - start_length - 3
+
+    return f"{url[:start_length]}...{url[-end_length:]}"
+
+
 def _markdown_to_html(text: str) -> str:
     """
     Converts markdown text to HTML.
@@ -170,6 +183,8 @@ def _convert_imgurl_to_datauri(imgurl: str) -> str:
 
     # Encode the content as base64
     base64_content = base64.b64encode(response.content).decode("utf-8")
+
+    logging.info(f"Image: ({_ellipsis_url(imgurl)}) - {mime_type}, {len(base64_content)} bytes")
 
     # Create the Data URI
     data_uri = f"data:{mime_type};base64,{base64_content}"
