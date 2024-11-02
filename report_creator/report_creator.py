@@ -1477,6 +1477,7 @@ class ReportCreator:
                             .icon_text_style {{
                                 font-size: {fs}em;
                                 stroke-width: 1px;
+                                font-family: Arial, sans-serif;
                                 font-weight: bold;
                                 text-anchor: middle;
                                 alignment-baseline: central;
