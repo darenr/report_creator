@@ -31,6 +31,7 @@ from .report_creator import (
     Scatter,
     Select,
     Separator,
+    Shell,
     Sql,
     Table,
     Text,

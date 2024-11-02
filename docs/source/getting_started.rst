@@ -11,7 +11,7 @@ To use ``report_creator``, first install it using pip:
 .. admonition:: Installation
    :class: note
 
-   $ pip install report_creator --upgrade
+   $ pip install report_creator -U
 
 Example Usage
 -------------
@@ -57,11 +57,11 @@ Example Usage
 
       report.save(view, "report.html") 
 
-Flow
-----
+Layout
+------
 
 With an instance of ``rc.ReportCreator()`` you add components, there are two container components, one that lays out vertically, called
-``rc.Block()`` and one that lays out child components horizontally in a flow called ``rc.Group()``. Every component allows for a 
+``rc.Block()`` and one that lays out child components horizontally called ``rc.Group()``. Every component allows for a 
 label that is styled approprite to the component. 
 
 Tabs
@@ -79,12 +79,14 @@ There are three types of text components, ``rc.Text()``, ``rc.Html()``, and ``rc
 for plain text, ``rc.Html()`` is to be used if you already have html, while ``rc.Markdown()`` is very flexible, the markdown is the 
 GitHub extended syntax, tables will be rendered properly, and code in Markdown will be styled to match code in the code components.
 
+Most components will accept a label, which is a string that may contain Markdown.
+
 
 Code
 ----
 
-There are components for ``rc.Yaml()``, ``rc.Json()``, ``rc.Python()``, ``rc.Java()``, and ``rc.Sql()``,  each will format and
-will render with color syntax highlighting.
+There are components for ``rc.Yaml()``, ``rc.Json()``, ``rc.Python()``, ``rc.Java()``, ``rc.Shell()``, and ``rc.Sql()``,  each 
+will format and render with color syntax highlighting.
 
 .. image:: images/code.png
   :alt: rc.Java()

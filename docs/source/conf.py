@@ -14,7 +14,7 @@ sys.path.insert(0, add_path)
 
 
 project = "report_creator"
-copyright = "2024, Daren Race"
+copyright = "2025, Daren Race"
 author = "Daren Race"
 
 extensions = [
@@ -38,3 +38,19 @@ html_show_sourcelink = False
 html_theme = "sphinx_book_theme"
 
 mermaid_params = ["--theme", "forest"]
+
+html_theme_options = {
+    "repository_url": "https://github.com/darenr/report_creator",
+    "use_repository_button": True,
+    "use_issues_button": True,
+    "use_download_button": True,
+    "path_to_docs": "docs/source",
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/darenr/report_creator",
+            "icon": "https://raw.githubusercontent.com/pydata/pydata-sphinx-theme/main/docs/_static/pandas-square.svg",
+            "type": "url",
+        }
+    ],
+}

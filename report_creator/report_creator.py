@@ -1263,6 +1263,21 @@ class Python(Language):
 ##############################
 
 
+class Shell(Language):
+    """Shell is a container for zsh/csh/sh code. It can also take a label.
+
+    Args:
+        code (str): _description_
+        label (Optional[str], optional): _description_. Defaults to None.
+    """
+
+    def __init__(self, code: str, *, label: Optional[str] = None):
+        Language.__init__(self, escape(code), "shell", label=label)
+
+
+##############################
+
+
 class Java(Language):
     """Java is a container for Java code. It can also take a label.
 
