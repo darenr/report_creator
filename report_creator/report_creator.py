@@ -1468,11 +1468,7 @@ class ReportCreator:
             icon_color, text_color = _random_color_generator(self.title)
 
             width = 150
-
-            cx = width / 2
-            cy = width / 2
-            r = width / 2
-            fs = int(r / 15)
+            fs = int(width / 2 / 13)
 
             self.header_str = f"""
                     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="{width}" height="{width}">
@@ -1480,16 +1476,15 @@ class ReportCreator:
                         <style>
                             .icon_text_style {{
                                 font-size: {fs}em;
-                                font-family: Verdana, lucida console, Fira Mono, monospace;
-                                text-anchor: middle;
                                 stroke-width: 1px;
                                 font-weight: bold;
+                                text-anchor: middle;
                                 alignment-baseline: central;
                             }}
 
                         </style>
 
-                        <circle cx="{cx}" cy="{cy}" r="{r}" fill="{icon_color}" />
+                        <rect width="{width}" height="{width}" rx="6" ry="6" fill="{icon_color}" />
                         <text class="icon_text_style" x="50%" y="50%" fill="{text_color}">{icon_text}</text>
                     </svg>
                 """.strip()
