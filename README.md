@@ -1,15 +1,15 @@
 # Report Creator
 
-- [Documentation](https://report-creator.readthedocs.io/en/latest)
-- [Getting Started](https://report-creator.readthedocs.io/en/latest/getting_started.html)
-
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](https://www.apache.org/licenses/LICENSE-2.0)
 [![PyPI Version](https://img.shields.io/pypi/v/report_creator.svg?style=for-the-badge&color=blue)](https://pypi.org/project/report_creator)
 [![Python Versions](https://img.shields.io/pypi/pyversions/report_creator.svg?logo=python&logoColor=white&style=for-the-badge)](https://pypi.org/project/report_creator)
 [![Python Stats](https://img.shields.io/pypi/dw/report_creator?style=for-the-badge)](https://pypi.org/project/report_creator)
 [![Repo Size](https://img.shields.io/github/repo-size/darenr/report_creator?style=for-the-badge)](https://pypi.org/project/report_creator)
 
-<img src="./rc-logo.png" width=256>
+![Logo](./rc-logo.pn)
+
+- [Documentation](https://report-creator.readthedocs.io/en/latest)
+- [Getting Started](https://report-creator.readthedocs.io/en/latest/getting_started.html)
 
 Library to assemble reports in HTML from various components using python
 
