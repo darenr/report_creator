@@ -140,7 +140,7 @@ def _random_color_generator(word: str) -> Tuple[str, str]:
     Args:
         word (str): word to generate color for
     """
-    random.seed(word.encode())  # must be deterministic
+    random.seed(f"-{word}-".encode())  # must be deterministic
     r = random.randint(0, 255)
     g = random.randint(0, 255)
     b = random.randint(0, 255)
