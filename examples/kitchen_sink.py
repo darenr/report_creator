@@ -55,8 +55,11 @@ if __name__ == "__main__":
                     label="Probability of rain in the next 24 hours using a weather model trained on historical data.",
                 ),
                 rc.Metric(
-                    heading="Loss",
-                    value=0.1,
+                    heading="Donald Knuth, 1992",
+                    value="Literate Programming",
+                    label="""I believe that the time is ripe for significantly better documentation of programs, and that we can best achieve this by considering 
+                    programs to be works of literature. Hence, my title: "Literate Programming."
+                    """,
                 ),
                 rc.Metric(
                     heading="Accuracy",
