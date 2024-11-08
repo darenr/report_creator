@@ -1473,7 +1473,7 @@ class ReportCreator:
             r = width / 2
             fs = int(r / 15)
 
-            self.header_str = f"""
+            self.header_str = textwrap.dedent(f"""
                     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="{width}" height="{width}">
 
                         <style>
@@ -1490,8 +1490,9 @@ class ReportCreator:
 
                         <circle cx="{cx}" cy="{cy}" r="{r}" fill="{icon_color}" />
                         <text class="icon_text_style" x="50%" y="50%" fill="{text_color}">{icon_text}</text>
+                        
                     </svg>
-                """.strip()
+                """)
 
     def __enter__(self):
         """Save the original color schema"""

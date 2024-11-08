@@ -1,4 +1,3 @@
-import datetime
 import logging
 
 import pandas as pd
@@ -55,11 +54,10 @@ if __name__ == "__main__":
                     label="Probability of rain in the next 24 hours using a weather model trained on historical data.",
                 ),
                 rc.Metric(
-                    heading="Donald Knuth, 1992",
-                    value="Literate Programming",
-                    label="""I believe that the time is ripe for significantly better documentation of programs, and that we can best achieve this by considering 
-                    programs to be works of literature. Hence, my title: "Literate Programming."
-                    """,
+                    heading="Gross profit margin",
+                    value=65,
+                    unit="%",
+                    label="A commonly tracked metric by finance departments that can be found on an income statement.",
                 ),
                 rc.Metric(
                     heading="Accuracy",
@@ -67,18 +65,20 @@ if __name__ == "__main__":
                     label="Number of correct predictions by Total number of predictions",
                 ),
                 rc.Metric(
-                    heading="Date",
-                    value=datetime.datetime.now().strftime("%d-%b-%y").upper(),
+                    heading="Recurring revenue",
+                    value="$10.7B",
+                    label="Recurring revenue is the portion of a company's revenue that is predictable and stable.",
                 ),
                 rc.Metric(
-                    heading="Ultimate Answer",
-                    value="42",
-                ),
-                rc.Metric(
-                    heading="Confidence",
-                    value=95,
+                    heading="Capacity utilization",
+                    value=42,
                     unit="%",
-                    label="How likely is this to be correct.",
+                    label="A popular productivity metric that measures the ratio of actual output to potential output.",
+                ),
+                rc.Metric(
+                    heading="Asset turnover ratio",
+                    value=3.3,
+                    label="Asset turnover ratio is a financial metric that shows how efficiently a company generates revenue from its assets.",
                 ),
                 rc.Metric(
                     heading="Author",
