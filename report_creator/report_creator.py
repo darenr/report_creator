@@ -34,7 +34,6 @@ from .utilities import (
     _random_color_generator,
     _random_light_color_generator,
     _strip_whitespace,
-    _ellipsis_url,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -1451,7 +1450,7 @@ class ReportCreator:
         self.diagram_theme = diagram_theme
         self.footer = footer
 
-        logging.info(f"ReportCreator: {self.title} {self.description}")
+        logging.info(f"ReportCreator: {self.title=} {self.description=}")
 
         pio.templates["rc"] = get_rc_theme()
 
@@ -1490,7 +1489,6 @@ class ReportCreator:
 
                         <circle cx="{cx}" cy="{cy}" r="{r}" fill="{icon_color}" />
                         <text class="icon_text_style" x="50%" y="50%" fill="{text_color}">{icon_text}</text>
-                        
                     </svg>
                 """)
 
@@ -1537,12 +1535,12 @@ class ReportCreator:
         include_hljs = "include_hljs" in body
 
         logging.info(f"ReportCreator: {include_plotly=}, {include_datatable=}, {include_mermaid=}, {include_hljs=}")
-
+        logging.info(f"ReportCreator: {self.description=}, {self.author=}")
         with open(path, "w", encoding="utf-8") as f:
             html = template.render(
                 title=self.title or "Report",
                 description=_markdown_to_html(self.description) if self.description else "",
-                author=self.author or "",
+                author=self.author.strip() if self.author else "",
                 body=body,
                 header_logo=self.header_str,
                 include_plotly=include_plotly,
@@ -1551,7 +1549,7 @@ class ReportCreator:
                 include_hljs=include_hljs,
                 code_theme=self.code_theme,
                 diagram_theme=self.diagram_theme,
-                footer=_markdown_to_html(self.footer) if self.footer else None,
+                footer=_markdown_to_html(self.footer).strip() if self.footer else None,
             )
             if prettify_html:
                 try:

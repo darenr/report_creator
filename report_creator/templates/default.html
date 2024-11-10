@@ -166,17 +166,25 @@
       }
 
       header {
-        align-items: center;
         display: flex;
+        align-items: center;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-content: stretch;
         gap: 25px;
+        margin-right: 20px;
       }
 
+      header .header-text {
+        display: flex;
+        flex-direction: column;
+      }
 
       header .header-text h1 {
         font-size: 65px;
       }
 
-      header letter-icon {
+      header .letter-icon {
         display: flex;
         flex-direction: column;
       }
@@ -380,8 +388,9 @@
       <div class="header-text">
         <h1>{{title}}</h1>
         {% if description %}
-        <p>{{description}}</p>
-        {% endif %} {% if author %}
+        {{description}}
+        {% endif %} 
+        {% if author %}
         <p><small>{{author}}</small></p>
         {% endif %}
       </div>
@@ -395,7 +404,7 @@
 
     {% if footer %}
       <footer>
-        <p>{{footer}}</p>
+        {{footer}}
       </footer>
     {% endif %}
 
