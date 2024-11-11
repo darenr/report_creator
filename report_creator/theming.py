@@ -1,8 +1,6 @@
 import plotly.graph_objs as go
 
 preferred_fonts = [
-    "Verdana",
-    "Oracle Sans",
     "sans-serif",
 ]
 

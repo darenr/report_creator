@@ -22,8 +22,8 @@ Example Usage
 
    with rc.ReportCreator(
       title="My Report",
-      description="This is a report created with report_creator",
-      footer="This is the footer",
+      description="My Report Description",
+      footer="My Report Footer",
    ) as report:
 
       view = rc.Block(
@@ -56,6 +56,20 @@ Example Usage
       )
 
       report.save(view, "report.html") 
+
+
+Logo
+----
+
+The logo parameter is optional, if you want to include a logo in the report, you can pass a url 
+to the logo file. The logo will be fetched at report creation time and included in the report. As
+an alternative you can pass a ``base64`` encoded image, or a GitHub handle. When passing a GitHub handle
+(your username) the image will be fetched from the github repository. Since most companies have a
+GitHub account, this is a convenient way to include a logo (for example ``logo="apple"``).
+
+Not providing any logo (or None), 
+the report will include an SVG based logo that derives it's color from the title of the report, and the first, and 
+second letters of the title.
 
 Layout
 ------

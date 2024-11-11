@@ -1,9 +1,13 @@
+import base64
 import logging
+import mimetypes
 import random
 import uuid
 from html.parser import HTMLParser
 from typing import Tuple
 from urllib.parse import urlparse
+
+import requests
 
 from .theming import report_creator_colors
 
@@ -161,17 +165,35 @@ def _get_url_root(url):
     return root_url
 
 
+def _convert_filepath_to_datauri(filepath: str) -> str:
+    """convert file path to base64 datauri
+
+    Args:
+        imgurl (str): url of the image
+    """
+
+    with open(filepath, "rb") as image_file:
+        # Detect the MIME type of the file from the URL
+        mime_type, _ = mimetypes.guess_type(filepath)
+        logging.info(f"{filepath=} mime_type: {mime_type}")
+
+        # Encode the content as base64
+        base64_content = base64.b64encode(image_file.read()).decode("utf-8")
+
+        logging.info(f"Image: ({_ellipsis_url(filepath)}) - {mime_type}, {len(base64_content)} bytes")
+
+        # Create the Data URI
+        data_uri = f"data:{mime_type};base64,{base64_content}"
+
+    return data_uri
+
+
 def _convert_imgurl_to_datauri(imgurl: str) -> str:
     """convert url to base64 datauri
 
     Args:
         imgurl (str): url of the image
     """
-
-    import base64
-    import mimetypes
-
-    import requests
 
     headers = {"Referer": _get_url_root(imgurl)}
 
