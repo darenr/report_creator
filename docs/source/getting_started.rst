@@ -24,6 +24,7 @@ Example Usage
       title="My Report",
       description="My Report Description",
       footer="My Report Footer",
+      logo="octocat",
    ) as report:
 
       view = rc.Block(
@@ -61,15 +62,14 @@ Example Usage
 Logo
 ----
 
-The logo parameter is optional, if you want to include a logo in the report, you can pass a url 
-to the logo file. The logo will be fetched at report creation time and included in the report. As
-an alternative you can pass a ``base64`` encoded image, or a GitHub handle. When passing a GitHub handle
-(your username) the image will be fetched from the github repository. Since most companies have a
-GitHub account, this is a convenient way to include a logo (for example ``logo="apple"``).
+The ``logo`` parameter is optional, to include a logo in the report pass a path 
+to the logo file, a url to a logo image, a base64 encoded image, or a GitHub handle.
 
-Not providing any logo (or None), 
-the report will include an SVG based logo that derives it's color from the title of the report, and the first, and 
-second letters of the title.
+When passing a GitHub handle the image will be fetched from the github repository. Since 
+most companies have a GitHub account, this is a convenient way to include a logo 
+(for example ``logo="apple"``).
+
+Not providing a logo, the report will include an SVG based logo that derives from the title of the report.
 
 Layout
 ------
