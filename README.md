@@ -5,8 +5,6 @@
 [![Python Versions](https://img.shields.io/pypi/pyversions/report_creator.svg?logo=python&logoColor=white&style=for-the-badge)](https://pypi.org/project/report_creator)
 [![Python Stats](https://img.shields.io/pypi/dw/report_creator?style=for-the-badge)](https://pypi.org/project/report_creator)
 
-![Logo](./rc-logo.png)
-
 - [Documentation](https://report-creator.readthedocs.io/en/latest)
 - [Getting Started](https://report-creator.readthedocs.io/en/latest/getting_started.html)
 
@@ -31,7 +29,7 @@ Library to assemble reports in HTML from various components using python
 * [x] Write documentation!
 * [x] Add a status metric that supports up to a handful of k/v pairs (k=task, v=status)
 * [x] Add bookmark anchors to blocks
-* [x] Add Footer block
+* [x] Add Footer to report
 * [ ] Add log file block (https://github.com/jwodder/apachelogs) with analytics
 * [ ] Add Radar chart
 * [ ] Add choropleth map plot type
@@ -46,8 +44,8 @@ import report_creator as rc
 
 with rc.ReportCreator(
     title="My Report",
-    description="This is a report created with report_creator",
-    footer="This is the footer",
+    description="My Report Description",
+    footer="My Report Footer",
 ) as report:
     view = rc.Block(
         rc.Text("""It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of light, it was the season of darkness, it was the spring of hope, it was the winter of despair.""", 
