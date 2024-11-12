@@ -37,7 +37,7 @@ from .utilities import (
     _strip_whitespace,
 )
 
-logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("report_creator")
 
 
 class Base(ABC):
@@ -69,7 +69,7 @@ class Block(Base):
     def __init__(self, *components: Base, label: Optional[str] = None):
         Base.__init__(self, label=label)
         self.components = components
-        logging.info(f"Block: {len(self.components)} components")
+        logger.info(f"Block: {len(self.components)} components")
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -99,7 +99,7 @@ class Group(Base):
     def __init__(self, *components: Base, label: Optional[str] = None):
         Base.__init__(self, label=label)
         self.components = components
-        logging.info(f"Group: {len(self.components)} components {label=}")
+        logger.info(f"Group: {len(self.components)} components {label=}")
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -136,7 +136,7 @@ class Collapse(Base):
     def __init__(self, *components: Base, label: Optional[str] = None):
         Base.__init__(self, label=label)
         self.components = components
-        logging.info(f"Collapse: {len(self.components)} components, {label=}")
+        logger.info(f"Collapse: {len(self.components)} components, {label=}")
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -218,7 +218,7 @@ class MetricGroup(Base):
 
         self.g = Group(*[Metric(row[heading], row[value]) for _, row in df.iterrows()], label=label)
 
-        logging.info(f"MetricGroup: {len(df)} metrics")
+        logger.info(f"MetricGroup: {len(df)} metrics")
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -266,7 +266,7 @@ class EventMetric(Base):
         self.freq = frequency
 
         if not is_datetime(self.df[date]):
-            logging.info(f"EventMetric converting {date} to datetime")
+            logger.info(f"EventMetric converting {date} to datetime")
             self.df[date] = self.df[date].apply(dateutil.parser.parse)
 
         self.condition = condition
@@ -274,7 +274,7 @@ class EventMetric(Base):
         self.heading = heading or f"{condition}"
         self.yhat = "_Y_"
 
-        logging.info(f"EventMetric: {len(df)} rows, fn: ({condition})")
+        logger.info(f"EventMetric: {len(df)} rows, fn: ({condition})")
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -364,7 +364,7 @@ class Metric(Base):
         self.value = value
         self.unit = unit or ""
         self.colored = colored
-        logging.info(f"Metric: {self.heading} {self.value}")
+        logger.info(f"Metric: {self.heading} {self.value}")
 
     def __str__(self) -> str:
         return f"Metric {self.heading=} {self.value=} {self.unit=} {self.label=}"
@@ -484,7 +484,7 @@ class DataTable(Base):
 
         styler.set_table_attributes(f'class="{" ".join(data_table_classes)} cellspacing="0" style="width: 100%;"')
         self.table_html = styler.format(escape="html", precision=float_precision).to_html()
-        logging.info(f"DataTable: {len(df)} rows")
+        logger.info(f"DataTable: {len(df)} rows")
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -510,7 +510,7 @@ class Html(Base):
         status, errors = _check_html_tags_are_closed(html)
         if not status:
             raise ValueError(f"HTML component with label {self.label}, tags are not closed: {', '.join(errors)}")
-        logging.info(f"HTML: {len(self.html)} characters")
+        logger.info(f"HTML: {len(self.html)} characters")
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -545,7 +545,7 @@ class Diagram(Base):
 
         self.src = src
         self.extra_css = extra_css or ""
-        logging.info(f"Diagram: {len(self.src)} characters")
+        logger.info(f"Diagram: {len(self.src)} characters")
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -598,8 +598,8 @@ class Image(Base):
             try:
                 self.src = _convert_imgurl_to_datauri(src)
             except Exception as e:
-                logging.error(f"Error converting {src} to base64: {e}")
-        logging.info(f"Image: label: {self.label}")
+                logger.error(f"Error converting {src} to base64: {e}")
+        logger.info(f"Image: label: {self.label}")
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -638,7 +638,7 @@ class Markdown(Base):
         self.text = text
         self.extra_css = extra_css or ""
 
-        logging.info(f"Markdown: {len(self.text)} characters")
+        logger.info(f"Markdown: {len(self.text)} characters")
 
     @staticmethod
     def _markdown_to_html(text):
@@ -747,7 +747,7 @@ class Bar(PxBase):
 
         PxBase.apply_common_kwargs(self.kwargs, label=label)
 
-        logging.info(f"Bar: {len(self.df)} rows, {x=}, {y=}, {label=}")
+        logger.info(f"Bar: {len(self.df)} rows, {x=}, {y=}, {label=}")
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -818,7 +818,7 @@ class Line(PxBase):
 
         PxBase.apply_common_kwargs(self.kwargs, label=label)
 
-        logging.info(f"Line: {len(self.df)} rows, {x=}, {y=}, {label=}")
+        logger.info(f"Line: {len(self.df)} rows, {x=}, {y=}, {label=}")
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -867,7 +867,7 @@ class Pie(PxBase):
         if "hole" not in self.kwargs:
             self.kwargs["hole"] = 0.3
 
-        logging.info(f"Pie: {len(self.df)} rows, {values=}, {names=}, {label=}")
+        logger.info(f"Pie: {len(self.df)} rows, {values=}, {names=}, {label=}")
 
     def to_html(self) -> str:
         fig = px.pie(
@@ -938,7 +938,7 @@ class Scatter(PxBase):
 
         PxBase.apply_common_kwargs(self.kwargs, label=label)
 
-        logging.info(f"Scatter: {len(self.df)} rows, {y=}, {dimension=}, {label=}")
+        logger.info(f"Scatter: {len(self.df)} rows, {y=}, {dimension=}, {label=}")
 
     def to_html(self) -> str:
         """
@@ -1001,7 +1001,7 @@ class Box(PxBase):
 
         PxBase.apply_common_kwargs(self.kwargs, label=label)
 
-        logging.info(f"Box: {len(self.df)} rows, {y=}, {dimension=}, {label=}")
+        logger.info(f"Box: {len(self.df)} rows, {y=}, {dimension=}, {label=}")
 
     def to_html(self) -> str:
         """
@@ -1063,7 +1063,7 @@ class Histogram(PxBase):
 
         PxBase.apply_common_kwargs(kwargs, label=label)
 
-        logging.info(f"Histogram: {len(self.df)} rows, {x=}, {label=}")
+        logger.info(f"Histogram: {len(self.df)} rows, {x=}, {label=}")
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -1101,7 +1101,7 @@ class Heading(Base):
         assert level >= 1 and level <= 5, f"heading level ({level}) must be between 1 and 5 (inclusive)"
         assert label, "No heading label provided"
         self.level = level
-        logging.info(f"Heading: (h{level}): [{label}]")
+        logger.info(f"Heading: (h{level}): [{label}]")
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -1126,7 +1126,7 @@ class Separator(Base):
 
     def __init__(self, label: Optional[str] = None):
         Base.__init__(self, label=label)
-        logging.info(f"Separator: {label=}")
+        logger.info(f"Separator: {label=}")
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -1166,7 +1166,7 @@ class Select(Base):
             if not b.label:
                 raise ValueError("All blocks must have a label to use in a Select")
 
-        logging.info(f"Select: {len(self.blocks)} tabs: {', '.join([c.label for c in self.blocks])}")
+        logger.info(f"Select: {len(self.blocks)} tabs: {', '.join([c.label for c in self.blocks])}")
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -1230,7 +1230,7 @@ class Language(Base):
         Base.__init__(self, label=label)
         self.text = text
         self.language = language
-        logging.info(f"{language}: {len(self.text)} characters")
+        logger.info(f"{language}: {len(self.text)} characters")
 
     @_strip_whitespace
     @abstractmethod
@@ -1451,7 +1451,7 @@ class ReportCreator:
         self.diagram_theme = diagram_theme
         self.footer = footer
 
-        logging.info(f"ReportCreator: {self.title=} {self.description=}")
+        logger.info(f"ReportCreator: {self.title=} {self.description=}")
 
         pio.templates["rc"] = get_rc_theme()
 
@@ -1465,7 +1465,7 @@ class ReportCreator:
             elif os.path.exists(logo):
                 self.header_str = f"""<img src="{_convert_filepath_to_datauri(logo)}" style="width: 125px;">"""
             else:
-                logging.info(f"GitHub: {logo}")
+                logger.info(f"GitHub: {logo}")
                 self.header_str = (
                     f"""<img src="https://avatars.githubusercontent.com/{logo}?s=125" style="width: 125px;">"""
                 )
@@ -1527,7 +1527,7 @@ class ReportCreator:
         if not isinstance(view, (Block, Group)):
             raise ValueError(f"Expected view to be either Block or Group object, got {type(view)} instead")
 
-        logging.info(f"Saving report to {path}")
+        logger.info(f"Saving report to {path}")
 
         try:
             body = view.to_html()
@@ -1542,8 +1542,8 @@ class ReportCreator:
         include_mermaid = "include_mermaid" in body
         include_hljs = "include_hljs" in body
 
-        logging.info(f"ReportCreator: {include_plotly=}, {include_datatable=}, {include_mermaid=}, {include_hljs=}")
-        logging.info(f"ReportCreator: {self.description=}, {self.author=}")
+        logger.info(f"ReportCreator: {include_plotly=}, {include_datatable=}, {include_mermaid=}, {include_hljs=}")
+        logger.info(f"ReportCreator: {self.description=}, {self.author=}")
         with open(path, "w", encoding="utf-8") as f:
             html = template.render(
                 title=self.title or "Report",
@@ -1571,6 +1571,6 @@ class ReportCreator:
             else:
                 f.write(html)
 
-            logging.info(
+            logger.info(
                 f'ReportCreator created {path}, size: {humanize.naturalsize(len(html), binary=True)}, title: "{self.title}"'
             )
