@@ -16,14 +16,14 @@ Library to assemble reports in HTML from various components using python
 * [x] Look modern
 * [x] Allows markdown as input for text blocks
 * [x] Allows html as input
-* [x] A few simple components for things like metrics ("Accuracy: 87%") from a triple of key, value
+* [x] Components for things like metrics ("Accuracy: 87%") from a key & value
 * [x] Support for plotting figures, interactive `plotly` and `matplotlib`
 * [x] images (styled by the library) with an option to fetch at report build time (no fetch on render)
 * [x] `json`/`yaml`/`python`/`java` code blocks with color syntax highlighting
-* [x] Support tabs
+* [x] Support tab containers (not printer friendly)
 * [x] Add support for any Jupyter widget, any object that renders in a notebook should render to a report
 * [x] Add built-in easy plotting that looks stylistically consistent with the report
-* [x] Add option to change the report icon based on a github account avatar
+* [x] Add option to change the report icon based on a github account avatar, or an image
 * [x] Add a metric type for timeseries data which should some aggregate function of the data, and plot over time.
 * [x] Add diagram component with Mermaid JS
 * [x] Write documentation!
@@ -32,9 +32,9 @@ Library to assemble reports in HTML from various components using python
 * [x] Add Footer to report
 * [ ] Add log file block (https://github.com/jwodder/apachelogs) with analytics
 * [ ] Add Radar chart
-* [ ] Add choropleth map plot type
+* [ ] Add choropleth map plot type (maybe?)
 * [ ] Youtube embeds rc.Video(url: str, label: str)
-* [ ] File attachments (downloadable any data from page)
+* [ ] File attachments (downloadable dataset from page)
 
 ## Example
 
