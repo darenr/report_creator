@@ -11,7 +11,7 @@ import requests
 
 from .theming import report_creator_colors
 
-logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("report_creator")
 
 
 def _generate_anchor_id(text: str) -> str:
@@ -48,7 +48,7 @@ def _check_html_tags_are_closed(html_content: str):
             if self.stack and self.stack[-1] == tag:
                 self.stack.pop()  # Remove the tag from the stack when it closes
             else:
-                logging.error(f"Unexpected closing tag {tag} or tag not opened.")
+                logger.error(f"Unexpected closing tag {tag} or tag not opened.")
 
         def validate_html(self, html):
             self.feed(html)
@@ -175,12 +175,12 @@ def _convert_filepath_to_datauri(filepath: str) -> str:
     with open(filepath, "rb") as image_file:
         # Detect the MIME type of the file from the URL
         mime_type, _ = mimetypes.guess_type(filepath)
-        logging.info(f"{filepath=} mime_type: {mime_type}")
+        logger.info(f"{filepath=} mime_type: {mime_type}")
 
         # Encode the content as base64
         base64_content = base64.b64encode(image_file.read()).decode("utf-8")
 
-        logging.info(f"Image: ({_ellipsis_url(filepath)}) - {mime_type}, {len(base64_content)} bytes")
+        logger.info(f"Image: ({_ellipsis_url(filepath)}) - {mime_type}, {len(base64_content)} bytes")
 
         # Create the Data URI
         data_uri = f"data:{mime_type};base64,{base64_content}"
@@ -206,7 +206,7 @@ def _convert_imgurl_to_datauri(imgurl: str) -> str:
     # Encode the content as base64
     base64_content = base64.b64encode(response.content).decode("utf-8")
 
-    logging.info(f"Image: ({_ellipsis_url(imgurl)}) - {mime_type}, {len(base64_content)} bytes")
+    logger.info(f"Image: ({_ellipsis_url(imgurl)}) - {mime_type}, {len(base64_content)} bytes")
 
     # Create the Data URI
     data_uri = f"data:{mime_type};base64,{base64_content}"
