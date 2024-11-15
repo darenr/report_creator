@@ -740,8 +740,10 @@ class Gauge(PxBase):
     @_strip_whitespace
     def to_html(self) -> str:
         plot_bgcolor = "white"
-        quadrant_colors = [plot_bgcolor] + list(reversed(["#f25829", "#f2a529", "#2bad4e"]))
-        quadrant_text = [""] + list(reversed(["<b>Low</b>", "<b>Medium</b>", "<b>High</b>"]))
+        quadrant_colors = [plot_bgcolor] + list(reversed(["#2bad4e", "#85e043", "#eff229", "#f2a529", "#f25829"]))
+        quadrant_text = [""] + list(
+            reversed(["<b>Very Low</b>", "<b>Low</b>", "<b>Medium</b>", "<b>High</b>", "<b>Very High</b>"])
+        )
         n_quadrants = len(quadrant_colors) - 1
 
         current_value = self.value
