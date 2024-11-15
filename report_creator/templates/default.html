@@ -447,6 +447,7 @@
 
         {% if include_hljs %}
 
+        console.log("initializing highlight.js (theme: {{code_theme}})");
         // style any code blocks
         document
           .querySelectorAll(".syntax-color, .codehilite pre code")
@@ -462,6 +463,7 @@
 
         {% if include_datatable %}
 
+        console.log("initializing DataTables");
         // style tables
         table = new DataTable("table.fancy-table", {
           layout: {
@@ -478,6 +480,7 @@
 
         {% if include_mermaid %}
 
+        console.log("initializing mermaid (theme: {{diagram_theme}})");
         mermaid.initialize({
           startOnLoad: true,
           securityLevel: "loose",

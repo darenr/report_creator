@@ -36,9 +36,6 @@ if __name__ == "__main__":
     with rc.ReportCreator(
         title="Kitchen Sink",
         description="**All** the *things*",
-        theme="rc",
-        code_theme="ir-black",
-        diagram_theme="default",
         footer="Install the package with `pip install report-creator`",
     ) as report:
         view = rc.Block(
@@ -48,10 +45,8 @@ if __name__ == "__main__":
             ),
             rc.Group(
                 rc.Metric(
-                    heading="Chances of rain",
-                    value="84",
-                    unit="%",
-                    label="Probability of rain in the next 24 hours using a weather model trained on historical data.",
+                    heading="Hitchhiker's Guide to the Galaxy",
+                    value="Don't Panic",
                 ),
                 rc.Metric(
                     heading="Gross profit margin",
@@ -107,7 +102,7 @@ if __name__ == "__main__":
                 rc.EventMetric(
                     pd.read_csv("examples/logs.csv"),
                     condition="status == 200",
-                    color="green",
+                    color="black",
                     date="time",
                     frequency="B",
                     heading="Successful Requests",
@@ -115,7 +110,7 @@ if __name__ == "__main__":
                 rc.EventMetric(
                     pd.read_csv("examples/logs.csv"),
                     condition="status == 404",
-                    color="red",
+                    color="black",
                     date="time",
                     frequency="B",
                     heading="Not Found Requests",
@@ -124,7 +119,7 @@ if __name__ == "__main__":
             ),
             rc.Text(
                 example_text,
-                label="Alice’s Adventures in Wonderland",
+                label="Alice’s Adventures in Wonderland (Text)",
             ),
             rc.Yaml(
                 datastructure,

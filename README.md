@@ -30,6 +30,7 @@ Library to assemble reports in HTML from various components using python
 * [x] Add a status metric that supports up to a handful of k/v pairs (k=task, v=status)
 * [x] Add bookmark anchors to blocks
 * [x] Add Footer to report
+* [ ] Add Venn diagram support (possibly with `matplotlib_venn`, or SVG)
 * [ ] Add log file block (https://github.com/jwodder/apachelogs) with analytics
 * [ ] Add Radar chart
 * [ ] Add choropleth map plot type (maybe?)
