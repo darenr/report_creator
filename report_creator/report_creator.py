@@ -15,7 +15,6 @@ import dateutil
 import humanize
 import matplotlib
 import matplotlib as mpl
-import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
@@ -704,110 +703,6 @@ class PxBase(Base):
 # Charting Components
 
 ##############################
-
-
-class Gauge(PxBase):
-    """Gauge is a component used to show a value within a range
-
-    Args:
-        value (float): The value to be shown
-        min_value (float, optional): The minimum value for the gauge. Defaults to 0.
-        max_value (float, optional): The maximum value for the gauge. Defaults to 100.
-        quadrants (Optional[List[str]], optional): The quadrants to be shown. Defaults to None.
-        label (Optional[str], optional): The label for the gauge. Defaults to None.
-    """
-
-    def __init__(
-        self,
-        value: float,
-        *,
-        min_value: float = 0.0,
-        max_value: float = 100.0,
-        quadrants: Optional[List[str]] = None,
-        label: Optional[str] = None,
-    ):
-        Base.__init__(self, label=label)
-        self.min_value = min_value
-        self.max_value = max_value
-        self.value = value
-        self.quadrants = quadrants or []
-
-        assert value >= min_value, f"{value=} must be greater than {min_value=}"
-        assert value <= max_value, f"{value=} must be less than {max_value=}"
-
-        logger.info(f"Gauge: {value=} ({min_value=} - {max_value=}) {', '.join(self.quadrants)} {label=}")
-
-    @_strip_whitespace
-    def to_html(self) -> str:
-        plot_bgcolor = "white"
-        quadrant_colors = [plot_bgcolor] + list(reversed(["#2bad4e", "#85e043", "#eff229", "#f2a529", "#f25829"]))
-        quadrant_text = [""] + list(
-            reversed(["<b>Very Low</b>", "<b>Low</b>", "<b>Medium</b>", "<b>High</b>", "<b>Very High</b>"])
-        )
-        n_quadrants = len(quadrant_colors) - 1
-
-        current_value = self.value
-        min_value = self.min_value
-        max_value = self.max_value
-        hand_length = 0.17
-        hand_angle = np.pi * (1 - (max(min_value, min(max_value, current_value)) - min_value) / (max_value - min_value))
-
-        fig = go.Figure(
-            data=[
-                go.Pie(
-                    values=[0.5] + (np.ones(n_quadrants) / 2 / n_quadrants).tolist(),
-                    rotation=90,
-                    hole=0.5,
-                    marker_colors=quadrant_colors,
-                    text=quadrant_text,
-                    textinfo="text",
-                    hoverinfo="skip",
-                ),
-            ],
-            layout=go.Layout(
-                showlegend=False,
-                margin={"b": 0, "t": 10, "l": 10, "r": 10},
-                width=250,
-                # height=250,
-                paper_bgcolor=plot_bgcolor,
-                annotations=[
-                    go.layout.Annotation(
-                        text=f"<b>{current_value}</b>",
-                        x=0.5,
-                        xanchor="center",
-                        xref="paper",
-                        y=0.25,
-                        yanchor="bottom",
-                        yref="paper",
-                        showarrow=False,
-                        font={"size": 45},  # Set font size to 20
-                    )
-                ],
-                shapes=[
-                    go.layout.Shape(
-                        type="circle",
-                        x0=0.48,
-                        x1=0.52,
-                        y0=0.48,
-                        y1=0.52,
-                        fillcolor="#333",
-                        line_color="#333",
-                    ),
-                    go.layout.Shape(
-                        type="line",
-                        x0=0.5,
-                        x1=0.5 + hand_length * np.cos(hand_angle),
-                        y0=0.5,
-                        y1=0.5 + hand_length * np.sin(hand_angle),
-                        line={"color": "#333", "width": 5},
-                    ),
-                ],
-            ),
-        )
-
-        PxBase.apply_common_fig_options(fig)
-
-        return fig.to_html(include_plotlyjs=False, full_html=False, config={"responsive": True})
 
 
 class Bar(PxBase):

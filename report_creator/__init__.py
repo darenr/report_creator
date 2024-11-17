@@ -14,7 +14,6 @@ from .report_creator import (
     DataTable,
     Diagram,
     EventMetric,
-    Gauge,
     Group,
     Heading,
     Histogram,
