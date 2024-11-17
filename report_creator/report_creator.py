@@ -1594,7 +1594,7 @@ class ReportCreator:
                                 font-family: sans-serif;
                                 font-weight: bold;
                                 text-anchor: middle;
-                                alignment-baseline: central;
+                                dominant-baseline: central;
                             }}
 
                         </style>

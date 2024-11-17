@@ -28,9 +28,12 @@
     <!-- DataTable -->
     {% if include_datatable %}
 
-      <link href="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-2.1.8/b-3.1.2/b-colvis-3.1.2/b-html5-3.1.2/b-print-3.1.2/cr-2.0.4/date-1.5.4/fc-5.0.4/fh-4.0.1/kt-2.12.1/r-3.0.3/rg-1.5.0/rr-1.5.0/sc-2.4.3/sb-1.8.1/sp-2.3.3/sl-2.1.0/datatables.min.css" rel="stylesheet">
- 
-      <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-2.1.8/b-3.1.2/b-colvis-3.1.2/b-html5-3.1.2/b-print-3.1.2/cr-2.0.4/date-1.5.4/fc-5.0.4/fh-4.0.1/kt-2.12.1/r-3.0.3/rg-1.5.0/rr-1.5.0/sc-2.4.3/sb-1.8.1/sp-2.3.3/sl-2.1.0/datatables.min.js"></script>
+    <link
+      href="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-2.1.8/b-3.1.2/b-colvis-3.1.2/b-html5-3.1.2/b-print-3.1.2/cr-2.0.4/date-1.5.4/fc-5.0.4/fh-4.0.1/kt-2.12.1/r-3.0.3/rg-1.5.0/rr-1.5.0/sc-2.4.3/sb-1.8.1/sp-2.3.3/sl-2.1.0/datatables.min.css"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-2.1.8/b-3.1.2/b-colvis-3.1.2/b-html5-3.1.2/b-print-3.1.2/cr-2.0.4/date-1.5.4/fc-5.0.4/fh-4.0.1/kt-2.12.1/r-3.0.3/rg-1.5.0/rr-1.5.0/sc-2.4.3/sb-1.8.1/sp-2.3.3/sl-2.1.0/datatables.min.js"></script>
     {% endif %}
 
     <!-- Mermaid JS -->
@@ -86,6 +89,17 @@
         -moz-osx-font-smoothing: grayscale !important;
       }
 
+      body {
+        max-width: 90%;
+        width: 90%;
+        margin: 20px auto;
+        padding-left: 5%;
+        padding-right: 5%;
+
+        font-family: "Ariana Grande", "Helvetica Neue", sans-serif;
+        font-size: 1.1em;
+      }
+
       input:disabled {
         opacity: unset;
       }
@@ -99,8 +113,6 @@
         background-color: var(--background-body);
         margin-left: -20px !important;
       }
-
-      /* end water undos */
 
       block {
         display: flex;
@@ -145,11 +157,8 @@
         box-sizing: border-box;
       }
 
-      h1, h2, h3, h4, h5, h6 {
-        font-family: sans-serif;
-        font-optical-sizing: auto;
-        font-weight: 700;
-        font-style: bold;
+      .metric h1 {
+        font-size: 3.5rem;
       }
 
       .metric p {
@@ -164,7 +173,7 @@
 
       header {
         display: flex;
-        align-items: flex-start; 
+        align-items: flex-start;
         justify-content: flex-start;
         flex-direction: row;
         flex-wrap: wrap;
@@ -178,7 +187,7 @@
       }
 
       header .header-text h1 {
-        font-size: 65px;
+        font-size: 4rem;
       }
 
       header .letter-icon {
@@ -190,7 +199,7 @@
         display: block;
         margin-top: 0.75em;
         margin-bottom: 1.2em;
-        font-size: 2.0em;
+        font-size: 2em;
         font-weight: bold;
         border-left: 5px solid var(--focus);
         padding-left: 15px;
@@ -222,17 +231,6 @@
         -moz-appearance: none;
         -webkit-appearance: none;
         appearance: none;
-      }
-
-      body {
-        max-width: 90%;
-        width: 90%;
-        margin: 20px auto;
-        padding-left: 5%;
-        padding-right: 5%;
-
-        font-family: "Ariana Grande", sans-serif;
-        font-size: 1.1em;
       }
 
       /* Style the tab */
@@ -376,7 +374,6 @@
         text-align: center;
         padding: 3px;
       }
-
     </style>
   </head>
 
@@ -385,25 +382,18 @@
       <div class="letter-icon">{{header_logo|safe}}</div>
       <div class="header-text">
         <h1>{{title}}</h1>
-        {% if description %}
-        {{description}}
-        {% endif %} 
-        {% if author %}
+        {% if description %} {{description}} {% endif %} {% if author %}
         <p><small>{{author}}</small></p>
         {% endif %}
       </div>
     </header>
 
     <hr />
-    
 
     <div class="container">{{body}}</div>
 
-
     {% if footer %}
-      <footer>
-        {{footer}}
-      </footer>
+    <footer>{{footer}}</footer>
     {% endif %}
 
     <script>
