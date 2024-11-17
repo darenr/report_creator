@@ -8,7 +8,7 @@
 - [Documentation](https://report-creator.readthedocs.io/en/latest)
 - [Getting Started](https://report-creator.readthedocs.io/en/latest/getting_started.html)
 
-Library to assemble reports in HTML from various components using python
+Library to assemble reports in HTML from various components using python. Inspired by DataPane which is no longer maintained and targetted more interactive use cases. 
 
 ## Features
 
