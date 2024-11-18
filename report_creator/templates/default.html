@@ -159,6 +159,8 @@
 
       .metric h1 {
         font-size: 3.5rem;
+        margin-top: 3px;
+        margin-bottom: 3px;
       }
 
       .metric p {
@@ -340,16 +342,20 @@
       .code-block {
         height: 100%;
         box-sizing: border-box;
+        border: 1px solid var(--border);
+        border-radius: 0.75rem;
+        padding: 1rem;
       }
 
       pre code.hljs {
-        border: 1px solid var(--border);
+        padding: 0;
       }
 
       pre {
         white-space: pre-wrap;
         word-wrap: break-word;
         box-sizing: border-box;
+        margin: 0;
       }
 
       .report-widget {

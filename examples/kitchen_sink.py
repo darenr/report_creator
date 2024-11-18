@@ -75,6 +75,18 @@ if __name__ == "__main__":
                     value=3.3,
                     label="Asset turnover ratio is a financial metric that shows how efficiently a company generates revenue from its assets.",
                 ),
+                rc.Metric(
+                    heading="Request",
+                    value="currency_calculator",
+                    label="""
+                    ```json
+                    {
+                        "base_amount": 124.56,
+                        "exchange_rate": 1.23
+                    }
+                    ```
+                    """,
+                ),
                 label="Grouped Metrics",
             ),
             rc.Group(
@@ -109,13 +121,15 @@ if __name__ == "__main__":
                 example_text,
                 label="Alice’s Adventures in Wonderland (Text)",
             ),
-            rc.Yaml(
-                datastructure,
-                label="Kubernetes Creating a Deployment as YAML",
-            ),
-            rc.Java(
-                example_java,
-                label="Example Java",
+            rc.Group(
+                rc.Yaml(
+                    datastructure,
+                    label="Kubernetes Creating a Deployment as YAML",
+                ),
+                rc.Java(
+                    example_java,
+                    label="Example Java",
+                ),
             ),
             rc.Separator(),
             rc.Markdown(example_md, label="README.md"),
