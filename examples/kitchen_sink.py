@@ -79,6 +79,7 @@ if __name__ == "__main__":
                     heading="Request",
                     value="currency_calculator",
                     label="""
+                    ### Currency Calculator
                     ```json
                     {
                         "base_amount": 124.56,
