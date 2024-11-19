@@ -86,12 +86,11 @@ A container called ``rc.Select()`` is used to show tabs. It should be noted that
 .. image:: images/select.png
   :alt: rc.Select()
 
-Text
-----
+Formatted Text
+--------------
 
-There are three types of text components, ``rc.Text()``, ``rc.Html()``, and ``rc.Markdown()``. The ``rc.Text()`` is a simple component 
-for plain text, ``rc.Html()`` is to be used if you already have html, while ``rc.Markdown()`` is very flexible, the markdown is the 
-GitHub extended syntax, tables will be rendered properly, and code in Markdown will be styled to match code in the code components.
+There are three types of text components, ``rc.Text()`` (deprecated in favor of ``rc.Markdown()``), ``rc.Html()``. The markdown is the 
+GitHub extended syntax, tables will be rendered properly, and code within Markdown will be styled to match code in the code components.
 
 Most components will accept a label, which is a string that may contain Markdown.
 

@@ -86,6 +86,7 @@ if __name__ == "__main__":
                         "exchange_rate": 1.23
                     }
                     ```
+                    <i>this is italics</i>
                     """,
                 ),
                 label="Grouped Metrics",

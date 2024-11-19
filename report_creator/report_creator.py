@@ -504,12 +504,21 @@ class Html(Base):
         html (str): The raw HTML content.
         css (str, optional): The CSS styles to be applied to the HTML. Defaults to None.
         label (Optional[str], optional): The label for the HTML component. Defaults to None.
+        bordered (Optional[bool], optional): If set to True, the HTML will have a border. Defaults to False.
     """
 
-    def __init__(self, html: str, *, css: Optional[str] = None, label: Optional[str] = None):
+    def __init__(
+        self,
+        html: str,
+        *,
+        css: Optional[str] = None,
+        label: Optional[str] = None,
+        bordered: Optional[bool] = False,
+    ):
         Base.__init__(self, label=label)
         self.html = html
         self.css = css
+        self.bordered = bordered
         status, errors = _check_html_tags_are_closed(html)
         if not status:
             raise ValueError(f"HTML component with label {self.label}, tags are not closed: {', '.join(errors)}")
@@ -517,10 +526,12 @@ class Html(Base):
 
     @_strip_whitespace
     def to_html(self) -> str:
+        border = "round-bordered" if self.bordered else ""
+
         html = f"<style>{self.css}</style>" if self.css else ""
         if self.label:
             html += f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption>"
-        html += "<div>" + self.html + "</div>"
+        html += f'<div class="{border}">' + self.html + "</div>"
         return html
 
 
