@@ -86,10 +86,6 @@ if __name__ == "__main__":
                         "exchange_rate": 1.23
                     }
                     ```
-                    
-                    $$
-                    \operatorname{ker} f=\{g\in G:f(g)=e_{H}\}{\mbox{.}}
-                    $$
                     """,
                 ),
                 label="Grouped Metrics",
