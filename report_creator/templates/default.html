@@ -23,6 +23,16 @@
 
     <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/javascript.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/shell.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/yaml.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/json.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/sql.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/css.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/html.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/java.min.js"></script>
+
     {% endif %}
 
     <!-- DataTable -->
@@ -344,19 +354,17 @@
       .code-block {
         height: 100%;
         box-sizing: border-box;
-        overflow: hidden;
-        border: 1px solid var(--border);
-        border-radius: 0.75rem;
       }
 
-      pre code.hljs {
-      }
-
-      pre {
+      .code-block pre {
         white-space: pre-wrap;
         word-wrap: break-word;
         box-sizing: border-box;
         margin: 0;
+        overflow: hidden;
+
+        border: 1px solid var(--border);
+        border-radius: 0.75rem;
       }
 
       .report-widget {
@@ -450,6 +458,9 @@
           .querySelectorAll(".syntax-color, .codehilite pre code")
           .forEach((element, key) => {
             hljs.highlightElement(element);
+            hljs.configure({
+              ignoreUnescapedHTML: true,
+            });
           });
         {% endif %}
 
