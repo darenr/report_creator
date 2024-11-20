@@ -92,8 +92,11 @@ def _markdown_to_html(text: str) -> str:
         ):  # **_ gathers unused key-value pairs (to avoid lint warning of unused param(s))
             return "<div class='codehilite'><pre><code>" + mistune.escape(code) + "</code></pre></div>"
 
+    escape_html = False
     return mistune.create_markdown(
-        renderer=HighlightRenderer(),
+        renderer=HighlightRenderer(escape=escape_html),
+        escape=escape_html,
+        hard_wrap=False,
         plugins=["task_lists", "def_list", "math", "table"],
     )(text)
 

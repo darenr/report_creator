@@ -343,7 +343,7 @@ class Metric(Base):
         value (Union[str, int, float]): _description_
         unit ([type], optional): _description_. Defaults to None.
         float_precision (int, optional): limit the precision (number of decimal digits). Defaults to 3.
-        label (Optional[str], optional): _description_. Defaults to None.
+        label (Optional[str], optional): _description_. Defaults to None. May be markdown.
         colored (Optional[bool], optional): to use a colorful background or not. Defaults to False.
     """
 
