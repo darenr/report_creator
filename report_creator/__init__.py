@@ -27,6 +27,7 @@ from .report_creator import (
     MetricGroup,
     Pie,
     Python,
+    Plaintext,
     ReportCreator,
     Scatter,
     Select,

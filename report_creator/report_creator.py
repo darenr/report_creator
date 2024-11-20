@@ -1253,8 +1253,21 @@ class Language(Base):
     def __init__(self, text: str, language: str, *, label: Optional[str] = None):
         Base.__init__(self, label=label)
         self.text = text
-        self.language = language
+        self.language = language.lower()
         logger.info(f"{language}: {len(self.text)} characters")
+
+        if not self.language:
+            assert self.language, "Language must be specified"
+        else:
+            assert self.language in [
+                "java",
+                "python",
+                "shell",
+                "sql",
+                "yaml",
+                "json",
+                "plaintext",
+            ], f"Language {self.language} not supported"
 
     @_strip_whitespace
     @abstractmethod
@@ -1433,6 +1446,26 @@ class Json(Language):
             self,
             json.dumps(data, indent=2),
             "json",
+            label=label,
+        )
+
+
+##############################
+
+
+class Plaintext(Language):
+    """Plaintext is a container for plain text that will styled as code. It can also take a label.
+
+    Args:
+        code (str): _description_
+        label (Optional[str], optional): _description_. Defaults to None.
+    """
+
+    def __init__(self, code: str, *, label: Optional[str] = None):
+        Language.__init__(
+            self,
+            code,
+            "plaintext",
             label=label,
         )
 

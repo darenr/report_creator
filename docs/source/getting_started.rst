@@ -99,7 +99,8 @@ Code
 ----
 
 There are components for ``rc.Yaml()``, ``rc.Json()``, ``rc.Python()``, ``rc.Java()``, ``rc.Shell()``, and ``rc.Sql()``,  each 
-will format and render with color syntax highlighting.
+will format and render with color syntax highlighting. Plain text can also be styled as code with ``rc.Plaintext()``, although this
+has limited use, it can be used to show code that is not in a common language.
 
 .. image:: images/code.png
   :alt: rc.Java()

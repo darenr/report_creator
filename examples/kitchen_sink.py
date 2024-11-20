@@ -123,6 +123,10 @@ if __name__ == "__main__":
                 example_text,
                 label="Alice’s Adventures in Wonderland (Text)",
             ),
+            rc.Plaintext(
+                example_text,
+                label="Alice’s Adventures in Wonderland (Text)",
+            ),
             rc.Group(
                 rc.Yaml(
                     datastructure,
