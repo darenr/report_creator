@@ -101,9 +101,6 @@ pipdeptree --exclude pip,pipdeptree,setuptools,wheel,twine
 
 ```
 
-## Publish
-
-* run `publish.sh`
 
 ## Dev Notes
 
@@ -112,5 +109,7 @@ pipdeptree --exclude pip,pipdeptree,setuptools,wheel,twine
 
 ## Docs
 
+```shell
 pip install sphinx sphinx-autodoc-typehints sphinx-book-theme sphinx_copybutton sphinxcontrib-mermaid --upgrade
+```
 

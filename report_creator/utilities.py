@@ -97,7 +97,7 @@ def _markdown_to_html(text: str) -> str:
         renderer=HighlightRenderer(escape=escape_html),
         escape=escape_html,
         hard_wrap=False,
-        plugins=["task_lists", "def_list", "math", "table"],
+        plugins=["task_lists", "def_list", "math", "table", "strikethrough", "footnotes", "url", "spoiler"],
     )(text)
 
 
