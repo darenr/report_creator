@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accordion Example</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/water.css/out/light.css"
+    />
+  </head>
+  <body>
+    <h1>Accordion Example</h1>
+    <p>
+      Click the headers below to toggle content. Only one section can be open at
+      a time.
+    </p>
+
+    <details>
+      <summary>Section 1: Introduction</summary>
+      <p>
+        This is the content of section 1. It provides a brief introduction to
+        the topic at hand.
+      </p>
+    </details>
+
+    <details>
+      <summary>Section 2: Details</summary>
+      <p>This section contains more in-depth information about the topic.</p>
+    </details>
+
+    <details>
+      <summary>Section 3: Conclusion</summary>
+      <p>
+        Here is the conclusion. It wraps up the discussion and provides final
+        thoughts.
+      </p>
+    </details>
+
+    <script>
+      // Ensure only one <details> element is open at a time
+      document.querySelectorAll("details").forEach((details) => {
+        details.addEventListener("toggle", () => {
+          if (details.open) {
+            document.querySelectorAll("details").forEach((otherDetails) => {
+              if (otherDetails !== details) {
+                otherDetails.open = false;
+              }
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
