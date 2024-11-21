@@ -29,12 +29,13 @@
     <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/json.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/sql.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/java.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/bash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/prolog.min.js"></script>
 
     {% endif %}
 
     <script
       id="MathJax-script"
-      async
       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
     ></script>
 
@@ -391,6 +392,11 @@
       footer {
         text-align: center;
         padding: 3px;
+      }
+
+      .markdown-wrapper li.task-list-item {
+        list-style-type: none;
+        margin-left: -1.5em;
       }
     </style>
   </head>

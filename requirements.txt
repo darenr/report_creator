@@ -13,3 +13,4 @@ python-dateutil
 lxml
 requests
 pillow
+md4mathjax

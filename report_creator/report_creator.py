@@ -1262,6 +1262,7 @@ class Language(Base):
             assert self.language in [
                 "java",
                 "python",
+                "prolog",
                 "shell",
                 "sql",
                 "yaml",
@@ -1280,6 +1281,21 @@ class Language(Base):
             )
 
         return f"""<div class="code-block include_hljs">{formatted_text}</div>"""
+
+
+##############################
+
+
+class Prolog(Language):
+    """Prolog is a container for prolog code. It can also take a label.
+
+    Args:
+        code (str): _description_
+        label (Optional[str], optional): _description_. Defaults to None.
+    """
+
+    def __init__(self, code: str, *, label: Optional[str] = None):
+        Language.__init__(self, escape(code), "prolog", label=label)
 
 
 ##############################
@@ -1496,13 +1512,14 @@ class ReportCreator:
         author: Optional[str] = None,
         logo: Optional[str] = None,
         theme: Optional[str] = "rc",
+        code_theme: Optional[str] = "atom-one-light",
         diagram_theme: Optional[str] = "default",
         footer: Optional[str] = None,
     ):
         self.title = title
         self.description = description
         self.author = author
-        self.code_theme = "vs"
+        self.code_theme = code_theme
         self.diagram_theme = diagram_theme
         self.footer = footer
 

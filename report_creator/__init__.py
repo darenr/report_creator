@@ -28,6 +28,7 @@ from .report_creator import (
     Pie,
     Python,
     Plaintext,
+    Prolog,
     ReportCreator,
     Scatter,
     Select,

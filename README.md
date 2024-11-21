@@ -19,7 +19,7 @@ Library to assemble reports in HTML from various components using python. Inspir
 * [x] Components for things like metrics ("Accuracy: 87%") from a key & value
 * [x] Support for plotting figures, interactive `plotly` and `matplotlib`
 * [x] images (styled by the library) with an option to fetch at report build time (no fetch on render)
-* [x] `json`/`yaml`/`python`/`java` code blocks with color syntax highlighting
+* [x] `json`/`yaml`/`python`/`java`/`ptolog` code blocks with color syntax highlighting
 * [x] Support tab containers (not printer friendly)
 * [x] Add support for any Jupyter widget, any object that renders in a notebook should render to a report
 * [x] Add built-in easy plotting that looks stylistically consistent with the report
@@ -39,7 +39,7 @@ Library to assemble reports in HTML from various components using python. Inspir
 
 ## Example
 
-```python3
+```.python3
 
 import report_creator as rc
 
@@ -82,34 +82,35 @@ with rc.ReportCreator(
 
 ## Development
 
-``` .python
-conda create --name rc python=3.12
-conda activate rc
-pip install -r requirements.txt -U
+```.console
+$ conda create --name rc python=3.12
+$ conda activate rc
+$ python3 -m pip  install -r requirements.txt -U
 
 # recommended installs for code hygiene
-pip install ruff
+$ python3 -m pip install ruff
 
 # build "kitchen_sink" example
-make
+$ make
 
 # install local package
-pip install -e .
+$ python3 -m pip install -e .
 
 # see dependency tree
-pipdeptree --exclude pip,pipdeptree,setuptools,wheel,twine
+$ pipdeptree --exclude pip,pipdeptree,setuptools,wheel,twine
 
 ```
 
-
 ## Dev Notes
 
-* **4/18/24 - no breaking changes**, all changes should go through standard deprecation policies
-* To render math you'll need to `pip install md4mathjax`
+- **4/18/24 - no breaking changes,** all changes should go through standard deprecation policies
 
 ## Docs
 
-```shell
-pip install sphinx sphinx-autodoc-typehints sphinx-book-theme sphinx_copybutton sphinxcontrib-mermaid --upgrade
+```.console
+$ python3 -m pip install -r requirements-docs.txt --upgrade
+$ cd docs
+$ make html
+$ open build/html/index.html
 ```
 
