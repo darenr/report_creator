@@ -2,7 +2,7 @@
 
 .. meta::
     :description lang=en:
-        Report creator is a library to create self contained HTML reports from python code.
+        Report creator is a library to create self contained HTML reports from python code for text, code, images, and data visualizations.
 
 Report Creator
 ==============
@@ -17,9 +17,18 @@ Report Creator
 .. |GitHub| image:: https://img.shields.io/github/license/darenr/report_creator?style=for-the-badge&logo=pypi&logoColor=white
 ..  _GitHub: https://github.com/darenr/report_creator
 
-When you have data to share and want to be able to create a report that is easy to read and understand, you can use the Report 
-Creator. This tool allows you to create a report in a few simple steps. You can add a title, a description, and a table of data. You 
-can also add a chart to the report. The Report Creator will generate a report in HTML format that you can share with others.
+Report Creator will generate a report in HTML format that you can share with others, fully self contained, even Images 
+can be base64 encoded and included in the report. The report can be viewed in a browser, or printed to PDF. Use simple
+Python components to create a report, for text, code, images, and data visualizations. Markdown can be used in its own
+component, or in the label/description of any component. While the charging is very capable, Report Creator allows you 
+also to add any matplotlib figure, along with any python object that supports the ``_repr_html_`` method (which many 
+libraries support since this is used in Jupyter notebooks). Report Creator does its best to make the report look modern
+and consistent even with different components coming from different sources. For diagraming there's a ``rc.Diagram()``
+which can be used with any |mermaid_js| syntax.
+
+.. |mermaid_js| raw:: html
+
+   <a href="https://mermaid-js.github.io/mermaid/" target="_blank">mermaid js</a>
 
 
 The python file |kitchen_sink_location_source| is an example (in the ``examples`` folder) that demonstrates every 
