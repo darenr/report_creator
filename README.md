@@ -8,35 +8,35 @@
 - [Documentation](https://report-creator.readthedocs.io/en/latest)
 - [Getting Started](https://report-creator.readthedocs.io/en/latest/getting_started.html)
 
-Library to assemble reports in HTML from various components using python. Inspired by DataPane which is no longer maintained and targetted more interactive use cases. 
+Library to assemble reports in HTML from various components using python. Inspired by DataPane which is no longer maintained and targetted more interactive use cases.
 
 ## Features
 
-* [x] Good pandas/dataframe/table support
-* [x] Look modern
-* [x] Allows markdown as input for text blocks
-* [x] Allows html as input
-* [x] Components for things like metrics ("Accuracy: 87%") from a key & value
-* [x] Support for plotting figures, interactive `plotly` and `matplotlib`
-* [x] images (styled by the library) with an option to fetch at report build time (no fetch on render)
-* [x] `json`/`yaml`/`python`/`java`/`ptolog` code blocks with color syntax highlighting
-* [x] Support tab containers (not printer friendly)
-* [x] Add support for any Jupyter widget, any object that renders in a notebook should render to a report
-* [x] Add built-in easy plotting that looks stylistically consistent with the report
-* [x] Add option to change the report icon based on a github account avatar, or an image
-* [x] Add a metric type for timeseries data which should some aggregate function of the data, and plot over time.
-* [x] Add diagram component with Mermaid JS
-* [x] Write documentation!
-* [x] Add a status metric that supports up to a handful of k/v pairs (k=task, v=status)
-* [x] Add bookmark anchors to blocks
-* [x] Add Footer to report
-* [ ] Add accordion component
-* [ ] Add Venn diagram support (possibly with `matplotlib_venn`, or SVG)
-* [ ] Add log file block (https://github.com/jwodder/apachelogs) with analytics
-* [ ] Add Radar chart
-* [ ] Add choropleth map plot type (maybe?)
-* [ ] Youtube embeds rc.Video(url: str, label: str)
-* [ ] File attachments (downloadable dataset from page)
+- [x] Good pandas/dataframe/table support
+- [x] Look modern
+- [x] Allows markdown as input for text blocks
+- [x] Allows html as input
+- [x] Components for things like metrics ("Accuracy: 87%") from a key & value
+- [x] Support for plotting figures, interactive `plotly` and `matplotlib`
+- [x] images (styled by the library) with an option to fetch at report build time (no fetch on render)
+- [x] `json`/`yaml`/`python`/`java`/`ptolog` code blocks with color syntax highlighting
+- [x] Support tab containers (not printer friendly)
+- [x] Add support for any Jupyter widget, any object that renders in a notebook should render to a report
+- [x] Add built-in easy plotting that looks stylistically consistent with the report
+- [x] Add option to change the report icon based on a github account avatar, or an image
+- [x] Add a metric type for timeseries data which should some aggregate function of the data, and plot over time.
+- [x] Add diagram component with Mermaid JS
+- [x] Write documentation!
+- [x] Add a status metric that supports up to a handful of k/v pairs (k=task, v=status)
+- [x] Add bookmark anchors to blocks
+- [x] Add Footer to report
+- [ ] Add accordion component
+- [ ] Add Venn diagram support (possibly with `matplotlib_venn`, or SVG)
+- [ ] Add log file block [apachelogs](https://github.com/jwodder/apachelogs) with analytics
+- [ ] Add Radar chart
+- [ ] Add choropleth map plot type (maybe?)
+- [ ] Youtube embeds rc.Video(url: str, label: str)
+- [ ] File attachments (downloadable dataset from page)
 
 ## Example
 
@@ -84,34 +84,34 @@ with rc.ReportCreator(
 ## Development
 
 ```.console
-$ conda create --name rc python=3.12
-$ conda activate rc
-$ python3 -m pip  install -r requirements.txt -U
+conda create --name rc python=3.12
+conda activate rc
+python3 -m pip  install -r requirements.txt -U
 
 # recommended installs for code hygiene
-$ python3 -m pip install ruff
+python3 -m pip install ruff
 
 # build "kitchen_sink" example
-$ make
+make
 
 # install local package
-$ python3 -m pip install -e .
+python3 -m pip install -e .
 
 # see dependency tree
-$ pipdeptree --exclude pip,pipdeptree,setuptools,wheel,twine
+pipdeptree --exclude pip,pipdeptree,setuptools,wheel,twine
 
 ```
 
 ## Dev Notes
 
-- **4/18/24 - no breaking changes,** all changes should go through standard deprecation policies
+- **4/18/24 - no breaking changes,*- all changes should go through standard deprecation policies
 
 ## Docs
 
 ```.console
-$ python3 -m pip install -r requirements-docs.txt --upgrade
-$ cd docs
-$ make html
-$ open build/html/index.html
-```
 
+python3 -m pip install -r requirements-docs.txt --upgrade
+cd docs
+make html
+open build/html/index.html
+```

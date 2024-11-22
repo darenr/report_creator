@@ -40,7 +40,7 @@ html_theme = "sphinx_book_theme"
 
 mermaid_params = ["--theme", "forest"]
 
-html_logo = "https://raw.githubusercontent.com/darenr/report_creator/refs/heads/main/rc-logo.png"
+html_title = "Report Creator"
 
 
 html_theme_options = {
