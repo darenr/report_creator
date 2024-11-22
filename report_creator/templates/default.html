@@ -104,14 +104,16 @@
       }
 
       body {
-        max-width: 90%;
-        width: 90%;
-        margin: 20px auto;
-        padding-left: 5%;
-        padding-right: 5%;
-
+        max-width: 95%;
         font-family: "Ariana Grande", "Helvetica Neue", sans-serif;
         font-size: 1.1em;
+      }
+
+      /* Styles for desktop (90% width) */
+      @media (min-width: 768px) {
+        body {
+          max-width: 90%;
+        }
       }
 
       input:disabled {
