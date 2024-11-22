@@ -118,7 +118,7 @@ Charts
 
 There are a number of charting components, ``rc.Bar()``, ``rc.Scatter()``, ``rc.Histogram()``, ``rc.Box()``, ``rc.Line()``, and ``rc.Pie()``.
 These are wrappers around plotly express componets. There is also a ``rc.Widget()`` component that can be used anywhere 
-the object supports the ``repr_html`` that is used by Jupyter notebooks (for example ``matplotlib`` object)
+the object supports the ``repr_html()`` function that is used by Jupyter notebooks (for example ``matplotlib`` object)
 
 .. code-block:: python3
 

@@ -21,10 +21,10 @@ Report Creator will generate a report in HTML format that you can share with oth
 can be base64 encoded and included in the report. The report can be viewed in a browser, or printed to PDF. Use simple
 Python components to create a report, for text, code, images, and data visualizations. Markdown can be used in its own
 component, or in the label/description of any component. While the charging is very capable, Report Creator allows you 
-also to add any matplotlib figure, along with any python object that supports the ``_repr_html_`` method (which many 
+also to add any matplotlib figure, along with any python object that supports the ``_repr_html_()`` function (which many 
 libraries support since this is used in Jupyter notebooks). Report Creator does its best to make the report look modern
-and consistent even with different components coming from different sources. For diagraming there's a ``rc.Diagram()``
-which can be used with any |mermaid_js| syntax.
+and consistent even with different components coming from different sources. For diagramming there's a ``rc.Diagram()`` component 
+which can be used with any valid |mermaid_js| syntax.
 
 .. |mermaid_js| raw:: html
 
@@ -47,6 +47,7 @@ Contents
 --------
 
 .. toctree::
+   :titlesonly:
    :maxdepth: 2
 
    getting_started
