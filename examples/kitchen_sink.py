@@ -105,6 +105,13 @@ if __name__ == "__main__":
                 ),
                 label="Log File Metrics",
             ),
+            rc.Accordion(
+                blocks=[
+                    rc.Markdown("This is the first block of the accordion", label="First Block"),
+                    rc.Markdown("This is the second block of the accordion", label="Second Block"),
+                ],
+                label="Accordion",
+            ),
             rc.Text(
                 example_text,
                 label="Alice’s Adventures in Wonderland (Text)",

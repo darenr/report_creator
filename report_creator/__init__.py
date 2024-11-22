@@ -6,6 +6,7 @@ from .__meta__ import (
     __version__,
 )
 from .report_creator import (
+    Accordion,
     Bar,
     Base,
     Block,
@@ -26,9 +27,9 @@ from .report_creator import (
     Metric,
     MetricGroup,
     Pie,
-    Python,
     Plaintext,
     Prolog,
+    Python,
     ReportCreator,
     Scatter,
     Select,

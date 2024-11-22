@@ -1224,6 +1224,47 @@ class Select(Base):
 ##############################
 
 
+class Accordion(Base):
+    """Accordion is a container for a set of text blocks that can be collapsed.
+
+    Args:
+        blocks (List[Base]): _description_
+        label (Optional[str], optional): _description_. Defaults to None.
+        open_first (bool, optional): _description_. Defaults to False.
+    """
+
+    def __init__(self, blocks: List[Base], *, label: Optional[str] = None, open_first: Optional[bool] = False):
+        Base.__init__(self, label=label)
+        self.blocks = blocks
+        self.open_first = open_first
+
+        for b in self.blocks:
+            if not b.label:
+                raise ValueError("All blocks must have a label to use in an Accordion")
+
+        logger.info(f"Select: {len(self.blocks)} tabs: {', '.join([c.label for c in self.blocks])}")
+
+    @_strip_whitespace
+    def to_html(self) -> str:
+        html = (
+            f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption>"
+            if self.label
+            else ""
+        )
+
+        # assesmble the accordion
+        for i, block in enumerate(self.blocks):
+            html += f"""<details {' open ' if i==0 and self.open_first else ''} class="accordion">"""
+            html += f"""<summary>{block.label}</summary>"""
+            html += block.to_html()
+            html += """</details>"""
+
+        return html
+
+
+##############################
+
+
 class Unformatted(Base):
     """Unformatted is a container for any text that should be displayed verbatim with a non-proportional font.
 
