@@ -391,8 +391,13 @@
         color: var(--text-muted);
       }
 
-      .accordion h1 {
-        unset: all;
+      details report-caption {
+        /* don't show the caption label within an accodion */
+        display: none;
+      }
+
+      summary {
+        font-weight: bold;
       }
 
       footer {

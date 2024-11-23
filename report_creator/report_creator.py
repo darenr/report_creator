@@ -139,7 +139,7 @@ class Collapse(Base):
 
     @_strip_whitespace
     def to_html(self) -> str:
-        html = f"<details><summary>{self.label}</summary>"
+        html = f"""<details class="collapse"><summary>{self.label}</summary>"""
 
         for component in self.components:
             html += component.to_html()
