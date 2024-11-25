@@ -8,7 +8,7 @@ import textwrap
 import traceback
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Dict, List, Optional, Union
+from typing import Optional, Union
 from uuid import uuid4
 
 import dateutil
@@ -65,7 +65,7 @@ class Block(Base):
         label (Optional[str], optional): _description_. Defaults to None.
     """
 
-    def __init__(self, *components: Base, label: Optional[str] = None):
+    def __init__(self, *components: "Base", label: Optional[str] = None):
         Base.__init__(self, label=label)
         self.components = components
         logger.info(f"Block: {len(self.components)} components")
@@ -344,7 +344,7 @@ class Metric(Base):
         unit ([type], optional): _description_. Defaults to None.
         float_precision (int, optional): limit the precision (number of decimal digits). Defaults to 3.
         label (Optional[str], optional): _description_. Defaults to None. May be markdown.
-        colored (Optional[bool], optional): to use a colorful background or not. Defaults to False.
+        color (Optional[bool], optional): to use a background color or not, if chosen consequetive metrics will have different colors. Defaults to False.
     """
 
     def __init__(
@@ -355,14 +355,14 @@ class Metric(Base):
         unit: Optional[str] = None,
         float_precision: Optional[int] = 3,
         label: Optional[str] = None,
-        colored: Optional[bool] = False,
+        color: Optional[bool] = False,
     ):
         Base.__init__(self, label=textwrap.dedent(label) if label else None)
         self.heading = heading
         self.float_precision = float_precision
         self.value = value
         self.unit = unit or ""
-        self.colored = colored
+        self.color = color
 
         if isinstance(self.value, (str)):
             self.value = self.value.strip()
@@ -385,7 +385,7 @@ class Metric(Base):
 
         description = f"<div class='metric-description'>{_markdown_to_html(self.label)}</div>" if self.label else ""
 
-        if self.colored:
+        if self.color:
             bk_color, _ = _random_light_color_generator(f"{self.heading}")
             style = f'style="background-color: {bk_color};"'
         else:
@@ -407,7 +407,7 @@ class Table(Widget):
     """Table is a simple container for a DataFrame (or table-like list of dictionaries.)
 
     Args:
-        data (Union[pd.DataFrame, List[Dict]]): _description_
+        data (Union[pd.DataFrame, list[dict]]): _description_
         label (Optional[str], optional): _description_. Defaults to None.
         index (bool, optional): _description_. Defaults to False.
         float_precision (int, optional): _description_. Defaults to 3.
@@ -415,7 +415,7 @@ class Table(Widget):
 
     def __init__(
         self,
-        data: Union[pd.DataFrame, List[Dict]],
+        data: Union[pd.DataFrame, list[dict]],
         *,
         label: Optional[str] = None,
         index: Optional[bool] = False,
@@ -440,7 +440,7 @@ class DataTable(Base):
     """DataTable is a container for a DataFrame (or table-like list of dictionaries.) with search and sort capabilities.
 
     Args:
-        data (Union[pd.DataFrame, List[Dict]]): _description_
+        data (Union[pd.DataFrame, list[dict]]): _description_
         label (Optional[str], optional): _description_. Defaults to None.
         wrap_text (bool, optional): _description_. Defaults to True.
         index (bool, optional): _description_. Defaults to False.
@@ -450,7 +450,7 @@ class DataTable(Base):
 
     def __init__(
         self,
-        data: Union[pd.DataFrame, List[Dict]],
+        data: Union[pd.DataFrame, list[dict]],
         *,
         label: Optional[str] = None,
         wrap_text: bool = True,
@@ -657,7 +657,7 @@ class Markdown(Base):
         bordered: Optional[bool] = False,
     ):
         Base.__init__(self, label=label)
-        self.text = text
+        self.text = textwrap.dedent(text)
         self.extra_css = extra_css or ""
         self.bordered = bordered
 
@@ -739,7 +739,7 @@ class Bar(PxBase):
         y (str): The column to be plotted on the y-axis.
         dimension (Optional[str], optional): The column to be plotted on the dimension axis. Defaults to None.
         label (Optional[str], optional): The label for the bar chart. Defaults to None.
-        **kwargs (Optional[Dict], optional): Additional keyword arguments to be passed to the plotly express bar chart.
+        **kwargs (Optional[dict], optional): Additional keyword arguments to be passed to the plotly express bar chart.
 
     Raises:
         AssertionError: If the specified columns (x, y, dimension) are not present in the DataFrame.
@@ -754,7 +754,7 @@ class Bar(PxBase):
         *,
         dimension: Optional[str] = None,
         label: Optional[str] = None,
-        **kwargs: Optional[Dict],
+        **kwargs: Optional[dict],
     ):
         Base.__init__(self, label=label)
         self.df = df
@@ -792,10 +792,10 @@ class Line(PxBase):
     Args:
         df (pd.DataFrame): The data to be plotted.
         x (str): The column to be plotted on the x-axis.
-        y (Union[str, List[str]]): The column(s) to be plotted on the y-axis.
+        y (Union[str, list[str]]): The column(s) to be plotted on the y-axis.
         dimension (Optional[str], optional): The column to be plotted on the dimension axis. Defaults to None.
         label (Optional[str], optional): The label for the bar chart. Defaults to None.
-        **kwargs (Optional[Dict], optional): Additional keyword arguments to be passed to the plotly express line chart.
+        **kwargs (Optional[dict], optional): Additional keyword arguments to be passed to the plotly express line chart.
 
     Raises:
         AssertionError: If the specified columns (x, y, dimension) are not present in the DataFrame.
@@ -806,11 +806,11 @@ class Line(PxBase):
         self,
         df: pd.DataFrame,
         x: str,
-        y: Union[str, List[str]],
+        y: Union[str, list[str]],
         *,
         dimension: Optional[str] = None,
         label: Optional[str] = None,
-        **kwargs: Optional[Dict],
+        **kwargs: Optional[dict],
     ):
         Base.__init__(self, label=label)
         self.df = df
@@ -865,7 +865,7 @@ class Pie(PxBase):
         values (str): The column name in the DataFrame representing the values for the pie.
         names (str): The column name in the DataFrame representing the names for the pie.
         label (Optional[str], optional): The label for the pi. Defaults to None.
-        **kwargs (Optional[Dict], optional): Additional keyword arguments for the report. Defaults to None.
+        **kwargs (Optional[dict], optional): Additional keyword arguments for the report. Defaults to None.
     """
 
     def __init__(
@@ -875,7 +875,7 @@ class Pie(PxBase):
         names: str,
         *,
         label: Optional[str] = None,
-        **kwargs: Optional[Dict],
+        **kwargs: Optional[dict],
     ):
         Base.__init__(self, label=label)
         self.df = df
@@ -922,7 +922,7 @@ class Scatter(PxBase):
         dimension (Optional[str], optional): The column name for the dimension data. Defaults to None.
         label (Optional[str], optional): The label for the scatter plot. Defaults to None.
         marginal (Optional[str], optional): The type of marginal plot to add. Must be one of ['histogram', 'violin', 'box', 'rug']. Defaults to None.
-        **kwargs (Optional[Dict], optional): Additional keyword arguments to pass to the scatter plot. Defaults to None.
+        **kwargs (Optional[dict], optional): Additional keyword arguments to pass to the scatter plot. Defaults to None.
     """
 
     def __init__(
@@ -934,7 +934,7 @@ class Scatter(PxBase):
         *,
         label: Optional[str] = None,
         marginal: Optional[str] = None,
-        **kwargs: Optional[Dict],
+        **kwargs: Optional[dict],
     ):
         Base.__init__(self, label=label)
         self.df = df
@@ -1009,7 +1009,7 @@ class Box(PxBase):
         dimension: Optional[str] = None,
         *,
         label: Optional[str] = None,
-        **kwargs: Optional[Dict],
+        **kwargs: Optional[dict],
     ):
         Base.__init__(self, label=label)
         self.df = df
@@ -1060,7 +1060,7 @@ class Histogram(PxBase):
         x (str): The column name to be used for the histogram.
         dimension (Optional[str], optional): The column name to be used for coloring the histogram bars. Defaults to None.
         label (Optional[str], optional): The label for the histogram. Defaults to None.
-        kwargs (Optional[Dict]): Additional keyword arguments.
+        kwargs (Optional[dict]): Additional keyword arguments.
 
     For more information, refer to the Plotly documentation: https://plotly.com/python/histograms/
     """
@@ -1072,7 +1072,7 @@ class Histogram(PxBase):
         dimension: Optional[str] = None,
         *,
         label: Optional[str] = None,
-        **kwargs: Optional[Dict],
+        **kwargs: Optional[dict],
     ):
         Base.__init__(self, label=label)
         self.df = df
@@ -1178,11 +1178,11 @@ class Select(Base):
     """Select is a container for a group of components that will shown in tabs. It can also take an outer label.
 
     Args:
-        blocks (List[Base]): _description_
+        blocks (list[Base]): _description_
         label (Optional[str], optional): _description_. Defaults to None.
     """
 
-    def __init__(self, blocks: List[Base], *, label: Optional[str] = None):
+    def __init__(self, blocks: list[Base], *, label: Optional[str] = None):
         Base.__init__(self, label=label)
         self.blocks = blocks
 
@@ -1228,12 +1228,12 @@ class Accordion(Base):
     """Accordion is a container for a set of text blocks that can be collapsed.
 
     Args:
-        blocks (List[Base]): _description_
+        blocks (list[Base]): _description_
         label (Optional[str], optional): _description_. Defaults to None.
         open_first (bool, optional): _description_. Defaults to False.
     """
 
-    def __init__(self, blocks: List[Base], *, label: Optional[str] = None, open_first: Optional[bool] = False):
+    def __init__(self, blocks: list[Base], *, label: Optional[str] = None, open_first: Optional[bool] = False):
         Base.__init__(self, label=label)
         self.blocks = blocks
         self.open_first = open_first
@@ -1474,11 +1474,11 @@ class Yaml(Language):
     """Yaml is a container for yaml. It can also take a label.
 
     Args:
-        data (Union[Dict, List]): _description_
+        data (Union[dict, list]): _description_
         label (Optional[str], optional): _description_. Defaults to None.
     """
 
-    def __init__(self, data: Union[Dict, List], *, label: Optional[str] = None):
+    def __init__(self, data: Union[dict, list], *, label: Optional[str] = None):
         Language.__init__(
             self,
             yaml.dump(data, indent=2, Dumper=yaml.SafeDumper),
@@ -1494,11 +1494,11 @@ class Json(Language):
     """Json is a container for JSON data. It can also take a label.
 
     Args:
-        data (Union[Dict, List]): _description_
+        data (Union[dict, list]): _description_
         label (Optional[str], optional): _description_. Defaults to None.
     """
 
-    def __init__(self, data: Union[Dict, List], *, label: Optional[str] = None):
+    def __init__(self, data: Union[dict, list], *, label: Optional[str] = None):
         Language.__init__(
             self,
             json.dumps(data, indent=2),
@@ -1542,6 +1542,7 @@ class ReportCreator:
         which will use an autogenerated icon based on the title.
         theme (str, optional): The theme to use for the report. Defaults to "rc".
         diagram_theme (str, optional): The mermaid theme (https://mermaid.js.org/config/theming.html#available-themes) to use Defaults to "default", options: "neo", "neo-dark", "dark", "neutral", "forest", & "base".
+        accent_color (str, optional): The accent color for the report. Defaults to "black".
         footer (str, optional): The footer text for the report (markdown is ok). Defaults to None.
     """
 
@@ -1555,6 +1556,7 @@ class ReportCreator:
         theme: Optional[str] = "rc",
         code_theme: Optional[str] = "atom-one-light",
         diagram_theme: Optional[str] = "default",
+        accent_color: Optional[str] = "black",
         footer: Optional[str] = None,
     ):
         self.title = title
@@ -1562,6 +1564,7 @@ class ReportCreator:
         self.author = author
         self.code_theme = code_theme
         self.diagram_theme = diagram_theme
+        self.accent_color = accent_color
         self.footer = footer
 
         logger.info(f"ReportCreator: {self.title=} {self.description=}")
@@ -1585,7 +1588,8 @@ class ReportCreator:
         else:
             match = re.findall(r"[A-Z]", self.title)
             icon_text = "".join(match[:2]) if match else self.title[0]
-            icon_color, text_color = "black", "white"
+
+            icon_color, text_color = self.accent_color, "white"
 
             width = 150
             cx = width / 2
@@ -1670,6 +1674,7 @@ class ReportCreator:
                 include_hljs=include_hljs,
                 code_theme=self.code_theme,
                 diagram_theme=self.diagram_theme,
+                accent_color=self.accent_color,
                 footer=_markdown_to_html(self.footer).strip() if self.footer else None,
             )
             if prettify_html:

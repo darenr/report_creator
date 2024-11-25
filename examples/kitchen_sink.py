@@ -107,8 +107,40 @@ if __name__ == "__main__":
             ),
             rc.Accordion(
                 blocks=[
-                    rc.Markdown("This is the first block of the accordion", label="First Block"),
-                    rc.Markdown("This is the second block of the accordion", label="Second Block"),
+                    rc.Markdown(
+                        """
+                            > Love all, trust a few, do wrong to none.
+
+                            > Moderate lamentation is the right of the dead, excessive grief the enemy to the living.
+                        """,
+                        label="All's Well That Ends Well",
+                    ),
+                    rc.Markdown(
+                        """
+                            >Something is rotten in the state of Denmark.
+
+                            > There are more things in heaven and earth, Horatio,  
+                            > Than are dreamt of in our philosophy.
+
+                            > To be, or not to be, that is the question.
+
+                            > How all occasions do inform against me, and spur my dull revenge.
+                        """,
+                        label="Hamlet",
+                    ),
+                    rc.Markdown(
+                        """
+                        > But, soft, what light through yonder window breaks?  
+                        > It is the east, and Juliet is the sun.
+
+                        > O happy dagger,  
+                        > This is thy sheath: there rust, and let me die.
+
+                        > For never was a story of more woe  
+                        > Than this of Juliet and her Romeo.
+                        """,
+                        label="Romeo and Juliet",
+                    ),
                 ],
                 label="Accordion",
             ),
