@@ -118,4 +118,3 @@ make examples EXAMPLES=examples/myreport.py
 
 make docs
 ```
-
