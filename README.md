@@ -101,6 +101,9 @@ python3 -m pip install -e .
 # see dependency tree
 pipdeptree --exclude pip,pipdeptree,setuptools,wheel,twine
 
+# build examples
+make examples
+
 ```
 
 ## Dev Notes
@@ -111,8 +114,5 @@ pipdeptree --exclude pip,pipdeptree,setuptools,wheel,twine
 
 ```.console
 
-python3 -m pip install -r requirements-docs.txt --upgrade
-cd docs
-make html
-open build/html/index.html
+make docs
 ```

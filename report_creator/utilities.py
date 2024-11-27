@@ -4,7 +4,6 @@ import mimetypes
 import random
 import uuid
 from html.parser import HTMLParser
-from typing import Tuple
 from urllib.parse import urlparse
 
 import requests
@@ -33,7 +32,7 @@ def _check_html_tags_are_closed(html_content: str):
         html_content (str): The HTML content to be checked.
 
     Returns:
-        Tuple[bool, Optional[List[str]]]: A tuple containing a boolean value indicating if all tags are closed and a list of tags that are not closed.
+        tuple[bool, Optional[list[str]]]: A tuple containing a boolean value indicating if all tags are closed and a list of tags that are not closed.
     """
 
     class HTMLValidator(HTMLParser):
@@ -123,7 +122,7 @@ def _strip_whitespace(func):
     return wrapper
 
 
-def _random_light_color_generator(word: str) -> Tuple[str, str]:
+def _random_light_color_generator(word: str) -> tuple[str, str]:
     """returns auto selected light background_color
 
     Args:
@@ -141,7 +140,7 @@ def _random_light_color_generator(word: str) -> Tuple[str, str]:
     return lighten_color(random.choice(report_creator_colors)), "black"
 
 
-def _random_color_generator(word: str) -> Tuple[str, str]:
+def _random_color_generator(word: str) -> tuple[str, str]:
     """returns auto selected (background_color, text_color) as tuple
 
     Args:

@@ -3,7 +3,6 @@
 # standard libs
 import re
 from pathlib import Path
-from typing import List
 
 from setuptools import find_packages, setup
 
@@ -13,7 +12,7 @@ with open("README.md") as readme:
 
 
 # include necessary deopendencies
-def get_install_requires() -> List[str]:
+def get_install_requires() -> list[str]:
     """Returns requirements.txt parsed to a list"""
     fname = Path(__file__).parent / "requirements.txt"
     targets = []

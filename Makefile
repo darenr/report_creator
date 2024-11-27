@@ -1,8 +1,39 @@
-all: setup kitchen_sink
+all: setup examples
+.PHONY: clean examples
+
+EXAMPLE_FILES = $(wildcard examples/*.py)
 
 setup:
 	@python3 -m pip install -q --upgrade pip
 	@python3 -m pip install -qr requirements.txt -U
+	@python3 -m pip install -qr requirements-docs.txt -U
+	@python3 -m pip install -q ruff twine -U
 
-kitchen_sink: examples/kitchen_sink.py
-	PYTHONPATH=. python examples/kitchen_sink.py 
+examples: setup
+	@for file in $(EXAMPLE_FILES); do \
+		echo "Running example: $$file"; \
+        PYTHONPATH=. python $$file; \
+	done	
+
+docs: setup clean
+	@cd docs && make html
+	@open docs/build/html/index.html
+
+clean:
+	@rm -rf build dist *.egg-info
+	cd docs && make clean
+
+debug:
+	@echo "EXAMPLE_FILES: $(EXAMPLE_FILES)"
+
+format:
+	@ruff format report_creator
+
+deploy: setup clean
+	@find ./ -name '*.pyc' -exec rm -f {} \;
+	@find ./ -name 'Thumbs.db' -exec rm -f {} \;
+	@find ./ -name '*~' -exec rm -f {} \;
+
+	@python3 setup.py sdist bdist_wheel
+	@twine upload dist/*
+
