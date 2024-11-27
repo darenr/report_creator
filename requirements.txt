@@ -14,3 +14,4 @@ lxml
 requests
 pillow
 md4mathjax
+emoji
