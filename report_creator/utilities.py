@@ -72,7 +72,7 @@ def _ellipsis_url(url, max_length=45):
     return f"{url[:start_length]}...{url[-end_length:]}"
 
 
-def _markdown_to_html(text: str) -> str:
+def _gfm_markdown_to_html(text: str) -> str:
     """
     Converts markdown text to HTML.
 
