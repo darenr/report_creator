@@ -28,6 +28,7 @@ debug:
 
 format:
 	@ruff format report_creator
+	@ruff check report_creator
 
 deploy: setup clean
 	@find ./ -name '*.pyc' -exec rm -f {} \;
