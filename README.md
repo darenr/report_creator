@@ -87,22 +87,23 @@ with rc.ReportCreator(
 ```.console
 conda create --name rc python=3.12
 conda activate rc
-python3 -m pip  install -r requirements.txt -U
+make setup
 
-# recommended installs for code hygiene
-python3 -m pip install ruff
+# recommended for code hygiene
+make format
 
-# build "kitchen_sink" example
-make
-
-# install local package
+# install as a local package:
 python3 -m pip install -e .
 
-# see dependency tree
+# see dependency tree:
 pipdeptree --exclude pip,pipdeptree,setuptools,wheel,twine
 
-# build examples
+# build examples:
 make examples
+
+# build a specific example:
+make examples EXAMPLES=examples/myreport.py
+
 
 ```
 

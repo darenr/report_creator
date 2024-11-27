@@ -1,7 +1,7 @@
 all: setup examples
 .PHONY: clean examples
 
-EXAMPLE_FILES = $(wildcard examples/*.py)
+EXAMPLES = $(wildcard examples/*.py)
 
 setup:
 	@python3 -m pip install -q --upgrade pip
@@ -10,8 +10,8 @@ setup:
 	@python3 -m pip install -q ruff twine -U
 
 examples: setup
-	@for file in $(EXAMPLE_FILES); do \
-		echo "Running example: $$file"; \
+	@for file in $(EXAMPLES); do \
+		echo "building example: $$file"; \
         PYTHONPATH=. python $$file; \
 	done	
 
@@ -24,7 +24,7 @@ clean:
 	cd docs && make clean
 
 debug:
-	@echo "EXAMPLE_FILES: $(EXAMPLE_FILES)"
+	@echo "EXAMPLES: $(EXAMPLES)"
 
 format:
 	@ruff format report_creator
