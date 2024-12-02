@@ -14,7 +14,7 @@ def parse_inline_emoji_icon(inline, m, state) -> int:
 
 
 def render_inline_emoji_icon(renderer, emoji_str: str) -> str:
-    return f"{emoji.emojize(emoji_str, variant="emoji_type", language="en")}"
+    return emoji.emojize(emoji_str, variant="emoji_type", language="en")
 
 
 def emojis(md) -> None:
