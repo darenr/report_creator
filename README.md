@@ -10,7 +10,7 @@
 
 Library to assemble reports in HTML from various components using python. Inspired by DataPane which is no longer maintained and targetted more interactive use cases.
 
-## Features
+## ⚡ Features
 
 - [x] Good pandas/dataframe/table support
 - [x] Look modern
@@ -31,6 +31,7 @@ Library to assemble reports in HTML from various components using python. Inspir
 - [x] Add bookmark anchors to blocks
 - [x] Add Footer to report
 - [x] Add accordion component
+- [ ] Consider https://pypi.org/project/humanfriendly/
 - [x] Add option for color logo (uses accent color param passed to ReportCreator ctor)
 - [ ] Add mistune plugin to allow gfk markdown icons - `:icon-name:`, for example `:pizza:`
 - [ ] Add Venn diagram support (possibly with `matplotlib_venn`, or SVG)
@@ -40,7 +41,7 @@ Library to assemble reports in HTML from various components using python. Inspir
 - [ ] Youtube embeds rc.Video(url: str, label: str)
 - [ ] File attachments (downloadable dataset from page)
 
-## Example
+## ⚡ Example
 
 ```.python3
 
@@ -83,7 +84,7 @@ with rc.ReportCreator(
     report.save(view, "report.html") 
 ```
 
-## Development
+## 🤗 Development
 
 ```.console
 conda create --name rc python=3.12
@@ -108,11 +109,11 @@ make examples EXAMPLES=examples/myreport.py
 
 ```
 
-## Dev Notes
+## 🤗 Dev Notes
 
 - **4/18/24 - no breaking changes,*- all changes should go through standard deprecation policies
 
-## Docs
+## ⚡ Docs
 
 ```.console
 
