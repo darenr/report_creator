@@ -4,8 +4,10 @@ import mimetypes
 import random
 import uuid
 from html.parser import HTMLParser
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 
+import emoji
+import humanize
 import requests
 
 from .theming import report_creator_colors
@@ -82,7 +84,28 @@ def _gfm_markdown_to_html(text: str) -> str:
     Returns:
         str: The converted HTML string.
     """
+
     import mistune
+
+    def emojis(md) -> None:
+        # https://www.webfx.com/tools/emoji-cheat-sheet/
+        INLINE_EMOJI_PATTERN = r":[A-Za-z0-9._’()_-]+:"
+
+        def parse_inline_emoji_icon(inline, m, state) -> int:
+            state.append_token(
+                {
+                    "type": "emoji_icon_ref",
+                    "attrs": {"emoji_str": m.group(0)},
+                }
+            )
+            return m.end()
+
+        def render_inline_emoji_icon(renderer, emoji_str: str) -> str:
+            return emoji.emojize(emoji_str, variant="emoji_type", language="en")
+
+        md.inline.register("emojis", INLINE_EMOJI_PATTERN, parse_inline_emoji_icon)
+        if md.renderer and md.renderer.NAME == "html":
+            md.renderer.register("emoji_icon_ref", render_inline_emoji_icon)
 
     class HighlightRenderer(mistune.HTMLRenderer):
         # need to wrap code/pre inside a div that is styled with codehilite at rendertime
@@ -91,12 +114,11 @@ def _gfm_markdown_to_html(text: str) -> str:
         ):  # **_ gathers unused key-value pairs (to avoid lint warning of unused param(s))
             return "<div class='codehilite'><pre><code>" + mistune.escape(code) + "</code></pre></div>"
 
-    escape_html = False
     return mistune.create_markdown(
-        renderer=HighlightRenderer(escape=escape_html),
-        escape=escape_html,
+        renderer=HighlightRenderer(escape=False),
+        escape=False,
         hard_wrap=False,
-        plugins=["task_lists", "def_list", "math", "table", "strikethrough", "footnotes", "url", "spoiler"],
+        plugins=["task_lists", "def_list", "math", "table", "strikethrough", "footnotes", "url", "spoiler", emojis],
     )(text)
 
 
@@ -208,7 +230,7 @@ def _convert_imgurl_to_datauri(imgurl: str) -> str:
     # Encode the content as base64
     base64_content = base64.b64encode(response.content).decode("utf-8")
 
-    logger.info(f"Image: ({_ellipsis_url(imgurl)}) - {mime_type}, {len(base64_content)} bytes")
+    logger.info(f"Image: {mime_type}, {humanize.naturalsize(len(base64_content))} ({unquote(imgurl)})")
 
     # Create the Data URI
     data_uri = f"data:{mime_type};base64,{base64_content}"

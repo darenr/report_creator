@@ -36,7 +36,7 @@ if __name__ == "__main__":
     with rc.ReportCreator(
         title="Kitchen Sink",
         description="**All** the *things*",
-        footer="Install the package with `pip install report-creator`",
+        footer="Install the package with `pip install report-creator` :thumbs_up:",
     ) as report:
         view = rc.Block(
             rc.Collapse(

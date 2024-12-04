@@ -487,7 +487,7 @@ class DataTable(Base):
 
         styler.set_table_attributes(f'class="{" ".join(data_table_classes)} cellspacing="0" style="width: 100%;"')
         self.table_html = styler.format(escape="html", precision=float_precision).to_html()
-        logger.info(f"DataTable: {len(df)} rows")
+        logger.info(f"DataTable: {len(df)} rows, {len(df.columns)} columns")
 
     @_strip_whitespace
     def to_html(self) -> str:

@@ -4,9 +4,11 @@ all: setup examples
 EXAMPLES = $(wildcard examples/*.py)
 
 setup:
+	@echo "Setting up environment..."
 	@python3 -m pip install -q --upgrade pip
 	@python3 -m pip install -qr requirements.txt -U
 	@python3 -m pip install -qr requirements-docs.txt -U
+	@echo "Installing/updating dev tools..."
 	@python3 -m pip install -q ruff twine -U
 
 examples: setup

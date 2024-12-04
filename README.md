@@ -8,6 +8,12 @@
 - [Documentation](https://report-creator.readthedocs.io/en/latest)
 - [Getting Started](https://report-creator.readthedocs.io/en/latest/getting_started.html)
 
+`GitHub <https://github.com/darenr/report_creator>`_
+| `PyPI <https://pypi.org/project/report_creator/>`_
+| `Documentation <https://report-creator.readthedocs.io>`_
+| `Issues <https://github.com/darenr/report_creator/issues>`_
+| `Getting Started <https://report-creator.readthedocs.io/en/latest/getting_started.html>`_
+
 Library to assemble reports in HTML from various components using python. Inspired by DataPane which is no longer maintained and targetted more interactive use cases.
 
 ## ⚡ Features
@@ -31,8 +37,6 @@ Library to assemble reports in HTML from various components using python. Inspir
 - [x] Add bookmark anchors to blocks
 - [x] Add Footer to report
 - [x] Add accordion component
-- [ ] Switch logger to `logru`
-- [ ] Consider https://pypi.org/project/humanfriendly/
 - [x] Add option for color logo (uses accent color param passed to ReportCreator ctor)
 - [ ] Add mistune plugin to allow gfk markdown icons - `:icon-name:`, for example `:pizza:`
 - [ ] Add Venn diagram support (possibly with `matplotlib_venn`, or SVG)
@@ -41,6 +45,8 @@ Library to assemble reports in HTML from various components using python. Inspir
 - [ ] Add choropleth map plot type (maybe?)
 - [ ] Youtube embeds rc.Video(url: str, label: str)
 - [ ] File attachments (downloadable dataset from page)
+- [ ] Switch logger to `logru`
+
 
 ## ⚡ Example
 
