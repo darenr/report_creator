@@ -32,7 +32,7 @@ format:
 	@ruff format report_creator
 	@ruff check report_creator
 
-deploy: setup clean
+release: setup clean
 	@find ./ -name '*.pyc' -exec rm -f {} \;
 	@find ./ -name 'Thumbs.db' -exec rm -f {} \;
 	@find ./ -name '*~' -exec rm -f {} \;

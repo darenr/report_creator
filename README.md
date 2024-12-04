@@ -112,4 +112,7 @@ make examples EXAMPLES=examples/myreport.py
 # build docs
 make docs
 
+# release new version
+make release
+
 ```
