@@ -44,7 +44,6 @@ Library to assemble reports in HTML from various components using python. Inspir
 - [ ] File attachments (downloadable dataset from page)
 - [ ] Switch logger to `logru`
 
-
 ## ⚡ Example
 
 ```.python3
@@ -110,16 +109,7 @@ make examples
 # build a specific example:
 make examples EXAMPLES=examples/myreport.py
 
-
-```
-
-## 🤗 Dev Notes
-
-- **4/18/24 - no breaking changes,*- all changes should go through standard deprecation policies
-
-## ⚡ Docs
-
-```.console
-
+# build docs
 make docs
+
 ```
