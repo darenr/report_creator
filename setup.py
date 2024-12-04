@@ -7,8 +7,8 @@ from pathlib import Path
 from setuptools import find_packages, setup
 
 # get long description from README.rst
-with open("README.md") as readme:
-    long_description = readme.read()
+with open("README.md") as f:
+    long_description = f.read()
 
 
 # include necessary deopendencies
@@ -44,15 +44,17 @@ setup(
     author=metadata["__authors__"],
     author_email=metadata["__contact__"],
     description=metadata["__description__"],
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     license=metadata["__license__"],
     keywords="python, html, reports, report, creator, generator, markdown, yaml, plot, chart, table, blog",
     url="https://github.com/darenr/report_creator",
     packages=find_packages(),
     include_package_data=True,
     package_data={"report_creator": ["templates/*"]},
-    long_description=long_description,
-    long_description_content_type="text/markdown",
     install_requires=get_install_requires(),
+    maintainer="Daren Race",
+    maintainer_email="daren.race@gmail.com",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Topic :: Software Development :: Libraries :: Application Frameworks",
@@ -62,4 +64,5 @@ setup(
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
     ],
+    license_files=("LICENSE",),
 )
