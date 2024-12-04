@@ -5,14 +5,11 @@
 [![Python Versions](https://img.shields.io/pypi/pyversions/report_creator.svg?logo=python&logoColor=white&style=for-the-badge)](https://pypi.org/project/report_creator)
 [![Python Stats](https://img.shields.io/pypi/dw/report_creator?style=for-the-badge)](https://pypi.org/project/report_creator)
 
-- [Documentation](https://report-creator.readthedocs.io/en/latest)
-- [Getting Started](https://report-creator.readthedocs.io/en/latest/getting_started.html)
-
-`GitHub <https://github.com/darenr/report_creator>`_
-| `PyPI <https://pypi.org/project/report_creator/>`_
-| `Documentation <https://report-creator.readthedocs.io>`_
-| `Issues <https://github.com/darenr/report_creator/issues>`_
-| `Getting Started <https://report-creator.readthedocs.io/en/latest/getting_started.html>`_
+[GitHub](https://github.com/darenr/report_creator) | 
+[PyPI](https://pypi.org/project/report_creator/) | 
+[Documentation](https://report-creator.readthedocs.io) | 
+[Issues](https://github.com/darenr/report_creator/issues) | 
+[Getting Started](https://report-creator.readthedocs.io/en/latest/getting_started.html)
 
 Library to assemble reports in HTML from various components using python. Inspired by DataPane which is no longer maintained and targetted more interactive use cases.
 
