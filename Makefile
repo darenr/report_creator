@@ -22,7 +22,7 @@ docs: setup clean
 	@open docs/build/html/index.html
 
 clean:
-	@rm -rf build dist *.egg-info
+	@rm -rf build dist *.egg-info __pycache__
 	cd docs && make clean
 
 debug:
