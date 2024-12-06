@@ -116,4 +116,7 @@ make docs
 # release new version
 make release
 
+@ show list of make targets
+make targets
+
 ```
