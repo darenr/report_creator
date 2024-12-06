@@ -7,7 +7,8 @@ setup:
 	@echo "Setting up environment..."
 	@python3 -m pip install -q --upgrade pip
 	@python3 -m pip install -qr requirements.txt -U
-	@python3 -m pip install -qr requirements-docs.txt -U
+	@python3 -m pip install -qr requirements-doc.txt -U
+	@python3 -m pip install -qr requirements-test.txt -U
 	@echo "Installing/updating dev tools..."
 	@python3 -m pip install -q ruff twine -U
 
@@ -39,6 +40,9 @@ release: setup clean
 
 	@python3 setup.py sdist bdist_wheel
 	@twine upload dist/*
+
+test: setup
+	@python3 -m pytest -vs tests	
 
 .PHONY: targets
 targets:

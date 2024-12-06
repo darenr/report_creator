@@ -36,6 +36,7 @@ Library to assemble reports in HTML from various components using python. Inspir
 - [x] Add accordion component
 - [x] Add option for color logo (uses accent color param passed to ReportCreator ctor)
 - [x] Clean up docs build, move requirements-doc into docs/environment.yaml "- -r requirements.txt"
+- [ ] Progress component
 - [ ] Add mistune plugin to allow gfk markdown icons - `:icon-name:`, for example `:pizza:`
 - [ ] Add Venn diagram support (possibly with `matplotlib_venn`, or SVG)
 - [ ] Add log file block [apachelogs](https://github.com/jwodder/apachelogs) with analytics

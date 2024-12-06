@@ -1,4 +1,5 @@
 import base64
+import html
 import io
 import json
 import logging
@@ -663,20 +664,18 @@ class Markdown(Base):
 
         logger.info(f"Markdown: {len(self.text)} characters")
 
-    @staticmethod
-    def _markdown_to_html(text):
-        return _gfm_markdown_to_html(text)
-
     @_strip_whitespace
     def to_html(self) -> str:
         border = "round-bordered" if self.bordered else ""
         html = f"<div class='markdown-wrapper include_hljs {border}'>"
         if self.label:
             html += f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption>"
-        html += f'<div style="{self.extra_css}">'
-        html += Markdown._markdown_to_html(self.text)
+
+        html += f'<div style="{self.extra_css}">' if self.extra_css else "<div>"
+        html += _gfm_markdown_to_html(self.text)
         html += "</div>"
         html += "</div>"
+
         return html
 
 
@@ -1392,7 +1391,7 @@ class Sql(Language):
 
     Args:
         code (str): your SQL code
-        prettify (Optional[bool], optional): _description_. Defaults to True.
+        prettify (Optional[bool], optional): _description_. Defaults to False for space-efficiency.
         label (Optional[str], optional): _description_. Defaults to None.
     """
 
@@ -1499,9 +1498,16 @@ class Json(Language):
     """
 
     def __init__(self, data: Union[dict, list], *, label: Optional[str] = None):
+        class HTMLEscapingEncoder(json.JSONEncoder):
+            def encode(self, obj):
+                obj = json.loads(super().encode(obj))  # Ensure JSON structure
+                if isinstance(obj, dict):
+                    obj = {k: html.escape(v) if isinstance(v, str) else v for k, v in obj.items()}
+                return super().encode(obj)
+
         Language.__init__(
             self,
-            json.dumps(data, indent=2),
+            json.dumps(data, indent=2, cls=HTMLEscapingEncoder),
             "json",
             label=label,
         )
