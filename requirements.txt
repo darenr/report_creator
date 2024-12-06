@@ -2,7 +2,7 @@ pandas
 pyarrow
 numpy
 matplotlib
-mistune
+mistune>=3.0.2
 pyyaml
 plotly
 plotly-express
