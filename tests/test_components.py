@@ -107,11 +107,6 @@ def test_separator():
         # Test lists
         ("- Item 1\n- Item 2\n- Item 3", "<ul>\n<li>Item 1</li>\n<li>Item 2</li>\n<li>Item 3</li>\n</ul>"),
         ("1. Item 1\n2. Item 2\n3. Item 3", "<ol>\n<li>Item 1</li>\n<li>Item 2</li>\n<li>Item 3</li>\n</ol>"),
-        # Test code blocks
-        (
-            "```python\nprint('Hello, World!')\n```",
-            "<pre><code class=\"language-python\">print('Hello, World!')\n</code></pre>",
-        ),
         # Test mixed Markdown
         (
             "# Heading\nThis is **bold** and *italic*, with [a link](https://example.com).",
@@ -124,6 +119,13 @@ def test_markdown_conversion(text, expected_html):
     markdown = rc.Markdown(text)
     html_output = markdown.to_html()
     assert expected_html in html_output
+
+
+def test_markdown_with_code():
+    """Test Markdown with code."""
+    markdown = rc.Markdown("```python\nprint('Hello, World!')\n```")
+    html_output = markdown.to_html()
+    assert "<pre><code class=\"language-python\">print('Hello, World!')\n</code></pre>" in html_output
 
 
 def test_markdown_with_label():
