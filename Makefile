@@ -26,9 +26,6 @@ clean:
 	@rm -rf build dist *.egg-info __pycache__
 	cd docs && make clean
 
-debug:
-	@echo "EXAMPLES: $(EXAMPLES)"
-
 format:
 	@ruff format report_creator
 	@ruff check report_creator
@@ -43,6 +40,7 @@ release: setup clean
 	@twine upload dist/*
 
 test: setup
+	@python3  -c 'import report_creator; print(report_creator.__version__)'
 	@python3 -m pytest -vs tests	
 
 .PHONY: targets

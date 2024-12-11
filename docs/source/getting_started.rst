@@ -16,7 +16,7 @@ To use ``report_creator``, first install it using pip:
 Example Usage
 -------------
 
-.. code-block:: python3
+.. code-block:: python
 
    import report_creator as rc
 

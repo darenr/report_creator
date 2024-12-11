@@ -36,7 +36,7 @@ if __name__ == "__main__":
     with rc.ReportCreator(
         title="Kitchen Sink",
         description="**All** the *things*",
-        footer="Install the package with `pip install report-creator` :thumbs_up:",
+        footer=f"Made with `report_creator` (v{rc.__version__}), `pip install report-creator` :red_heart:",
     ) as report:
         view = rc.Block(
             rc.Collapse(
@@ -361,4 +361,4 @@ mindmap
             ),
         )
 
-        report.save(view, "index.html")
+        report.save(view, "index.html", prettify_html=False)

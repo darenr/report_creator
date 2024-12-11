@@ -9,21 +9,13 @@ import sys
 import textwrap
 from collections.abc import Generator, Sequence
 from re import Match
-from typing import NamedTuple, Optional, cast
+from typing import NamedTuple
 
 MD_RE = re.compile(
     r"(?P<before>^(?P<indent> *)```\s*python\n)" r"(?P<code>.*?)" r"(?P<after>^(?P=indent)```\s*$)",
     re.DOTALL | re.MULTILINE,
 )
-MD_PYCON_RE = re.compile(
-    r"(?P<before>^(?P<indent> *)```\s*pycon\n)" r"(?P<code>.*?)" r"(?P<after>^(?P=indent)```.*$)",
-    re.DOTALL | re.MULTILINE,
-)
-PYCON_PREFIX = ">>> "
-PYCON_CONTINUATION_PREFIX = "..."
-PYCON_CONTINUATION_RE = re.compile(
-    rf"^{re.escape(PYCON_CONTINUATION_PREFIX)}( |$)",
-)
+
 DEFAULT_LINE_LENGTH = 100
 
 
@@ -51,58 +43,7 @@ def format_str(
         code = textwrap.indent(code, match["indent"])
         return f'{match["before"]}{code}{match["after"]}'
 
-    def _pycon_match(match: Match[str]) -> str:
-        code = ""
-        fragment = cast(Optional[str], None)
-
-        def finish_fragment() -> None:
-            nonlocal code
-            nonlocal fragment
-
-            if fragment is not None:
-                with _collect_error(match):
-                    fragment = format_code_block(fragment)
-                fragment_lines = fragment.splitlines()
-                code += f"{PYCON_PREFIX}{fragment_lines[0]}\n"
-                for line in fragment_lines[1:]:
-                    # Skip blank lines to handle Black adding a blank above
-                    # functions within blocks. A blank line would end the REPL
-                    # continuation prompt.
-                    #
-                    # >>> if True:
-                    # ...     def f():
-                    # ...         pass
-                    # ...
-                    if line:
-                        code += f"{PYCON_CONTINUATION_PREFIX} {line}\n"
-                if fragment_lines[-1].startswith(" "):
-                    code += f"{PYCON_CONTINUATION_PREFIX}\n"
-                fragment = None
-
-        indentation = None
-        for line in match["code"].splitlines():
-            orig_line, line = line, line.lstrip()
-            if indentation is None and line:
-                indentation = len(orig_line) - len(line)
-            continuation_match = PYCON_CONTINUATION_RE.match(line)
-            if continuation_match and fragment is not None:
-                fragment += line[continuation_match.end() :] + "\n"
-            else:
-                finish_fragment()
-                if line.startswith(PYCON_PREFIX):
-                    fragment = line[len(PYCON_PREFIX) :] + "\n"
-                else:
-                    code += orig_line[indentation:] + "\n"
-        finish_fragment()
-        return code
-
-    def _md_pycon_match(match: Match[str]) -> str:
-        code = _pycon_match(match)
-        code = textwrap.indent(code, match["indent"])
-        return f'{match["before"]}{code}{match["after"]}'
-
     src = MD_RE.sub(_md_match, src)
-    src = MD_PYCON_RE.sub(_md_pycon_match, src)
     return src, errors
 
 

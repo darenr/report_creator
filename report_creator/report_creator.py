@@ -106,7 +106,9 @@ class Group(Base):
         html = "<div>"
 
         if self.label:
-            html += f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption></a>"
+            html += (
+                f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption></a>"
+            )
 
         html += """<div class="group">"""
 
@@ -176,7 +178,7 @@ class Widget(Base):
         html = "<div class='report-widget'>"
 
         if self.label:
-            html += f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption>"
+            html += f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption>"
 
         if isinstance(self.widget, pd.DataFrame):
             html += self.widget.style._repr_html_()
@@ -531,7 +533,7 @@ class Html(Base):
 
         html = f"<style>{self.css}</style>" if self.css else ""
         if self.label:
-            html += f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption>"
+            html += f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption>"
         html += f'<div class="{border}">' + self.html + "</div>"
         return html
 
@@ -570,7 +572,7 @@ class Diagram(Base):
         """
 
         if self.label:
-            html += f"<figcaption><report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption></figcaption>"
+            html += f"<figcaption><report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption></figcaption>"
 
         html += f"<div class='mermaid include_mermaid'>{self.src}</div>"
 
@@ -629,7 +631,7 @@ class Image(Base):
             html += image_markup
 
         if self.label:
-            html += f"<figcaption><report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption></figcaption>"
+            html += f"<figcaption><report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption></figcaption>"
 
         html += "</figure></div>"
 
@@ -669,7 +671,7 @@ class Markdown(Base):
         border = "round-bordered" if self.bordered else ""
         html = f"<div class='markdown-wrapper include_hljs {border}'>"
         if self.label:
-            html += f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption>"
+            html += f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption>"
 
         html += f'<div style="{self.extra_css}">' if self.extra_css else "<div>"
         html += _gfm_markdown_to_html(self.text)
@@ -1159,7 +1161,7 @@ class Separator(Base):
             str: The HTML representation of the Separator.
         """
         if self.label:
-            return f"<br><hr><report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption>"
+            return f"<br><hr><report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption>"
         else:
             return "<br><hr>"
 
@@ -1194,7 +1196,7 @@ class Select(Base):
     @_strip_whitespace
     def to_html(self) -> str:
         html = (
-            f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption>"
+            f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption>"
             if self.label
             else ""
         )
@@ -1246,7 +1248,7 @@ class Accordion(Base):
     @_strip_whitespace
     def to_html(self) -> str:
         html = (
-            f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption>"
+            f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption>"
             if self.label
             else ""
         )
@@ -1281,7 +1283,7 @@ class Unformatted(Base):
         formatted_text = f"<pre><code>{self.text.strip()}</code></pre>"
 
         if self.label:
-            return f"""<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</report-caption><div>{formatted_text}</div>"""
+            return f"""<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption><div>{formatted_text}</div>"""
         else:
             return f"""<div>{formatted_text}</div>"""
 
