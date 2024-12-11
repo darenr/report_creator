@@ -32,6 +32,7 @@ debug:
 format:
 	@ruff format report_creator
 	@ruff check report_creator
+	@python scripts/utils/ruffen-docs.py README.md
 
 release: setup clean
 	@find ./ -name '*.pyc' -exec rm -f {} \;

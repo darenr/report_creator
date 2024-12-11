@@ -49,8 +49,7 @@ Library to assemble reports in HTML from various components using python. Inspir
 
 ## ⚡ Example
 
-```.python3
-
+```python
 import report_creator as rc
 
 with rc.ReportCreator(
@@ -59,8 +58,10 @@ with rc.ReportCreator(
     footer="My Report Footer",
 ) as report:
     view = rc.Block(
-        rc.Text("""It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of light, it was the season of darkness, it was the spring of hope, it was the winter of despair.""", 
-        label="Charles Dickens, A Tale of Two Cities"),
+        rc.Text(
+            """It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of light, it was the season of darkness, it was the spring of hope, it was the winter of despair.""",
+            label="Charles Dickens, A Tale of Two Cities",
+        ),
         rc.Group(
             rc.Metric(
                 heading="Answer to Life, The Universe, and Everything",
@@ -69,13 +70,14 @@ with rc.ReportCreator(
             rc.Metric(
                 heading="Author",
                 value="Douglas Adams",
-            ),   
+            ),
         ),
-        rc.Bar(px.data.medals_long(),
-               x="nation",
-               y="count",
-               dimension="medal",
-               label="Bar Chart - Olympic Medals",
+        rc.Bar(
+            px.data.medals_long(),
+            x="nation",
+            y="count",
+            dimension="medal",
+            label="Bar Chart - Olympic Medals",
         ),
         rc.Scatter(
             px.data.iris(),
@@ -87,12 +89,12 @@ with rc.ReportCreator(
         ),
     )
 
-    report.save(view, "report.html") 
+    report.save(view, "report.html")
 ```
 
 ## 🤗 Development
 
-```.console
+```sh
 conda create --name rc python=3.12
 conda activate rc
 make setup
