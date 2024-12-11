@@ -1689,8 +1689,8 @@ class ReportCreator:
                 try:
                     from bs4 import BeautifulSoup
 
-                    soup = BeautifulSoup(html, features="lxml")
-                    f.write(soup.prettify())
+                    soup = BeautifulSoup(html, "html.parser")
+                    f.write(soup.prettify(formatter="minimal"))
                 except ImportError:
                     f.write(html)
 

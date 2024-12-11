@@ -361,4 +361,4 @@ mindmap
             ),
         )
 
-        report.save(view, "index.html", prettify_html=False)
+        report.save(view, "index.html", prettify_html=True)

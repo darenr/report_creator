@@ -10,7 +10,6 @@ Jinja2
 humanize
 beautifulsoup4
 python-dateutil
-lxml
 requests
 pillow
 md4mathjax
