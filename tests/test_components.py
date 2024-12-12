@@ -166,16 +166,15 @@ def test_markdown_edge_cases():
     assert "LongText" in html_output
 
 
-@pytest.mark.skip(reason="This test is not working")
 def test_markdown_html_script_injection():
     """Test for potential HTML injection in Markdown."""
-    malicious_text = "<script>alert('XSS')</script>"
+    malicious_text = "## Markdown Example\nThis is a Markdown example with a potential XSS vulnerability:\n<script>alert('XSS')</script>\nThe End"
     markdown = rc.Markdown(malicious_text)
     html_output = markdown.to_html()
     assert "<script>" not in html_output
-    assert "&lt;script&gt;alert('XSS')&lt;/script&gt;" in html_output
-
-    assert "<h2>Markdown Example</h2>" in markdown.to_html()
+    assert "alert('XSS')" not in html_output
+    assert "<h2>Markdown Example</h2>" in html_output
+    assert "The End" in html_output
 
 
 def test_widget():

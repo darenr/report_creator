@@ -108,6 +108,12 @@ def _gfm_markdown_to_html(text: str) -> str:
             md.renderer.register("emoji_icon_ref", render_inline_emoji_icon)
 
     class HighlightRenderer(mistune.HTMLRenderer):
+        def block_html(self, html):
+            if html.startswith("<script") and html.strip().endswith("</script>"):
+                logging.info("Blocking script tag found in Markdown content.")
+                return ""  # Return an empty string to remove the script tag
+            return html
+
         # need to wrap code/pre inside a div that is styled with codehilite at rendertime
         def block_code(
             self, code, **_
@@ -118,7 +124,17 @@ def _gfm_markdown_to_html(text: str) -> str:
         renderer=HighlightRenderer(escape=False),
         escape=False,
         hard_wrap=False,
-        plugins=["task_lists", "def_list", "math", "table", "strikethrough", "footnotes", "url", "spoiler", emojis],
+        plugins=[
+            "task_lists",
+            "def_list",
+            "math",
+            "table",
+            "strikethrough",
+            "footnotes",
+            "url",
+            "spoiler",
+            emojis,
+        ],
     )(text)
 
 
