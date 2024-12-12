@@ -2,6 +2,7 @@ import base64
 import logging
 import mimetypes
 import random
+from typing import Optional
 import uuid
 from html.parser import HTMLParser
 from urllib.parse import unquote, urlparse
@@ -108,17 +109,19 @@ def _gfm_markdown_to_html(text: str) -> str:
             md.renderer.register("emoji_icon_ref", render_inline_emoji_icon)
 
     class HighlightRenderer(mistune.HTMLRenderer):
-        def block_html(self, html):
-            if html.startswith("<script") and html.strip().endswith("</script>"):
+        def block_html(self, html: str) -> str:
+            if html.strip().startswith("<script") and html.strip().endswith("</script>"):
                 logging.info("Blocking script tag found in Markdown content.")
-                return ""  # Return an empty string to remove the script tag
+                return "<!-- blocked script tag - bad human! -->"  # block script tags
             return html
 
-        # need to wrap code/pre inside a div that is styled with codehilite at rendertime
-        def block_code(
-            self, code, **_
-        ):  # **_ gathers unused key-value pairs (to avoid lint warning of unused param(s))
-            return "<div class='codehilite'><pre><code>" + mistune.escape(code) + "</code></pre></div>"
+        def block_code(self, code: str, info: Optional[str] = None) -> str:
+            # markup code in markdown for highlight.js
+            return (
+                f"<div class='codehilite'><pre><code class='language-{info}'>"
+                + mistune.escape(code)
+                + "</code></pre></div>"
+            )
 
     return mistune.create_markdown(
         renderer=HighlightRenderer(escape=False),
