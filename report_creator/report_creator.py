@@ -1562,7 +1562,7 @@ class ReportCreator:
         author: Optional[str] = None,
         logo: Optional[str] = None,
         theme: Optional[str] = "rc",
-        code_theme: Optional[str] = "atom-one-light",
+        code_theme: Optional[str] = "xcode",
         diagram_theme: Optional[str] = "default",
         accent_color: Optional[str] = "black",
         footer: Optional[str] = None,

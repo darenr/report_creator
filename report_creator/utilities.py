@@ -118,7 +118,7 @@ def _gfm_markdown_to_html(text: str) -> str:
         def block_code(self, code: str, info: Optional[str] = None) -> str:
             # markup code in markdown for highlight.js
             return (
-                f"<div class='codehilite'><pre><code class='language-{info}'>"
+                f"<div class='codehilite code-block'><pre><code class='language-{info}'>"
                 + mistune.escape(code)
                 + "</code></pre></div>"
             )

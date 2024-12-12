@@ -2,7 +2,6 @@ import logging
 
 import pandas as pd
 import plotly.express as px
-import yaml
 
 import report_creator as rc
 
@@ -18,9 +17,6 @@ if __name__ == "__main__":
 
     with open(__file__) as f:
         example_python = f.read()
-
-    with open("examples/example.yaml") as f:
-        datastructure = yaml.safe_load(f.read())
 
     with open("examples/example.txt") as f:
         example_text = f.read()
@@ -77,6 +73,7 @@ if __name__ == "__main__":
                 ),
                 label="Grouped Metrics",
             ),
+            rc.Separator(),
             rc.Group(
                 rc.MetricGroup(
                     df1,
@@ -148,15 +145,9 @@ if __name__ == "__main__":
                 example_text,
                 label="Alice’s Adventures in Wonderland (Text)",
             ),
-            rc.Group(
-                rc.Yaml(
-                    datastructure,
-                    label="Kubernetes Creating a Deployment as YAML",
-                ),
-                rc.Java(
-                    example_java,
-                    label="Example Java",
-                ),
+            rc.Java(
+                example_java,
+                label="Example Java",
             ),
             rc.Separator(),
             rc.Markdown(example_md, label="README.md"),
@@ -361,4 +352,4 @@ mindmap
             ),
         )
 
-        report.save(view, "index.html", prettify_html=True)
+        report.save(view, "index.html", prettify_html=False)
