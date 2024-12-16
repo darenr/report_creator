@@ -311,7 +311,6 @@
 
       /* Style the tab content */
       .tabcontent {
-        display: none;
         width: 100%;
         border: 0.5px solid var(--border);
         box-sizing: border-box;
@@ -430,6 +429,14 @@
         list-style-type: none;
         margin-left: -1.5em;
       }
+
+      .offscreen {
+        position: absolute;
+        left: -9999px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+      }
     </style>
   </head>
 
@@ -467,7 +474,8 @@
 
         // Hide all tab contents for the specified table index
         for (i = 0; i < tabcontent.length; i++) {
-          tabcontent[i].style.display = "none";
+          // tabcontent[i].style.display = "none";
+          tabcontent[i].classList.add('offscreen');
         }
 
         // Get all elements with class="tablinks" and remove the class "active"
@@ -481,7 +489,9 @@
         // Show the current tab, and add an "active" class to the button that opened the tab
         for (i = 0; i < tabcontent.length; i++) {
           if (tabcontent[i].id == tabName) {
-            tabcontent[i].style.display = "block";
+            //tabcontent[i].style.display = "block";
+            tabcontent[i].classList.remove('offscreen');
+
           }
         }
         evt.currentTarget.classList.add("active");

@@ -255,8 +255,10 @@ if __name__ == "__main__":
                 label="Tab Group of Data Tables",
             ),
             rc.Separator(),
-            rc.Diagram(
-                src="""
+            rc.Select(
+                blocks=[
+                    rc.Diagram(
+                        src="""
 mindmap
   root((Artificial Intelligence))
     subtopic1(Machine Learning)
@@ -307,17 +309,20 @@ mindmap
       subtopic6d(Accountability)
       subtopic6e(Fairness)
                 """,
-                label="Example AI Mind Map Diagram",
-            ),
-            rc.Diagram(
-                src="""
+                        label="Example AI Mind Map Diagram",
+                    ),
+                    rc.Diagram(
+                        src="""
                     graph LR
                         A[Square Rect] -- Link text --> B((Circle))
                         A --> C(Round Rect)
                         B --> D{Rhombus}
                         C --> D
                 """,
-                label="Example Git Graph",
+                        label="Example Git Graph",
+                    ),
+                ],
+                label="Tab Group of Diagrams",
             ),
             rc.Unformatted(
                 r"""
