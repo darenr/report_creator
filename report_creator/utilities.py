@@ -2,9 +2,9 @@ import base64
 import logging
 import mimetypes
 import random
-from typing import Optional
 import uuid
 from html.parser import HTMLParser
+from typing import Optional
 from urllib.parse import unquote, urlparse
 
 import emoji
