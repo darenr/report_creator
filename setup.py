@@ -1,68 +1,42 @@
 """Build and installation script for report_creator."""
 
-# standard libs
-import re
-from pathlib import Path
-
 from setuptools import find_packages, setup
-
-# get long description from README.rst
-with open("README.md") as f:
-    long_description = f.read()
+from report_creator.__version__ import __version__
 
 
-# include necessary deopendencies
-def get_install_requires() -> list[str]:
-    """Returns requirements.txt parsed to a list"""
-    fname = Path(__file__).parent / "requirements.txt"
-    targets = []
-    if fname.exists():
-        with open(fname) as f:
-            targets = f.read().splitlines()
-
-    return targets
-
-
-# get package metadata by parsing __meta__ module
-with open("report_creator/__meta__.py") as source:
-    content = source.read().strip()
-    metadata = {
-        key: re.search(key + r'\s*=\s*[\'"]([^\'"]*)[\'"]', content).group(1)
-        for key in [
-            "__version__",
-            "__authors__",
-            "__contact__",
-            "__description__",
-            "__license__",
-        ]
-    }
+# Function to read the requirements.txt file
+def read_requirements():
+    with open("requirements.txt") as req:
+        content = req.readlines()
+    return [line.strip() for line in content]
 
 
 setup(
     name="report_creator",
-    version=metadata["__version__"],
-    author=metadata["__authors__"],
-    author_email=metadata["__contact__"],
-    description=metadata["__description__"],
-    long_description=long_description,
+    version="1.0.33",
+    author="Daren Race",
+    author_email="daren.race@gmail.com",
+    description="Create self-contained HTML reports from Python.",
+    long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    license=metadata["__license__"],
+    license="MIT",
     keywords="python, html, reports, report, creator, generator, markdown, yaml, plot, chart, table, blog",
     url="https://github.com/darenr/report_creator",
     packages=find_packages(),
-    include_package_data=True,
     package_data={"report_creator": ["templates/*"]},
-    install_requires=get_install_requires(),
+    python_requires=">=3.9",
     maintainer="Daren Race",
     maintainer_email="daren.race@gmail.com",
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
-        "Topic :: Software Development :: Libraries :: Application Frameworks",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
-        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3",
+        "Operating System :: OS Independent",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Information Technology",
+        "Intended Audience :: Science/Research",
+        "Topic :: Scientific/Engineering :: Artificial Intelligence",
+        "Topic :: Scientific/Engineering :: Information Analysis",
     ],
-    license_files=("LICENSE",),
+    install_requires=read_requirements(),
+    include_package_data=True,
 )
