@@ -576,7 +576,9 @@ class Diagram(Base):
 
         html += f"<div class='mermaid include_mermaid'>{self.src}</div>"
 
-        html += "</figure></div>"
+        html += """
+                </figure>
+            </div>"""
 
         return html
 
