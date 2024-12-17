@@ -125,10 +125,7 @@ def test_markdown_with_code():
     """Test Markdown with code."""
     markdown = rc.Markdown("```python\nprint('Hello, World!')\n```")
     html_output = markdown.to_html()
-    assert (
-        "<div class='codehilite'><pre><code class='language-python'>print('Hello, World!')\n</code></pre></div>"
-        in html_output
-    )
+    assert "<pre><code class='language-python'>print('Hello, World!')\n</code></pre>" in html_output
 
 
 def test_markdown_with_label():

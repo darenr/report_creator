@@ -13,7 +13,5 @@ conda:
   environment: docs/environment.yml
 
 python:
-  install:
-    - requirements: src/doc/requirements.txt
-    - method: pip
-      path: .
+   install:
+   - requirements: requirements.txt
