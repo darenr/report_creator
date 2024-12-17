@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.35
+
+### Changed
+
+- Added missing dependency package (`python-dateutil`)
+
+---
+
 ## 1.0.34
 
 ### Added
