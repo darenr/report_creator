@@ -1,7 +1,5 @@
 """Build and installation script for report_creator."""
 
-from pathlib import Path
-
 from setuptools import find_packages, setup
 
 from report_creator.__version__ import __version__
@@ -9,14 +7,9 @@ from report_creator.__version__ import __version__
 
 # Function to read the requirements.txt file
 def read_requirements():
-    """Returns requirements.txt parsed to a list"""
-    fname = Path(__file__).parent / "requirements.txt"
-    targets = []
-    if fname.exists():
-        with open(fname) as f:
-            targets = f.read().splitlines()
-
-    return targets
+    with open("requirements.txt") as req:
+        content = req.readlines()
+    return [line.strip() for line in content]
 
 
 setup(
