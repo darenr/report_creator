@@ -327,6 +327,12 @@
         overflow: hidden;
       }
 
+      @media print {
+        .offscreen {
+          display: none;
+        }
+      }
+
       .indented-text-block {
         text-indent: 20px;
       }
@@ -489,7 +495,6 @@
         // Show the current tab, and add an "active" class to the button that opened the tab
         for (i = 0; i < tabcontent.length; i++) {
           if (tabcontent[i].id == tabName) {
-            //tabcontent[i].style.display = "block";
             tabcontent[i].classList.remove('offscreen');
 
           }
