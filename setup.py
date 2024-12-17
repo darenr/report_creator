@@ -1,6 +1,7 @@
 """Build and installation script for report_creator."""
 
 from setuptools import find_packages, setup
+
 from report_creator.__version__ import __version__
 
 
@@ -13,7 +14,7 @@ def read_requirements():
 
 setup(
     name="report_creator",
-    version="1.0.33",
+    version=__version__,
     author="Daren Race",
     author_email="daren.race@gmail.com",
     description="Create self-contained HTML reports from Python.",
