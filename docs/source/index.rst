@@ -17,22 +17,40 @@ Report Creator
 .. |GitHub| image:: https://img.shields.io/github/license/darenr/report_creator?style=for-the-badge&logo=pypi&logoColor=white
 ..  _GitHub: https://github.com/darenr/report_creator
 
-Report Creator will generate a report in HTML format that you can share with others, fully self contained, even Images 
-can be base64 encoded and included in the report. The report can be viewed in a browser, or printed to PDF. Use simple
-Python components to create a report, for text, code, images, and data visualizations. Markdown can be used in its own
-component, or in the label/description of any component. While the charging is very capable, Report Creator allows you 
-also to add any matplotlib figure, along with any python object that supports the ``_repr_html_()`` function (which many 
-libraries support since this is used in Jupyter notebooks). Report Creator does its best to make the report look modern
-and consistent even with different components coming from different sources. For diagramming there's a ``rc.Diagram()`` component 
-which can be used with any valid |mermaid_js| syntax.
+Report Creator generates shareable, self-contained HTML reports, including base64-encoded 
+images. These reports are viewable in any browser or printable to PDF. Using simple Python 
+components, it creates reports incorporating text, code, images, and data visualizations.
+Markdown is supported within dedicated components or as labels/descriptions for other 
+components. 
+
+.. code-block:: python
+
+   import report_creator as rc
+
+   with rc.ReportCreator(title="Report", logo="octocat") as report:
+      report.save(
+         rc.Block(
+               rc.Heading("Hello World", level=1),
+               rc.Markdown("This is a simple report using Report Creator."),
+         ),
+         "report.html",
+      )
+
+
+Beyond its built-in capabilities, Report Creator allows the inclusion of 
+any Matplotlib figure and any Python object implementing the ``_repr_html_()`` function 
+(a common feature in libraries supporting Jupyter notebooks). Report Creator ensures 
+a modern and consistent report appearance, even with components from diverse sources. 
+For diagrams, the ``rc.Diagram()`` component supports any valid |mermaid_js| syntax.
 
 .. |mermaid_js| raw:: html
 
    <a href="https://mermaid-js.github.io/mermaid/" target="_blank">mermaid js</a>
 
 
-The python file |kitchen_sink_location_source| is an example (in the ``examples`` folder) that demonstrates every 
-component, and many of the options. The report created from that can be seen |kitchen_sink_location_output|.
+The python file |kitchen_sink_location_source| is an example (in the ``examples`` folder) 
+that demonstrates every component, and many of the options. The created report can be 
+viewed |kitchen_sink_location_output|.
 
 .. |kitchen_sink_location_source| raw:: html
 
