@@ -1,4 +1,5 @@
 import logging
+import textwrap
 
 import pandas as pd
 import plotly.express as px
@@ -20,9 +21,6 @@ if __name__ == "__main__":
 
     with open("examples/example.txt") as f:
         example_text = f.read()
-
-    with open("examples/example.java") as f:
-        example_java = f.read()
 
     with open("README.md") as f:
         example_md = f.read()
@@ -145,9 +143,29 @@ if __name__ == "__main__":
                 example_text,
                 label="Alice’s Adventures in Wonderland (Text)",
             ),
-            rc.Java(
-                example_java,
-                label="Example Java",
+            rc.Group(
+                rc.Java(
+                    textwrap.dedent("""
+                    public class HelloWorld {
+                        public static void main(String[] args) {
+                            // Print "Hello, World!" to the console
+                            System.out.println("Hello, World!");
+                        }
+                    }
+                    """),
+                    label="Java",
+                ),
+                rc.Prolog(
+                    textwrap.dedent("""
+                    % Define a rule to display the message
+                    hello_world :- 
+                        write('Hello, World!'), nl.
+
+                    % To run, consult the file and call the rule:
+                    % ?- hello_world.
+                    """),
+                    label="Prolog",
+                ),
             ),
             rc.Separator(),
             rc.Markdown(example_md, label="README.md"),

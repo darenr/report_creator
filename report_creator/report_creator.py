@@ -33,6 +33,7 @@ from .utilities import (
     _convert_imgurl_to_datauri,
     _generate_anchor_id,
     _gfm_markdown_to_html,
+    _random_color_generator,
     _random_light_color_generator,
     _strip_whitespace,
 )
@@ -1317,14 +1318,13 @@ class Language(Base):
     @_strip_whitespace
     @abstractmethod
     def to_html(self) -> str:
+        formatted_text = f"<pre><code class='language-{self.language} syntax-color'>\n{self.text.strip()}</code></pre>"
         if self.label:
-            formatted_text = f"<pre><code class='language-{self.language} syntax-color'>### {self.label}\n\n{self.text.strip()}</code></pre>"
+            label_background, label_text_color = _random_color_generator(self.label)
+            label_span = f"<span class='code-block-label' style='background-color: {label_background}; color:{label_text_color};'>{self.label}</span>"
         else:
-            formatted_text = (
-                f"<pre><code class='language-{self.language} syntax-color'>{self.text.strip()}</code></pre>"
-            )
-
-        return f"""<div class="code-block include_hljs">{formatted_text}</div>"""
+            label_span = ""
+        return f"""<div class="code-block include_hljs">{label_span}{formatted_text}</div>"""
 
 
 ##############################
@@ -1564,7 +1564,7 @@ class ReportCreator:
         author: Optional[str] = None,
         logo: Optional[str] = None,
         theme: Optional[str] = "rc",
-        code_theme: Optional[str] = "xcode",
+        code_theme: Optional[str] = "github-dark",
         diagram_theme: Optional[str] = "default",
         accent_color: Optional[str] = "black",
         footer: Optional[str] = None,

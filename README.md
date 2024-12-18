@@ -4,6 +4,7 @@
 [![PyPI Version](https://img.shields.io/pypi/v/report_creator.svg?style=for-the-badge&color=blue)](https://pypi.org/project/report_creator)
 [![Python Versions](https://img.shields.io/pypi/pyversions/report_creator.svg?logo=python&logoColor=white&style=for-the-badge)](https://pypi.org/project/report_creator)
 [![Python Stats](https://img.shields.io/pypi/dw/report_creator?style=for-the-badge)](https://pypi.org/project/report_creator)
+[![Discord](https://img.shields.io/discord/1318814951795593236?style=for-the-badge)](https://discord.gg/c4VZp5ze)
 
 [GitHub](https://github.com/darenr/report_creator) | 
 [PyPI](https://pypi.org/project/report_creator/) | 
@@ -36,7 +37,7 @@ Library to assemble reports in HTML from various components using python. Inspir
 - [x] Add accordion component
 - [x] Add option for color logo (uses accent color param passed to ReportCreator ctor)
 - [x] Clean up docs build, move requirements-doc into docs/environment.yaml "- -r requirements.txt"
-- [ ] Add a Metric  type for a softable list of key/values rendered like this [Percent of time](https://www.googlecloudcommunity.com/gc/image/serverpage/image-id/73682iEC88C630172A41FA/image-size/large)
+- [ ] Add a Metric  type for a sortable set of key/values rendered like this [Percent of time](https://www.googlecloudcommunity.com/gc/image/serverpage/image-id/73682iEC88C630172A41FA/image-size/large)
 - [ ] Progress component
 - [ ] Add mistune plugin to allow gfk markdown icons - `:icon-name:`, for example `:pizza:`
 - [ ] Add Venn diagram support (possibly with `matplotlib_venn`, or SVG)
