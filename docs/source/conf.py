@@ -37,7 +37,6 @@ html_copy_source = False
 html_show_sourcelink = False
 
 html_theme = "sphinx_book_theme"
-pygments_style = "github-dark"
 
 mermaid_params = ["--theme", "forest"]
 
@@ -52,4 +51,5 @@ html_theme_options = {
     "path_to_docs": "docs/source",
     "show_navbar_depth": 2,
     "home_page_in_toc": True,
+    "pygments_style": "github-dark",
 }
