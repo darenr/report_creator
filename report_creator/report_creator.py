@@ -1320,7 +1320,7 @@ class Language(Base):
     def to_html(self) -> str:
         formatted_text = f"<pre><code class='language-{self.language} syntax-color'>\n{self.text.strip()}</code></pre>"
         if self.label:
-            label_background, label_text_color = _random_color_generator(self.label)
+            label_background, label_text_color = _random_color_generator(self.language)
             label_span = f"<span class='code-block-label' style='background-color: {label_background}; color:{label_text_color};'>{self.label}</span>"
         else:
             label_span = ""
