@@ -266,6 +266,7 @@
       }
 
       select:not([multiple]):not([size]) {
+        /* this selector targets standard, single-select dropdown lists */
         padding-right: 1.5rem;
         background-repeat: no-repeat;
         background-position: right 0.75rem center;
@@ -274,13 +275,11 @@
         appearance: none;
       }
 
-      /* Style the tab */
       .tab {
         overflow: hidden;
         border-bottom: 3px solid var(--button-hover);
       }
 
-      /* Style the buttons that are used to open the tab content */
       .tab button {
         font-weight: normal;
 
@@ -309,7 +308,6 @@
         border-top-left-radius: 0.25em;
       }
 
-      /* Style the tab content */
       .tabcontent {
         width: 100%;
         border: 0.5px solid var(--border);
@@ -413,7 +411,6 @@
         box-sizing: border-box;
         margin: 0;
         overflow: hidden;
-
         border: 1px solid var(--border);
         border-radius: 0.75rem;
       }
