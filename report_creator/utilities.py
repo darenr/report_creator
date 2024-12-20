@@ -1,7 +1,9 @@
 import base64
+import functools
 import logging
 import mimetypes
 import random
+import time
 import uuid
 from html.parser import HTMLParser
 from typing import Optional
@@ -139,6 +141,23 @@ def _gfm_markdown_to_html(text: str) -> str:
             emojis,
         ],
     )(text)
+
+
+def _time_it(func):
+    """A decorator to time a function"""
+
+    @functools.wraps(func)
+    def wrapper_timer(*args, **kwargs):
+        start_time = time.perf_counter()
+        value = func(*args, **kwargs)
+        end_time = time.perf_counter()
+        run_time = end_time - start_time
+        class_name = args[0].__class__.__name__ if args else None  # Get class name
+
+        logger.debug(f"[{class_name}::{func.__name__!r}] - {run_time:.4f} secs")
+        return value
+
+    return wrapper_timer
 
 
 def _strip_whitespace(func):

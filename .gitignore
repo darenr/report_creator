@@ -163,3 +163,5 @@ aa.htm*
 .vscode/
 .DS_Store
 
+htmlcov/
+output.prof

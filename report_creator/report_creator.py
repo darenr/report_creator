@@ -36,9 +36,11 @@ from .utilities import (
     _random_color_generator,
     _random_light_color_generator,
     _strip_whitespace,
+    _time_it,
 )
 
 logger = logging.getLogger("report_creator")
+logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 
 class Base(ABC):
@@ -1638,6 +1640,7 @@ class ReportCreator:
         """Restore the original color schema"""
         mpl.rcParams["axes.prop_cycle"] = cycler("color", self.default_colors)
 
+    @_time_it
     def save(self, view: Base, path: str, prettify_html: Optional[bool] = True) -> None:
         """
         Save the report to a file.
@@ -1670,7 +1673,7 @@ class ReportCreator:
         include_hljs = "include_hljs" in body
 
         logger.info(f"ReportCreator: {include_plotly=}, {include_datatable=}, {include_mermaid=}, {include_hljs=}")
-        logger.info(f"ReportCreator: {self.description=}, {self.author=}")
+        logger.info(f"ReportCreator: {self.description=}, {self.author=} {prettify_html=}")
         with open(path, "w", encoding="utf-8") as f:
             html = template.render(
                 title=self.title or "Report",

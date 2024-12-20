@@ -6,7 +6,7 @@ import plotly.express as px
 
 import report_creator as rc
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 
 if __name__ == "__main__":

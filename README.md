@@ -37,16 +37,14 @@ Library to assemble reports in HTML from various components using python. Inspir
 - [x] Add accordion component
 - [x] Add option for color logo (uses accent color param passed to ReportCreator ctor)
 - [x] Clean up docs build, move requirements-doc into docs/environment.yaml "- -r requirements.txt"
-- [ ] Add a Metric  type for a sortable set of key/values rendered like this [Percent of time](https://www.googlecloudcommunity.com/gc/image/serverpage/image-id/73682iEC88C630172A41FA/image-size/large)
+- [x] Add mistune plugin to allow gfk markdown icons - `:icon-name:`, for example `:pizza:`
+- [ ] Add a Metric type for a sortable set of key/values rendered like this [Percent of time](https://www.googlecloudcommunity.com/gc/image/serverpage/image-id/73682iEC88C630172A41FA/image-size/large)
 - [ ] Progress component
-- [ ] Add mistune plugin to allow gfk markdown icons - `:icon-name:`, for example `:pizza:`
 - [ ] Add Venn diagram support (possibly with `matplotlib_venn`, or SVG)
-- [ ] Add log file block [apachelogs](https://github.com/jwodder/apachelogs) with analytics
 - [ ] Add Radar chart
 - [ ] Add choropleth map plot type (maybe?)
 - [ ] Youtube embeds rc.Video(url: str, label: str)
 - [ ] File attachments (downloadable dataset from page)
-- [ ] Switch logger to `logru`
 
 ## ⚡ Example
 

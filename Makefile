@@ -18,11 +18,18 @@ examples: setup
         PYTHONPATH=. python $$file; \
 	done	
 
+profile: setup
+	PYTHONPATH=. python -m cProfile  -o output.prof examples/kitchen_sink.py
+	snakeviz output.prof
+
+
 docs: setup clean
 	@cd docs && make html
 	@open docs/build/html/index.html
 
 clean:
+	@rm output.prof
+	@rm -rf htmlcov
 	@rm -rf build dist *.egg-info __pycache__
 	cd docs && make clean
 
@@ -41,7 +48,7 @@ release: setup clean
 
 tests: setup
 	@python3  -c 'import report_creator; print(report_creator.__version__)'
-	@python3 -m pytest -vs tests	
+	@python3 -m pytest -vs --cov --cov-report=html 	
 
 .PHONY: targets
 targets:
