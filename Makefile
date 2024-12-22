@@ -28,7 +28,7 @@ docs: setup clean
 	@open docs/build/html/index.html
 
 clean:
-	@rm output.prof
+	@rm -f output.prof
 	@rm -rf htmlcov
 	@rm -rf build dist *.egg-info __pycache__
 	cd docs && make clean
@@ -47,7 +47,7 @@ release: setup clean
 	@twine upload dist/*
 
 tests: setup
-	@python3  -c 'import report_creator; print(report_creator.__version__)'
+	@python3 -c 'import report_creator; print(report_creator.__version__)'
 	@python3 -m pytest -vs --cov --cov-report=html 	
 
 .PHONY: targets
