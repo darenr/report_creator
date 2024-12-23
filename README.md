@@ -12,7 +12,9 @@
 [Issues](https://github.com/darenr/report_creator/issues) | 
 [Getting Started](https://report-creator.readthedocs.io/en/latest/getting_started.html)
 
-Library to assemble reports in HTML from various components using python. Inspired by DataPane which is no longer maintained and targetted more interactive use cases.
+Library to assemble reports in HTML from various components using python. This is not meant to be a replacement for do-it-yourself HTML,
+it's a tool to put together professional looking reports from python easily and quickly. The philosophy for layout is that components flow in
+either the horizontal (`rc.Group`) or Vertical (`rc.Block`) direction.
 
 ## ⚡ Features
 
@@ -23,7 +25,7 @@ Library to assemble reports in HTML from various components using python. Inspir
 - [x] Components for things like metrics ("Accuracy: 87%") from a key & value
 - [x] Support for plotting figures, interactive `plotly` and `matplotlib`
 - [x] images (styled by the library) with an option to fetch at report build time (no fetch on render)
-- [x] `json`/`yaml`/`python`/`java`/`ptolog` code blocks with color syntax highlighting
+- [x] `json`/`yaml`/`python`/`java`/`prolog` code blocks with color syntax highlighting
 - [x] Support tab containers (not printer friendly)
 - [x] Add support for any Jupyter widget, any object that renders in a notebook should render to a report
 - [x] Add built-in easy plotting that looks stylistically consistent with the report
