@@ -7,3 +7,4 @@ recommonmark
 sphinx-markdown-tables
 sphinxcontrib-mermaid
 sphinx-book-theme
+sphinxcontrib-video

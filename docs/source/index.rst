@@ -39,7 +39,7 @@ components. The philosophy for layout is that components flow in either the hori
 
 
 Beyond its built-in capabilities, Report Creator allows the inclusion of 
-any Matplotlib figure and any Python object implementing the ``_repr_html_()`` function 
+any ``matplotlib`` figure and any Python object implementing the ``_repr_html_()`` function 
 (a common feature in libraries supporting Jupyter notebooks). Report Creator ensures 
 a modern and consistent report appearance, even with components from diverse sources. 
 For diagrams, the ``rc.Diagram()`` component supports any valid |mermaid_js| syntax.

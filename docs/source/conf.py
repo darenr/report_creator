@@ -29,19 +29,24 @@ extensions = [
     "sphinx_copybutton",
     "sphinxcontrib.mermaid",
     "sphinx.ext.inheritance_diagram",
+    "sphinxcontrib.video",
 ]
 templates_path = ["_templates"]
-exclude_patterns = []
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 html_copy_source = False
 html_show_sourcelink = False
 
 html_theme = "sphinx_book_theme"
 
+source_suffix = {
+    ".rst": "restructuredtext",
+    ".md": "markdown",
+}
+
 mermaid_params = ["--theme", "forest"]
 
 html_title = "Report Creator"
-
 
 html_theme_options = {
     "repository_url": "https://github.com/darenr/report_creator",
