@@ -21,7 +21,8 @@ Report Creator generates shareable, self-contained HTML reports, including base6
 images. These reports are viewable in any browser or printable to PDF. Using simple Python 
 components, it creates reports incorporating text, code, images, and data visualizations.
 Markdown is supported within dedicated components or as labels/descriptions for other 
-components. 
+components. The philosophy for layout is that components flow in either the horizontal 
+(``rc.Group()``) or Vertical (``rc.Block()``) direction.
 
 .. code-block:: python
 
