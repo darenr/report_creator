@@ -41,6 +41,7 @@ from .utilities import (
 
 logger = logging.getLogger("report_creator")
 logging.getLogger("urllib3").setLevel(logging.WARNING)
+logging.getLogger("matplotlib.font_manager").setLevel(logging.WARNING)
 
 
 class Base(ABC):
@@ -1323,10 +1324,18 @@ class Language(Base):
         formatted_text = f"<pre><code class='language-{self.language} syntax-color'>\n{self.text.strip()}</code></pre>"
         if self.label:
             label_background, label_text_color = _random_color_generator(self.language)
-            label_span = f"<span class='code-block-label' style='background-color: {label_background}; color:{label_text_color};'>{self.label}</span>"
+            label_span = f"""
+                <span class="code-block-label" style="background-color: {label_background}; color:{label_text_color};">
+                    {self.label}
+                </span>
+            """
         else:
             label_span = ""
-        return f"""<div class="code-block include_hljs">{label_span}{formatted_text}</div>"""
+        return f"""
+                <div class="code-block include_hljs">
+                    {label_span}{formatted_text}
+                </div>
+        """
 
 
 ##############################

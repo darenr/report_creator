@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .container {
+        font-family: sans-serif;
+      }
+
+      .label {
+        font-weight: bold;
+      }
+
+      .percent-bar {
+        height: 20px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        position: relative;
+      }
+
+      .on-time {
+        background-color: #a8d9aa;
+      }
+      .late {
+        background-color: #ffe699;
+      }
+      .very-late {
+        background-color: #ff9999;
+      }
+      .cancelled {
+        background-color: #e6e6e6;
+      }
+      .early {
+        background-color: #a8d9aa;
+      }
+
+      .percent-text {
+        position: absolute;
+        top: 50%;
+        left: 10px; /* Align text to the left with some padding */
+        transform: translateY(-50%); /* Center vertically */
+        color: black;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="label">State</div>
+      <div>CA</div>
+
+      <div class="label">Percent on Time</div>
+      <div class="percent-bar on-time" style="width: 41.19%">
+        <span class="percent-text">41.19%</span>
+      </div>
+
+      <div class="label">Percent Late</div>
+      <div class="percent-bar late" style="width: 25.1%">
+        <span class="percent-text">25.1%</span>
+      </div>
+
+      <div class="label">Percent Very Late</div>
+      <div class="percent-bar very-late" style="width: 10.2%">
+        <span class="percent-text">10.2%</span>
+      </div>
+
+      <div class="label">Percent Cancelled</div>
+      <div class="percent-bar cancelled" style="width: 0%">
+        <span class="percent-text">0%</span>
+      </div>
+
+      <div class="label">Percent Early</div>
+      <div class="percent-bar early" style="width: 23.4%">
+        <span class="percent-text">23.4%</span>
+      </div>
+    </div>
+  </body>
+</html>

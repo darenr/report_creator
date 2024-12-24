@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## 1.0.36
 
 - Style code blocks better (remove injected comment)
+- fix quirky behavior when it comes to width and layout issue for contents within a `rc.Collapse()`
 
 ## 1.0.35
 
