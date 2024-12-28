@@ -93,6 +93,83 @@ with rc.ReportCreator(
     report.save(view, "report.html")
 ```
 
+## 🤗 Code Structure
+
+```mermaid
+graph TD
+    subgraph "UI"
+        API[Report Creator API]
+        COMP[Components]
+        API --> COMP
+    end
+
+    subgraph "Core"
+        RC[Engine]
+        TS[Templates]
+        TM[Themes]
+        CR[Renderer]
+        
+        RC --> TS
+        RC --> TM
+        RC --> CR
+        COMP --> CR
+    end
+
+    subgraph "Integration"
+        PL[Plotting]
+        MD[Markdown]
+        SH[Syntax]
+        MJ[Mermaid]
+        JW[Jupyter]
+        
+        CR --> PL
+        CR --> MD
+        CR --> SH
+        CR --> MJ
+        CR --> JW
+    end
+
+    subgraph "Output"
+        HG[HTML]
+        AB[Assets]
+        DT[Template]
+        
+        CR --> HG
+        HG --> AB
+        TS --> DT
+        DT --> HG
+    end
+
+    subgraph "Utils"
+        UT[Utils]
+        VM[Version]
+        PI[Init]
+        
+        RC --> UT
+        RC --> VM
+        RC --> PI
+    end
+
+    classDef core fill:#2374ab,color:white
+    classDef integration fill:#47a025,color:white
+    classDef output fill:#a442f5,color:white
+    classDef utility fill:#f58442,color:white
+
+    class API,RC,TS,TM,CR core
+    class PL,MD,SH,MJ,JW integration
+    class HG,AB,DT output
+    class UT,VM,PI utility
+
+    click RC "https://github.com/darenr/report_creator/blob/main/report_creator/report_creator.py"
+    click TS "https://github.com/darenr/report_creator/tree/main/report_creator/templates/"
+    click TM "https://github.com/darenr/report_creator/blob/main/report_creator/theming.py"
+    click UT "https://github.com/darenr/report_creator/blob/main/report_creator/utilities.py"
+    click COMP "https://github.com/darenr/report_creator/blob/main/tests/test_components.py"
+    click DT "https://github.com/darenr/report_creator/blob/main/report_creator/templates/default.html"
+    click VM "https://github.com/darenr/report_creator/blob/main/report_creator/__version__.py"
+    click PI "https://github.com/darenr/report_creator/blob/main/report_creator/__init__.py"
+```
+
 ## 🤗 Development
 
 ```sh
