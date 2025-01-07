@@ -118,12 +118,19 @@ def _gfm_markdown_to_html(text: str) -> str:
             return html
 
         def block_code(self, code: str, info: Optional[str] = None) -> str:
-            # markup code in markdown for highlight.js
-            return (
-                f"<div class='codehilite code-block'><pre><code class='language-{info}'>"
-                + mistune.escape(code)
-                + "</code></pre></div>"
-            )
+            if info is None:
+                info = "plaintext"
+
+            if info == "mermaid":
+                # Replace the code block with a div for Mermaid diagrams
+                return f"<div class='mermaid include_mermaid'>{code}</div>"
+            else:
+                # markup code in markdown for highlight.js
+                return (
+                    f"<div class='codehilite code-block'><pre><code class='language-{info}'>"
+                    + mistune.escape(code)
+                    + "</code></pre></div>"
+                )
 
     return mistune.create_markdown(
         renderer=HighlightRenderer(escape=False),
@@ -242,7 +249,9 @@ def _convert_filepath_to_datauri(filepath: str) -> str:
         # Encode the content as base64
         base64_content = base64.b64encode(image_file.read()).decode("utf-8")
 
-        logger.info(f"Image: ({_ellipsis_url(filepath)}) - {mime_type}, {len(base64_content)} bytes")
+        logger.info(
+            f"Image: ({_ellipsis_url(filepath)}) - {mime_type}, {len(base64_content)} bytes"
+        )
 
         # Create the Data URI
         data_uri = f"data:{mime_type};base64,{base64_content}"
@@ -268,7 +277,9 @@ def _convert_imgurl_to_datauri(imgurl: str) -> str:
     # Encode the content as base64
     base64_content = base64.b64encode(response.content).decode("utf-8")
 
-    logger.info(f"Image: {mime_type}, {humanize.naturalsize(len(base64_content))} ({unquote(imgurl)})")
+    logger.info(
+        f"Image: {mime_type}, {humanize.naturalsize(len(base64_content))} ({unquote(imgurl)})"
+    )
 
     # Create the Data URI
     data_uri = f"data:{mime_type};base64,{base64_content}"
