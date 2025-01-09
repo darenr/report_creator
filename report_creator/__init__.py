@@ -1,5 +1,5 @@
-from .__version__ import __version__
-from .report_creator import (
+from report_creator.__version__ import __version__
+from report_creator.report_creator import (
     Accordion,
     Bar,
     Base,
