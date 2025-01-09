@@ -9,9 +9,9 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath("../../../report_creator"))
-sys.path.insert(1, os.path.abspath("../../report_creator"))
-sys.path.insert(2, os.path.abspath("../report_creator"))
+# sys.path.insert(0, os.path.abspath("../../../report_creator"))
+sys.path.append(os.path.abspath(".."))
+sys.path.append(os.path.abspath("../../../report_creator"))
 
 
 project = "report_creator"
