@@ -10,11 +10,7 @@ import os
 import sys
 
 sys.path.append(os.path.abspath("../../../report_creator"))
-print("*************", sys.path)
-
-import glob
-
-print("++++++++++++++", glob.glob("../../*"))
+sys.path.append(os.path.abspath("../../report_creator"))
 
 
 project = "report_creator"
