@@ -17,7 +17,6 @@ All notable changes to this project will be documented in this file.
 
 - Added missing dependency package (`python-dateutil`)
 
-
 ## 1.0.34
 
 - Block \<script\> tags in Markdown when converting to HTML (while preserving other HTML)
