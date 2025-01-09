@@ -1,16 +1,16 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# For the full list of built-in configuration values, see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
-
-# -- Project information -----------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
-
 import os
 import sys
+import glob
 
-sys.path.append(os.path.abspath("../../../report_creator"))
-sys.path.append(os.path.abspath("../../report_creator"))
+for path in ["./", "../", "../../", "../../../"]:
+    candidate = f"{path}report_creator"
+    print("***", candidate)
+    print("***", glob.glob(f"{path}*"))
+    print("\n\n")
+    if candidate in glob.glob(f"{path}*"):
+        sys.path.append(candidate)
+        print("FOUND MODULE *************", sys.path, "\n\n")
+        break
 
 
 project = "report_creator"
