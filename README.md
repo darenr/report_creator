@@ -173,7 +173,7 @@ graph TD
 ## 🤗 Development
 
 ```sh
-conda create --name rc python=3.12
+conda create --name rc python=3.13
 conda activate rc
 make setup
 
@@ -189,7 +189,7 @@ pipdeptree --exclude pip,pipdeptree,setuptools,wheel,twine
 # build examples:
 make examples
 
-# build a specific example:
+# build a *specific* example:
 make examples EXAMPLES=examples/myreport.py
 
 # run tests

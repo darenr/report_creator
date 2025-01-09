@@ -54,6 +54,7 @@
     {% if include_mermaid %}
 
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="https://unpkg.com/@panzoom/panzoom/dist/panzoom.min.js"></script>
 
     {% endif %}
 
@@ -564,6 +565,33 @@
           startOnLoad: true,
           securityLevel: "loose",
           theme: "{{diagram_theme}}",
+          themeVariables: {
+            fontFamily: "Helvetica Neue",
+          },
+        });
+
+        mermaid.run({
+            querySelector: '.mermaid',
+            postRenderCallback: (id) => {
+                const svgElement = document.getElementById(id);
+
+                // Initialize Panzoom
+                const panzoom = Panzoom(svgElement, {
+                    cursor: 'grab'   // Change the cursor style
+                });
+
+                svgElement.addEventListener('wheel', function(event) {
+                  if (!event.shiftKey) return
+                  panzoom.zoomWithWheel(event)
+                })
+
+                document.querySelectorAll(".panzoom-reset").forEach(function (button) {
+                  button.addEventListener("click", function () {
+                    panzoom.reset();
+                  });
+                });
+
+            }
         });
 
         {% endif %}

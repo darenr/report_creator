@@ -110,9 +110,7 @@ class Group(Base):
         html = "<div>"
 
         if self.label:
-            html += (
-                f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption></a>"
-            )
+            html += f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption></a>"
 
         html += """<div class="group">"""
 
@@ -217,12 +215,16 @@ class MetricGroup(Base):
         label (Optional[str], optional): _description_. Defaults to None.
     """
 
-    def __init__(self, df: pd.DataFrame, heading: str, value: str, *, label: Optional[str] = None):
+    def __init__(
+        self, df: pd.DataFrame, heading: str, value: str, *, label: Optional[str] = None
+    ):
         Base.__init__(self, label=label)
         assert heading in df.columns, f"heading {heading} not in df"
         assert value in df.columns, f"value {value} not in df"
 
-        self.g = Group(*[Metric(row[heading], row[value]) for _, row in df.iterrows()], label=label)
+        self.g = Group(
+            *[Metric(row[heading], row[value]) for _, row in df.iterrows()], label=label
+        )
 
         logger.info(f"MetricGroup: {len(df)} metrics")
 
@@ -327,7 +329,9 @@ class EventMetric(Base):
             config={"responsive": True, "displayModeBar": False},
         )
 
-        description = f"<div class='metric-description'><p>{self.label}</p></div>" if self.label else ""
+        description = (
+            f"<div class='metric-description'><p>{self.label}</p></div>" if self.label else ""
+        )
 
         return f"""
             <div class="metric">
@@ -390,7 +394,11 @@ class Metric(Base):
         else:
             value_str = str(self.value)
 
-        description = f"<div class='metric-description'>{_gfm_markdown_to_html(self.label)}</div>" if self.label else ""
+        description = (
+            f"<div class='metric-description'>{_gfm_markdown_to_html(self.label)}</div>"
+            if self.label
+            else ""
+        )
 
         if self.color:
             bk_color, _ = _random_light_color_generator(f"{self.heading}")
@@ -492,7 +500,9 @@ class DataTable(Base):
         if not index:
             styler.hide(axis="index")
 
-        styler.set_table_attributes(f'class="{" ".join(data_table_classes)} cellspacing="0" style="width: 100%;"')
+        styler.set_table_attributes(
+            f'class="{" ".join(data_table_classes)} cellspacing="0" style="width: 100%;"'
+        )
         self.table_html = styler.format(escape="html", precision=float_precision).to_html()
         logger.info(f"DataTable: {len(df)} rows, {len(df.columns)} columns")
 
@@ -528,7 +538,9 @@ class Html(Base):
         self.bordered = bordered
         status, errors = _check_html_tags_are_closed(html)
         if not status:
-            raise ValueError(f"HTML component with label {self.label}, tags are not closed: {', '.join(errors)}")
+            raise ValueError(
+                f"HTML component with label {self.label}, tags are not closed: {', '.join(errors)}"
+            )
         logger.info(f"HTML: {len(self.html)} characters")
 
     @_strip_whitespace
@@ -578,7 +590,11 @@ class Diagram(Base):
         if self.label:
             html += f"<figcaption><report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption></figcaption>"
 
-        html += f"<div class='mermaid include_mermaid'>{self.src}</div>"
+        html += f"<pre class='mermaid include_mermaid'>{self.src}</pre>"
+        html += "<small>"
+        html += "pan (mouse) and zoom (shift+wheel)"
+        html += """&nbsp;<a href="#" onclick="event.preventDefault();" class="panzoom-reset">(reset)</a>"""
+        html += "</small>"
 
         html += """
                 </figure>
@@ -628,9 +644,7 @@ class Image(Base):
     def to_html(self) -> str:
         html = """<div class="image-block"><figure>"""
 
-        image_markup = (
-            f"""<img src="{self.src}" style="{self.rounded_css} {self.extra_css}" alt="{self.label or self.src}">"""
-        )
+        image_markup = f"""<img src="{self.src}" style="{self.rounded_css} {self.extra_css}" alt="{self.label or self.src}">"""
         if self.link_to:
             html += f"""<a href="{self.link_to}" target="_blank">{image_markup}</a>"""
         else:
@@ -1129,7 +1143,9 @@ class Heading(Base):
         level: Optional[int] = 1,
     ):
         Base.__init__(self, label=label)
-        assert level >= 1 and level <= 5, f"heading level ({level}) must be between 1 and 5 (inclusive)"
+        assert level >= 1 and level <= 5, (
+            f"heading level ({level}) must be between 1 and 5 (inclusive)"
+        )
         assert label, "No heading label provided"
         self.level = level
         logger.info(f"Heading: (h{level}): [{label}]")
@@ -1197,7 +1213,9 @@ class Select(Base):
             if not b.label:
                 raise ValueError("All blocks must have a label to use in a Select")
 
-        logger.info(f"Select: {len(self.blocks)} tabs: {', '.join([c.label for c in self.blocks])}")
+        logger.info(
+            f"Select: {len(self.blocks)} tabs: {', '.join([c.label for c in self.blocks])}"
+        )
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -1240,7 +1258,13 @@ class Accordion(Base):
         open_first (bool, optional): _description_. Defaults to False.
     """
 
-    def __init__(self, blocks: list[Base], *, label: Optional[str] = None, open_first: Optional[bool] = False):
+    def __init__(
+        self,
+        blocks: list[Base],
+        *,
+        label: Optional[str] = None,
+        open_first: Optional[bool] = False,
+    ):
         Base.__init__(self, label=label)
         self.blocks = blocks
         self.open_first = open_first
@@ -1249,7 +1273,9 @@ class Accordion(Base):
             if not b.label:
                 raise ValueError("All blocks must have a label to use in an Accordion")
 
-        logger.info(f"Select: {len(self.blocks)} tabs: {', '.join([c.label for c in self.blocks])}")
+        logger.info(
+            f"Select: {len(self.blocks)} tabs: {', '.join([c.label for c in self.blocks])}"
+        )
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -1261,7 +1287,7 @@ class Accordion(Base):
 
         # assesmble the accordion
         for i, block in enumerate(self.blocks):
-            html += f"""<details {' open ' if i==0 and self.open_first else ''} class="accordion">"""
+            html += f"""<details {" open " if i == 0 and self.open_first else ""} class="accordion">"""
             html += f"""<summary>{block.label}</summary>"""
             html += block.to_html()
             html += """</details>"""
@@ -1298,11 +1324,19 @@ class Unformatted(Base):
 
 
 class Language(Base):
-    def __init__(self, text: str, language: str, *, label: Optional[str] = None):
+    def __init__(
+        self,
+        text: str,
+        language: str,
+        *,
+        scroll_long_content: Optional[bool] = False,
+        label: Optional[str] = None,
+    ):
         Base.__init__(self, label=label)
         self.text = text
         self.language = language.lower()
-        logger.info(f"{language}: {len(self.text)} characters")
+        self.scroll_long_content = scroll_long_content
+        logger.info(f"{language}: {len(self.text)} characters, {scroll_long_content=}")
 
         if not self.language:
             assert self.language, "Language must be specified"
@@ -1346,11 +1380,20 @@ class Prolog(Language):
 
     Args:
         code (str): _description_
+        scroll_long_content (Optional[bool], optional): _description_. Defaults to False.
         label (Optional[str], optional): _description_. Defaults to None.
     """
 
-    def __init__(self, code: str, *, label: Optional[str] = None):
-        Language.__init__(self, escape(code), "prolog", label=label)
+    def __init__(
+        self,
+        code: str,
+        *,
+        scroll_long_content: Optional[bool] = False,
+        label: Optional[str] = None,
+    ):
+        Language.__init__(
+            self, escape(code), "prolog", scroll_long_content=scroll_long_content, label=label
+        )
 
 
 ##############################
@@ -1361,11 +1404,20 @@ class Python(Language):
 
     Args:
         code (str): _description_
+        scroll_long_content (Optional[bool], optional): _description_. Defaults to False.
         label (Optional[str], optional): _description_. Defaults to None.
     """
 
-    def __init__(self, code: str, *, label: Optional[str] = None):
-        Language.__init__(self, escape(code), "python", label=label)
+    def __init__(
+        self,
+        code: str,
+        *,
+        scroll_long_content: Optional[bool] = False,
+        label: Optional[str] = None,
+    ):
+        Language.__init__(
+            self, escape(code), "python", scroll_long_content=scroll_long_content, label=label
+        )
 
 
 ##############################
@@ -1376,11 +1428,20 @@ class Shell(Language):
 
     Args:
         code (str): _description_
+        scroll_long_content (Optional[bool], optional): _description_. Defaults to False.
         label (Optional[str], optional): _description_. Defaults to None.
     """
 
-    def __init__(self, code: str, *, label: Optional[str] = None):
-        Language.__init__(self, escape(code), "shell", label=label)
+    def __init__(
+        self,
+        code: str,
+        *,
+        scroll_long_content: Optional[bool] = False,
+        label: Optional[str] = None,
+    ):
+        Language.__init__(
+            self, escape(code), "shell", scroll_long_content=scroll_long_content, label=label
+        )
 
 
 ##############################
@@ -1391,11 +1452,20 @@ class Java(Language):
 
     Args:
         code (str): _description_
+        scroll_long_content (Optional[bool], optional): _description_. Defaults to False.
         label (Optional[str], optional): _description_. Defaults to None.
     """
 
-    def __init__(self, code: str, *, label: Optional[str] = None):
-        Language.__init__(self, escape(code), "java", label=label)
+    def __init__(
+        self,
+        code: str,
+        *,
+        scroll_long_content: Optional[bool] = False,
+        label: Optional[str] = None,
+    ):
+        Language.__init__(
+            self, escape(code), "java", scroll_long_content=scroll_long_content, label=label
+        )
 
 
 ##############################
@@ -1406,6 +1476,7 @@ class Sql(Language):
 
     Args:
         code (str): your SQL code
+        scroll_long_content (Optional[bool], optional): _description_. Defaults to False.
         prettify (Optional[bool], optional): _description_. Defaults to False for space-efficiency.
         label (Optional[str], optional): _description_. Defaults to None.
     """
@@ -1475,10 +1546,17 @@ class Sql(Language):
         self,
         code: str,
         *,
+        scroll_long_content: Optional[bool] = False,
         prettify: Optional[bool] = False,
         label: Optional[str] = None,
     ):
-        Language.__init__(self, Sql.format_sql(code) if prettify else code, "sql", label=label)
+        Language.__init__(
+            self,
+            Sql.format_sql(code) if prettify else code,
+            "sql",
+            scroll_long_content=scroll_long_content,
+            label=label,
+        )
 
 
 ##############################
@@ -1489,14 +1567,22 @@ class Yaml(Language):
 
     Args:
         data (Union[dict, list]): _description_
+        scroll_long_content (Optional[bool], optional): _description_. Defaults to False.
         label (Optional[str], optional): _description_. Defaults to None.
     """
 
-    def __init__(self, data: Union[dict, list], *, label: Optional[str] = None):
+    def __init__(
+        self,
+        data: Union[dict, list],
+        *,
+        scroll_long_content: Optional[bool] = False,
+        label: Optional[str] = None,
+    ):
         Language.__init__(
             self,
             yaml.dump(data, indent=2, Dumper=yaml.SafeDumper),
             "yaml",
+            scroll_long_content=scroll_long_content,
             label=label,
         )
 
@@ -1509,21 +1595,31 @@ class Json(Language):
 
     Args:
         data (Union[dict, list]): _description_
+        scroll_long_content (Optional[bool], optional): _description_. Defaults to False.
         label (Optional[str], optional): _description_. Defaults to None.
     """
 
-    def __init__(self, data: Union[dict, list], *, label: Optional[str] = None):
+    def __init__(
+        self,
+        data: Union[dict, list],
+        *,
+        scroll_long_content: Optional[bool] = False,
+        label: Optional[str] = None,
+    ):
         class HTMLEscapingEncoder(json.JSONEncoder):
             def encode(self, obj):
                 obj = json.loads(super().encode(obj))  # Ensure JSON structure
                 if isinstance(obj, dict):
-                    obj = {k: html.escape(v) if isinstance(v, str) else v for k, v in obj.items()}
+                    obj = {
+                        k: html.escape(v) if isinstance(v, str) else v for k, v in obj.items()
+                    }
                 return super().encode(obj)
 
         Language.__init__(
             self,
             json.dumps(data, indent=2, cls=HTMLEscapingEncoder),
             "json",
+            scroll_long_content=scroll_long_content,
             label=label,
         )
 
@@ -1532,18 +1628,26 @@ class Json(Language):
 
 
 class Plaintext(Language):
-    """Plaintext is a container for plain text that will styled as code. It can also take a label.
+    """Plaintext is a container for plain text that will styled as "code". It can also take a label.
 
     Args:
         code (str): _description_
+        scroll_long_content (Optional[bool], optional): _description_. Defaults to False.
         label (Optional[str], optional): _description_. Defaults to None.
     """
 
-    def __init__(self, code: str, *, label: Optional[str] = None):
+    def __init__(
+        self,
+        code: str,
+        *,
+        scroll_long_content: Optional[bool] = False,
+        label: Optional[str] = None,
+    ):
         Language.__init__(
             self,
             code,
             "plaintext",
+            scroll_long_content=scroll_long_content,
             label=label,
         )
 
@@ -1603,9 +1707,7 @@ class ReportCreator:
                 self.header_str = f"""<img src="{_convert_filepath_to_datauri(logo)}" style="width: 125px;">"""
             else:
                 logger.info(f"GitHub: {logo}")
-                self.header_str = (
-                    f"""<img src="https://avatars.githubusercontent.com/{logo}?s=125" style="width: 125px;">"""
-                )
+                self.header_str = f"""<img src="https://avatars.githubusercontent.com/{logo}?s=125" style="width: 125px;">"""
         else:
             match = re.findall(r"[A-Z]", self.title)
             icon_text = "".join(match[:2]) if match else self.title[0]
@@ -1664,7 +1766,9 @@ class ReportCreator:
 
         """
         if not isinstance(view, (Block, Group)):
-            raise ValueError(f"Expected view to be either Block or Group object, got {type(view)} instead")
+            raise ValueError(
+                f"Expected view to be either Block or Group object, got {type(view)} instead"
+            )
 
         logger.info(f"Saving report to {path}")
 
@@ -1673,7 +1777,9 @@ class ReportCreator:
         except ValueError:
             body = f"""<pre>{traceback.format_exc()}</pre>"""
 
-        file_loader = FileSystemLoader(f"{os.path.dirname(os.path.abspath(__file__))}/templates")
+        file_loader = FileSystemLoader(
+            f"{os.path.dirname(os.path.abspath(__file__))}/templates"
+        )
         template = Environment(loader=file_loader).get_template("default.html")
 
         include_plotly = "plotly-graph-div" in body
@@ -1681,7 +1787,9 @@ class ReportCreator:
         include_mermaid = "include_mermaid" in body
         include_hljs = "include_hljs" in body
 
-        logger.info(f"ReportCreator: {include_plotly=}, {include_datatable=}, {include_mermaid=}, {include_hljs=}")
+        logger.info(
+            f"ReportCreator: {include_plotly=}, {include_datatable=}, {include_mermaid=}, {include_hljs=}"
+        )
         logger.info(f"ReportCreator: {self.description=}, {self.author=} {prettify_html=}")
         with open(path, "w", encoding="utf-8") as f:
             html = template.render(

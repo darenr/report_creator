@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.37
+
+- Optional put code blocks in vertical scrollable windows to limit the report length.
+- Add pan/zoom for `rc.Diagram()`
+- Markdown now allows mermaid fenced code blocks (like Github does)
+
 ## 1.0.36
 
 - Style code blocks better (remove injected comment)
