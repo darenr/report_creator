@@ -31,7 +31,7 @@ either the horizontal (`rc.Group()`) or Vertical (`rc.Block()`) direction.
     journey
             title Your Journey with `report_creator`
             section Let's Make a Report
-            Make Chemex with Kopi Luwak Civet Coffee: 7.5
+            Make some Kopi Luwak Civet coffee: 7.5
             Read Documentation: 1
             Study kitchen_sink.py example: 3
             Open Editor: 5
