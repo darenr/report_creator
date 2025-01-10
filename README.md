@@ -27,6 +27,17 @@ either the horizontal (`rc.Group()`) or Vertical (`rc.Block()`) direction.
 - [x] images (styled by the library) with an option to fetch at report build time (no fetch on render)
 - [x] `json`/`yaml`/`python`/`java`/`prolog`/`plaintext` code blocks with color syntax highlighting
 
+```mermaid
+    journey
+            title Your Journey with `report_creator`
+            section Let's Make a Report
+            Make Chemex with Kopi Luwak Civet Coffee: 7.5
+            Read Documentation: 1
+            Study kitchen_sink.py example: 3
+            Open Editor: 5
+            First Report Works: 7.5
+```
+
 ## ⚡ Example
 
 ```python
