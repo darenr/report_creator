@@ -1444,6 +1444,15 @@ class Shell(Language):
         )
 
 
+# Alias for Shell
+
+
+class Sh(Shell): ...
+
+
+class Bash(Shell): ...
+
+
 ##############################
 
 
