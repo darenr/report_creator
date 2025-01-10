@@ -563,21 +563,24 @@ class Diagram(Base):
 
     Args:
         src (str): The mermaid source code.
-        label (Optional[str], optional): The label for the diagram. Defaults to None.
+        pan_and_zoom (Optional[bool], optional): If set to True, the diagram will be pan and zoomable. Defaults to True.
         extra_css (str, optional): Additional CSS styles to be applied. Defaults to None.
+        label (Optional[str], optional): The label for the diagram. Defaults to None.
     """
 
     def __init__(
         self,
         src: str,
         *,
-        label: Optional[str] = None,
+        pan_and_zoom: Optional[bool] = True,
         extra_css: Optional[str] = None,
+        label: Optional[str] = None,
     ):
         Base.__init__(self, label=label)
 
         self.src = src
         self.extra_css = extra_css or ""
+        self.pan_and_zoom = pan_and_zoom
         logger.info(f"Diagram: {len(self.src)} characters")
 
     @_strip_whitespace
@@ -590,11 +593,15 @@ class Diagram(Base):
         if self.label:
             html += f"<figcaption><report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption></figcaption>"
 
-        html += f"<pre class='mermaid include_mermaid'>{self.src}</pre>"
-        html += "<small>"
-        html += "pan (mouse) and zoom (shift+wheel)"
-        html += """&nbsp;<a href="#" onclick="event.preventDefault();" class="panzoom-reset">(reset)</a>"""
-        html += "</small>"
+        html += f"""<pre class='mermaid include_mermaid {"mermaid-pan-zoom" if self.pan_and_zoom else ""}' style="{self.extra_css}">
+                        {self.src}
+                    </pre>"""
+
+        if self.pan_and_zoom:
+            html += "<small>"
+            html += "pan (mouse) and zoom (shift+wheel)"
+            html += """&nbsp;<a href="#" onclick="event.preventDefault();" class="panzoom-reset">(reset)</a>"""
+            html += "</small>"
 
         html += """
                 </figure>

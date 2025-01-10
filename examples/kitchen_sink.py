@@ -339,6 +339,7 @@ if __name__ == "__main__":
                         B --> D{Rhombus}
                         C --> D
                 """,
+                        pan_and_zoom=False,
                         label="Example Git Graph",
                     ),
                 ],
