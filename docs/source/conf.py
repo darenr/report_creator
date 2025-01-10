@@ -1,6 +1,5 @@
-import os
-import sys
 import glob
+import sys
 
 for path in ["./", "../", "../../", "../../../"]:
     candidate = f"{path}report_creator"
@@ -30,6 +29,7 @@ extensions = [
     "sphinxcontrib.mermaid",
     "sphinx.ext.inheritance_diagram",
     "sphinxcontrib.video",
+    "sphinx_tabs.tabs",
 ]
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
