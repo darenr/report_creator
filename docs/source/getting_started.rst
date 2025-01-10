@@ -11,7 +11,11 @@ To use ``report_creator``, first install it using pip:
 .. admonition:: Installation
    :class: note
 
-   $ pip install report_creator -U
+   To install the package, run:
+
+   .. code-block:: bash
+
+      $ python -m pip install report_creator -U
 
 Example Usage
 -------------

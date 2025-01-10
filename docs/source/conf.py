@@ -31,18 +31,27 @@ extensions = [
 
 myst_enable_extensions = [
     "amsmath",
+    "attrs_inline",
+    "attrs_block",
     "colon_fence",
     "deflist",
     "dollarmath",
     "fieldlist",
     "html_admonition",
     "html_image",
+    # "linkify",
     "replacements",
     "smartquotes",
     "strikethrough",
     "substitution",
     "tasklist",
 ]
+
+# Copy button settings
+copybutton_prompt_text = "$ "  # for bash prompts
+copybutton_prompt_is_regexp = False
+copybutton_remove_prompts = True
+copybutton_line_continuation_character = "\\"
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
