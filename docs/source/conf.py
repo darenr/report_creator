@@ -3,12 +3,8 @@ import sys
 
 for path in ["./", "../", "../../", "../../../"]:
     candidate = f"{path}report_creator"
-    print("***", candidate)
-    print("***", glob.glob(f"{path}*"))
-    print("\n\n")
     if candidate in glob.glob(f"{path}*"):
         sys.path.append(candidate)
-        print("FOUND MODULE *************", sys.path, "\n\n")
         break
 
 
@@ -30,7 +26,24 @@ extensions = [
     "sphinx.ext.inheritance_diagram",
     "sphinxcontrib.video",
     "sphinx_tabs.tabs",
+    "myst_parser",
 ]
+
+myst_enable_extensions = [
+    "amsmath",
+    "colon_fence",
+    "deflist",
+    "dollarmath",
+    "fieldlist",
+    "html_admonition",
+    "html_image",
+    "replacements",
+    "smartquotes",
+    "strikethrough",
+    "substitution",
+    "tasklist",
+]
+
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 

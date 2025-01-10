@@ -22,7 +22,8 @@ images. These reports are viewable in any browser or printable to PDF. Using sim
 components, it creates reports incorporating text, code, images, and data visualizations.
 Markdown is supported within dedicated components or as labels/descriptions for other 
 components. The philosophy for layout is that components flow in either the horizontal 
-(``rc.Group()``) or Vertical (``rc.Block()``) direction.
+with ``rc.Group()`` or vertical with ``rc.Block()`` direction.
+
 
 .. code-block:: python
 

@@ -76,7 +76,7 @@ Layout
 
 With an instance of ``rc.ReportCreator()`` you add components, there are two container components, one that lays out vertically, called
 ``rc.Block()`` and one that lays out child components horizontally called ``rc.Group()``. Every component allows for a 
-label that is styled approprite to the component. 
+label that is styled appropriate to the component. 
 
 Tabs
 ----
@@ -110,14 +110,14 @@ Images
 
 One of the goals of report creator is to be self-contained, images may not be visible, or available at view time so the ``rc.Image()``
 component allows an option (``convert_to_base64``) which will retrieve at report creation time the image from the url and keep the 
-local copy in the report. This can be used to get around CORS issues also. Images, like all the compoents will be styled and laid 
+local copy in the report. This can be used to get around CORS issues also. Images, like all the components will be styled and laid 
 out to look consistent and attractive.
 
 Charts
 ------
 
 There are a number of charting components, ``rc.Bar()``, ``rc.Scatter()``, ``rc.Histogram()``, ``rc.Box()``, ``rc.Line()``, and ``rc.Pie()``.
-These are wrappers around plotly express componets. There is also a ``rc.Widget()`` component that can be used anywhere 
+These are wrappers around ``plotly express`` components. There is also a ``rc.Widget()`` component that can be used anywhere 
 the object supports the ``repr_html()`` function that is used by Jupyter notebooks (for example ``matplotlib`` object)
 
 .. code-block:: python3
@@ -136,17 +136,17 @@ Tables
 ------
 
 There are two types of table components, ``rc.Table()`` for simple tables, and ``rc.DataTable()`` for a richer experience, the data table
-will paginate data, is searchablem, supports export to pdf and print. Both table objects will construct from table-like objects. In the
+will paginate data, is searchable, supports export to pdf and print. Both table objects will construct from table-like objects. In the
 ``rc.DataTable()`` you can specify precision to keep numeric values more readable. 
 
 Metrics
 -------
 
-A common use for reports is to show numeric/text results, like for example scores. These will be layed out in a flow that is responsive. 
+A common use for reports is to show numeric/text results, like for example scores. These will be laid out in a flow that is responsive. 
 You can also color them if you like, you can't change the color, only indicate that they should be colored. The layout engine will ensure
-that backgound/text colors always have legible contrast, and that never adjacent metrics will have the same color. The default is a while
-backgound. The component to use is called ``rc.Metric()`` - ctor elements for heading, value and optionally units. As with any component you
-can also use a label which can serve as a description. Some times you have your data in a ``Pandas`` dataframe and it's inconventient to 
+that background/text colors always have legible contrast, and that never adjacent metrics will have the same color. The default is a while
+background. The component to use is called ``rc.Metric()`` - ctor elements for heading, value and optionally units. As with any component you
+can also use a label which can serve as a description. Some times you have your data in a ``Pandas`` dataframe and it's inconvenient to 
 expand the rows, in this case the component ``rc.MetricGroup()`` takes a dataframe and the column names for the headings and value, 
 a component will be created *for each row.*
 
@@ -165,7 +165,7 @@ a component will be created *for each row.*
 Miscellaneous
 -------------
 
-There are compoents also to be used as separators ``rc.Separator()``, to hide content under a drop down ``rc.Collapse()``, and 
+There are components also to be used as separators ``rc.Separator()``, to hide content under a drop down ``rc.Collapse()``, and 
 to include diagrams in |mermaid_location_link| ``rc.Diagram()``
 
 .. |mermaid_location_link| raw:: html
