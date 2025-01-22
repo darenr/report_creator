@@ -114,3 +114,9 @@ This project is under active development
 
 - Report bugs via [GitHub Issues](https://github.com/darenr/report_creator/issues).
 - Chat with the maintainers on [Discord](https://discord.com/channels/1318814951795593236/1318814951795593239).
+
+## 🎉 Contributors
+
+<a href="https://github.com/darenr/report_creator/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=darenr/report_creator" />
+</a>
