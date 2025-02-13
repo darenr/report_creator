@@ -51,7 +51,7 @@ class Base(ABC):
         label (Optional[str], optional): _description_. Defaults to None.
     """
 
-    def __init__(self, label: Optional[str] = None):
+    def __init__(self, label: Optional[str] = None) -> None:
         self.label = label
 
     @abstractmethod
@@ -63,11 +63,35 @@ class Base(ABC):
 
 
 class Block(Base):
-    """Block is a container for vertically stacked components
+    """A vertical container that stacks components from top to bottom.
+
+    Block is one of the primary layout components. It arranges its child components
+    vertically with consistent spacing. Use Block when you want components to appear
+    one after another down the page.
+
+    Example:
+        ```python
+        # Create a block with multiple components
+        Block(
+            Heading("Section 1"),
+            Markdown("Some explanatory text"),
+            DataTable(df),
+            Heading("Section 2"),
+            Group(
+                Metric("Value 1", 100),
+                Metric("Value 2", 200)
+            )
+        )
+        ```
 
     Args:
-        components (Base): _description_
-        label (Optional[str], optional): _description_. Defaults to None.
+        components (Base): One or more report components to stack vertically
+        label (Optional[str]): Optional label for the block. Defaults to None.
+
+    Note:
+        - Components are rendered in the order they are provided
+        - Blocks can be nested inside other Blocks or Groups
+        - Use Group instead if you want horizontal layout
     """
 
     def __init__(self, *components: "Base", label: Optional[str] = None):
@@ -93,11 +117,30 @@ class Block(Base):
 
 
 class Group(Base):
-    """Group is a container for horizontally stacked components
+    """A horizontal container that arranges components side-by-side.
+
+    Group is used to create horizontal layouts where components appear next to each
+    other. It automatically handles responsive behavior, wrapping components to new
+    rows on smaller screens.
+
+    Example:
+        ```python
+        # Create a row of metrics
+        Group(
+            Metric("Revenue", 1500000, unit="$"),
+            Metric("Expenses", 1000000, unit="$"),
+            Metric("Profit", 500000, unit="$")
+        )
+        ```
 
     Args:
-        components (Base): _description_
-        label (Optional[str], optional): _description_. Defaults to None.
+        components (Base): One or more components to arrange horizontally
+        label (Optional[str]): Optional label for the group. Defaults to None.
+
+    Note:
+        - Components are sized equally by default
+        - Use Block instead if you want vertical stacking
+        - Groups can be nested in Blocks or other Groups
     """
 
     def __init__(self, *components: Base, label: Optional[str] = None):
@@ -237,21 +280,53 @@ class MetricGroup(Base):
 
 
 class EventMetric(Base):
-    """A special metric that shows the number of events that match a condition over time. Used or telemetry
-    or event tracking. The dataframe must have a column that's datelike. The column specified will be
-    converted to a datetime and used to group over. The condition, like "status=200" will be evaluated
-    for each row and converted to a 1 for true, or 0 for not true. The sum of these values will be the
-    period of frequency (daily, D, weekly, W etc) and plotted as a line chart along with showing the
-    count and percentage of the total.
+    """A specialized metric for tracking and visualizing event data over time.
+
+    EventMetric combines a metric display with a sparkline chart showing the trend.
+    Perfect for monitoring system events, user actions, or any time-series data
+    that can be counted.
+
+    Example:
+        ```python
+        # Track successful API calls
+        EventMetric(
+            df,
+            condition="status_code == 200",
+            date="timestamp",
+            frequency="D",
+            color="green",
+            heading="Successful Requests"
+        )
+
+        # Monitor errors with weekly aggregation
+        EventMetric(
+            df,
+            condition="severity == 'ERROR'",
+            date="log_time",
+            frequency="W",
+            color="red",
+            heading="Weekly Errors"
+        )
+        ```
 
     Args:
-        df (pd.DataFrame): the data
-        condition (str): an expression to evaluate like B==42
-        date (str, optional): the date column.
-        frequency (str, optional): the frequency to group over. Defaults to "D" (daily)
-        color (str, optional): _description_. Defaults to "red".
-        heading (Optional[str], optional): _description_. Defaults to None.
-        label (Optional[str], optional): _description_. Defaults to None.
+        df (pd.DataFrame): Event data
+        condition (str): Python expression to evaluate for each row
+        date (str): Column containing timestamps
+        frequency (str, optional): Aggregation frequency:
+            - "D": Daily
+            - "W": Weekly
+            - "M": Monthly
+            - "H": Hourly
+        color (str, optional): Line/fill color. Defaults to "red".
+        heading (Optional[str]): Metric title. Defaults to condition text.
+        label (Optional[str]): Description text. Defaults to None.
+
+    Note:
+        - Automatically converts date strings to timestamps
+        - Shows total count and trend visualization
+        - Interactive hover shows values
+        - Supports pandas frequency strings
     """
 
     def __init__(
@@ -347,15 +422,45 @@ class EventMetric(Base):
 
 
 class Metric(Base):
-    """Metric is a container for a single metric. It takes a heading and a value.
+    """Displays a single metric/KPI with optional formatting and description.
+
+    Metric is designed to highlight important numbers and statistics. It supports
+    various data types and automatic formatting.
+
+    Example:
+        ```python
+        # Basic metric
+        Metric("Revenue", 1500000, unit="$")
+
+        # With description and precision
+        Metric(
+            "Conversion Rate",
+            0.1234,
+            unit="%",
+            float_precision=2,
+            label="Percentage of visitors who made a purchase"
+        )
+
+        # With background color
+        Metric("Status", "Active", color=True)
+        ```
 
     Args:
-        heading (str): _description_
-        value (Union[str, int, float]): _description_
-        unit ([type], optional): _description_. Defaults to None.
-        float_precision (int, optional): limit the precision (number of decimal digits). Defaults to 3.
-        label (Optional[str], optional): _description_. Defaults to None. May be markdown.
-        color (Optional[bool], optional): to use a background color or not, if chosen consequetive metrics will have different colors. Defaults to False.
+        heading (str): The metric name/title
+        value (Union[str, int, float, datetime]): The metric value. Supports:
+            - Strings (displayed as-is)
+            - Integers (formatted with humanize)
+            - Floats (rounded based on precision)
+            - Datetime (formatted as YYYY-MM-DD)
+        unit (Optional[str]): Unit to display after the value. Defaults to None.
+        float_precision (Optional[int]): Number of decimal places for floats. Defaults to 3.
+        label (Optional[str]): Markdown description text shown below the metric. Defaults to None.
+        color (Optional[bool]): Whether to add a random background color. Defaults to False.
+
+    Note:
+        - Large numbers are automatically formatted (e.g. 1.5M instead of 1500000)
+        - Colors are generated deterministically based on the heading
+        - Description text supports markdown formatting
     """
 
     def __init__(
@@ -452,15 +557,41 @@ class Table(Widget):
 
 
 class DataTable(Base):
-    """DataTable is a container for a DataFrame (or table-like list of dictionaries.) with search and sort capabilities.
+    """Creates an interactive data table with search, sort and pagination.
+
+    DataTable provides a rich interface for displaying tabular data. It automatically
+    handles large datasets with client-side processing.
+
+    Example:
+        ```python
+        # Basic table
+        DataTable(df)
+
+        # Customized table
+        DataTable(
+            df,
+            label="Sales Data",
+            wrap_text=False,
+            index=False,
+            max_rows=1000,
+            float_precision=2
+        )
+        ```
 
     Args:
-        data (Union[pd.DataFrame, list[dict]]): _description_
-        label (Optional[str], optional): _description_. Defaults to None.
-        wrap_text (bool, optional): _description_. Defaults to True.
-        index (bool, optional): _description_. Defaults to False.
-        max_rows (int, optional): _description_. Defaults to -1.
-        float_precision (int, optional): _description_. Defaults to 3.
+        data (Union[pd.DataFrame, list[dict]]): Table data as DataFrame or list of dicts
+        label (Optional[str]): Table caption/title. Defaults to None.
+        wrap_text (bool): Whether to wrap long text in cells. Defaults to True.
+        index (Optional[bool]): Whether to show DataFrame index. Defaults to False.
+        max_rows (Optional[int]): Max rows to display (-1 for all). Defaults to -1.
+        float_precision (Optional[int]): Decimal places for floats. Defaults to 2.
+
+    Features:
+        - Full-text search across all columns
+        - Click column headers to sort
+        - Page through large datasets
+        - Responsive layout with horizontal scrolling
+        - Export to CSV/Excel
     """
 
     def __init__(
@@ -558,14 +689,51 @@ class Html(Base):
 
 
 class Diagram(Base):
-    """Diagram is a container for a mermaid js diagram. For examples of the syntax please see https://mermaid.js.org/syntax/examples.html
-    Note also that ChatGPT is able to create the diagrams for you simply by describing them in text. The kitchen sink example is an example of this.
+    """Creates diagrams using Mermaid.js syntax.
+
+    Diagram enables you to create various types of diagrams using Mermaid's markdown-like
+    syntax. Supports flowcharts, sequence diagrams, gantt charts and more.
+
+    Example:
+        ```python
+        # Simple flowchart
+        Diagram('''
+            graph TD
+                A[Start] --> B{Decision}
+                B -->|Yes| C[OK]
+                B -->|No| D[Cancel]
+        ''')
+
+        # With pan/zoom and custom styling
+        Diagram(
+            mermaid_code,
+            label="System Architecture",
+            pan_and_zoom=True,
+            extra_css="max-width: 800px;"
+        )
+        ```
 
     Args:
-        src (str): The mermaid source code.
-        pan_and_zoom (Optional[bool], optional): If set to True, the diagram will be pan and zoomable. Defaults to True.
-        extra_css (str, optional): Additional CSS styles to be applied. Defaults to None.
-        label (Optional[str], optional): The label for the diagram. Defaults to None.
+        src (str): Mermaid diagram source code
+        pan_and_zoom (Optional[bool]): Enable pan/zoom controls. Defaults to True.
+        extra_css (Optional[str]): Additional CSS styles. Defaults to None.
+        label (Optional[str]): Diagram caption. Defaults to None.
+
+    Supported Diagram Types:
+        - Flowchart
+        - Sequence Diagram
+        - Class Diagram
+        - State Diagram
+        - Entity Relationship Diagram
+        - User Journey
+        - Gantt Chart
+        - Pie Chart
+        - Git Graph
+
+    Note:
+        - See https://mermaid.js.org/syntax/flowchart.html for syntax reference
+        - Pan: Click and drag
+        - Zoom: Shift + mouse wheel
     """
 
     def __init__(
@@ -669,13 +837,64 @@ class Image(Base):
 
 
 class Markdown(Base):
-    """Markdown is a container for markdown text. It can also take extra CSS.
+    """Renders Markdown text with GitHub-flavored syntax support.
+
+    Markdown provides a simple way to add formatted text content to reports.
+    Supports standard Markdown plus tables, code blocks, and other GFM features.
+
+    Example:
+        ```python
+        # Basic text
+        Markdown("# Heading\nRegular text with **bold** and *italic*")
+
+        # With code blocks
+        Markdown('''
+            # Analysis Results
+
+            ## Key Findings
+            - Point 1
+            - Point 2
+
+            ```python
+            def example():
+                return "Code with syntax highlighting"
+            ```
+
+            | Column 1 | Column 2 |
+            |----------|----------|
+            | Data 1   | Data 2   |
+        ''')
+
+        # With custom styling
+        Markdown(
+            text="Content here...",
+            extra_css="max-width: 800px;",
+            bordered=True
+        )
+        ```
 
     Args:
-        text (str): The markdown text to be displayed.
-        label (Optional[str], optional): The label for the markdown section. Defaults to None.
-        extra_css (str, optional): Additional CSS styles to be applied. Defaults to None.
-        bordered (bool, optional): If set to True, the markdown will have a border. Defaults to False.
+        text (str): Markdown-formatted text content
+        label (Optional[str]): Section label/title. Defaults to None.
+        extra_css (Optional[str]): Additional CSS styles. Defaults to None.
+        bordered (Optional[bool]): Add container border. Defaults to False.
+
+    Supported Syntax:
+        - Headers (# H1, ## H2, etc.)
+        - Lists (ordered and unordered)
+        - Links and images
+        - Tables
+        - Code blocks with syntax highlighting
+        - Task lists
+        - Strikethrough
+        - Emoji shortcodes
+        - HTML tags
+
+    Note:
+        - Uses GitHub-flavored Markdown parsing
+        - Code syntax highlighting via highlight.js
+        - Automatically generates anchor links for headers
+        - Preserves whitespace in code blocks
     """
 
     def __init__(
@@ -759,19 +978,57 @@ class PxBase(Base):
 
 
 class Bar(PxBase):
-    """Bar is a container for a plotly express bar chart.
+    """Creates interactive bar charts with grouping and stacking options.
+
+    Bar charts effectively show comparisons between categories. Supports vertical
+    or horizontal bars, grouping, stacking, and sorting options.
+
+    Example:
+        ```python
+        # Basic bar chart
+        Bar(df, x="category", y="value")
+
+        # Grouped bars
+        Bar(
+            df,
+            x="product",
+            y="sales",
+            dimension="region",
+            label="Sales by Product and Region"
+        )
+
+        # Stacked bars with sorting
+        Bar(
+            df,
+            x="month",
+            y="revenue",
+            dimension="department",
+            kwargs={
+                "barmode": "stack",
+                "category_orders": {"month": df.month.unique()}
+            }
+        )
+        ```
 
     Args:
-        df (pd.DataFrame): The data to be plotted.
-        x (str): The column to be plotted on the x-axis.
-        y (str): The column to be plotted on the y-axis.
-        dimension (Optional[str], optional): The column to be plotted on the dimension axis. Defaults to None.
-        label (Optional[str], optional): The label for the bar chart. Defaults to None.
-        **kwargs (Optional[dict], optional): Additional keyword arguments to be passed to the plotly express bar chart.
+        df (pd.DataFrame): The data to plot
+        x (str): Column name for categories
+        y (str): Column name for values
+        dimension (Optional[str]): Column for grouping/coloring bars. Defaults to None.
+        label (Optional[str]): Chart title/caption. Defaults to None.
+        **kwargs: Additional plotly express bar chart options:
+            - barmode: "group" or "stack"
+            - orientation: "v" (vertical) or "h" (horizontal)
+            - text: Column name for bar labels
+            - category_orders: Dict defining category sort order
+            - height: Chart height in pixels
+            - title: Chart title (auto-generated from label if not specified)
 
-    Raises:
-        AssertionError: If the specified columns (x, y, dimension) are not present in the DataFrame.
-
+    Note:
+        - Automatically sizes bars and gaps
+        - Interactive tooltips show values
+        - Legend shown when using dimension grouping
+        - Responsive layout adapts to container width
     """
 
     def __init__(
@@ -815,19 +1072,52 @@ class Bar(PxBase):
 
 
 class Line(PxBase):
-    """Line is a container for a plotly express line chart.
+    """Creates interactive line charts with optional multi-series support.
+
+    Line charts are ideal for showing trends over time or comparing multiple series
+    of data. Supports automatic date formatting, hover tooltips, and zooming.
+
+    Example:
+        ```python
+        # Basic line chart
+        Line(df, x="date", y="value")
+
+        # Multiple series
+        Line(
+            df,
+            x="date",
+            y=["revenue", "costs", "profit"],
+            label="Financial Metrics"
+        )
+
+        # With dimension coloring
+        Line(
+            df,
+            x="date",
+            y="temperature",
+            dimension="location",
+            label="Temperature by City"
+        )
+        ```
 
     Args:
-        df (pd.DataFrame): The data to be plotted.
-        x (str): The column to be plotted on the x-axis.
-        y (Union[str, list[str]]): The column(s) to be plotted on the y-axis.
-        dimension (Optional[str], optional): The column to be plotted on the dimension axis. Defaults to None.
-        label (Optional[str], optional): The label for the bar chart. Defaults to None.
-        **kwargs (Optional[dict], optional): Additional keyword arguments to be passed to the plotly express line chart.
+        df (pd.DataFrame): The data to plot
+        x (str): Column name for x-axis (typically dates/time)
+        y (Union[str, list[str]]): Column name(s) for y-axis values
+        dimension (Optional[str]): Column to use for grouping/coloring. Defaults to None.
+        label (Optional[str]): Chart title/caption. Defaults to None.
+        **kwargs: Additional plotly express line chart options:
+            - line_shape: "linear", "spline", "hv", "vh", "hvh", "vhv"
+            - markers: Show point markers (bool)
+            - template: Plotly theme template
+            - height: Chart height in pixels
+            - title: Chart title (auto-generated from label if not specified)
 
-    Raises:
-        AssertionError: If the specified columns (x, y, dimension) are not present in the DataFrame.
-
+    Note:
+        - Automatically handles date formatting on x-axis
+        - Interactive zoom and pan enabled by default
+        - Hover tooltips show x,y values
+        - Legend shown automatically for multiple series
     """
 
     def __init__(
@@ -940,17 +1230,64 @@ class Pie(PxBase):
 
 
 class Scatter(PxBase):
-    """
-    Scatter plot class for creating scatter plots.
+    """Creates interactive scatter plots with optional dimension grouping.
+
+    Scatter plots are ideal for showing relationships between variables and
+    identifying patterns, clusters, and outliers.
+
+    Example:
+        ```python
+        # Basic scatter plot
+        Scatter(df, x="x_value", y="y_value")
+
+        # With dimension coloring and marginals
+        Scatter(
+            df,
+            x="sepal_length",
+            y="sepal_width",
+            dimension="species",
+            marginal="histogram",
+            label="Iris Dataset"
+        )
+
+        # Custom styling
+        Scatter(
+            df,
+            x="price",
+            y="sqft",
+            dimension="type",
+            kwargs={
+                "opacity": 0.7,
+                "size": "bedrooms",
+                "hover_data": ["address"]
+            }
+        )
+        ```
 
     Args:
-        df (pd.DataFrame): The DataFrame containing the data.
-        x (str): The column name for the x-axis data.
-        y (str): The column name for the y-axis data.
-        dimension (Optional[str], optional): The column name for the dimension data. Defaults to None.
-        label (Optional[str], optional): The label for the scatter plot. Defaults to None.
-        marginal (Optional[str], optional): The type of marginal plot to add. Must be one of ['histogram', 'violin', 'box', 'rug']. Defaults to None.
-        **kwargs (Optional[dict], optional): Additional keyword arguments to pass to the scatter plot. Defaults to None.
+        df (pd.DataFrame): The data to plot
+        x (str): Column name for x-axis
+        y (str): Column name for y-axis
+        dimension (Optional[str]): Column for point coloring/grouping. Defaults to None.
+        label (Optional[str]): Plot title/caption. Defaults to None.
+        marginal (Optional[str]): Add marginal distributions:
+            - "histogram": Frequency histograms
+            - "violin": Violin plots
+            - "box": Box plots
+            - "rug": Rug plots
+        Defaults to None.
+        **kwargs: Additional plotly express scatter options:
+            - size: Column name for point sizes
+            - hover_data: List of columns to show in tooltips
+            - trendline: Add regression line ("ols", "lowess")
+            - opacity: Point transparency (0-1)
+            - symbol: Column for point shape variation
+
+    Note:
+        - Interactive zoom and pan enabled
+        - Hover tooltips show x,y values
+        - Legend shown when using dimension
+        - Supports large datasets with WebGL rendering
     """
 
     def __init__(
@@ -1607,12 +1944,41 @@ class Yaml(Language):
 
 
 class Json(Language):
-    """Json is a container for JSON data. It can also take a label.
+    """Displays JSON data with syntax highlighting and formatting.
+
+    Json provides a clean way to show structured data in reports with proper
+    indentation and color coding.
+
+    Example:
+        ```python
+        # Basic JSON display
+        Json({"key": "value", "nested": {"data": [1, 2, 3]}})
+
+        # With scrolling for large content
+        Json(
+            large_data_dict,
+            scroll_long_content=True,
+            label="API Response"
+        )
+        ```
 
     Args:
-        data (Union[dict, list]): _description_
-        scroll_long_content (Optional[bool], optional): _description_. Defaults to False.
-        label (Optional[str], optional): _description_. Defaults to None.
+        data (Union[dict, list]): JSON-serializable Python object
+        scroll_long_content (Optional[bool]): Enable vertical scrolling for long
+            content. Defaults to False.
+        label (Optional[str]): Block label/title. Defaults to None.
+
+    Features:
+        - Proper indentation (2 spaces)
+        - Syntax highlighting
+        - HTML escaping of string values
+        - Optional scrolling container
+        - Copy-to-clipboard button
+
+    Note:
+        - Automatically handles nested structures
+        - Preserves data types in display
+        - Safe HTML encoding of content
     """
 
     def __init__(
@@ -1672,19 +2038,54 @@ class Plaintext(Language):
 
 
 class ReportCreator:
-    """
-    Initialize a ReportCreator object.
+    """A powerful report generation system that creates interactive HTML reports.
+
+    The ReportCreator class is the main entry point for creating reports. It handles:
+    - Report configuration and theming
+    - Component rendering and layout
+    - Asset management and resource handling
+    - HTML generation and export
+
+    Example:
+        ```python
+        # Create a basic report
+        with ReportCreator("My Report", author="John Doe") as report:
+            view = Block(
+                Heading("Sales Analysis"),
+                Markdown("Monthly sales performance analysis"),
+                Group(
+                    Metric("Total Sales", 150000, unit="$"),
+                    Metric("Growth", 12.5, unit="%")
+                )
+            )
+            report.save(view, "sales_report.html")
+        ```
 
     Args:
-        title (str): The title of the report.
-        description (str, optional): The description of the report (markdown is ok). Defaults to None.
-        author (str, optional): The author of the report. Defaults to None.
-        logo (str, optional): A GitHub username to use as the report icon, a url/filepath to an image, or None. Defaults to None,
-        which will use an autogenerated icon based on the title.
-        theme (str, optional): The theme to use for the report. Defaults to "rc".
-        diagram_theme (str, optional): The mermaid theme (https://mermaid.js.org/config/theming.html#available-themes) to use Defaults to "default", options: "neo", "neo-dark", "dark", "neutral", "forest", & "base".
-        accent_color (str, optional): The accent color for the report. Defaults to "black".
-        footer (str, optional): The footer text for the report (markdown is ok). Defaults to None.
+        title (str): The report title that appears at the top of the page
+        description (Optional[str]): Markdown-formatted description text. Defaults to None.
+        author (Optional[str]): Report author name. Defaults to None.
+        logo (Optional[str]): Can be:
+            - GitHub username (will use GitHub avatar)
+            - URL to image
+            - Path to local image file
+            - None (generates icon from title)
+        theme (Optional[str]): Report theme name. Must be one of the registered plotly themes.
+            Defaults to "rc".
+        code_theme (Optional[str]): Syntax highlighting theme. Defaults to "github-dark".
+        diagram_theme (Optional[str]): Mermaid diagram theme. Options:
+            - "default"
+            - "neo"
+            - "neo-dark"
+            - "dark"
+            - "neutral"
+            - "forest"
+            - "base"
+        accent_color (Optional[str]): Primary accent color. Defaults to "black".
+        footer (Optional[str]): Markdown-formatted footer text. Defaults to None.
+
+    Raises:
+        ValueError: If title is empty or invalid theme specified
     """
 
     def __init__(
@@ -1700,6 +2101,14 @@ class ReportCreator:
         accent_color: Optional[str] = "black",
         footer: Optional[str] = None,
     ):
+        # Add logger initialization
+        self.report_id = str(uuid4())
+        self.logger = ReportLogger(self.report_id)
+
+        if not title or not isinstance(title, str):
+            self.logger.log("ERROR", "Title must be a non-empty string")
+            raise ValueError("Title must be a non-empty string")
+
         self.title = title
         self.description = description
         self.author = author
@@ -1708,11 +2117,14 @@ class ReportCreator:
         self.accent_color = accent_color
         self.footer = footer
 
-        logger.info(f"ReportCreator: {self.title=} {self.description=}")
+        self.logger.log(
+            "INFO", f"Initializing report: {self.title}", description=description, author=author
+        )
 
         pio.templates["rc"] = get_rc_theme()
 
         assert theme in pio.templates, f"Theme {theme} not in {', '.join(pio.templates.keys())}"
+        self.logger.log("INFO", f"Using theme: {theme}")
 
         pio.templates.default = theme
 
@@ -1722,7 +2134,7 @@ class ReportCreator:
             elif os.path.exists(logo):
                 self.header_str = f"""<img src="{_convert_filepath_to_datauri(logo)}" style="width: 125px;">"""
             else:
-                logger.info(f"GitHub: {logo}")
+                self.logger.log("INFO", f"Using GitHub avatar for: {logo}")
                 self.header_str = f"""<img src="https://avatars.githubusercontent.com/{logo}?s=125" style="width: 125px;">"""
         else:
             match = re.findall(r"[A-Z]", self.title)
@@ -1755,17 +2167,23 @@ class ReportCreator:
                         <text class="icon_text_style" x="50%" y="50%" fill="{text_color}">{icon_text}</text>
                     </svg>
                 """)
+            self.logger.log("INFO", "Generated default icon from title")
 
     def __enter__(self):
         """Save the original color schema"""
+        self.logger.log("INFO", "Entering report context")
         self.default_colors = mpl.rcParams["axes.prop_cycle"].by_key()["color"]
         mpl.rcParams["axes.prop_cycle"] = cycler("color", report_creator_colors)
-
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
         """Restore the original color schema"""
+        self.logger.log("INFO", "Exiting report context")
         mpl.rcParams["axes.prop_cycle"] = cycler("color", self.default_colors)
+
+        # Log any errors that occurred
+        if exc_type:
+            self.logger.log("ERROR", f"Error during report generation: {exc_value}")
 
     @_time_it
     def save(self, view: Base, path: str, prettify_html: Optional[bool] = True) -> None:
@@ -1781,16 +2199,20 @@ class ReportCreator:
             ValueError: If the view object is not an instance of Block or Group.
 
         """
+        self.logger.log("INFO", f"Starting report save to: {path}")
+
         if not isinstance(view, (Block, Group)):
-            raise ValueError(
+            error_msg = (
                 f"Expected view to be either Block or Group object, got {type(view)} instead"
             )
-
-        logger.info(f"Saving report to {path}")
+            self.logger.log("ERROR", error_msg)
+            raise ValueError(error_msg)
 
         try:
             body = view.to_html()
-        except ValueError:
+            self.logger.log("INFO", "Successfully generated HTML body")
+        except Exception as e:
+            self.logger.log("ERROR", f"Failed to generate HTML: {str(e)}")
             body = f"""<pre>{traceback.format_exc()}</pre>"""
 
         file_loader = FileSystemLoader(
@@ -1803,11 +2225,16 @@ class ReportCreator:
         include_mermaid = "include_mermaid" in body
         include_hljs = "include_hljs" in body
 
-        logger.info(
-            f"ReportCreator: {include_plotly=}, {include_datatable=}, {include_mermaid=}, {include_hljs=}"
+        self.logger.log(
+            "INFO",
+            "Detected components",
+            plotly=include_plotly,
+            datatable=include_datatable,
+            mermaid=include_mermaid,
+            hljs=include_hljs,
         )
-        logger.info(f"ReportCreator: {self.description=}, {self.author=} {prettify_html=}")
-        with open(path, "w", encoding="utf-8") as f:
+
+        try:
             html = template.render(
                 title=self.title or "Report",
                 description=_gfm_markdown_to_html(self.description) if self.description else "",
@@ -1823,18 +2250,69 @@ class ReportCreator:
                 accent_color=self.accent_color,
                 footer=_gfm_markdown_to_html(self.footer).strip() if self.footer else None,
             )
+
             if prettify_html:
                 try:
                     from bs4 import BeautifulSoup
 
                     soup = BeautifulSoup(html, "html.parser")
-                    f.write(soup.prettify(formatter="minimal"))
+                    html = soup.prettify(formatter="minimal")
+                    self.logger.log("INFO", "Applied HTML prettification")
                 except ImportError:
-                    f.write(html)
+                    self.logger.log(
+                        "WARNING", "BeautifulSoup not installed, skipping HTML prettification"
+                    )
 
-            else:
+            with open(path, "w", encoding="utf-8") as f:
                 f.write(html)
 
-            logger.info(
-                f'ReportCreator created {path}, size: {humanize.naturalsize(len(html), binary=True)}, title: "{self.title}"'
+            file_size = len(html)
+            self.logger.log(
+                "INFO",
+                "Successfully saved report",
+                path=path,
+                size=humanize.naturalsize(file_size, binary=True),
             )
+
+            # Log summary statistics
+            summary = self.logger.get_summary()
+            self.logger.log(
+                "INFO",
+                "Report generation complete",
+                duration=str(summary["duration"]),
+                errors=summary["error_count"],
+                warnings=summary["warning_count"],
+            )
+
+        except Exception as e:
+            self.logger.log("ERROR", f"Failed to save report: {str(e)}")
+            raise
+
+
+class ReportLogger:
+    """Enhanced logging for report generation"""
+
+    def __init__(self, report_id: str):
+        self.report_id = report_id
+        self.start_time = datetime.now()
+        self.logs: list[dict] = []
+
+    def log(self, level: str, message: str, **kwargs) -> None:
+        self.logs.append(
+            {
+                "timestamp": datetime.now(),
+                "level": level,
+                "message": message,
+                "report_id": self.report_id,
+                **kwargs,
+            }
+        )
+
+    def get_summary(self) -> dict:
+        """Get report generation summary"""
+        return {
+            "report_id": self.report_id,
+            "duration": datetime.now() - self.start_time,
+            "error_count": sum(1 for log in self.logs if log["level"] == "ERROR"),
+            "warning_count": sum(1 for log in self.logs if log["level"] == "WARNING"),
+        }
