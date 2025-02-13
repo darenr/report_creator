@@ -2103,10 +2103,9 @@ class ReportCreator:
     ):
         # Add logger initialization
         self.report_id = str(uuid4())
-        self.logger = ReportLogger(self.report_id)
 
         if not title or not isinstance(title, str):
-            self.logger.log("ERROR", "Title must be a non-empty string")
+            logger.error("Title must be a non-empty string")
             raise ValueError("Title must be a non-empty string")
 
         self.title = title
@@ -2117,14 +2116,12 @@ class ReportCreator:
         self.accent_color = accent_color
         self.footer = footer
 
-        self.logger.log(
-            "INFO", f"Initializing report: {self.title}", description=description, author=author
-        )
+        logger.info(f"Initializing report: {self.title}")
 
         pio.templates["rc"] = get_rc_theme()
 
         assert theme in pio.templates, f"Theme {theme} not in {', '.join(pio.templates.keys())}"
-        self.logger.log("INFO", f"Using theme: {theme}")
+        logger.info(f"Using theme: {theme}")
 
         pio.templates.default = theme
 
@@ -2167,23 +2164,21 @@ class ReportCreator:
                         <text class="icon_text_style" x="50%" y="50%" fill="{text_color}">{icon_text}</text>
                     </svg>
                 """)
-            self.logger.log("INFO", "Generated default icon from title")
+            logger.info("Generated default icon from title")
 
     def __enter__(self):
         """Save the original color schema"""
-        self.logger.log("INFO", "Entering report context")
         self.default_colors = mpl.rcParams["axes.prop_cycle"].by_key()["color"]
         mpl.rcParams["axes.prop_cycle"] = cycler("color", report_creator_colors)
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
         """Restore the original color schema"""
-        self.logger.log("INFO", "Exiting report context")
         mpl.rcParams["axes.prop_cycle"] = cycler("color", self.default_colors)
 
         # Log any errors that occurred
         if exc_type:
-            self.logger.log("ERROR", f"Error during report generation: {exc_value}")
+            logger.error(f"Error during report generation: {exc_value}")
 
     @_time_it
     def save(self, view: Base, path: str, prettify_html: Optional[bool] = True) -> None:
@@ -2199,20 +2194,16 @@ class ReportCreator:
             ValueError: If the view object is not an instance of Block or Group.
 
         """
-        self.logger.log("INFO", f"Starting report save to: {path}")
-
         if not isinstance(view, (Block, Group)):
-            error_msg = (
+            raise ValueError(
                 f"Expected view to be either Block or Group object, got {type(view)} instead"
             )
-            self.logger.log("ERROR", error_msg)
-            raise ValueError(error_msg)
+
+        logger.info(f"Saving report to {path}")
 
         try:
             body = view.to_html()
-            self.logger.log("INFO", "Successfully generated HTML body")
-        except Exception as e:
-            self.logger.log("ERROR", f"Failed to generate HTML: {str(e)}")
+        except ValueError:
             body = f"""<pre>{traceback.format_exc()}</pre>"""
 
         file_loader = FileSystemLoader(
@@ -2225,16 +2216,11 @@ class ReportCreator:
         include_mermaid = "include_mermaid" in body
         include_hljs = "include_hljs" in body
 
-        self.logger.log(
-            "INFO",
-            "Detected components",
-            plotly=include_plotly,
-            datatable=include_datatable,
-            mermaid=include_mermaid,
-            hljs=include_hljs,
+        logger.info(
+            f"ReportCreator: {include_plotly=}, {include_datatable=}, {include_mermaid=}, {include_hljs=}"
         )
-
-        try:
+        logger.info(f"ReportCreator: {self.description=}, {self.author=} {prettify_html=}")
+        with open(path, "w", encoding="utf-8") as f:
             html = template.render(
                 title=self.title or "Report",
                 description=_gfm_markdown_to_html(self.description) if self.description else "",
@@ -2250,69 +2236,18 @@ class ReportCreator:
                 accent_color=self.accent_color,
                 footer=_gfm_markdown_to_html(self.footer).strip() if self.footer else None,
             )
-
             if prettify_html:
                 try:
                     from bs4 import BeautifulSoup
 
                     soup = BeautifulSoup(html, "html.parser")
-                    html = soup.prettify(formatter="minimal")
-                    self.logger.log("INFO", "Applied HTML prettification")
+                    f.write(soup.prettify(formatter="minimal"))
                 except ImportError:
-                    self.logger.log(
-                        "WARNING", "BeautifulSoup not installed, skipping HTML prettification"
-                    )
+                    f.write(html)
 
-            with open(path, "w", encoding="utf-8") as f:
+            else:
                 f.write(html)
 
-            file_size = len(html)
-            self.logger.log(
-                "INFO",
-                "Successfully saved report",
-                path=path,
-                size=humanize.naturalsize(file_size, binary=True),
+            logger.info(
+                f'ReportCreator created {path}, size: {humanize.naturalsize(len(html), binary=True)}, title: "{self.title}"'
             )
-
-            # Log summary statistics
-            summary = self.logger.get_summary()
-            self.logger.log(
-                "INFO",
-                "Report generation complete",
-                duration=str(summary["duration"]),
-                errors=summary["error_count"],
-                warnings=summary["warning_count"],
-            )
-
-        except Exception as e:
-            self.logger.log("ERROR", f"Failed to save report: {str(e)}")
-            raise
-
-
-class ReportLogger:
-    """Enhanced logging for report generation"""
-
-    def __init__(self, report_id: str):
-        self.report_id = report_id
-        self.start_time = datetime.now()
-        self.logs: list[dict] = []
-
-    def log(self, level: str, message: str, **kwargs) -> None:
-        self.logs.append(
-            {
-                "timestamp": datetime.now(),
-                "level": level,
-                "message": message,
-                "report_id": self.report_id,
-                **kwargs,
-            }
-        )
-
-    def get_summary(self) -> dict:
-        """Get report generation summary"""
-        return {
-            "report_id": self.report_id,
-            "duration": datetime.now() - self.start_time,
-            "error_count": sum(1 for log in self.logs if log["level"] == "ERROR"),
-            "warning_count": sum(1 for log in self.logs if log["level"] == "WARNING"),
-        }
