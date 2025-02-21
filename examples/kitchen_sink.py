@@ -345,6 +345,7 @@ if __name__ == "__main__":
                 ],
                 label="Tab Group of Diagrams",
             ),
+            rc.Separator(),
             rc.Radar(
                 df=pd.DataFrame(
                     {
@@ -381,6 +382,7 @@ if __name__ == "__main__":
                     }
                 ).T,
                 lock_minimum_to_zero=True,
+                filled=False,
                 label="Radar Chart of Model Performance",
             ),
             rc.Unformatted(

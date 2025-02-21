@@ -966,6 +966,7 @@ class Radar(PxBase):
         *,
         label: Optional[str] = None,
         lock_minimum_to_zero: Optional[bool] = False,
+        filled: Optional[bool] = False,
         **kwargs: Optional[dict],
     ):
         Base.__init__(self, label=label)
@@ -973,6 +974,7 @@ class Radar(PxBase):
         assert len(df.index) > 0, "DataFrame has no index or is empty"
         assert df.index.is_unique and not df.index.hasnans, "DataFrame index is invalid"
         self.df = df
+        self.filled = filled
 
         self.min_value = 0 if lock_minimum_to_zero else df.min().min()
         self.max_value = df.max().max()
@@ -998,7 +1000,7 @@ class Radar(PxBase):
                 go.Scatterpolar(
                     r=r,
                     theta=theta,
-                    # fill="toself",
+                    fill="toself" if self.filled else None,
                     name=index,
                 )
             )
@@ -1015,7 +1017,7 @@ class Radar(PxBase):
                     ],
                 }
             },
-            height=800,
+            height=600,
         )
 
         if self.label:
