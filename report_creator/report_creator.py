@@ -886,7 +886,7 @@ class Line(PxBase):
 
 
 class Pie(PxBase):
-    """Pie is a container for a plotly express pie chart.
+    """Pie is a container for a plotly express pie chart, this takes the data source from a pandas dataframe.
 
     Args:
         df (pd.DataFrame): The input DataFrame containing the data for the report.
@@ -932,6 +932,94 @@ class Pie(PxBase):
         fig.update_layout(uniformtext_minsize=10, uniformtext_mode="hide")
 
         PxBase.apply_common_fig_options(fig)
+
+        return fig.to_html(include_plotlyjs=False, full_html=False, config={"responsive": True})
+
+
+##############################
+
+
+class Radar(PxBase):
+    """Radar is a container for a plotly express radar chart, this takes the data source from a pandas dataframe.
+
+    The index represents a new trace, all the columns represent categories to plot.
+
+    Example
+
+    |                |   MMLU |   HumanEval |   GSM8K |   ARC Challenge |   BigBench |
+    |:---------------|-------:|------------:|--------:|----------------:|-----------:|
+    | Llama 3.1 405B |   78.2 |        75.1 |    86   |            84.5 |       68   |
+    | Llama 3.2 405B |   78.5 |        75.3 |    86.2 |            84.8 |       68.3 |
+
+    Args:
+        df (pd.DataFrame): The input DataFrame containing the data for the report.
+        values (str): The column name in the DataFrame representing the values for the pie.
+        names (str): The column name in the DataFrame representing the names for the pie.
+        label (Optional[str], optional): The label for the pi. Defaults to None.
+        lock_minimum_to_zero (Optional[bool], optional): If set to True, the minimum value will be locked to zero. Defaults to False (use the data's minimum).
+        **kwargs (Optional[dict], optional): Additional keyword arguments for the report. Defaults to None.
+    """
+
+    def __init__(
+        self,
+        df: pd.DataFrame,
+        *,
+        label: Optional[str] = None,
+        lock_minimum_to_zero: Optional[bool] = False,
+        **kwargs: Optional[dict],
+    ):
+        Base.__init__(self, label=label)
+        assert df.index is not None, "DataFrame has no index"
+        assert len(df.index) > 0, "DataFrame has no index or is empty"
+        assert df.index.is_unique and not df.index.hasnans, "DataFrame index is invalid"
+        self.df = df
+
+        self.min_value = 0 if lock_minimum_to_zero else df.min().min()
+        self.max_value = df.max().max()
+        self.kwargs = kwargs
+
+        PxBase.apply_common_kwargs(self.kwargs, label=label)
+
+        logger.info(
+            f"Radar: {len(self.df)} rows, (range: {self.min_value} .. {self.max_value}) {label=}"
+        )
+
+    def to_html(self):
+        fig = go.Figure()
+
+        theta = self.df.columns.tolist()
+        theta += theta[:1]  # Ensure the radar chart is closed
+
+        for index, row in self.df.iterrows():
+            r = row.values.tolist()
+            r += r[:1]  # Ensure that the first value of r is repeated to close the loop
+
+            fig.add_trace(
+                go.Scatterpolar(
+                    r=r,
+                    theta=theta,
+                    # fill="toself",
+                    name=index,
+                )
+            )
+
+        PxBase.apply_common_fig_options(fig)
+
+        fig.update_layout(
+            polar={
+                "radialaxis": {
+                    "visible": True,
+                    "range": [
+                        self.min_value,
+                        self.max_value,
+                    ],
+                }
+            },
+            height=800,
+        )
+
+        if self.label:
+            fig.update_layout(title=self.label)
 
         return fig.to_html(include_plotlyjs=False, full_html=False, config={"responsive": True})
 

@@ -95,7 +95,7 @@ make examples
 make examples EXAMPLES=examples/myreport.py
 
 # run tests
-make tests
+make test
 
 # build docs
 make docs

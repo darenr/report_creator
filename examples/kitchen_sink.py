@@ -345,6 +345,44 @@ if __name__ == "__main__":
                 ],
                 label="Tab Group of Diagrams",
             ),
+            rc.Radar(
+                df=pd.DataFrame(
+                    {
+                        "Llama3.1": {
+                            "MMLU (Accuracy)": 0.72,
+                            "TruthfulQA (Accuracy)": 0.65,
+                            "Winogrande (Accuracy)": 0.85,
+                            "ARC-Challenge (Accuracy)": 0.48,
+                            "ARC-Easy (Accuracy)": 0.78,
+                            "CommonsenseQA (Accuracy)": 0.68,
+                            "BoolQ (Accuracy)": 0.80,
+                            "CB (Accuracy)": 0.88,
+                            "COPA (Accuracy)": 0.95,
+                            "WiC (Accuracy)": 0.75,
+                            "ReCoRD (F1)": 0.72,
+                            "RACE-h (Accuracy)": 0.60,
+                            "RACE-m (Accuracy)": 0.65,
+                        },
+                        "Llama3.2": {  # Example of a second model
+                            "MMLU (Accuracy)": 0.75,
+                            "TruthfulQA (Accuracy)": 0.68,
+                            "Winogrande (Accuracy)": 0.88,
+                            "ARC-Challenge (Accuracy)": 0.52,
+                            "ARC-Easy (Accuracy)": 0.81,
+                            "CommonsenseQA (Accuracy)": 0.71,
+                            "BoolQ (Accuracy)": 0.83,
+                            "CB (Accuracy)": 0.90,
+                            "COPA (Accuracy)": 0.97,
+                            "WiC (Accuracy)": 0.78,
+                            "ReCoRD (F1)": 0.75,
+                            "RACE-h (Accuracy)": 0.63,
+                            "RACE-m (Accuracy)": 0.68,
+                        },
+                    }
+                ).T,
+                lock_minimum_to_zero=True,
+                label="Radar Chart of Model Performance",
+            ),
             rc.Unformatted(
                 r"""
  ___________________________________

@@ -46,7 +46,7 @@ release: setup clean
 	@python3 setup.py sdist bdist_wheel
 	@twine upload dist/*
 
-tests: setup
+test: setup
 	@python3 -c 'import report_creator; print(report_creator.__version__)'
 	@python3 -m pytest -vs --cov=report_creator --cov-report=html
 

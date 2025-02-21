@@ -25,6 +25,7 @@ from report_creator.report_creator import (
     Plaintext,
     Prolog,
     Python,
+    Radar,
     ReportCreator,
     Scatter,
     Select,
