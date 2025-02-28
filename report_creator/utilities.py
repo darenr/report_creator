@@ -2,6 +2,7 @@ import base64
 import functools
 import logging
 import mimetypes
+import os
 import random
 import time
 import uuid
@@ -235,11 +236,14 @@ def _get_url_root(url):
 
 
 def _convert_filepath_to_datauri(filepath: str) -> str:
-    """convert file path to base64 datauri
+    """convert local file to base64 datauri
 
     Args:
-        imgurl (str): url of the image
+        filepath (str): path to the image
     """
+
+    if not os.path.exists(filepath):
+        raise FileNotFoundError(f"Image file not found: {filepath}")
 
     with open(filepath, "rb") as image_file:
         # Detect the MIME type of the file from the URL
@@ -259,26 +263,26 @@ def _convert_filepath_to_datauri(filepath: str) -> str:
     return data_uri
 
 
-def _convert_imgurl_to_datauri(imgurl: str) -> str:
+def _convert_imgurl_to_datauri(image_url: str) -> str:
     """convert url to base64 datauri
 
     Args:
-        imgurl (str): url of the image
+        image_url (str): url of the image
     """
 
-    headers = {"Referer": _get_url_root(imgurl)}
+    headers = {"Referer": _get_url_root(image_url)}
 
-    response = requests.get(imgurl, headers=headers)
+    response = requests.get(image_url, headers=headers)
     response.raise_for_status()  # Check if the download was successful
 
     # Detect the MIME type of the file from the URL
-    mime_type, _ = mimetypes.guess_type(imgurl)
+    mime_type, _ = mimetypes.guess_type(image_url)
 
     # Encode the content as base64
     base64_content = base64.b64encode(response.content).decode("utf-8")
 
     logger.info(
-        f"Image: {mime_type}, {humanize.naturalsize(len(base64_content))} ({unquote(imgurl)})"
+        f"Image: {mime_type}, {humanize.naturalsize(len(base64_content))} ({unquote(image_url)})"
     )
 
     # Create the Data URI

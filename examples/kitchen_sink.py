@@ -1,6 +1,6 @@
 import logging
 import textwrap
-import yaml
+
 import pandas as pd
 import plotly.express as px
 

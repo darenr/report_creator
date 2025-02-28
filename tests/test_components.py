@@ -1,7 +1,10 @@
+import json
 import os
+from datetime import datetime
 
 import pandas as pd
 import pytest
+import yaml
 
 import report_creator as rc
 
@@ -411,3 +414,330 @@ def test_empty_collapse():
     assert '<details class="collapse">' in html
     assert "<summary>Empty Collapse</summary>" in html
     assert "</details>" in html
+
+
+# Sample DataFrame for testing
+sample_df = pd.DataFrame(
+    {
+        "Date": pd.date_range(start="2023-01-01", periods=5),
+        "Value": [10, 20, 30, 40, 50],
+        "Metric": ["A", "B", "C", "D", "E"],
+        "Category": ["X", "Y", "X", "Y", "X"],
+    }
+)
+
+
+# --- Metric Component Tests ---
+def test_metric_various_values():
+    """Test Metric with different value types."""
+    assert "123" in rc.Metric("Int", 123).to_html()
+    assert "123.457" in rc.Metric("Float", 123.4567).to_html()
+    assert "Test" in rc.Metric("String", "Test").to_html()
+    assert "2023-01-01" in rc.Metric("Datetime", datetime(2023, 1, 1)).to_html()
+    assert "None" in rc.Metric("None", None).to_html()
+
+
+@pytest.mark.parametrize(
+    "value, float_precision, expected",
+    [
+        (123.456789, 2, "123.46"),
+        (123.456789, 0, "123"),
+        (123.4, None, "123"),
+    ],
+)
+def test_metric_float_precision(value, float_precision, expected):
+    """Test Metric with various float precision."""
+    assert expected in rc.Metric("Test", value, float_precision=float_precision).to_html()
+
+
+def test_metric_with_unit():
+    """Test Metric with a unit."""
+    assert "123ms" in rc.Metric("Test", 123, unit="ms").to_html()
+
+
+def test_metric_with_color():
+    """Test Metric with color."""
+    metric_a = rc.Metric("Test", 123, color=True)
+    metric_b = rc.Metric("Test", 123, color=False)
+    metric_a_html = metric_a.to_html()
+    metric_b_html = metric_b.to_html()
+    assert 'style="background-color' in metric_a_html
+    assert metric_a_html != metric_b_html
+
+
+def test_metric_html_label():
+    """Test Metric label with html"""
+    metric = rc.Metric("Test", 123, label="42")
+    assert "42" in metric.to_html()
+
+
+# --- Table Component Tests ---
+def test_table_empty_dataframe():
+    """Test Table with an empty DataFrame."""
+    table = rc.Table(pd.DataFrame(), label="Empty Table")
+    assert "Empty Table" in table.to_html()
+    assert "<table" in table.to_html()
+
+
+def test_table_mixed_data_types():
+    """Test Table with mixed data types."""
+    df = pd.DataFrame({"A": [1, 2], "B": ["a", "b"], "C": [1.1, 2.2]})
+    table = rc.Table(df, label="Mixed Types")
+    html = table.to_html()
+    assert "Mixed Types" in html
+    assert "1.1" in html
+
+
+def test_table_float_precision():
+    """Test Table float precision."""
+    df = pd.DataFrame({"A": [1.1111, 2.2222]})
+    table = rc.Table(df, label="float precision", float_precision=2)
+    html = table.to_html()
+    assert "1.11" in html
+
+
+def test_table_index():
+    """Test Table index display."""
+    df = pd.DataFrame({"A": [1, 2]})
+    table_with_index = rc.Table(df, index=True)
+    table_without_index = rc.Table(df, index=False)
+    assert table_without_index.to_html().count("</th>") == 1
+    assert table_with_index.to_html().count("</th>") == 4
+
+
+def test_table_with_label():
+    table = rc.Table(sample_df, label="Test Table")
+    html = table.to_html()
+    assert "Test Table" in html
+
+
+# --- DataTable Component Tests ---
+def test_datatable_empty_dataframe():
+    """Test DataTable with an empty DataFrame."""
+    dt = rc.DataTable(pd.DataFrame(), label="Empty DataTable")
+    assert "Empty DataTable" in dt.to_html()
+    assert "fancy-table" in dt.to_html()
+
+
+def test_datatable_mixed_data_types():
+    """Test DataTable with mixed data types."""
+    df = pd.DataFrame({"A": [1, 2], "B": ["a", "b"], "C": [1.1, 2.2]})
+    dt = rc.DataTable(df, label="Mixed Types")
+    html = dt.to_html()
+    assert "Mixed Types" in html
+    assert "1.1" in html
+
+
+def test_datatable_index():
+    """Test DataTable index display."""
+    df = pd.DataFrame({"A": [1, 2]})
+    dt_with_index = rc.DataTable(df, index=True)
+    dt_without_index = rc.DataTable(df, index=False)
+    assert dt_without_index.to_html().count("</th>") == 1
+    assert dt_with_index.to_html().count("</th>") == 4
+
+
+def test_datatable_max_rows():
+    """Test DataTable max_rows."""
+    df = pd.DataFrame({"A": range(10)})
+    dt_half = rc.DataTable(df, max_rows=5)
+    assert dt_half.to_html().count("</td>") == 5
+
+
+def test_datatable_wrap_text():
+    """Test DataTable wrap_text."""
+    df = pd.DataFrame({"A": ["a" * 100, "b"]})
+    dt_wrapped = rc.DataTable(df, wrap_text=True)
+    dt_nowrapped = rc.DataTable(df, wrap_text=False)
+    assert "nowrap" not in dt_wrapped.to_html()
+    assert "nowrap" in dt_nowrapped.to_html()
+
+
+def test_datatable_float_precision():
+    """Test DataTable float precision."""
+    df = pd.DataFrame({"A": [1.1111, 2.2222]})
+    table = rc.DataTable(df, label="float precision", float_precision=2)
+    html = table.to_html()
+    assert "1.11" in html
+
+
+def test_datatable_with_label():
+    data_table = rc.DataTable(sample_df, label="Data Table Example")
+    html = data_table.to_html()
+    assert "Data Table Example" in html
+
+
+# --- Widget Component Tests ---
+def test_widget_matplotlib():
+    """Test Widget with a Matplotlib figure."""
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots()
+    ax.plot([1, 2, 3], [4, 5, 6])
+    widget = rc.Widget(fig, label="Matplotlib Widget")
+    html = widget.to_html()
+    assert "Matplotlib Widget" in html
+    assert "<img" in html
+
+
+def test_widget_plotly():
+    """Test Widget with a Plotly figure."""
+    import plotly.express as px
+
+    fig = px.line(sample_df, x="Date", y="Value")
+    widget = rc.Widget(fig, label="Plotly Widget")
+    html = widget.to_html()
+    assert "Plotly Widget" in html
+    assert "plotly-graph-div" in html
+
+
+def test_widget_pandas_style():
+    """Test Widget with a pandas style"""
+    widget = rc.Widget(sample_df.style, label="Plotly Widget")
+    html = widget.to_html()
+    assert "Plotly Widget" in html
+    assert "<th" in html
+    assert "<td" in html
+
+
+def test_widget_with_non_figure():
+    with pytest.raises(ValueError):
+        _ = rc.Widget("not a valid widget", label="Not a Widget!")
+
+
+def test_widget_with_label():
+    widget = rc.Widget(sample_df, label="Test Widget")
+    html = widget.to_html()
+    assert "Test Widget" in html
+    assert "report-widget" in html
+
+
+# --- HTML Component Tests ---
+def test_html_with_css():
+    """Test Html with CSS."""
+    html = rc.Html("<h1>Test</h1>", css="h1 { color: red; }")
+    assert "<style>h1 { color: red; }</style>" in html.to_html()
+    assert "<h1>Test</h1>" in html.to_html()
+
+
+def test_html_with_border():
+    """Test Html with border."""
+    html_bordered = rc.Html("<div>Test</div>", bordered=True)
+    html_nobordered = rc.Html("<div>Test</div>", bordered=False)
+    assert "round-bordered" in html_bordered.to_html()
+    assert "round-bordered" not in html_nobordered.to_html()
+
+
+def test_html_with_label():
+    """Test Html with label."""
+    html_with_label = rc.Html("<div>Test</div>", label="Test Label")
+    assert "Test Label" in html_with_label.to_html()
+
+
+def test_html_unclosed_tags():
+    with pytest.raises(ValueError, match="tags are not closed"):
+        rc.Html("<div>Test")
+
+
+def test_html_injection():
+    html_with_injection = rc.Html("<div><script>alert(1)</script></div>")
+    assert "<script>" in html_with_injection.to_html()
+    assert "alert(1)" in html_with_injection.to_html()
+
+
+# --- Diagram Component Tests ---
+def test_diagram_pan_and_zoom():
+    """Test Diagram pan_and_zoom."""
+    diagram_panzoom = rc.Diagram("graph LR\nA-->B", pan_and_zoom=True)
+    diagram_nopanzomm = rc.Diagram("graph LR\nA-->B", pan_and_zoom=False)
+    assert "mermaid-pan-zoom" in diagram_panzoom.to_html()
+    assert "mermaid-pan-zoom" not in diagram_nopanzomm.to_html()
+
+
+def test_diagram_extra_css():
+    """Test Diagram extra_css."""
+    diagram = rc.Diagram("graph LR\nA-->B", extra_css="color: red;")
+    assert 'style="color: red;"' in diagram.to_html()
+
+
+def test_diagram_various_types():
+    """Test with a few diagram types"""
+    rc.Diagram("graph LR\nA-->B").to_html()
+    rc.Diagram("sequenceDiagram\nA->>B: Hello").to_html()
+    rc.Diagram("gantt\nsection A\nA: 2024-01-01, 2024-01-02").to_html()
+
+
+def test_diagram_with_label():
+    diagram = rc.Diagram("graph LR\nA-->B", label="Test Diagram")
+    html = diagram.to_html()
+    assert "Test Diagram" in html
+
+
+# --- Image Component Tests ---
+def test_image_base64():
+    """Test Image with base64."""
+    # Sample base64 encoded string (a 1x1 transparent pixel)
+    base64_str = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+    image = rc.Image(f"data:image/png;base64,{base64_str}")
+    assert f"data:image/png;base64,{base64_str}" in image.to_html()
+
+
+def test_image_local_filepath(tmp_path):
+    """Test Image with local filepath."""
+    # Create a dummy image file
+    image_path = tmp_path / "test_image.png"
+    with open(image_path, "w") as f:
+        f.write("dummy image data")
+    image = rc.Image(str(image_path), convert_to_base64=True)
+    assert "data:image/png;base64" in image.to_html()
+
+
+def test_image_bad_url():
+    image = rc.Image("https://badurl.com", convert_to_base64=True)
+    assert "https://badurl.com" in image.to_html()
+
+
+def test_image_clickable():
+    """Test Image clickable."""
+    image = rc.Image("https://via.placeholder.com/150", link_to="https://example.com")
+    assert '<a href="https://example.com"' in image.to_html()
+
+
+def test_image_rounded():
+    """Test Image rounded."""
+    image_rounded = rc.Image("https://via.placeholder.com/150", rounded=True)
+    image_notrounded = rc.Image("https://via.placeholder.com/150", rounded=False)
+    assert "border-radius" in image_rounded.to_html()
+    assert "border-radius" not in image_notrounded.to_html()
+
+
+def test_image_extra_css():
+    """Test Image extra_css."""
+    image = rc.Image("https://via.placeholder.com/150", extra_css="width: 50px;")
+    assert "width: 50px;" in image.to_html()
+
+
+def test_image_with_label():
+    image = rc.Image("https://via.placeholder.com/150", label="Test Image")
+    html = image.to_html()
+    assert "Test Image" in html
+
+
+def test_markdown_unclosed_tags():
+    """Test for potential HTML unclosed tags."""
+    unclosed_text = "<h2> Markdown Example\nThis is a Markdown example with a potential XSS vulnerability:\n<b>The End"
+    markdown = rc.Markdown(unclosed_text)
+    html_output = markdown.to_html()
+    assert "<b>" in html_output
+    assert "The End" in html_output
+
+
+# --- Yaml/Json Component Tests ---
+def test_json_invalid():
+    with pytest.raises(json.JSONDecodeError):
+        rc.Json("invalid json")
+
+
+def test_yaml_invalid():
+    with pytest.raises(yaml.YAMLError):
+        rc.Yaml("invalid yaml")

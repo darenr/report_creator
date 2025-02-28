@@ -183,6 +183,14 @@ class Widget(Base):
     It acts as a bridge between these external objects and the report, enabling
     their seamless integration.
 
+    Args:
+        widget (Any): The external widget or object to be embedded within the report.
+        label (Optional[str], optional): An optional label or caption for the widget.
+            If provided, it will be displayed above the widget in the rendered report.
+            Defaults to None.
+
+    Raises:
+        ValueError: If the provided widget does not have an `_repr_html_` method.
 
     """
 
@@ -196,6 +204,9 @@ class Widget(Base):
             self.widget = widget.get_figure()
         else:
             self.widget = widget
+
+        if not hasattr(self.widget, "_repr_html_"):
+            raise ValueError("Widget does not have a _repr_html_ method")
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -525,7 +536,7 @@ class Table(Widget):
             raise ValueError(f"Expected data to be a list or pd.DataFrame, got {type(data)}")
 
         s = df.style if index else df.style.hide()
-
+        logger.info(f"Table: {len(df)} rows, {len(df.columns)} columns")
         Widget.__init__(self, s.format(escape="html", precision=float_precision), label=label)
 
 
@@ -771,7 +782,8 @@ class Image(Base):
     Args:
         src (str): The source of the image. This can be either:
             - A URL (e.g., "https://example.com/image.png") pointing to an
-              image on the web.
+              image on the web, or a local file path. For local images they will
+              automatically be converted to base64.
             - A base64-encoded image string.
         link_to (Optional[str], optional): An optional URL that the image
             will link to when clicked. If not provided, the image will
@@ -805,15 +817,23 @@ class Image(Base):
         convert_to_base64: Optional[bool] = False,
     ):
         Base.__init__(self, label=label)
-        self.src = src
         self.link_to = link_to
         self.extra_css = extra_css or ""
         self.rounded_css = "border-radius: 0.75rem;" if rounded else ""
-        if convert_to_base64:
-            try:
-                self.src = _convert_imgurl_to_datauri(src)
-            except Exception as e:
-                logger.error(f"Error converting {src} to base64: {e}")
+
+        if src.startswith("data:image"):
+            # Base64 image
+            self.src = src
+        elif os.path.exists(src):
+            # Local file
+            self.src = _convert_filepath_to_datauri(src)
+        elif convert_to_base64:
+            # URL that should be fetched and rendered as base64
+            self.src = _convert_imgurl_to_datauri(src)
+        else:
+            # URL (external image)
+            self.src = src
+
         logger.info(f"Image: label: {self.label}")
 
     @_strip_whitespace
