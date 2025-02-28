@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.39
+
+- <todo>
+
 ## 1.0.38
 
 - Make pan and zoom support for `rc.Diagram()` optional (defaults True)
