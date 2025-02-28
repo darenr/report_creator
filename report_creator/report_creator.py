@@ -2158,12 +2158,9 @@ class Yaml(Language):
             anchor will be displayed above the YAML data.
             Defaults to None.
 
-    Attributes:
-        data (Union[dict, str]): The yaml data to be displayed.
-        label (Optional[str]): The label of the yaml data.
-
-    Methods:
-        to_html() -> str: Generates the HTML representation of the formatted YAML content.
+    Raises:
+        ValueError: If the data type is not valid for the Yaml component.
+        yaml.YAMLError: If the provided YAML data is invalid or cannot be parsed.
     """
 
     def __init__(

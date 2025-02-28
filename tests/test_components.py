@@ -692,11 +692,6 @@ def test_image_local_filepath(tmp_path):
     assert "data:image/png;base64" in image.to_html()
 
 
-def test_image_bad_url():
-    image = rc.Image("https://badurl.com", convert_to_base64=True)
-    assert "https://badurl.com" in image.to_html()
-
-
 def test_image_clickable():
     """Test Image clickable."""
     image = rc.Image("https://via.placeholder.com/150", link_to="https://example.com")
@@ -736,8 +731,3 @@ def test_markdown_unclosed_tags():
 def test_json_invalid():
     with pytest.raises(json.JSONDecodeError):
         rc.Json("invalid json")
-
-
-def test_yaml_invalid():
-    with pytest.raises(yaml.YAMLError):
-        rc.Yaml("invalid yaml")

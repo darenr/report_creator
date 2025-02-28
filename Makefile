@@ -1,7 +1,6 @@
 all: setup examples
 .PHONY: clean examples
 
-EXAMPLES = $(wildcard examples/*.py)
 
 setup:
 	@echo "Setting up environment..."
@@ -13,8 +12,7 @@ setup:
 	@python3 -m pip install -q ruff twine -U
 
 examples: setup
-	@for file in $(EXAMPLES); do \
-		echo "building example: $$file"; \
+	@for file in $(wildcard examples/*.py); do \
         PYTHONPATH=. python $$file; \
 	done	
 
