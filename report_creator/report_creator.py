@@ -2331,19 +2331,17 @@ class ReportCreator:
     3.  Generate the HTML report using the `to_html()` method.
     4.  Save the HTML to a file or display it in a web browser.
 
-    Example:
+    Example::
 
-    ```python
-    from report_creator import ReportCreator, Metric, Block
+        from report_creator import ReportCreator, Metric, Block
 
-    report = ReportCreator("My Awesome Report")
-    report.add_component(Block(Metric("Revenue", 10000, unit="$"),
-                              Metric("Customers", 500)))
-    html_report = report.to_html()
+        report = ReportCreator("My Awesome Report")
+        report.add_component(Block(Metric("Revenue", 10000, unit="$"),
+                                Metric("Customers", 500)))
+        html_report = report.to_html()
 
-    with open("my_report.html", "w") as f:
-        f.write(html_report)
-    ```
+        with open("my_report.html", "w") as f:
+            f.write(html_report)
 
 
     Args:
