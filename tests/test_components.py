@@ -4,7 +4,6 @@ from datetime import datetime
 
 import pandas as pd
 import pytest
-import yaml
 
 import report_creator as rc
 
@@ -598,11 +597,6 @@ def test_widget_pandas_style():
     assert "Plotly Widget" in html
     assert "<th" in html
     assert "<td" in html
-
-
-def test_widget_with_non_figure():
-    with pytest.raises(ValueError):
-        _ = rc.Widget("not a valid widget", label="Not a Widget!")
 
 
 def test_widget_with_label():

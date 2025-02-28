@@ -205,9 +205,6 @@ class Widget(Base):
         else:
             self.widget = widget
 
-        if not hasattr(self.widget, "_repr_html_"):
-            raise ValueError("Widget does not have a _repr_html_ method")
-
     @_strip_whitespace
     def to_html(self) -> str:
         html = "<div class='report-widget'>"
@@ -228,8 +225,10 @@ class Widget(Base):
             b64image = base64.b64encode(tmp.getvalue()).decode("utf-8").replace("\n", "")
             html += f'<br/><img src="data:image/png;base64,{b64image}">'
 
-        else:
+        elif hasattr(self.widget, "_repr_html_"):
             html += self.widget._repr_html_()
+        elif hasattr(self.widget, "__repr__") or hasattr(self.widget, "__str__"):
+            html += f"<p>{self.widget}</p>"
 
         html += "</div>"
         return html
@@ -1927,7 +1926,7 @@ class Python(Language):
     into the report with code formatting applied.
 
     Args:
-        code (str): The Prolog code or text to be displayed.
+        code (str): The Python code or text to be displayed.
         label (Optional[str], optional): An optional label for the
             prolog. This label does not appear in the rendered
             report but can be helpful for internal identification
@@ -1942,7 +1941,11 @@ class Python(Language):
         label: Optional[str] = None,
     ):
         Language.__init__(
-            self, escape(code), "python", scroll_long_content=scroll_long_content, label=label
+            self,
+            escape(textwrap.dedent(code)),
+            "python",
+            scroll_long_content=scroll_long_content,
+            label=label,
         )
 
 
