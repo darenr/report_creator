@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 ## 1.0.38
 
 - Make pan and zoom support for `rc.Diagram()` optional (defaults True)
+- Add `rc.Radar()` component that sources data from a Pandas `DataFrame`
+- Docs improvements (numerous)
+- `tabulate` (MIT License) added as dependency
+- Doubled the number of tests, increased tewst coverage to 72%
 
 ## 1.0.37
 
@@ -27,4 +31,4 @@ All notable changes to this project will be documented in this file.
 - Added emoji support to `rc.Markdown()` for full GitHub-flavored-markdown compatibility :red_heart:
 - Fixed [c.Diagram() do not get re-sized when they are initially hidden](https://github.com/darenr/report_creator/issues/13)
 - Code default theme changed to highlight.js `xcode` colors
-eibcccntjuefdretbjgefbucldrcehetcgrnbtdtdftb
+  eibcccntjuefdretbjgefbucldrcehetcgrnbtdtdftb
