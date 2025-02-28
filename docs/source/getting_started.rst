@@ -120,7 +120,7 @@ out to look consistent and attractive.
 Charts
 ------
 
-There are a number of charting components, ``rc.Radar(), ``rc.Bar()``, ``rc.Scatter()``, ``rc.Histogram()``, ``rc.Box()``, ``rc.Line()``, and ``rc.Pie()``.
+There are a number of charting components, ``rc.Radar()``, ``rc.Bar()``, ``rc.Scatter()``, ``rc.Histogram()``, ``rc.Box()``, ``rc.Line()``, and ``rc.Pie()``.
 These are wrappers around ``plotly express`` components. There is also a ``rc.Widget()`` component that can be used anywhere 
 the object supports the ``repr_html()`` function that is used by Jupyter notebooks (for example ``matplotlib`` object)
 
