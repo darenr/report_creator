@@ -45,10 +45,15 @@ logging.getLogger("matplotlib.font_manager").setLevel(logging.WARNING)
 
 
 class Base(ABC):
-    """Abstract Base Class for all components
+    """
+    Abstract Base Class for report components.
 
-    Args:
-        label (Optional[str], optional): _description_. Defaults to None.
+    This class serves as the foundation for all visual elements within a report.
+    It defines the common interface and behavior expected of all report components.
+    Each concrete component, such as a Block, Group, Metric, or Chart, should inherit
+    from this class.
+
+
     """
 
     def __init__(self, label: Optional[str] = None):
@@ -63,11 +68,14 @@ class Base(ABC):
 
 
 class Block(Base):
-    """Block is a container for vertically stacked components
+    """
+    A container for vertically stacking report components.
 
-    Args:
-        components (Base): _description_
-        label (Optional[str], optional): _description_. Defaults to None.
+    The `Block` component is fundamental for structuring a report's layout.
+    It arranges its child components in a single, vertical column,
+    rendering them sequentially from top to bottom. This allows for
+    the creation of visually organized sections within a report.
+
     """
 
     def __init__(self, *components: "Base", label: Optional[str] = None):
@@ -93,11 +101,16 @@ class Block(Base):
 
 
 class Group(Base):
-    """Group is a container for horizontally stacked components
+    """
+    A container for horizontally arranging report components.
 
-    Args:
-        components (Base): _description_
-        label (Optional[str], optional): _description_. Defaults to None.
+    The `Group` component is used to arrange multiple report
+    components side-by-side within a horizontal row. It acts as a
+    wrapper that renders its child components next to each other,
+    allowing you to create layouts with columns or multiple elements
+    on the same horizontal line.
+
+
     """
 
     def __init__(self, *components: Base, label: Optional[str] = None):
@@ -130,11 +143,16 @@ class Group(Base):
 
 
 class Collapse(Base):
-    """Collapse is a container for vertically stacked components that can be collapsed
+    """
+    A container for creating collapsible sections in a report.
 
-    Args:
-        components (Base): _description_
-        label (Optional[str], optional): _description_. Defaults to None.
+    The `Collapse` component allows you to group a set of report
+    components under a single, clickable header. When the header
+    is clicked, the content within the `Collapse` is either revealed
+    or hidden, allowing for a more compact and organized presentation
+    of information. This is useful for hiding less important or
+    detailed content that the user may choose to view on demand.
+
     """
 
     def __init__(self, *components: Base, label: Optional[str] = None):
@@ -157,11 +175,15 @@ class Collapse(Base):
 
 
 class Widget(Base):
-    """Widget is a container for any component that supports the _repr_html_ method (anything written for Jupyter).
+    """
+    A container for embedding and rendering external content or interactive widgets.
 
-    Args:
-        widget: A widget that supports the _repr_html_ method.
-        label (Optional[str], optional): _description_. Defaults to None.
+    The `Widget` component is designed to display objects that can render themselves
+    as HTML, such as Pandas DataFrames, Matplotlib figures, and Plotly figures.
+    It acts as a bridge between these external objects and the report, enabling
+    their seamless integration.
+
+
     """
 
     def __init__(self, widget, *, label: Optional[str] = None):
@@ -206,13 +228,16 @@ class Widget(Base):
 
 
 class MetricGroup(Base):
-    """MetricGroup is a container for a group of metrics. It takes a DataFrame with a heading and value column.
+    """
+    A container for displaying multiple metrics in a structured group.
 
-    Args:
-        df (pd.DataFrame): the DataFrame containing the data.
-        heading (str): the column with the metric heading string
-        value (str): the column wuth the metric value
-        label (Optional[str], optional): _description_. Defaults to None.
+    The `MetricGroup` component is designed to efficiently present
+    a collection of metrics derived from a Pandas DataFrame. Each
+    row in the DataFrame is transformed into a separate `Metric`
+    component, and these `Metric`s are then arranged horizontally
+    within a `Group`.
+
+
     """
 
     def __init__(
@@ -237,21 +262,45 @@ class MetricGroup(Base):
 
 
 class EventMetric(Base):
-    """A special metric that shows the number of events that match a condition over time. Used or telemetry
-    or event tracking. The dataframe must have a column that's datelike. The column specified will be
-    converted to a datetime and used to group over. The condition, like "status=200" will be evaluated
-    for each row and converted to a 1 for true, or 0 for not true. The sum of these values will be the
-    period of frequency (daily, D, weekly, W etc) and plotted as a line chart along with showing the
-    count and percentage of the total.
+    """
+    A specialized metric component for tracking event frequency over time.
+
+    The `EventMetric` component is specifically designed for visualizing
+    the occurrence of events that satisfy a given condition within a
+    time series. It's particularly useful for telemetry, event tracking,
+    or monitoring the frequency of specific occurrences within a dataset.
+
+    The component analyzes a Pandas DataFrame, applies a boolean condition
+    to each row, and aggregates the results over a specified time
+    frequency (e.g., daily, weekly). The output includes a line chart
+    depicting the event frequency over time and the total count of events.
 
     Args:
-        df (pd.DataFrame): the data
-        condition (str): an expression to evaluate like B==42
-        date (str, optional): the date column.
-        frequency (str, optional): the frequency to group over. Defaults to "D" (daily)
-        color (str, optional): _description_. Defaults to "red".
-        heading (Optional[str], optional): _description_. Defaults to None.
-        label (Optional[str], optional): _description_. Defaults to None.
+        df (pd.DataFrame): The DataFrame containing the event data.
+            This DataFrame should include a date-like column and any
+            columns necessary to evaluate the `condition`.
+        condition (str): A boolean expression to evaluate for each row
+            in the DataFrame. This expression should return `True` if
+            the event occurred and `False` otherwise (e.g.,
+            "status == 200", "error_code != 0").
+        date (str): The name of the date-like column in the DataFrame.
+            This column will be used to group the data by the specified
+            `frequency`.
+        frequency (str, optional): The time frequency to group the data
+            by. Common options include "D" for daily, "W" for weekly,
+            "M" for monthly, etc. Defaults to "D".
+        color (str, optional): The color to use for the line chart.
+            Defaults to "red".
+        heading (Optional[str], optional): An optional heading for the
+            metric. If not provided, the `condition` will be used as
+            the heading. Defaults to None.
+        label (Optional[str], optional): An optional description for
+            the metric. This description is displayed below the event
+            count. Defaults to None.
+
+    Raises:
+        AssertionError: If the specified `date` column is not found in the DataFrame.
+
     """
 
     def __init__(
@@ -347,15 +396,32 @@ class EventMetric(Base):
 
 
 class Metric(Base):
-    """Metric is a container for a single metric. It takes a heading and a value.
+    """
+    Displays a single, key metric with a heading, value, and optional supporting information.
+
+    The `Metric` component is designed to highlight important quantitative or qualitative
+    data points within a report. It allows for a concise presentation of key performance
+    indicators (KPIs), summary statistics, or any other crucial piece of information.
 
     Args:
-        heading (str): _description_
-        value (Union[str, int, float]): _description_
-        unit ([type], optional): _description_. Defaults to None.
-        float_precision (int, optional): limit the precision (number of decimal digits). Defaults to 3.
-        label (Optional[str], optional): _description_. Defaults to None. May be markdown.
-        color (Optional[bool], optional): to use a background color or not, if chosen consequetive metrics will have different colors. Defaults to False.
+        heading (str): The primary label or title for the metric. This concisely describes
+            what the metric represents (e.g., "Total Revenue", "Conversion Rate",
+            "Average Order Value").
+        value (Union[str, int, float, datetime]): The actual value of the metric. This can be
+            a numerical value, a string, or a datetime object.
+        unit (Optional[str], optional): An optional unit of measurement for the metric.
+            If provided, it will be displayed directly after the value (e.g., "%",
+            "USD", "ms", "items"). Defaults to None.
+        float_precision (Optional[int], optional): The number of decimal places to display
+            for float values. Defaults to 3.
+        label (Optional[str], optional): An optional description or additional context for
+            the metric. This label can be formatted using Markdown syntax and will be
+            displayed below the metric's value. Defaults to None.
+        color (Optional[bool], optional): If True, the metric will be displayed with a
+            subtle background color. Consecutive metrics with `color=True` will have
+            different background colors, aiding in visual distinction. Defaults to False.
+
+
     """
 
     def __init__(
@@ -419,13 +485,28 @@ class Metric(Base):
 
 
 class Table(Widget):
-    """Table is a simple container for a DataFrame (or table-like list of dictionaries.)
+    """
+    Displays a Pandas DataFrame or a list of dictionaries as a formatted HTML table.
+
+    The `Table` component provides a straightforward way to render tabular data within a report.
+    It supports both Pandas DataFrames and lists of dictionaries as input and
+    offers basic styling and formatting options.
 
     Args:
-        data (Union[pd.DataFrame, list[dict]]): _description_
-        label (Optional[str], optional): _description_. Defaults to None.
-        index (bool, optional): _description_. Defaults to False.
-        float_precision (int, optional): _description_. Defaults to 3.
+        data (Union[pd.DataFrame, list[dict]]): The data to be displayed in the table.
+            This can be either a Pandas DataFrame or a list of dictionaries, where each
+            dictionary represents a row in the table.
+        label (Optional[str], optional): An optional label or caption for the table.
+            If provided, it will be displayed above the table. Defaults to None.
+        index (bool, optional): Whether to display the DataFrame index column in the
+            rendered table. If False, the index will be hidden. Defaults to False.
+        float_precision (int, optional): The number of decimal places to display for
+            floating-point numbers in the table. Defaults to 3.
+
+    Raises:
+        ValueError: If the `data` argument is not a Pandas DataFrame or a list of dictionaries.
+
+
     """
 
     def __init__(
@@ -452,15 +533,41 @@ class Table(Widget):
 
 
 class DataTable(Base):
-    """DataTable is a container for a DataFrame (or table-like list of dictionaries.) with search and sort capabilities.
+    """
+    Displays a sortable and searchable table from a Pandas DataFrame or a list of dictionaries.
+
+    The `DataTable` component renders tabular data in an interactive HTML table
+    with built-in search and sort capabilities. It provides a user-friendly way
+    to explore and analyze datasets directly within a report.
 
     Args:
-        data (Union[pd.DataFrame, list[dict]]): _description_
-        label (Optional[str], optional): _description_. Defaults to None.
-        wrap_text (bool, optional): _description_. Defaults to True.
-        index (bool, optional): _description_. Defaults to False.
-        max_rows (int, optional): _description_. Defaults to -1.
-        float_precision (int, optional): _description_. Defaults to 3.
+        data (Union[pd.DataFrame, list[dict]]): The data to be displayed in the table.
+            This can be either a Pandas DataFrame or a list of dictionaries, where each
+            dictionary represents a row in the table.
+        label (Optional[str], optional): An optional label or caption for the table.
+            If provided, it will be used as the table's caption. Defaults to None.
+        wrap_text (bool, optional): If True, text within table cells will wrap to
+            fit the cell width. If False, text will not wrap and may be truncated.
+            Defaults to True.
+        index (bool, optional): If True, the DataFrame index will be displayed as
+            the first column in the table. If False, the index will be hidden.
+            Defaults to False.
+        max_rows (int, optional): The maximum number of rows to display in the table.
+            If set to -1, all rows will be displayed. Defaults to -1.
+        float_precision (int, optional): The number of decimal places to display for
+            floating-point numbers in the table. Defaults to 3.
+
+    Raises:
+        ValueError: If the `data` argument is not a Pandas DataFrame or a list of dictionaries.
+
+    Attributes:
+        table_html (str): The HTML representation of the table, including
+            the necessary DataTables.js markup.
+        label(Optional[str]): The optional label of the DataTable.
+
+    Methods:
+        to_html() -> str: Generates the full HTML representation of the table, including the
+            DataTables.js wrapper and any necessary scripts for interactive functionality.
     """
 
     def __init__(
@@ -515,13 +622,30 @@ class DataTable(Base):
 
 
 class Html(Base):
-    """Html is a container for raw HTML. It can also include CSS.
+    """
+    Embeds raw HTML content, optionally with inline CSS styling, into the report.
+
+    The `Html` component provides a way to include arbitrary HTML markup directly
+    within a report. This is useful for embedding custom web elements, adding
+    specialized formatting, or integrating content from external sources that
+    provide HTML snippets.
 
     Args:
-        html (str): The raw HTML content.
-        css (str, optional): The CSS styles to be applied to the HTML. Defaults to None.
-        label (Optional[str], optional): The label for the HTML component. Defaults to None.
-        bordered (Optional[bool], optional): If set to True, the HTML will have a border. Defaults to False.
+        html (str): The raw HTML content to be embedded. This can include any
+            valid HTML tags and content.
+        css (Optional[str], optional): Optional inline CSS styles to be applied
+            to the HTML content. If provided, these styles will be wrapped in
+            `<style>` tags and inserted before the HTML content. Defaults to None.
+        label (Optional[str], optional): An optional label for the HTML component.
+            If provided, a caption with a linkable anchor will be displayed above
+            the HTML content in the rendered report. Defaults to None.
+        bordered (Optional[bool], optional): If True, the HTML content will be
+            rendered within a bordered container. Defaults to False.
+
+    Raises:
+        ValueError: If the provided HTML content contains unclosed tags.
+
+
     """
 
     def __init__(
@@ -558,14 +682,36 @@ class Html(Base):
 
 
 class Diagram(Base):
-    """Diagram is a container for a mermaid js diagram. For examples of the syntax please see https://mermaid.js.org/syntax/examples.html
-    Note also that ChatGPT is able to create the diagrams for you simply by describing them in text. The kitchen sink example is an example of this.
+    """
+    Renders a diagram using Mermaid.js syntax within the report.
+
+    The `Diagram` component allows you to create and embed diagrams
+    directly within your report using the Mermaid.js library. Mermaid
+    allows you to define diagrams using a simple text-based syntax,
+    which is then rendered visually by the library.
+
+    This component is highly versatile, enabling the creation of various
+    diagram types, including flowcharts, sequence diagrams, Gantt charts,
+    class diagrams, state diagrams, and more. For detailed syntax
+    examples, refer to the Mermaid.js documentation: https://mermaid.js.org/syntax/examples.html.
+    ChatGPT is also able to create the diagrams for you simply by describing them in text.
 
     Args:
-        src (str): The mermaid source code.
-        pan_and_zoom (Optional[bool], optional): If set to True, the diagram will be pan and zoomable. Defaults to True.
-        extra_css (str, optional): Additional CSS styles to be applied. Defaults to None.
-        label (Optional[str], optional): The label for the diagram. Defaults to None.
+        src (str): The Mermaid.js source code defining the diagram.
+            This is the text that describes the diagram's structure
+            and elements using Mermaid's syntax.
+        pan_and_zoom (Optional[bool], optional): Enables panning and zooming
+            functionality for the diagram in the rendered report.
+            Users can pan by dragging the mouse and zoom using shift + mouse wheel.
+            Defaults to True.
+        extra_css (Optional[str], optional): Additional inline CSS styles to be
+            applied to the diagram. This allows for custom styling beyond
+            Mermaid's default appearance. Defaults to None.
+        label (Optional[str], optional): An optional label or caption for the
+            diagram. If provided, a caption with a linkable anchor will be
+            displayed above the diagram. Defaults to None.
+
+
     """
 
     def __init__(
@@ -614,15 +760,38 @@ class Diagram(Base):
 
 
 class Image(Base):
-    """Image is a container for an image. It can also take a link.
+    """
+    Embeds an image within the report, optionally linking it to an external URL.
+
+    The `Image` component allows you to include images in your report,
+    either by referencing an external URL or by embedding a base64-encoded
+    image directly within the HTML. You can also make the image clickable,
+    linking it to another webpage.
 
     Args:
-        src (str): a URL where the image can be found, or a base_64 URI.
-        link_to (str, optional): a URL to go to if clicked. Defaults to not clickable.
-        label (Optional[str], optional): a label for the image. Defaults to None.
-        extra_css (str, optional): additional CSS styles for the image. Defaults to None.
-        rounded (bool, optional): if set to True, the image will have rounded corners. Defaults to True.
-        convert_to_base64 (bool, optional): if set to True, the src will be fetched at create time and replaced with a base64 encoded image. Defaults to False.
+        src (str): The source of the image. This can be either:
+            - A URL (e.g., "https://example.com/image.png") pointing to an
+              image on the web.
+            - A base64-encoded image string.
+        link_to (Optional[str], optional): An optional URL that the image
+            will link to when clicked. If not provided, the image will
+            not be clickable. Defaults to None.
+        label (Optional[str], optional): An optional label or caption for
+            the image. If provided, it will be displayed below the image
+            and can be used as a linkable anchor within the report.
+            Defaults to None.
+        extra_css (Optional[str], optional): Additional inline CSS styles
+            to be applied to the image element. This allows for custom
+            styling beyond the basic options. Defaults to None.
+        rounded (bool, optional): If True, the image will be displayed with
+            rounded corners. Defaults to True.
+        convert_to_base64 (bool, optional): If True, the `src` will be
+            treated as a URL. The image at that URL will be fetched,
+            and its content will be embedded in the report as a
+            base64-encoded image. This ensures that the image is
+            always available, even if the original URL becomes inaccessible.
+            Defaults to False.
+
     """
 
     def __init__(
@@ -669,13 +838,25 @@ class Image(Base):
 
 
 class Markdown(Base):
-    """Markdown is a container for markdown text. It can also take extra CSS.
+    """
+    Embeds Markdown-formatted text within the report, with optional styling and borders.
+
+    The `Markdown` component allows you to include rich text content in your report
+    using Markdown syntax. It supports Github Falvored Markdown formatting and provides
+    options for adding custom CSS styles and borders.
 
     Args:
-        text (str): The markdown text to be displayed.
-        label (Optional[str], optional): The label for the markdown section. Defaults to None.
-        extra_css (str, optional): Additional CSS styles to be applied. Defaults to None.
-        bordered (bool, optional): If set to True, the markdown will have a border. Defaults to False.
+        text (str): The Markdown-formatted text to be rendered. This string will be
+            processed and displayed as formatted text in the report.
+        label (Optional[str], optional): An optional label or heading for the
+            Markdown section. If provided, a caption with a linkable anchor will
+            be displayed above the Markdown content. Defaults to None.
+        extra_css (Optional[str], optional): Additional inline CSS styles to be
+            applied to the Markdown content. This allows for custom styling
+            beyond the basic Markdown rendering. Defaults to None.
+        bordered (bool, optional): If True, the Markdown content will be
+            rendered within a bordered container, providing a visual
+            separation from surrounding content. Defaults to False.
     """
 
     def __init__(
@@ -759,18 +940,37 @@ class PxBase(Base):
 
 
 class Bar(PxBase):
-    """Bar is a container for a plotly express bar chart.
+    """
+    Displays a bar chart using Plotly Express.
+
+    The `Bar` component renders a bar chart from a Pandas DataFrame.
+    It supports grouping by a categorical dimension and provides
+    options for customizing the chart's appearance.
 
     Args:
-        df (pd.DataFrame): The data to be plotted.
-        x (str): The column to be plotted on the x-axis.
-        y (str): The column to be plotted on the y-axis.
-        dimension (Optional[str], optional): The column to be plotted on the dimension axis. Defaults to None.
-        label (Optional[str], optional): The label for the bar chart. Defaults to None.
-        **kwargs (Optional[dict], optional): Additional keyword arguments to be passed to the plotly express bar chart.
+        df (pd.DataFrame): The DataFrame containing the data to be plotted.
+            This DataFrame should contain at least the columns specified by
+            the `x` and `y` arguments.
+        x (str): The name of the column in the DataFrame to be plotted on
+            the x-axis. This column typically represents the categories
+            or discrete values for the bars.
+        y (str): The name of the column in the DataFrame to be plotted on
+            the y-axis. This column typically represents the numerical
+            values associated with each category.
+        dimension (Optional[str], optional): The name of an optional column
+            in the DataFrame to be used as a categorical dimension for
+            grouping the bars. If provided, the bars will be colored
+            according to the unique values in this column. Defaults to None.
+        label (Optional[str], optional): An optional label or title for the
+            bar chart. Defaults to None.
+        **kwargs: Additional keyword arguments to be passed directly to
+            the `plotly.express.bar` function. This allows for fine-grained
+            control over the chart's appearance and behavior.
 
     Raises:
-        AssertionError: If the specified columns (x, y, dimension) are not present in the DataFrame.
+        AssertionError: If the specified `x` column is not found in the DataFrame.
+        AssertionError: If the specified `y` column is not found in the DataFrame.
+        AssertionError: If the specified `dimension` column is not found in the DataFrame, when provided.
 
     """
 
@@ -815,18 +1015,42 @@ class Bar(PxBase):
 
 
 class Line(PxBase):
-    """Line is a container for a plotly express line chart.
+    """
+    Displays a line chart using Plotly Express.
+
+    The `Line` component renders a line chart from a Pandas DataFrame,
+    allowing you to visualize trends and relationships between variables
+    over a continuous or ordered dimension. It supports plotting multiple
+    lines on the same chart and provides options for customizing the
+    chart's appearance.
 
     Args:
-        df (pd.DataFrame): The data to be plotted.
-        x (str): The column to be plotted on the x-axis.
-        y (Union[str, list[str]]): The column(s) to be plotted on the y-axis.
-        dimension (Optional[str], optional): The column to be plotted on the dimension axis. Defaults to None.
-        label (Optional[str], optional): The label for the bar chart. Defaults to None.
-        **kwargs (Optional[dict], optional): Additional keyword arguments to be passed to the plotly express line chart.
+        df (pd.DataFrame): The DataFrame containing the data to be plotted.
+            This DataFrame should contain at least the columns specified by
+            the `x` and `y` arguments.
+        x (str): The name of the column in the DataFrame to be plotted on
+            the x-axis. This column typically represents a continuous or
+            ordered dimension (e.g., time, sequence).
+        y (Union[str, list[str]]): The name(s) of the column(s) in the
+            DataFrame to be plotted on the y-axis. This can be a single
+            column name (for a single line) or a list of column names
+            (for multiple lines).
+        dimension (Optional[str], optional): The name of an optional column
+            in the DataFrame to be used as a categorical dimension. If
+            provided, the lines will be differentiated by color and symbol
+            according to the unique values in this column. Defaults to None.
+        label (Optional[str], optional): An optional label or title for the
+            line chart. Defaults to None.
+        **kwargs: Additional keyword arguments to be passed directly to the
+            `plotly.express.line` function. This allows for fine-grained
+            control over the chart's appearance and behavior, such as
+            `line_shape`, `markers`, etc.
 
     Raises:
-        AssertionError: If the specified columns (x, y, dimension) are not present in the DataFrame.
+        AssertionError: If the specified `x` column is not found in the DataFrame.
+        AssertionError: If any of the specified `y` column(s) are not found in the DataFrame.
+        AssertionError: If the specified `dimension` column is not found in the DataFrame, when provided.
+        ValueError: If `y` is not a string or a list of strings.
 
     """
 
@@ -886,14 +1110,35 @@ class Line(PxBase):
 
 
 class Pie(PxBase):
-    """Pie is a container for a plotly express pie chart, this takes the data source from a pandas dataframe.
+    """
+    Displays a pie chart using Plotly Express.
+
+    The `Pie` component renders a pie chart from a Pandas DataFrame,
+    allowing you to visualize the proportions of different categories
+    within a dataset. It provides options for customizing the chart's
+    appearance, including the size of the hole in the center (for creating
+    donut charts).
 
     Args:
-        df (pd.DataFrame): The input DataFrame containing the data for the report.
-        values (str): The column name in the DataFrame representing the values for the pie.
-        names (str): The column name in the DataFrame representing the names for the pie.
-        label (Optional[str], optional): The label for the pi. Defaults to None.
-        **kwargs (Optional[dict], optional): Additional keyword arguments for the report. Defaults to None.
+        df (pd.DataFrame): The DataFrame containing the data to be plotted.
+            This DataFrame should contain at least the columns specified by
+            the `values` and `names` arguments.
+        values (str): The name of the column in the DataFrame representing
+            the numerical values that determine the size of each pie slice.
+        names (str): The name of the column in the DataFrame representing
+            the categories or labels for each pie slice.
+        label (Optional[str], optional): An optional label or title for the
+            pie chart. Defaults to None.
+        **kwargs: Additional keyword arguments to be passed directly to the
+            `plotly.express.pie` function. This allows for fine-grained
+            control over the chart's appearance and behavior, such as
+            `hole` (for creating donut charts), `color_discrete_sequence`,
+            etc.
+
+    Raises:
+        AssertionError: If the specified `values` column is not found in the DataFrame.
+        AssertionError: If the specified `names` column is not found in the DataFrame.
+
     """
 
     def __init__(
@@ -940,9 +1185,12 @@ class Pie(PxBase):
 
 
 class Radar(PxBase):
-    """Radar is a container for a plotly express radar chart, this takes the data source from a pandas dataframe.
+    """
+    Displays a radar chart using Plotly Express.
 
-    The index represents a new trace, all the columns represent categories to plot.
+    The `Radar` component renders a radar chart from a Pandas DataFrame.
+    Radar charts are useful for visualizing multivariate data and comparing
+    multiple quantitative variables across different categories or entities.
 
     Example
 
@@ -950,14 +1198,31 @@ class Radar(PxBase):
     |:---------------|-------:|------------:|--------:|----------------:|-----------:|
     | Llama 3.1 405B |   78.2 |        75.1 |    86   |            84.5 |       68   |
     | Llama 3.2 405B |   78.5 |        75.3 |    86.2 |            84.8 |       68.3 |
+    | Llama 3.3 405B |   78.8 |        75.5 |    86.4 |            85.1 |       68.6 |
+    | Llama 3.4 405B |   79.1 |        75.7 |    86.6 |            85.4 |       68.9 |
 
     Args:
-        df (pd.DataFrame): The input DataFrame containing the data for the report.
-        values (str): The column name in the DataFrame representing the values for the pie.
-        names (str): The column name in the DataFrame representing the names for the pie.
-        label (Optional[str], optional): The label for the pi. Defaults to None.
-        lock_minimum_to_zero (Optional[bool], optional): If set to True, the minimum value will be locked to zero. Defaults to False (use the data's minimum).
-        **kwargs (Optional[dict], optional): Additional keyword arguments for the report. Defaults to None.
+        df (pd.DataFrame): The DataFrame containing the data to be plotted.
+            This DataFrame should contain at least the columns specified by
+            the `r` (values) and `theta` (categories) arguments.
+        label (Optional[str], optional): An optional label or title for the
+            radar chart. Defaults to None.
+        lock_minimum_to_zero (Optional[bool], optional): If True, the minimum
+            value of the radar chart's radial axis will be locked to zero,
+            ensuring that the chart starts from zero. If False, the minimum
+            value will be determined by the minimum value in the DataFrame.
+            Defaults to False.
+        **kwargs: Additional keyword arguments to be passed directly to the
+            `plotly.express.line_polar` function. This allows for fine-grained
+            control over the chart's appearance and behavior, such as
+            `line_close` (to close the polygon), `color_discrete_sequence`,
+            etc.
+
+    Raises:
+        AssertionError: If the specified `r` column is not found in the DataFrame.
+        AssertionError: If the specified `theta` column is not found in the DataFrame.
+        AssertionError: If the specified `dimension` column is not found in the DataFrame, when provided.
+
     """
 
     def __init__(
@@ -1031,16 +1296,43 @@ class Radar(PxBase):
 
 class Scatter(PxBase):
     """
-    Scatter plot class for creating scatter plots.
+    Displays a scatter plot using Plotly Express.
+
+    The `Scatter` component renders a scatter plot from a Pandas DataFrame,
+    allowing you to visualize the relationship between two numerical variables.
+    It supports adding a categorical dimension for color-coding or sizing
+    the data points, enhancing the visualization of patterns within the data.
 
     Args:
-        df (pd.DataFrame): The DataFrame containing the data.
-        x (str): The column name for the x-axis data.
-        y (str): The column name for the y-axis data.
-        dimension (Optional[str], optional): The column name for the dimension data. Defaults to None.
-        label (Optional[str], optional): The label for the scatter plot. Defaults to None.
-        marginal (Optional[str], optional): The type of marginal plot to add. Must be one of ['histogram', 'violin', 'box', 'rug']. Defaults to None.
-        **kwargs (Optional[dict], optional): Additional keyword arguments to pass to the scatter plot. Defaults to None.
+        df (pd.DataFrame): The DataFrame containing the data to be plotted.
+            This DataFrame should contain at least the columns specified by
+            the `x` and `y` arguments.
+        x (str): The name of the column in the DataFrame to be plotted on
+            the x-axis. This column typically represents a numerical variable.
+        y (str): The name of the column in the DataFrame to be plotted on
+            the y-axis. This column typically represents a numerical variable.
+        dimension (Optional[str], optional): The name of an optional column
+            in the DataFrame to be used as a categorical dimension for
+            color-coding or sizing the data points. If provided, the points
+            will be colored or sized according to the unique values in this
+            column. Defaults to None.
+        label (Optional[str], optional): An optional label or title for the
+            scatter plot. Defaults to None.
+        marginal (Optional[str], optional): An optional argument to specify
+            the type of marginal plots to display along the x and y axes.
+            This can be one of 'histogram', 'violin', 'box', or 'rug'.
+            Defaults to None.
+        **kwargs: Additional keyword arguments to be passed directly to the
+            `plotly.express.scatter` function. This allows for fine-grained
+            control over the chart's appearance and behavior, such as
+            `trendline`, `symbol`, etc.
+
+    Raises:
+        AssertionError: If the specified `x` column is not found in the DataFrame.
+        AssertionError: If the specified `y` column is not found in the DataFrame.
+        AssertionError: If the specified `color` column is not found in the DataFrame, when provided.
+        AssertionError: If the specified `size` column is not found in the DataFrame, when provided.
+
     """
 
     def __init__(
@@ -1106,18 +1398,38 @@ class Scatter(PxBase):
 
 class Box(PxBase):
     """
-    Box plot class for creating scatter plots.
+    Displays a box plot using Plotly Express.
+
+    The `Box` component renders a box plot from a Pandas DataFrame,
+    allowing you to visualize the distribution of data across different
+    categories or groups. Box plots are useful for showing the median,
+    quartiles, and potential outliers within each group.
 
     Args:
-        df (pd.DataFrame): The input DataFrame.
-        y (str, optional): The column name for the y-axis. Defaults to None.
-        dimension (str, optional): The column name for the dimension. Defaults to None.
-        label (str, optional): The label for the report. Defaults to None.
-        **kwargs (dict, optional): Additional keyword arguments.
+        df (pd.DataFrame): The DataFrame containing the data to be plotted.
+            This DataFrame should contain at least the columns specified by
+            the `x` and `y` arguments.
+        y (str): The name of the column in the DataFrame to be plotted on
+            the y-axis. This column typically represents the numerical
+            variable whose distribution is being visualized.
+        dimension (Optional[str], optional): The name of an optional column
+            in the DataFrame to be used as a categorical dimension for
+            grouping the box plots. If provided, the box plots will be
+            separated according to the unique values in this column.
+            Defaults to None.
+        label (Optional[str], optional): An optional label or title for the
+            box plot. Defaults to None.
+        **kwargs: Additional keyword arguments to be passed directly to the
+            `plotly.express.box` function. This allows for fine-grained
+            control over the chart's appearance and behavior, such as
+            `notched` boxes, `orientation` etc.
 
     Raises:
-        AssertionError: If the y column is not present in the DataFrame.
-        AssertionError: If the dimension column is not present in the DataFrame (if specified).
+        AssertionError: If the specified `x` column is not found in the DataFrame.
+        AssertionError: If the specified `y` column is not found in the DataFrame.
+        AssertionError: If the specified `color` column is not found in the DataFrame, when provided.
+
+
     """
 
     def __init__(
@@ -1150,7 +1462,7 @@ class Box(PxBase):
         Convert the box plot to an HTML string.
 
         Returns:
-        - str: The HTML string representation of the box plot.
+            str: The HTML representation of the box plot.
 
         """
         fig = px.box(
@@ -1171,16 +1483,35 @@ class Box(PxBase):
 
 class Histogram(PxBase):
     """
-    A class representing a histogram plot.
+    Displays a histogram using Plotly Express.
+
+    The `Histogram` component renders a histogram from a Pandas DataFrame,
+    allowing you to visualize the distribution of a numerical variable.
+    Histograms are useful for understanding the frequency and range of
+    values within a dataset.
 
     Args:
-        df (pd.DataFrame): The input DataFrame.
-        x (str): The column name to be used for the histogram.
-        dimension (Optional[str], optional): The column name to be used for coloring the histogram bars. Defaults to None.
-        label (Optional[str], optional): The label for the histogram. Defaults to None.
-        kwargs (Optional[dict]): Additional keyword arguments.
+        df (pd.DataFrame): The DataFrame containing the data to be plotted.
+            This DataFrame should contain at least the column specified by
+            the `x` argument.
+        x (str): The name of the column in the DataFrame to be plotted on
+            the x-axis. This column represents the numerical variable
+            whose distribution is being visualized.
+        dimension (Optional[str], optional): The name of an optional column
+            in the DataFrame to be used as a categorical dimension for
+            splitting the histogram. If provided, multiple histograms will
+            be created, one for each unique value of the column. Defaults to None.
+        label (Optional[str], optional): An optional label or title for the
+            histogram. Defaults to None.
+        **kwargs: Additional keyword arguments to be passed directly to the
+            `plotly.express.histogram` function. This allows for fine-grained
+            control over the chart's appearance and behavior, such as
+            `barmode`, `histnorm`, etc.
 
-    For more information, refer to the Plotly documentation: https://plotly.com/python/histograms/
+    Raises:
+        AssertionError: If the specified `x` column is not found in the DataFrame.
+        AssertionError: If the specified `color` column is not found in the DataFrame, when provided.
+
     """
 
     def __init__(
@@ -1219,18 +1550,24 @@ class Histogram(PxBase):
 
 class Heading(Base):
     """
-    Represents a heading in a report.
+    Displays a large heading within the report.
+
+    The `Heading` component is used to create visually distinct
+    headings or titles within a report. It provides a way to
+    structure content and create clear sections.
 
     Args:
-        label (str): The label or text of the heading.
-        level (Optional[int]): The level of the heading, ranging from 1 to 5 (inclusive). Defaults to 1.
+        text (str): The text content of the heading. This will be
+            displayed as a large heading within the report.
+        level (int, optional): The HTML heading level to use (h1-h6).
+            Lower numbers are larger and more prominent. Defaults to 1 (h1).
+        label (Optional[str], optional): An optional label for the
+            heading. If provided, a caption with a linkable anchor
+            will be generated above the heading. Defaults to None.
 
     Raises:
-        AssertionError: If the heading level is not between 1 and 5 (inclusive).
-        AssertionError: If no heading label is provided.
+        ValueError: If the specified `level` is not between 1 and 6.
 
-    Attributes:
-        level (int): The level of the heading.
     """
 
     def __init__(
@@ -1262,10 +1599,20 @@ class Heading(Base):
 
 
 class Separator(Base):
-    """Separator is a container for a horizontal line. It can also take a label.
+    """
+    Inserts a visual separator (horizontal rule) into the report.
+
+    The `Separator` component provides a way to create clear visual
+    breaks between sections of a report. It renders as a horizontal
+    line, making it easy to distinguish different parts of the content.
 
     Args:
-        label (Optional[str], optional): The label to be displayed above the separator. Defaults to None.
+        label (Optional[str], optional): An optional label for the separator.
+            If provided, a caption with a linkable anchor will be generated
+            above the separator line. This can be used for internal
+            referencing or to provide a brief description of the break.
+            Defaults to None.
+
     """
 
     def __init__(self, label: Optional[str] = None):
@@ -1295,11 +1642,28 @@ class Text(Markdown): ...
 
 
 class Select(Base):
-    """Select is a container for a group of components that will shown in tabs. It can also take an outer label.
+    """
+    Creates a dropdown select element for user interaction within the report.
+
+    The `Select` component allows you to include a dropdown list within your report,
+    enabling users to select a single option from a predefined set of choices.
+    This can be useful for filtering data, choosing between different views,
+    or otherwise controlling the report's behavior.
 
     Args:
-        blocks (list[Base]): _description_
-        label (Optional[str], optional): _description_. Defaults to None.
+        blocks (list[Base]): A list of `Base` components to be displayed
+            within the dropdown. Each component will be associated with
+            a separate option in the dropdown list. When the user selects
+            an option, the corresponding component will be displayed in
+            the report.
+        label (Optional[str], optional): An optional label or description
+            for the select element. If provided, this label will be displayed
+            above the dropdown, helping to explain its purpose to the user.
+            Defaults to None.
+
+    Raises:
+        ValueError: If the `default_value` is provided but is not present in the `options`.
+
     """
 
     def __init__(self, blocks: list[Base], *, label: Optional[str] = None):
@@ -1347,12 +1711,27 @@ class Select(Base):
 
 
 class Accordion(Base):
-    """Accordion is a container for a set of text blocks that can be collapsed.
+    """
+    Creates an accordion element for organizing and collapsing content sections within a report.
+
+    The `Accordion` component allows you to group multiple `Collapse` components
+    into a single, vertically stacked accordion. Each `Collapse` acts as an
+    expandable/collapsible panel within the accordion. Only one panel can be
+    expanded at a time, providing a compact and organized way to present
+    multiple sections of content.
 
     Args:
-        blocks (list[Base]): _description_
-        label (Optional[str], optional): _description_. Defaults to None.
-        open_first (bool, optional): _description_. Defaults to False.
+        blocks (list[Base]): A list of `Base` components to be displayed
+            within the accordion. Each component will be associated with
+            a separate collapsible panel. When the user expands a panel,
+            the corresponding component will be displayed in the report.
+        label (Optional[str], optional): An optional label or heading for
+            the entire accordion. If provided, a caption with a linkable
+            anchor will be generated above the accordion. Defaults to None.
+
+    Raises:
+        ValueError: If any of the components do not have a label.
+
     """
 
     def __init__(
@@ -1396,11 +1775,29 @@ class Accordion(Base):
 
 
 class Unformatted(Base):
-    """Unformatted is a container for any text that should be displayed verbatim with a non-proportional font.
+    """
+    Displays data as text without any specific formatting or structure.
+
+    The `Unformatted` component renders raw text or data directly within
+    the report without applying any special HTML formatting or styling.
+    This is useful for displaying data that is not intended to be part
+    of the main content flow, such as debug output, code snippets, or
+    raw data dumps.
 
     Args:
-        text (str): any text that should be displayed verbatim with a non-proportional font.
-        label (Optional[str], optional): _description_. Defaults to None.
+        text (str): The raw text or data to be displayed as-is within
+            the report. This can be any string or data type that you
+            want to present without modification.
+        label (Optional[str], optional): An optional label for the
+            unformatted data. If provided, a caption with a linkable
+            anchor will be displayed above the data. Defaults to None.
+
+    Attributes:
+        data (Any): The data to be displayed.
+        label (Optional[str]): The optional label for the data.
+
+    Methods:
+        to_html() -> str: Generates the HTML representation of the data as unformatted text.
     """
 
     def __init__(self, text: str, *, label: Optional[str] = None):
@@ -1421,6 +1818,10 @@ class Unformatted(Base):
 
 
 class Language(Base):
+    """
+    Base class for components that display code or text in a specific programming language.
+    """
+
     def __init__(
         self,
         text: str,
@@ -1473,12 +1874,25 @@ class Language(Base):
 
 
 class Prolog(Language):
-    """Prolog is a container for prolog code. It can also take a label.
+    """
+    Displays the code within the report.
+
+    The `Prolog` component allows you to add Prolog code that will be inserted
+    into the report with code formatting applied.
 
     Args:
-        code (str): _description_
-        scroll_long_content (Optional[bool], optional): _description_. Defaults to False.
-        label (Optional[str], optional): _description_. Defaults to None.
+        code (str): The Prolog code or text to be displayed.
+        label (Optional[str], optional): An optional label for the
+            prolog. This label does not appear in the rendered
+            report but can be helpful for internal identification
+            or debugging purposes. Defaults to None.
+
+    Attributes:
+        html (str): The raw HTML content to be inserted.
+        label (Optional[str]): The optional label of the prolog.
+
+    Methods:
+        to_html() -> str: Generates the HTML representation of the prolog.
     """
 
     def __init__(
@@ -1497,12 +1911,18 @@ class Prolog(Language):
 
 
 class Python(Language):
-    """Python is a container for python code. It can also take a label.
+    """
+    Displays the code within the report.
+
+    The `Python` component allows you to add Python code that will be inserted
+    into the report with code formatting applied.
 
     Args:
-        code (str): _description_
-        scroll_long_content (Optional[bool], optional): _description_. Defaults to False.
-        label (Optional[str], optional): _description_. Defaults to None.
+        code (str): The Prolog code or text to be displayed.
+        label (Optional[str], optional): An optional label for the
+            prolog. This label does not appear in the rendered
+            report but can be helpful for internal identification
+            or debugging purposes. Defaults to None.
     """
 
     def __init__(
@@ -1521,12 +1941,18 @@ class Python(Language):
 
 
 class Shell(Language):
-    """Shell is a container for zsh/csh/sh code. It can also take a label.
+    """
+    Displays the code within the report.
+
+    The `Shell` component allows you to add `sh` code that will be inserted
+    into the report with code formatting applied.
 
     Args:
-        code (str): _description_
-        scroll_long_content (Optional[bool], optional): _description_. Defaults to False.
-        label (Optional[str], optional): _description_. Defaults to None.
+        code (str): The Shell code or text to be displayed.
+        label (Optional[str], optional): An optional label for the
+            prolog. This label does not appear in the rendered
+            report but can be helpful for internal identification
+            or debugging purposes. Defaults to None.
     """
 
     def __init__(
@@ -1554,12 +1980,18 @@ class Bash(Shell): ...
 
 
 class Java(Language):
-    """Java is a container for Java code. It can also take a label.
+    """
+    Displays the code within the report.
+
+    The `Java` component allows you to add Java code that will be inserted
+    into the report with code formatting applied.
 
     Args:
-        code (str): _description_
-        scroll_long_content (Optional[bool], optional): _description_. Defaults to False.
-        label (Optional[str], optional): _description_. Defaults to None.
+        code (str): The Prolog code or text to be displayed.
+        label (Optional[str], optional): An optional label for the
+            prolog. This label does not appear in the rendered
+            report but can be helpful for internal identification
+            or debugging purposes. Defaults to None.
     """
 
     def __init__(
@@ -1578,13 +2010,27 @@ class Java(Language):
 
 
 class Sql(Language):
-    """Sql is a container for SQL code. It can also take a label.
+    """
+    Displays the code within the report.
+
+    The `Sql` component allows you to add SQL code that will be inserted
+    into the report with code formatting applied.
 
     Args:
-        code (str): your SQL code
-        scroll_long_content (Optional[bool], optional): _description_. Defaults to False.
-        prettify (Optional[bool], optional): _description_. Defaults to False for space-efficiency.
-        label (Optional[str], optional): _description_. Defaults to None.
+        code (str): The SQL query to be rendered
+        scroll_long_content (Optional[bool], optional): If True, and the output is long,
+            the output will be rendered within a scrollable element. If false it will
+            render in place, which may make the report very long. This can be used to
+            help manage the length of the report. Defaults to False.
+        prettify (Optional[bool], optional): If True, the SQL query will be formatted
+            before execution. Defaults to False.
+        label (Optional[str], optional): An optional label for the SQL query
+            output. If provided, a caption with a linkable anchor will be
+            displayed above the output. Defaults to None.
+
+    Raises:
+        Exception: If any error occurs during database connection or query execution.
+
     """
 
     @staticmethod
@@ -1669,24 +2115,56 @@ class Sql(Language):
 
 
 class Yaml(Language):
-    """Yaml is a container for yaml. It can also take a label.
+    """
+    Displays formatted YAML content within the report.
+
+    The `Yaml` component is designed to embed YAML-formatted data
+    directly into the report, presenting it in a structured and
+    human-readable way. It's useful for displaying configuration files,
+    data structures, or any other information that is naturally
+    represented in YAML format.
 
     Args:
-        data (Union[dict, list]): _description_
-        scroll_long_content (Optional[bool], optional): _description_. Defaults to False.
-        label (Optional[str], optional): _description_. Defaults to None.
+        data (Union[dict, list, str]): The YAML data to be displayed.
+            This can be either a Python dictionary (which will be
+            converted to YAML), a list, or a string containing valid
+            YAML content.
+        scroll_long_content (Optional[bool], optional): If True, and the output is long,
+            the output will be rendered within a scrollable element. If false it will
+            render in place, which may make the report very long. This can be used to
+            help manage the length of the report. Defaults to False.
+        label (Optional[str], optional): An optional label or heading
+            for the YAML content. If provided, a caption with a linkable
+            anchor will be displayed above the YAML data.
+            Defaults to None.
+
+    Attributes:
+        data (Union[dict, str]): The yaml data to be displayed.
+        label (Optional[str]): The label of the yaml data.
+
+    Methods:
+        to_html() -> str: Generates the HTML representation of the formatted YAML content.
     """
 
     def __init__(
         self,
-        data: Union[dict, list],
+        data: Union[str, dict, list],
         *,
         scroll_long_content: Optional[bool] = False,
         label: Optional[str] = None,
     ):
+        if isinstance(data, (dict, list)):
+            content = yaml.dump(data, indent=2, Dumper=yaml.SafeDumper)
+        elif isinstance(data, str):
+            content = yaml.dump(
+                yaml.load(data, Loader=yaml.SafeLoader), indent=2, Dumper=yaml.SafeDumper
+            )
+        else:
+            raise ValueError("Invalid data type for Yaml component")
+
         Language.__init__(
             self,
-            yaml.dump(data, indent=2, Dumper=yaml.SafeDumper),
+            content,
             "yaml",
             scroll_long_content=scroll_long_content,
             label=label,
@@ -1697,17 +2175,36 @@ class Yaml(Language):
 
 
 class Json(Language):
-    """Json is a container for JSON data. It can also take a label.
+    """
+    Displays formatted JSON content within the report.
+
+    The `Json` component is designed to embed JSON-formatted data
+    directly into the report, presenting it in a structured and
+    human-readable way. It's useful for displaying configuration data,
+    API responses, or any other information that is naturally
+    represented in JSON format.
 
     Args:
-        data (Union[dict, list]): _description_
-        scroll_long_content (Optional[bool], optional): _description_. Defaults to False.
-        label (Optional[str], optional): _description_. Defaults to None.
+        data (Union[dict, list, str]): The JSON data to be displayed.
+            This can be either a Python dictionary (which will be
+            converted to JSON) or a string containing valid JSON content.
+        scroll_long_content (bool, optional): If True and the content is long, it will be
+            rendered within a scrollable element. If false it will
+            render in place, which may make the report very long. This can be used to help
+            manage the length of the report. Defaults to False.
+        label (Optional[str], optional): An optional label or heading
+            for the JSON content. If provided, a caption with a linkable
+            anchor will be displayed above the JSON data.
+            Defaults to None.
+
+
+    Methods:
+        to_html() -> str: Generates the HTML representation of the formatted JSON content.
     """
 
     def __init__(
         self,
-        data: Union[dict, list],
+        data: Union[dict, list, str],
         *,
         scroll_long_content: Optional[bool] = False,
         label: Optional[str] = None,
@@ -1721,9 +2218,16 @@ class Json(Language):
                     }
                 return super().encode(obj)
 
+        if isinstance(data, (dict, list)):
+            content = json.dumps(data, indent=2, cls=HTMLEscapingEncoder)
+        elif isinstance(data, str):
+            content = json.dumps(json.loads(data), indent=2, cls=HTMLEscapingEncoder)
+        else:
+            raise ValueError("Invalid data type for JSON component")
+
         Language.__init__(
             self,
-            json.dumps(data, indent=2, cls=HTMLEscapingEncoder),
+            content,
             "json",
             scroll_long_content=scroll_long_content,
             label=label,
@@ -1734,24 +2238,39 @@ class Json(Language):
 
 
 class Plaintext(Language):
-    """Plaintext is a container for plain text that will styled as "code". It can also take a label.
+    """
+    Displays text content with minimal formatting within the report.
+
+    The `Plaintext` component is used to embed text content into the
+    report with basic, pre-defined styling. Unlike the `Markdown`
+    component, it does not support Markdown formatting, but it does
+    provide a simple way to display blocks of text in a consistent
+    and readable way.
 
     Args:
-        code (str): _description_
-        scroll_long_content (Optional[bool], optional): _description_. Defaults to False.
-        label (Optional[str], optional): _description_. Defaults to None.
+        text (str): The text content to be displayed. This should be a
+            string containing the text you want to include in the report.
+        scroll_long_content (bool, optional): If True and the content is long, it will be
+            rendered within a scrollable element. If false it will
+            render in place, which may make the report very long. This can be used to help
+            manage the length of the report. Defaults to False.
+        label (Optional[str], optional): An optional label or heading
+            for the plaintext content. If provided, a caption with a
+            linkable anchor will be displayed above the text.
+            Defaults to None.
+
     """
 
     def __init__(
         self,
-        code: str,
+        text: str,
         *,
         scroll_long_content: Optional[bool] = False,
         label: Optional[str] = None,
     ):
         Language.__init__(
             self,
-            code,
+            text,
             "plaintext",
             scroll_long_content=scroll_long_content,
             label=label,
@@ -1763,7 +2282,52 @@ class Plaintext(Language):
 
 class ReportCreator:
     """
-    Initialize a ReportCreator object.
+    Generates interactive HTML reports from structured Python data.
+
+    The `ReportCreator` class provides a streamlined interface for constructing
+    and rendering comprehensive, visually appealing reports. It supports a wide
+    range of components, including text, metrics, tables, charts, and diagrams,
+    all customizable through a declarative API.
+
+    Key Features:
+
+    - **Modular Design:** Build reports using a hierarchy of components
+      (`Block`, `Group`, `Collapse`, etc.) for clear organization.
+    - **Data Visualization:** Easily integrate various chart types
+      (`Bar`, `Line`, `Pie`, `Radar`, `Scatter`) powered by Plotly Express.
+    - **Tabular Data:** Display and interact with tables using `Table` and
+      `DataTable` components.
+    - **Markdown & HTML Support:** Incorporate formatted text and raw HTML for
+      flexible content rendering.
+    - **Diagrams:** Embed `Diagram` components defined using Mermaid.js syntax.
+    - **Images:** Add images with captions and optional links using the `Image` component.
+    - **Customizable Styling:** Fine-tune the appearance of reports using themes, CSS, and component-specific options.
+    - **Interactive Elements:** Includes interactive components like collapsible sections and sortable tables.
+    - **Programmatic Report Generation:**  Construct reports entirely through Python code, making it ideal for automated workflows.
+    - **Data URI conversion:** Convert local images or urls to datauri for embedded reports.
+
+    Usage:
+
+    1.  Instantiate `ReportCreator` with a report title.
+    2.  Assemble the report layout by adding components (e.g., `Block`, `Group`)
+        containing other components (e.g., `Metric`, `Chart`, `Table`).
+    3.  Generate the HTML report using the `to_html()` method.
+    4.  Save the HTML to a file or display it in a web browser.
+
+    Example:
+
+    ```python
+    from report_creator import ReportCreator, Metric, Block
+
+    report = ReportCreator("My Awesome Report")
+    report.add_component(Block(Metric("Revenue", 10000, unit="$"),
+                              Metric("Customers", 500)))
+    html_report = report.to_html()
+
+    with open("my_report.html", "w") as f:
+        f.write(html_report)
+    ```
+
 
     Args:
         title (str): The title of the report.
