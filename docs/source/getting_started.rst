@@ -1,14 +1,14 @@
 Getting Started
 ===============
 
-.. _installation:
+.. _getting_started:
 
 Installation
 ------------
 
 To use ``report_creator``, first install it using pip:
 
-.. admonition:: Installation
+.. admonition:: Install
    :class: note
 
    To install the package, run:
@@ -17,8 +17,8 @@ To use ``report_creator``, first install it using pip:
 
       $ python -m pip install report_creator -U
 
-Example Usage
--------------
+Quick Start
+-----------
 
 .. code-block:: python
 
@@ -66,14 +66,14 @@ Example Usage
 Logo
 ----
 
-The ``logo`` parameter is optional, to include a logo in the report pass a path 
-to the logo file, a url to a logo image, a base64 encoded image, or a GitHub handle.
+The ``logo`` parameter is optional. To include a logo in the report, pass a path 
+to the logo file, a URL to a logo image, a base64 encoded image, or a GitHub handle.
 
-When passing a GitHub handle the image will be fetched from the github repository. Since 
-most companies have a GitHub account, this is a convenient way to include a logo 
-(for example ``logo="apple"``).
-
-Not providing a logo, the report will include an SVG based logo that derives from the title of the report.
+When passing a GitHub handle, the image will be fetched from the GitHub repository. Since most 
+companies have a GitHub account, this is a convenient way to include a 
+logo (for example ``logo="apple"``).
+ 
+If you do not provide a logo, the report will include an SVG-based logo that derives from the title of the report.
 
 Layout
 ------
@@ -120,7 +120,7 @@ out to look consistent and attractive.
 Charts
 ------
 
-There are a number of charting components, ``rc.Bar()``, ``rc.Scatter()``, ``rc.Histogram()``, ``rc.Box()``, ``rc.Line()``, and ``rc.Pie()``.
+There are a number of charting components, ``rc.Radar(), ``rc.Bar()``, ``rc.Scatter()``, ``rc.Histogram()``, ``rc.Box()``, ``rc.Line()``, and ``rc.Pie()``.
 These are wrappers around ``plotly express`` components. There is also a ``rc.Widget()`` component that can be used anywhere 
 the object supports the ``repr_html()`` function that is used by Jupyter notebooks (for example ``matplotlib`` object)
 

@@ -21,7 +21,7 @@ profile: setup
 	snakeviz output.prof
 
 
-docs: setup clean
+doc: setup clean
 	@cd docs && make html
 	@open docs/build/html/index.html
 

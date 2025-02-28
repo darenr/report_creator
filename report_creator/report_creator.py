@@ -571,14 +571,6 @@ class DataTable(Base):
     Raises:
         ValueError: If the `data` argument is not a Pandas DataFrame or a list of dictionaries.
 
-    Attributes:
-        table_html (str): The HTML representation of the table, including
-            the necessary DataTables.js markup.
-        label(Optional[str]): The optional label of the DataTable.
-
-    Methods:
-        to_html() -> str: Generates the full HTML representation of the table, including the
-            DataTables.js wrapper and any necessary scripts for interactive functionality.
     """
 
     def __init__(
@@ -781,10 +773,8 @@ class Image(Base):
 
     Args:
         src (str): The source of the image. This can be either:
-            - A URL (e.g., "https://example.com/image.png") pointing to an
-              image on the web, or a local file path. For local images they will
-              automatically be converted to base64.
-            - A base64-encoded image string.
+            A URL pointing to an image on the web, a local file path,
+            or a base64-encoded image string.
         link_to (Optional[str], optional): An optional URL that the image
             will link to when clicked. If not provided, the image will
             not be clickable. Defaults to None.
@@ -1212,14 +1202,19 @@ class Radar(PxBase):
     Radar charts are useful for visualizing multivariate data and comparing
     multiple quantitative variables across different categories or entities.
 
-    Example
+    Example:
 
-    |                |   MMLU |   HumanEval |   GSM8K |   ARC Challenge |   BigBench |
-    |:---------------|-------:|------------:|--------:|----------------:|-----------:|
-    | Llama 3.1 405B |   78.2 |        75.1 |    86   |            84.5 |       68   |
-    | Llama 3.2 405B |   78.5 |        75.3 |    86.2 |            84.8 |       68.3 |
-    | Llama 3.3 405B |   78.8 |        75.5 |    86.4 |            85.1 |       68.6 |
-    | Llama 3.4 405B |   79.1 |        75.7 |    86.6 |            85.4 |       68.9 |
+    +-----------------+-------+-----------+-------+---------------+----------+
+    |                 | MMLU  | HumanEval | GSM8K | ARC Challenge | BigBench |
+    +=================+=======+===========+=======+===============+==========+
+    | Llama 3.1 405B  | 78.2  | 75.1      | 86    | 84.5          | 68       |
+    +-----------------+-------+-----------+-------+---------------+----------+
+    | Llama 3.2 405B  | 78.5  | 75.3      | 86.2  | 84.8          | 68.3     |
+    +-----------------+-------+-----------+-------+---------------+----------+
+    | Llama 3.3 405B  | 78.8  | 75.5      | 86.4  | 85.1          | 68.6     |
+    +-----------------+-------+-----------+-------+---------------+----------+
+    | Llama 3.4 405B  | 79.1  | 75.7      | 86.6  | 85.4          | 68.9     |
+    +-----------------+-------+-----------+-------+---------------+----------+
 
     Args:
         df (pd.DataFrame): The DataFrame containing the data to be plotted.
@@ -1812,12 +1807,6 @@ class Unformatted(Base):
             unformatted data. If provided, a caption with a linkable
             anchor will be displayed above the data. Defaults to None.
 
-    Attributes:
-        data (Any): The data to be displayed.
-        label (Optional[str]): The optional label for the data.
-
-    Methods:
-        to_html() -> str: Generates the HTML representation of the data as unformatted text.
     """
 
     def __init__(self, text: str, *, label: Optional[str] = None):

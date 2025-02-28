@@ -17,42 +17,45 @@ Report Creator
 .. |GitHub| image:: https://img.shields.io/github/license/darenr/report_creator?style=for-the-badge&logo=pypi&logoColor=white
 ..  _GitHub: https://github.com/darenr/report_creator
 
-Report Creator generates shareable, self-contained HTML reports, including base64-encoded 
-images. These reports are viewable in any browser or printable to PDF. Using simple Python 
-components, it creates reports incorporating text, code, images, and data visualizations.
-Markdown is supported within dedicated components or as labels/descriptions for other 
-components. The philosophy for layout is that components flow in either the horizontal 
-with ``rc.Group()`` or vertical with ``rc.Block()`` direction.
+Overview
+--------
+
+**Report Creator** is a Python library for generating shareable, self-contained HTML reports. These reports are designed to be:
+
+*   **Self-Contained:** Includes base64-encoded images, ensuring the report is fully portable.
+*   **Versatile:** Viewable in any web browser and can be easily printed to PDF.
+*   **Comprehensive:** Supports a wide array of components including:
+
+    *   Text and code blocks
+    *   Images (local, URLs, or base64)
+    *   Data visualizations (powered by Plotly Express)
+    *   Tables (static or interactive)
+    *   Diagrams (using Mermaid.js)
+*   **Customizable:** Markdown support within components or as labels/descriptions for other components.
+*   **Flexible Layout:** Components can be arranged horizontally (`rc.Group()`) or vertically (`rc.Block()`).
+* **Extendable** By using the `rc.Widget()` class, any python object that implements the `_repr_html_()` method can be included in the report.
 
 
-.. code-block:: python
+Getting Started
+---------------
+
+Here's a basic example of how to use Report Creator:
+
+.. code-block:: python3
 
    import report_creator as rc
 
-   with rc.ReportCreator(title="Report", logo="octocat") as report:
-      report.save(
-         rc.Block(
-               rc.Heading("Hello World", level=1),
-               rc.Markdown("This is a simple report using Report Creator."),
-         ),
-         "report.html",
-      )
+   report = rc.ReportCreator(title="My Report")
+   report.add_component(rc.Block(
+         rc.Heading("Hello World", level=1),
+         rc.Markdown("This is a simple report using Report Creator."),
+   ))
+   report.save("report.html")
 
 
-Beyond its built-in capabilities, Report Creator allows the inclusion of 
-any ``matplotlib`` figure and any Python object implementing the ``_repr_html_()`` function 
-(a common feature in libraries supporting Jupyter notebooks). Report Creator ensures 
-a modern and consistent report appearance, even with components from diverse sources. 
-For diagrams, the ``rc.Diagram()`` component supports any valid |mermaid_js| syntax.
+See the :doc:`getting_started` section for more details.
 
-.. |mermaid_js| raw:: html
-
-   <a href="https://mermaid-js.github.io/mermaid/" target="_blank">mermaid js</a>
-
-
-The python file |kitchen_sink_location_source| is an example (in the ``examples`` folder) 
-that demonstrates every component, and many of the options. The created report can be 
-viewed |kitchen_sink_location_output|.
+A comprehensive example demonstrating all components and their options can be found in the ``kitchen_sink.py`` example file |kitchen_sink_location_source|. The resulting report can be viewed |kitchen_sink_location_output|.
 
 .. |kitchen_sink_location_source| raw:: html
 
@@ -62,11 +65,11 @@ viewed |kitchen_sink_location_output|.
 
    <a href="https://darenr.github.io/report_creator/" target="_blank">here</a>
 
-
-Contents
---------
+Table of Contents
+-----------------
 
 .. toctree::
+   :caption: Usage
    :titlesonly:
    :maxdepth: 2
 

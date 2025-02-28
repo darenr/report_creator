@@ -6,10 +6,10 @@
 [![Python Stats](https://img.shields.io/pypi/dw/report_creator?style=for-the-badge)](https://pypi.org/project/report_creator)
 [![Discord](https://img.shields.io/discord/1318814951795593236?style=for-the-badge)](https://discord.gg/c4VZp5ze)
 
-[GitHub](https://github.com/darenr/report_creator) | 
-[PyPI](https://pypi.org/project/report_creator/) | 
-[Documentation](https://report-creator.readthedocs.io) | 
-[Issues](https://github.com/darenr/report_creator/issues) | 
+[GitHub](https://github.com/darenr/report_creator) |
+[PyPI](https://pypi.org/project/report_creator/) |
+[Documentation](https://report-creator.readthedocs.io) |
+[Issues](https://github.com/darenr/report_creator/issues) |
 [Getting Started](https://report-creator.readthedocs.io/en/latest/getting_started.html)
 
 Library to assemble reports in HTML from various components using python. This is not meant to be a replacement for do-it-yourself HTML,
@@ -97,8 +97,8 @@ make examples EXAMPLES=examples/myreport.py
 # run tests
 make test
 
-# build docs
-make docs
+# build doc
+make doc
 
 # release new version
 make release

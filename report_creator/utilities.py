@@ -170,13 +170,13 @@ def _time_it(func):
 
 def _strip_whitespace(func):
     """
-    A decorator that strips leading and trailing whitespace from the result of a function.
+    A decorator to strip whitespace from the output of a function.
 
     Args:
-        func: The function to be decorated.
+        func (callable): The function to be decorated.
 
     Returns:
-        The decorated function.
+        callable: The decorated function.
 
     """
 
