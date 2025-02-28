@@ -73,7 +73,9 @@ def test_data_table():
 
 
 def test_report_creator(tmp_path):
-    report = rc.ReportCreator(title="Test Report", description="This is a test report.", author="Tester")
+    report = rc.ReportCreator(
+        title="Test Report", description="This is a test report.", author="Tester"
+    )
     block = rc.Block(rc.Metric("Metric Example", 123))
     report.save(block, f"{tmp_path}/test_report.html", prettify_html=False)
     assert report.title == "Test Report"
@@ -103,10 +105,19 @@ def test_separator():
         ("*italic text*", "<em>italic text</em>"),
         # Test links and images
         ("[Link](https://example.com)", '<a href="https://example.com">Link</a>'),
-        ("![Image](https://example.com/image.png)", '<img src="https://example.com/image.png" alt="Image" />'),
+        (
+            "![Image](https://example.com/image.png)",
+            '<img src="https://example.com/image.png" alt="Image" />',
+        ),
         # Test lists
-        ("- Item 1\n- Item 2\n- Item 3", "<ul>\n<li>Item 1</li>\n<li>Item 2</li>\n<li>Item 3</li>\n</ul>"),
-        ("1. Item 1\n2. Item 2\n3. Item 3", "<ol>\n<li>Item 1</li>\n<li>Item 2</li>\n<li>Item 3</li>\n</ol>"),
+        (
+            "- Item 1\n- Item 2\n- Item 3",
+            "<ul>\n<li>Item 1</li>\n<li>Item 2</li>\n<li>Item 3</li>\n</ul>",
+        ),
+        (
+            "1. Item 1\n2. Item 2\n3. Item 3",
+            "<ol>\n<li>Item 1</li>\n<li>Item 2</li>\n<li>Item 3</li>\n</ol>",
+        ),
         # Test mixed Markdown
         (
             "# Heading\nThis is **bold** and *italic*, with [a link](https://example.com).",
@@ -125,7 +136,10 @@ def test_markdown_with_code():
     """Test Markdown with code."""
     markdown = rc.Markdown("```python\nprint('Hello, World!')\n```")
     html_output = markdown.to_html()
-    assert "<pre><code class='language-python'>print('Hello, World!')\n</code></pre>" in html_output
+    assert (
+        "<pre><code class='language-python'>print('Hello, World!')\n</code></pre>"
+        in html_output
+    )
 
 
 def test_markdown_with_label():
@@ -196,6 +210,47 @@ def test_json():
     assert "&lt;python_class&gt;" in html
 
 
+def test_json_string():
+    # test for valid json string
+    html = rc.Json('{"key": "value"}').to_html()
+    assert "key" in html
+    assert "value" in html
+
+
+def test_yaml_dict():
+    # Test with a dictionary
+    data = {"key1": "value1", "key2": 123, "key3": [1, 2, 3]}
+    yaml_component = rc.Yaml(data)
+    html = yaml_component.to_html()
+    assert "key1" in html
+    assert "value1" in html
+    assert "key2" in html
+    assert "123" in html
+    assert "key3" in html
+
+
+def test_yaml_string():
+    # Test with a YAML string
+    yaml_string = """
+    key1: value1
+    key2: 456
+    key3:
+      - a
+      - b
+      - c
+    """
+    yaml_component = rc.Yaml(yaml_string)
+    html = yaml_component.to_html()
+    assert "key1" in html
+    assert "value1" in html
+    assert "key2" in html
+    assert "456" in html
+    assert "key3" in html
+    assert "- a" in html
+    assert "- b" in html
+    assert "- c" in html
+
+
 def test_report_creator_initialization():
     """Test the initialization of the ReportCreator class."""
     report = rc.ReportCreator(
@@ -228,7 +283,10 @@ def test_report_creator_save(tmp_path):
 
     # Initialize the ReportCreator
     report = rc.ReportCreator(
-        title="Test Report", description="Test Description", author="Tester", footer="Footer Example"
+        title="Test Report",
+        description="Test Description",
+        author="Tester",
+        footer="Footer Example",
     )
 
     # Create a simple Block view
@@ -257,7 +315,9 @@ def test_report_creator_save_with_group(tmp_path):
     report = rc.ReportCreator(title="Group Report Test")
 
     # Create a Group view
-    group = rc.Group(rc.Metric("Metric 1", 100), rc.Metric("Metric 2", 200), label="Metrics Group")
+    group = rc.Group(
+        rc.Metric("Metric 1", 100), rc.Metric("Metric 2", 200), label="Metrics Group"
+    )
 
     # Save the report
     report.save(group, str(tmp_file))
@@ -285,7 +345,9 @@ def test_report_creator_save_prettify_html(tmp_path):
     """Test saving a report with prettified HTML."""
     tmp_file = tmp_path / "prettified_report.html"
 
-    report = rc.ReportCreator(title="Prettified Report", description="A report with prettified HTML.")
+    report = rc.ReportCreator(
+        title="Prettified Report", description="A report with prettified HTML."
+    )
 
     block = rc.Block(rc.Metric("Pretty Metric", 789))
 
@@ -322,3 +384,30 @@ def test_report_creator_save_without_prettify_html(tmp_path):
     # Verify the non-prettified content
     assert "Simple Metric" in content
     assert "456" in content
+
+
+def test_empty_block():
+    """Test Block component with no child components."""
+    block = rc.Block()
+    html = block.to_html()
+    assert "<block>" in html
+    assert "</block>" in html
+    assert "<block-component>" not in html
+
+
+def test_empty_group():
+    """Test Group component with no child components."""
+    group = rc.Group()
+    html = group.to_html()
+    assert '<div class="group">' in html
+    assert "</div>" in html
+    assert "<div class='group-content'>" not in html
+
+
+def test_empty_collapse():
+    """Test Collapse component with no child components."""
+    collapse = rc.Collapse(label="Empty Collapse")
+    html = collapse.to_html()
+    assert '<details class="collapse">' in html
+    assert "<summary>Empty Collapse</summary>" in html
+    assert "</details>" in html
