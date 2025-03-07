@@ -75,8 +75,8 @@ with rc.ReportCreator(
 ## 🤗 Development
 
 ```sh
-mamba create -n rc -c conda-forge python=3.13
-mamba activate rc
+conda create -n rc -c conda-forge python=3.13
+conda activate rc
 make setup
 
 # recommended for code hygiene
