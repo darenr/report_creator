@@ -9,10 +9,14 @@ import textwrap
 import traceback
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Optional, Union
+from typing import Any, Optional, Union
 from uuid import uuid4
 
+# Third-party imports - organized by category
+# Data handling
 import dateutil
+
+# Visualization
 import humanize
 import matplotlib
 import matplotlib as mpl
@@ -22,10 +26,12 @@ import plotly.graph_objs as go
 import plotly.io as pio
 import yaml
 from cycler import cycler
+
+# Templating & formatting
 from jinja2 import Environment, FileSystemLoader
 from markupsafe import escape
-from pandas.api.types import is_datetime64_any_dtype as is_datetime
 
+# Internal imports
 from .theming import get_rc_theme, preferred_fonts, report_creator_colors
 from .utilities import (
     _check_html_tags_are_closed,
@@ -39,6 +45,7 @@ from .utilities import (
     _time_it,
 )
 
+# Configure logging
 logger = logging.getLogger("report_creator")
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("matplotlib.font_manager").setLevel(logging.WARNING)
@@ -52,8 +59,6 @@ class Base(ABC):
     It defines the common interface and behavior expected of all report components.
     Each concrete component, such as a Block, Group, Metric, or Chart, should inherit
     from this class.
-
-
     """
 
     def __init__(self, label: Optional[str] = None):
@@ -62,6 +67,7 @@ class Base(ABC):
     @abstractmethod
     def to_html(self) -> str:
         """Each component that derives from Base must implement this method"""
+        pass
 
 
 ##############################
@@ -75,26 +81,25 @@ class Block(Base):
     It arranges its child components in a single, vertical column,
     rendering them sequentially from top to bottom. This allows for
     the creation of visually organized sections within a report.
-
     """
 
-    def __init__(self, *components: "Base", label: Optional[str] = None):
-        Base.__init__(self, label=label)
+    def __init__(self, *components: Base, label: Optional[str] = None):
+        super().__init__(label=label)
         self.components = components
         logger.info(f"Block: {len(self.components)} components")
 
     @_strip_whitespace
     def to_html(self) -> str:
-        html = "<block>"
+        html_output = "<block>"
 
         for component in self.components:
-            html += "<block-component>"
-            html += component.to_html()
-            html += "</block-component>"
+            html_output += "<block-component>"
+            html_output += component.to_html()
+            html_output += "</block-component>"
 
-        html += "</block>"
+        html_output += "</block>"
 
-        return html
+        return html_output
 
 
 ##############################
@@ -109,34 +114,34 @@ class Group(Base):
     wrapper that renders its child components next to each other,
     allowing you to create layouts with columns or multiple elements
     on the same horizontal line.
-
-
     """
 
     def __init__(self, *components: Base, label: Optional[str] = None):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
         self.components = components
         logger.info(f"Group: {len(self.components)} components {label=}")
 
     @_strip_whitespace
     def to_html(self) -> str:
-        html = "<div>"
+        html_output = "<div>"
 
         if self.label:
-            html += f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption></a>"
+            anchor_id = _generate_anchor_id(self.label)
+            html_output += (
+                f"<report-caption><a href='#{anchor_id}'>{self.label}</a></report-caption>"
+            )
 
-        html += """<div class="group">"""
+        html_output += """<div class="group">"""
 
         for component in self.components:
-            html += "<div class='group-content'>"
-            html += component.to_html()
-            html += "</div>"
+            html_output += "<div class='group-content'>"
+            html_output += component.to_html()
+            html_output += "</div>"
 
-        html += "</div>"  # group
+        html_output += "</div>"  # group
+        html_output += "</div>"  # outer block div
 
-        html += "</div>"  # outer block div
-
-        return html
+        return html_output
 
 
 ##############################
@@ -152,23 +157,22 @@ class Collapse(Base):
     or hidden, allowing for a more compact and organized presentation
     of information. This is useful for hiding less important or
     detailed content that the user may choose to view on demand.
-
     """
 
     def __init__(self, *components: Base, label: Optional[str] = None):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
         self.components = components
         logger.info(f"Collapse: {len(self.components)} components, {label=}")
 
     @_strip_whitespace
     def to_html(self) -> str:
-        html = f"""<details class="collapse"><summary>{self.label}</summary>"""
+        html_output = f"""<details class="collapse"><summary>{self.label}</summary>"""
 
         for component in self.components:
-            html += component.to_html()
+            html_output += component.to_html()
 
-        html += "</details>"
-        return html
+        html_output += "</details>"
+        return html_output
 
 
 ##############################
@@ -191,15 +195,13 @@ class Widget(Base):
 
     Raises:
         ValueError: If the provided widget does not have an `_repr_html_` method.
-
     """
 
-    def __init__(self, widget, *, label: Optional[str] = None):
-        Base.__init__(self, label=label)
+    def __init__(self, widget: Any, *, label: Optional[str] = None):
+        super().__init__(label=label)
         if isinstance(widget, go.Figure):
             self.widget = widget
             PxBase.apply_common_fig_options(self.widget)
-
         elif hasattr(widget, "get_figure"):
             self.widget = widget.get_figure()
         else:
@@ -207,13 +209,16 @@ class Widget(Base):
 
     @_strip_whitespace
     def to_html(self) -> str:
-        html = "<div class='report-widget'>"
+        html_output = "<div class='report-widget'>"
 
         if self.label:
-            html += f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption>"
+            anchor_id = _generate_anchor_id(self.label)
+            html_output += (
+                f"<report-caption><a href='#{anchor_id}'>{self.label}</a></report-caption>"
+            )
 
         if isinstance(self.widget, pd.DataFrame):
-            html += self.widget.style._repr_html_()
+            html_output += self.widget.style._repr_html_()
         elif isinstance(self.widget, matplotlib.figure.Figure):
             tmp = io.BytesIO()
 
@@ -223,15 +228,14 @@ class Widget(Base):
             self.widget.savefig(tmp, format="png")
             tmp.seek(0)
             b64image = base64.b64encode(tmp.getvalue()).decode("utf-8").replace("\n", "")
-            html += f'<br/><img src="data:image/png;base64,{b64image}">'
-
+            html_output += f'<br/><img src="data:image/png;base64,{b64image}">'
         elif hasattr(self.widget, "_repr_html_"):
-            html += self.widget._repr_html_()
+            html_output += self.widget._repr_html_()
         elif hasattr(self.widget, "__repr__") or hasattr(self.widget, "__str__"):
-            html += f"<p>{self.widget}</p>"
+            html_output += f"<p>{self.widget}</p>"
 
-        html += "</div>"
-        return html
+        html_output += "</div>"
+        return html_output
 
 
 ##############################
@@ -246,14 +250,12 @@ class MetricGroup(Base):
     row in the DataFrame is transformed into a separate `Metric`
     component, and these `Metric`s are then arranged horizontally
     within a `Group`.
-
-
     """
 
     def __init__(
         self, df: pd.DataFrame, heading: str, value: str, *, label: Optional[str] = None
     ):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
         assert heading in df.columns, f"heading {heading} not in df"
         assert value in df.columns, f"value {value} not in df"
 
@@ -310,7 +312,6 @@ class EventMetric(Base):
 
     Raises:
         AssertionError: If the specified `date` column is not found in the DataFrame.
-
     """
 
     def __init__(
@@ -324,13 +325,15 @@ class EventMetric(Base):
         *,
         label: Optional[str] = None,
     ):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
 
         assert date in df.columns, f"index column {date} not in df"
         self.df = df
         self.date = date
 
         self.freq = frequency
+
+        from pandas.api.types import is_datetime64_any_dtype as is_datetime
 
         if not is_datetime(self.df[date]):
             logger.info(f"EventMetric converting {date} to datetime")
@@ -345,12 +348,13 @@ class EventMetric(Base):
 
     @_strip_whitespace
     def to_html(self) -> str:
-        dfx = self.df.eval(f"{self.yhat} = {self.condition}")[[self.date, self.yhat]]
+        # Create a copy of the dataframe to avoid modifying the original
+        dfx = self.df.eval(f"{self.yhat} = {self.condition}")[[self.date, self.yhat]].copy()
         dfx[self.yhat] = dfx[self.yhat].astype(int)
         dfx = dfx.groupby(pd.Grouper(key=self.date, freq=self.freq)).sum().reset_index()
 
         # For an empty dataframe summing a series doesn't return 0
-        agg_value = dfx["_Y_"].apply("sum") if not dfx.empty else 0
+        agg_value = dfx["_Y_"].sum() if not dfx.empty else 0
 
         fig = px.line(
             dfx,
@@ -430,8 +434,6 @@ class Metric(Base):
         color (Optional[bool], optional): If True, the metric will be displayed with a
             subtle background color. Consecutive metrics with `color=True` will have
             different background colors, aiding in visual distinction. Defaults to False.
-
-
     """
 
     def __init__(
@@ -444,7 +446,7 @@ class Metric(Base):
         label: Optional[str] = None,
         color: Optional[bool] = False,
     ):
-        Base.__init__(self, label=textwrap.dedent(label) if label else None)
+        super().__init__(label=textwrap.dedent(label) if label else None)
         self.heading = heading
         self.float_precision = float_precision
         self.value = value
@@ -515,8 +517,6 @@ class Table(Widget):
 
     Raises:
         ValueError: If the `data` argument is not a Pandas DataFrame or a list of dictionaries.
-
-
     """
 
     def __init__(
@@ -569,7 +569,6 @@ class DataTable(Base):
 
     Raises:
         ValueError: If the `data` argument is not a Pandas DataFrame or a list of dictionaries.
-
     """
 
     def __init__(
@@ -582,7 +581,7 @@ class DataTable(Base):
         max_rows: Optional[int] = -1,
         float_precision: Optional[int] = 2,
     ):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
 
         if isinstance(data, list):
             df = pd.DataFrame(data)
@@ -646,8 +645,6 @@ class Html(Base):
 
     Raises:
         ValueError: If the provided HTML content contains unclosed tags.
-
-
     """
 
     def __init__(
@@ -658,7 +655,7 @@ class Html(Base):
         label: Optional[str] = None,
         bordered: Optional[bool] = False,
     ):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
         self.html = html
         self.css = css
         self.bordered = bordered
@@ -673,11 +670,11 @@ class Html(Base):
     def to_html(self) -> str:
         border = "round-bordered" if self.bordered else ""
 
-        html = f"<style>{self.css}</style>" if self.css else ""
+        html_output = f"<style>{self.css}</style>" if self.css else ""
         if self.label:
-            html += f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption>"
-        html += f'<div class="{border}">' + self.html + "</div>"
-        return html
+            html_output += f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption>"
+        html_output += f'<div class="{border}">' + self.html + "</div>"
+        return html_output
 
 
 ##############################
@@ -712,8 +709,6 @@ class Diagram(Base):
         label (Optional[str], optional): An optional label or caption for the
             diagram. If provided, a caption with a linkable anchor will be
             displayed above the diagram. Defaults to None.
-
-
     """
 
     def __init__(
@@ -724,7 +719,7 @@ class Diagram(Base):
         extra_css: Optional[str] = None,
         label: Optional[str] = None,
     ):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
 
         self.src = src
         self.extra_css = extra_css or ""
@@ -733,29 +728,29 @@ class Diagram(Base):
 
     @_strip_whitespace
     def to_html(self) -> str:
-        html = """
+        html_output = """
             <div class="diagram-block">
                 <figure>
         """
 
         if self.label:
-            html += f"<figcaption><report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption></figcaption>"
+            html_output += f"<figcaption><report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption></figcaption>"
 
-        html += f"""<pre class='mermaid include_mermaid {"mermaid-pan-zoom" if self.pan_and_zoom else ""}' style="{self.extra_css}">
+        html_output += f"""<pre class='mermaid include_mermaid {"mermaid-pan-zoom" if self.pan_and_zoom else ""}' style="{self.extra_css}">
                         {self.src}
                     </pre>"""
 
         if self.pan_and_zoom:
-            html += "<small>"
-            html += "pan (mouse) and zoom (shift+wheel)"
-            html += """&nbsp;<a href="#" onclick="event.preventDefault();" class="panzoom-reset">(reset)</a>"""
-            html += "</small>"
+            html_output += "<small>"
+            html_output += "pan (mouse) and zoom (shift+wheel)"
+            html_output += """&nbsp;<a href="#" onclick="event.preventDefault();" class="panzoom-reset">(reset)</a>"""
+            html_output += "</small>"
 
-        html += """
+        html_output += """
                 </figure>
             </div>"""
 
-        return html
+        return html_output
 
 
 ##############################
@@ -792,7 +787,6 @@ class Image(Base):
             base64-encoded image. This ensures that the image is
             always available, even if the original URL becomes inaccessible.
             Defaults to False.
-
     """
 
     def __init__(
@@ -805,7 +799,7 @@ class Image(Base):
         rounded: Optional[bool] = True,
         convert_to_base64: Optional[bool] = False,
     ):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
         self.link_to = link_to
         self.extra_css = extra_css or ""
         self.rounded_css = "border-radius: 0.75rem;" if rounded else ""
@@ -827,20 +821,20 @@ class Image(Base):
 
     @_strip_whitespace
     def to_html(self) -> str:
-        html = """<div class="image-block"><figure>"""
+        html_output = """<div class="image-block"><figure>"""
 
         image_markup = f"""<img src="{self.src}" style="{self.rounded_css} {self.extra_css}" alt="{self.label or self.src}">"""
         if self.link_to:
-            html += f"""<a href="{self.link_to}" target="_blank">{image_markup}</a>"""
+            html_output += f"""<a href="{self.link_to}" target="_blank">{image_markup}</a>"""
         else:
-            html += image_markup
+            html_output += image_markup
 
         if self.label:
-            html += f"<figcaption><report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption></figcaption>"
+            html_output += f"<figcaption><report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption></figcaption>"
 
-        html += "</figure></div>"
+        html_output += "</figure></div>"
 
-        return html
+        return html_output
 
 
 ##############################
@@ -876,7 +870,7 @@ class Markdown(Base):
         extra_css: Optional[str] = None,
         bordered: Optional[bool] = False,
     ):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
         self.text = textwrap.dedent(text)
         self.extra_css = extra_css or ""
         self.bordered = bordered
@@ -886,16 +880,16 @@ class Markdown(Base):
     @_strip_whitespace
     def to_html(self) -> str:
         border = "round-bordered" if self.bordered else ""
-        html = f"<div class='markdown-wrapper include_hljs {border}'>"
+        html_output = f"<div class='markdown-wrapper include_hljs {border}'>"
         if self.label:
-            html += f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption>"
+            html_output += f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption>"
 
-        html += f'<div style="{self.extra_css}">' if self.extra_css else "<div>"
-        html += _gfm_markdown_to_html(self.text)
-        html += "</div>"
-        html += "</div>"
+        html_output += f'<div style="{self.extra_css}">' if self.extra_css else "<div>"
+        html_output += _gfm_markdown_to_html(self.text)
+        html_output += "</div>"
+        html_output += "</div>"
 
-        return html
+        return html_output
 
 
 ##############################
@@ -903,7 +897,7 @@ class Markdown(Base):
 
 class PxBase(Base):
     def __init__(self, label: Optional[str] = None):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
 
     @abstractmethod
     def to_html(self) -> str:
@@ -980,7 +974,6 @@ class Bar(PxBase):
         AssertionError: If the specified `x` column is not found in the DataFrame.
         AssertionError: If the specified `y` column is not found in the DataFrame.
         AssertionError: If the specified `dimension` column is not found in the DataFrame, when provided.
-
     """
 
     def __init__(
@@ -993,7 +986,7 @@ class Bar(PxBase):
         label: Optional[str] = None,
         **kwargs: Optional[dict],
     ):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
         self.df = df
         self.x = x
         self.y = y
@@ -1060,7 +1053,6 @@ class Line(PxBase):
         AssertionError: If any of the specified `y` column(s) are not found in the DataFrame.
         AssertionError: If the specified `dimension` column is not found in the DataFrame, when provided.
         ValueError: If `y` is not a string or a list of strings.
-
     """
 
     def __init__(
@@ -1073,7 +1065,7 @@ class Line(PxBase):
         label: Optional[str] = None,
         **kwargs: Optional[dict],
     ):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
         self.df = df
         self.x = x
         self.y = y
@@ -1147,7 +1139,6 @@ class Pie(PxBase):
     Raises:
         AssertionError: If the specified `values` column is not found in the DataFrame.
         AssertionError: If the specified `names` column is not found in the DataFrame.
-
     """
 
     def __init__(
@@ -1159,7 +1150,7 @@ class Pie(PxBase):
         label: Optional[str] = None,
         **kwargs: Optional[dict],
     ):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
         self.df = df
         self.values = values
         self.names = names
@@ -1236,7 +1227,6 @@ class Radar(PxBase):
         AssertionError: If the specified `r` column is not found in the DataFrame.
         AssertionError: If the specified `theta` column is not found in the DataFrame.
         AssertionError: If the specified `dimension` column is not found in the DataFrame, when provided.
-
     """
 
     def __init__(
@@ -1248,7 +1238,7 @@ class Radar(PxBase):
         filled: Optional[bool] = False,
         **kwargs: Optional[dict],
     ):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
         assert df.index is not None, "DataFrame has no index"
         assert len(df.index) > 0, "DataFrame has no index or is empty"
         assert df.index.is_unique and not df.index.hasnans, "DataFrame index is invalid"
@@ -1346,7 +1336,6 @@ class Scatter(PxBase):
         AssertionError: If the specified `y` column is not found in the DataFrame.
         AssertionError: If the specified `color` column is not found in the DataFrame, when provided.
         AssertionError: If the specified `size` column is not found in the DataFrame, when provided.
-
     """
 
     def __init__(
@@ -1360,7 +1349,7 @@ class Scatter(PxBase):
         marginal: Optional[str] = None,
         **kwargs: Optional[dict],
     ):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
         self.df = df
         self.x = x
         self.y = y
@@ -1442,8 +1431,6 @@ class Box(PxBase):
         AssertionError: If the specified `x` column is not found in the DataFrame.
         AssertionError: If the specified `y` column is not found in the DataFrame.
         AssertionError: If the specified `color` column is not found in the DataFrame, when provided.
-
-
     """
 
     def __init__(
@@ -1455,7 +1442,7 @@ class Box(PxBase):
         label: Optional[str] = None,
         **kwargs: Optional[dict],
     ):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
         self.df = df
         self.y = y
         self.kwargs = kwargs
@@ -1477,7 +1464,6 @@ class Box(PxBase):
 
         Returns:
             str: The HTML representation of the box plot.
-
         """
         fig = px.box(
             self.df,
@@ -1525,7 +1511,6 @@ class Histogram(PxBase):
     Raises:
         AssertionError: If the specified `x` column is not found in the DataFrame.
         AssertionError: If the specified `color` column is not found in the DataFrame, when provided.
-
     """
 
     def __init__(
@@ -1537,7 +1522,7 @@ class Histogram(PxBase):
         label: Optional[str] = None,
         **kwargs: Optional[dict],
     ):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
         self.df = df
         self.x = x
         self.kwargs = kwargs
@@ -1581,7 +1566,6 @@ class Heading(Base):
 
     Raises:
         ValueError: If the specified `level` is not between 1 and 6.
-
     """
 
     def __init__(
@@ -1590,7 +1574,7 @@ class Heading(Base):
         *,
         level: Optional[int] = 1,
     ):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
         assert level >= 1 and level <= 5, (
             f"heading level ({level}) must be between 1 and 5 (inclusive)"
         )
@@ -1626,11 +1610,10 @@ class Separator(Base):
             above the separator line. This can be used for internal
             referencing or to provide a brief description of the break.
             Defaults to None.
-
     """
 
     def __init__(self, label: Optional[str] = None):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
         logger.info(f"Separator: {label=}")
 
     @_strip_whitespace
@@ -1677,11 +1660,10 @@ class Select(Base):
 
     Raises:
         ValueError: If the `default_value` is provided but is not present in the `options`.
-
     """
 
     def __init__(self, blocks: list[Base], *, label: Optional[str] = None):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
         self.blocks = blocks
 
         for b in self.blocks:
@@ -1694,7 +1676,7 @@ class Select(Base):
 
     @_strip_whitespace
     def to_html(self) -> str:
-        html = (
+        html_output = (
             f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption>"
             if self.label
             else ""
@@ -1706,19 +1688,19 @@ class Select(Base):
         data_table_index = int(uuid4()) % 10000
 
         # assemble the button bar for the tabs
-        html += """<div class="tab">"""
+        html_output += """<div class="tab">"""
         for i, block in enumerate(self.blocks):
             extra = "defaultOpen" if i == 0 else ""
-            html += f"""<button class="tablinks {extra}" onclick="openTab(event, '{block.label}', {data_table_index})" data-table-index={data_table_index}>{block.label}</button>"""
-        html += """</div>"""
+            html_output += f"""<button class="tablinks {extra}" onclick="openTab(event, '{block.label}', {data_table_index})" data-table-index={data_table_index}>{block.label}</button>"""
+        html_output += """</div>"""
 
         # assemble the tab contents
         for block in self.blocks:
-            html += f"""<div id="{block.label}" data-table-index={data_table_index} class="tabcontent">"""
-            html += block.to_html()
-            html += """</div>"""
+            html_output += f"""<div id="{block.label}" data-table-index={data_table_index} class="tabcontent">"""
+            html_output += block.to_html()
+            html_output += """</div>"""
 
-        return html
+        return html_output
 
 
 ##############################
@@ -1745,7 +1727,6 @@ class Accordion(Base):
 
     Raises:
         ValueError: If any of the components do not have a label.
-
     """
 
     def __init__(
@@ -1755,7 +1736,7 @@ class Accordion(Base):
         label: Optional[str] = None,
         open_first: Optional[bool] = False,
     ):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
         self.blocks = blocks
         self.open_first = open_first
 
@@ -1769,7 +1750,7 @@ class Accordion(Base):
 
     @_strip_whitespace
     def to_html(self) -> str:
-        html = (
+        html_output = (
             f"<report-caption><a href='#{_generate_anchor_id(self.label)}'>{self.label}</a></report-caption>"
             if self.label
             else ""
@@ -1777,12 +1758,12 @@ class Accordion(Base):
 
         # assesmble the accordion
         for i, block in enumerate(self.blocks):
-            html += f"""<details {" open " if i == 0 and self.open_first else ""} class="accordion">"""
-            html += f"""<summary>{block.label}</summary>"""
-            html += block.to_html()
-            html += """</details>"""
+            html_output += f"""<details {" open " if i == 0 and self.open_first else ""} class="accordion">"""
+            html_output += f"""<summary>{block.label}</summary>"""
+            html_output += block.to_html()
+            html_output += """</details>"""
 
-        return html
+        return html_output
 
 
 ##############################
@@ -1805,11 +1786,10 @@ class Unformatted(Base):
         label (Optional[str], optional): An optional label for the
             unformatted data. If provided, a caption with a linkable
             anchor will be displayed above the data. Defaults to None.
-
     """
 
     def __init__(self, text: str, *, label: Optional[str] = None):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
         self.text = text
 
     @_strip_whitespace
@@ -1838,7 +1818,7 @@ class Language(Base):
         scroll_long_content: Optional[bool] = False,
         label: Optional[str] = None,
     ):
-        Base.__init__(self, label=label)
+        super().__init__(label=label)
         self.text = text
         self.language = language.lower()
         self.scroll_long_content = scroll_long_content
@@ -1910,8 +1890,8 @@ class Prolog(Language):
         scroll_long_content: Optional[bool] = False,
         label: Optional[str] = None,
     ):
-        Language.__init__(
-            self, escape(code), "prolog", scroll_long_content=scroll_long_content, label=label
+        super().__init__(
+            escape(code), "prolog", scroll_long_content=scroll_long_content, label=label
         )
 
 
@@ -1940,8 +1920,7 @@ class Python(Language):
         scroll_long_content: Optional[bool] = False,
         label: Optional[str] = None,
     ):
-        Language.__init__(
-            self,
+        super().__init__(
             escape(textwrap.dedent(code)),
             "python",
             scroll_long_content=scroll_long_content,
@@ -1974,8 +1953,8 @@ class Shell(Language):
         scroll_long_content: Optional[bool] = False,
         label: Optional[str] = None,
     ):
-        Language.__init__(
-            self, escape(code), "shell", scroll_long_content=scroll_long_content, label=label
+        super().__init__(
+            escape(code), "shell", scroll_long_content=scroll_long_content, label=label
         )
 
 
@@ -2013,8 +1992,8 @@ class Java(Language):
         scroll_long_content: Optional[bool] = False,
         label: Optional[str] = None,
     ):
-        Language.__init__(
-            self, escape(code), "java", scroll_long_content=scroll_long_content, label=label
+        super().__init__(
+            escape(code), "java", scroll_long_content=scroll_long_content, label=label
         )
 
 
@@ -2042,7 +2021,6 @@ class Sql(Language):
 
     Raises:
         Exception: If any error occurs during database connection or query execution.
-
     """
 
     @staticmethod
@@ -2114,8 +2092,7 @@ class Sql(Language):
         prettify: Optional[bool] = False,
         label: Optional[str] = None,
     ):
-        Language.__init__(
-            self,
+        super().__init__(
             Sql.format_sql(code) if prettify else code,
             "sql",
             scroll_long_content=scroll_long_content,
@@ -2171,8 +2148,7 @@ class Yaml(Language):
         else:
             raise ValueError("Invalid data type for Yaml component")
 
-        Language.__init__(
-            self,
+        super().__init__(
             content,
             "yaml",
             scroll_long_content=scroll_long_content,
@@ -2206,7 +2182,6 @@ class Json(Language):
             anchor will be displayed above the JSON data.
             Defaults to None.
 
-
     Methods:
         to_html() -> str: Generates the HTML representation of the formatted JSON content.
     """
@@ -2234,8 +2209,7 @@ class Json(Language):
         else:
             raise ValueError("Invalid data type for JSON component")
 
-        Language.__init__(
-            self,
+        super().__init__(
             content,
             "json",
             scroll_long_content=scroll_long_content,
@@ -2267,7 +2241,6 @@ class Plaintext(Language):
             for the plaintext content. If provided, a caption with a
             linkable anchor will be displayed above the text.
             Defaults to None.
-
     """
 
     def __init__(
@@ -2277,8 +2250,7 @@ class Plaintext(Language):
         scroll_long_content: Optional[bool] = False,
         label: Optional[str] = None,
     ):
-        Language.__init__(
-            self,
+        super().__init__(
             text,
             "plaintext",
             scroll_long_content=scroll_long_content,
@@ -2299,7 +2271,6 @@ class ReportCreator:
     all customizable through a declarative API.
 
     Key Features:
-
     - **Modular Design:** Build reports using a hierarchy of components
       (`Block`, `Group`, `Collapse`, etc.) for clear organization.
     - **Data Visualization:** Easily integrate various chart types
@@ -2315,35 +2286,16 @@ class ReportCreator:
     - **Programmatic Report Generation:**  Construct reports entirely through Python code, making it ideal for automated workflows.
     - **Data URI conversion:** Convert local images or urls to datauri for embedded reports.
 
-    Usage:
-
-    1.  Instantiate `ReportCreator` with a report title.
-    2.  Assemble the report layout by adding components (e.g., `Block`, `Group`)
-        containing other components (e.g., `Metric`, `Chart`, `Table`).
-    3.  Generate the HTML report using the `to_html()` method.
-    4.  Save the HTML to a file or display it in a web browser.
-
-    Example::
-
-        from report_creator import ReportCreator, Metric, Block
-
-        report = ReportCreator("My Awesome Report")
-        report.add_component(Block(Metric("Revenue", 10000, unit="$"),
-                                Metric("Customers", 500)))
-        html_report = report.to_html()
-
-        with open("my_report.html", "w") as f:
-            f.write(html_report)
-
-
     Args:
         title (str): The title of the report.
         description (str, optional): The description of the report (markdown is ok). Defaults to None.
         author (str, optional): The author of the report. Defaults to None.
         logo (str, optional): A GitHub username to use as the report icon, a url/filepath to an image, or None. Defaults to None,
-        which will use an autogenerated icon based on the title.
+            which will use an autogenerated icon based on the title.
         theme (str, optional): The theme to use for the report. Defaults to "rc".
-        diagram_theme (str, optional): The mermaid theme (https://mermaid.js.org/config/theming.html#available-themes) to use Defaults to "default", options: "neo", "neo-dark", "dark", "neutral", "forest", & "base".
+        code_theme (str, optional): The theme for code highlighting. Defaults to "github-dark".
+        diagram_theme (str, optional): The mermaid theme to use.
+            Options: "default", "neo", "neo-dark", "dark", "neutral", "forest", & "base". Defaults to "default".
         accent_color (str, optional): The accent color for the report. Defaults to "black".
         footer (str, optional): The footer text for the report (markdown is ok). Defaults to None.
     """
@@ -2355,10 +2307,10 @@ class ReportCreator:
         description: Optional[str] = None,
         author: Optional[str] = None,
         logo: Optional[str] = None,
-        theme: Optional[str] = "rc",
-        code_theme: Optional[str] = "github-dark",
-        diagram_theme: Optional[str] = "default",
-        accent_color: Optional[str] = "black",
+        theme: str = "rc",
+        code_theme: str = "github-dark",
+        diagram_theme: str = "default",
+        accent_color: str = "black",
         footer: Optional[str] = None,
     ):
         self.title = title
@@ -2371,14 +2323,23 @@ class ReportCreator:
 
         logger.info(f"ReportCreator: {self.title=} {self.description=}")
 
+        # Setup plotting template
         pio.templates["rc"] = get_rc_theme()
 
-        assert theme in pio.templates, f"Theme {theme} not in {', '.join(pio.templates.keys())}"
-
+        # Validate theme
+        valid_themes = list(pio.templates.keys())
+        assert theme in valid_themes, (
+            f"Theme '{theme}' not in available themes: {', '.join(valid_themes)}"
+        )
         pio.templates.default = theme
 
+        # Setup header icon/logo
+        self._create_header(logo)
+
+    def _create_header(self, logo: Optional[str]) -> None:
+        """Create the header icon or logo for the report."""
         if logo:
-            if logo.startswith("http") or logo.startswith("data:image"):
+            if logo.startswith(("http", "data:image")):
                 self.header_str = f"""<img src="{logo}" style="width: 125px;">"""
             elif os.path.exists(logo):
                 self.header_str = f"""<img src="{_convert_filepath_to_datauri(logo)}" style="width: 125px;">"""
@@ -2386,9 +2347,9 @@ class ReportCreator:
                 logger.info(f"GitHub: {logo}")
                 self.header_str = f"""<img src="https://avatars.githubusercontent.com/{logo}?s=125" style="width: 125px;">"""
         else:
+            # Create an icon from the report title
             match = re.findall(r"[A-Z]", self.title)
             icon_text = "".join(match[:2]) if match else self.title[0]
-
             icon_color, text_color = self.accent_color, "white"
 
             width = 150
@@ -2398,38 +2359,34 @@ class ReportCreator:
             fs = int(r / 15)
 
             self.header_str = textwrap.dedent(f"""
-                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="{width}" height="{width}">
-
-                        <style>
-                            .icon_text_style {{
-                                font-size: {fs}rem;
-                                stroke-width: 1px;
-                                font-family: sans-serif;
-                                font-weight: bold;
-                                text-anchor: middle;
-                                dominant-baseline: central;
-                            }}
-
-                        </style>
-
-                        <circle cx="{cx}" cy="{cy}" r="{r}" fill="{icon_color}" />
-                        <text class="icon_text_style" x="50%" y="50%" fill="{text_color}">{icon_text}</text>
-                    </svg>
-                """)
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="{width}" height="{width}">
+                    <style>
+                        .icon_text_style {{
+                            font-size: {fs}rem;
+                            stroke-width: 1px;
+                            font-family: sans-serif;
+                            font-weight: bold;
+                            text-anchor: middle;
+                            dominant-baseline: central;
+                        }}
+                    </style>
+                    <circle cx="{cx}" cy="{cy}" r="{r}" fill="{icon_color}" />
+                    <text class="icon_text_style" x="50%" y="50%" fill="{text_color}">{icon_text}</text>
+                </svg>
+            """)
 
     def __enter__(self):
-        """Save the original color schema"""
+        """Save the original color schema and apply report colors."""
         self.default_colors = mpl.rcParams["axes.prop_cycle"].by_key()["color"]
         mpl.rcParams["axes.prop_cycle"] = cycler("color", report_creator_colors)
-
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
-        """Restore the original color schema"""
+        """Restore the original color schema."""
         mpl.rcParams["axes.prop_cycle"] = cycler("color", self.default_colors)
 
     @_time_it
-    def save(self, view: Base, path: str, prettify_html: Optional[bool] = True) -> None:
+    def save(self, view: Base, path: str, prettify_html: bool = True) -> None:
         """
         Save the report to a file.
 
@@ -2440,50 +2397,56 @@ class ReportCreator:
 
         Raises:
             ValueError: If the view object is not an instance of Block or Group.
-
         """
         if not isinstance(view, (Block, Group)):
             raise ValueError(
-                f"Expected view to be either Block or Group object, got {type(view)} instead"
+                f"Expected view to be either Block or Group object, got {type(view).__name__} instead"
             )
 
         logger.info(f"Saving report to {path}")
 
         try:
             body = view.to_html()
-        except ValueError:
+        except Exception:
             body = f"""<pre>{traceback.format_exc()}</pre>"""
 
-        file_loader = FileSystemLoader(
-            f"{os.path.dirname(os.path.abspath(__file__))}/templates"
-        )
+        # Find the template directory and load the default template
+        template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
+        file_loader = FileSystemLoader(template_dir)
         template = Environment(loader=file_loader).get_template("default.html")
 
+        # Determine which libraries to include
         include_plotly = "plotly-graph-div" in body
         include_datatable = "include_datatable" in body
         include_mermaid = "include_mermaid" in body
         include_hljs = "include_hljs" in body
 
         logger.info(
-            f"ReportCreator: {include_plotly=}, {include_datatable=}, {include_mermaid=}, {include_hljs=}"
+            f"ReportCreator features: {include_plotly=}, {include_datatable=}, {include_mermaid=}, {include_hljs=}"
         )
-        logger.info(f"ReportCreator: {self.description=}, {self.author=} {prettify_html=}")
+        logger.info(
+            f"ReportCreator metadata: {self.description=}, {self.author=} {prettify_html=}"
+        )
+
+        # Render the HTML template
+        html = template.render(
+            title=self.title or "Report",
+            description=_gfm_markdown_to_html(self.description) if self.description else "",
+            author=self.author.strip() if self.author else "",
+            body=body,
+            header_logo=self.header_str,
+            include_plotly=include_plotly,
+            include_datatable=include_datatable,
+            include_mermaid=include_mermaid,
+            include_hljs=include_hljs,
+            code_theme=self.code_theme,
+            diagram_theme=self.diagram_theme,
+            accent_color=self.accent_color,
+            footer=_gfm_markdown_to_html(self.footer).strip() if self.footer else None,
+        )
+
+        # Save the HTML to file
         with open(path, "w", encoding="utf-8") as f:
-            html = template.render(
-                title=self.title or "Report",
-                description=_gfm_markdown_to_html(self.description) if self.description else "",
-                author=self.author.strip() if self.author else "",
-                body=body,
-                header_logo=self.header_str,
-                include_plotly=include_plotly,
-                include_datatable=include_datatable,
-                include_mermaid=include_mermaid,
-                include_hljs=include_hljs,
-                code_theme=self.code_theme,
-                diagram_theme=self.diagram_theme,
-                accent_color=self.accent_color,
-                footer=_gfm_markdown_to_html(self.footer).strip() if self.footer else None,
-            )
             if prettify_html:
                 try:
                     from bs4 import BeautifulSoup
@@ -2491,8 +2454,8 @@ class ReportCreator:
                     soup = BeautifulSoup(html, "html.parser")
                     f.write(soup.prettify(formatter="minimal"))
                 except ImportError:
+                    logger.warning("BeautifulSoup not installed, saving without prettification")
                     f.write(html)
-
             else:
                 f.write(html)
 

@@ -274,7 +274,7 @@ def test_report_creator_initialization():
 
 def test_report_creator_invalid_theme():
     """Test ReportCreator raises an error for invalid themes."""
-    with pytest.raises(AssertionError, match="Theme invalid_theme not in"):
+    with pytest.raises(AssertionError, match="Theme 'invalid_theme' not in"):
         rc.ReportCreator(title="Test", theme="invalid_theme")
 
 
