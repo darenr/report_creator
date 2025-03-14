@@ -190,6 +190,40 @@ def _strip_whitespace(func):
     return wrapper
 
 
+def create_color_value_sensitive_mapping(
+    values,
+    error_keywords=["error", "fail", "failed", "404"],  # noqa: B006
+):
+    """
+    Creates a color mapping for Plotly based on values and error keywords.
+
+    Args:
+        values (list): List of values (strings or numbers).
+        error_keywords (list): List of keywords indicating error/failure.
+
+    Returns:
+        list: List of colors corresponding to each value.
+    """
+    colors = []
+    for value in values:
+        if isinstance(value, str):
+            value_lower = value.lower()
+            if any(keyword in value_lower for keyword in error_keywords):
+                colors.append("red")  # Or "orange" for a less harsh color
+            else:
+                colors.append(
+                    "green"
+                )  # Or another positive color like "lightgreen", "royalblue"
+        elif isinstance(value, (int, float)):
+            if value < 0:  # Example: negative numbers can be errors
+                colors.append("red")
+            else:
+                colors.append("green")
+        else:
+            colors.append("gray")  # Default color for unknown types
+    return colors
+
+
 def _random_light_color_generator(word: str) -> tuple[str, str]:
     """returns auto selected light background_color
 
