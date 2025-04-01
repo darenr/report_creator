@@ -7,8 +7,9 @@ import random
 import time
 import uuid
 from html.parser import HTMLParser
-from typing import Optional
+from typing import List, Sequence, Union, Optional
 from urllib.parse import unquote, urlparse
+import requests.exceptions
 
 import emoji
 import humanize
@@ -18,6 +19,9 @@ from .theming import report_creator_colors
 
 logger = logging.getLogger("report_creator")
 
+DEFAULT_ELLIPSIS_LENGTH = 45
+
+_color_rng = random.Random() # Module-level instance
 
 def _generate_anchor_id(text: str) -> str:
     return uuid.uuid5(uuid.NAMESPACE_DNS, text).hex
@@ -65,7 +69,7 @@ def _check_html_tags_are_closed(html_content: str):
     return HTMLValidator().validate_html(html_content)
 
 
-def _ellipsis_url(url, max_length=45):
+def _ellipsis_url(url, max_length=DEFAULT_ELLIPSIS_LENGTH):
     """Truncates a URL to a given maximum length, adding an ellipsis in the middle."""
 
     if len(url) <= max_length:
@@ -160,9 +164,8 @@ def _time_it(func):
         value = func(*args, **kwargs)
         end_time = time.perf_counter()
         run_time = end_time - start_time
-        class_name = args[0].__class__.__name__ if args else None  # Get class name
-
-        logger.debug(f"[{class_name}::{func.__name__!r}] - {run_time:.4f} secs")
+        context = func.__qualname__ # Provides Class.method or just function name
+        logger.debug(f"[{context}] - {run_time:.4f} secs")
         return value
 
     return wrapper_timer
@@ -180,20 +183,23 @@ def _strip_whitespace(func):
 
     """
 
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         result = func(*args, **kwargs)
         if isinstance(result, str):
             return result.strip()
         else:
             return result
-
     return wrapper
 
 
 def create_color_value_sensitive_mapping(
-    values,
-    error_keywords=["error", "fail", "failed", "404"],  # noqa: B006
-):
+    values: List[Union[str, int, float]],
+    error_keywords: Optional[Sequence[str]] = None,
+    error_color: str = "red",
+    success_color: str = "green",
+    default_color: str = "gray",
+) -> List[str]:
     """
     Creates a color mapping for Plotly based on values and error keywords.
 
@@ -204,25 +210,33 @@ def create_color_value_sensitive_mapping(
     Returns:
         list: List of colors corresponding to each value.
     """
+    if error_keywords is None:
+        error_keywords = ("error", "fail", "failed", "404") # Use tuple default internally
+
     colors = []
+    # Make keyword matching case-insensitive only once
+    error_keywords_lower = {kw.lower() for kw in error_keywords}
+
     for value in values:
+        color_assigned = False
         if isinstance(value, str):
             value_lower = value.lower()
-            if any(keyword in value_lower for keyword in error_keywords):
-                colors.append("red")  # Or "orange" for a less harsh color
-            else:
-                colors.append(
-                    "green"
-                )  # Or another positive color like "lightgreen", "royalblue"
+            if any(keyword in value_lower for keyword in error_keywords_lower):
+                colors.append(error_color)
+                color_assigned = True
         elif isinstance(value, (int, float)):
-            if value < 0:  # Example: negative numbers can be errors
-                colors.append("red")
-            else:
-                colors.append("green")
-        else:
-            colors.append("gray")  # Default color for unknown types
-    return colors
+            if value < 0:  # Example: negative numbers are errors
+                colors.append(error_color)
+                color_assigned = True
 
+        if not color_assigned:
+            # Assign success color if it wasn't an error, otherwise default
+            if isinstance(value, (str, int, float)):
+                 colors.append(success_color)
+            else:
+                 colors.append(default_color) # Default color for other types
+
+    return colors
 
 def _random_light_color_generator(word: str) -> tuple[str, str]:
     """returns auto selected light background_color
@@ -230,7 +244,7 @@ def _random_light_color_generator(word: str) -> tuple[str, str]:
     Args:
         word (str): word to generate color for
     """
-    random.seed(word.encode())  # must be deterministic
+    _color_rng.seed(word.encode()) # Seed the dedicated instance
 
     def lighten_color(hex_color, factor=0.64):
         """Lightens a hex color by a given factor (0.0 to 1.0)."""
@@ -239,7 +253,7 @@ def _random_light_color_generator(word: str) -> tuple[str, str]:
         light_rgb = [int((1 - factor) * c + factor * 255) for c in rgb]
         return "#{:02x}{:02x}{:02x}".format(*light_rgb)
 
-    return lighten_color(random.choice(report_creator_colors)), "black"
+    return lighten_color(_color_rng.choice(report_creator_colors)), "black"
 
 
 def _random_color_generator(word: str) -> tuple[str, str]:
@@ -248,13 +262,13 @@ def _random_color_generator(word: str) -> tuple[str, str]:
     Args:
         word (str): word to generate color for
     """
-    random.seed(f"-{word}-".encode())  # must be deterministic
-    r = random.randint(0, 255)
-    g = random.randint(0, 255)
-    b = random.randint(0, 255)
+    _color_rng.seed(f"-{word}-".encode()) # Seed the dedicated instance
+    _r = _color_rng.randint(0, 255)
+    _g = _color_rng.randint(0, 255)
+    _b = _color_rng.randint(0, 255)
 
-    background_color = f"#{r:02x}{g:02x}{b:02x}"
-    text_color = "black" if (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.5 else "white"
+    background_color = f"#{_r:02x}{_g:02x}{_b:02x}"
+    text_color = "black" if (0.299 * _r + 0.587 * _g + 0.114 * _b) / 255 > 0.5 else "white"
 
     return background_color, text_color
 
@@ -279,47 +293,70 @@ def _convert_filepath_to_datauri(filepath: str) -> str:
     if not os.path.exists(filepath):
         raise FileNotFoundError(f"Image file not found: {filepath}")
 
-    with open(filepath, "rb") as image_file:
-        # Detect the MIME type of the file from the URL
-        mime_type, _ = mimetypes.guess_type(filepath)
-        logger.info(f"{filepath=} mime_type: {mime_type}")
+    try:
+        with open(filepath, "rb") as image_file:
+            # Detect the MIME type of the file from the URL
+            mime_type, _ = mimetypes.guess_type(filepath)
 
-        # Encode the content as base64
-        base64_content = base64.b64encode(image_file.read()).decode("utf-8")
+            if mime_type is None:
+                raise ValueError(f"Could not determine MIME type for {filepath}")
 
-        logger.info(
-            f"Image: ({_ellipsis_url(filepath)}) - {mime_type}, {len(base64_content)} bytes"
-        )
+            logger.info(f"{filepath=} mime_type: {mime_type}")
 
-        # Create the Data URI
-        data_uri = f"data:{mime_type};base64,{base64_content}"
+            # Encode the content as base64
+            base64_content = base64.b64encode(image_file.read()).decode("utf-8")
 
-    return data_uri
+            logger.info(
+                f"Image: ({_ellipsis_url(filepath)}) - {mime_type}, {len(base64_content)} bytes"
+            )
 
+            # Create the Data URI
+            data_uri = f"data:{mime_type};base64,{base64_content}"
+
+        return data_uri
+    
+    except IOError as e:
+        logger.error(f"Could not read file {filepath}: {e}")
+        raise ValueError(f"Could not convert file {filepath} to data URI") from e
+    except Exception as e:
+         logger.error(f"An unexpected error occurred converting {filepath}: {e}")
+         raise ValueError(f"Could not convert file {filepath} to data URI") from e
 
 def _convert_imgurl_to_datauri(image_url: str) -> str:
-    """convert url to base64 datauri
+    """Convert URL to base64 data URI.
 
     Args:
         image_url (str): url of the image
     """
 
-    headers = {"Referer": _get_url_root(image_url)}
+    try:
+        headers = {"Referer": _get_url_root(image_url)} # Referer might not always be needed/helpful
+        response = requests.get(image_url, headers=headers, timeout=10) # Add a timeout
+        response.raise_for_status() # Check for HTTP errors (4xx, 5xx)
 
-    response = requests.get(image_url, headers=headers)
-    response.raise_for_status()  # Check if the download was successful
+        # Prioritize Content-Type header for MIME type
+        content_type = response.headers.get('Content-Type')
+        if content_type:
+             mime_type = content_type.split(';')[0].strip() # Get primary MIME type
+        else:
+             # Fallback to guessing from URL extension
+             mime_type, _ = mimetypes.guess_type(image_url)
+             if mime_type is None:
+                 mime_type = 'application/octet-stream' # Default if cannot guess
 
-    # Detect the MIME type of the file from the URL
-    mime_type, _ = mimetypes.guess_type(image_url)
+        base64_content = base64.b64encode(response.content).decode("utf-8")
+        logger.info(
+            f"Image fetched: {mime_type}, {humanize.naturalsize(len(response.content))} ({_ellipsis_url(unquote(image_url))})"
+        )
+        data_uri = f"data:{mime_type};base64,{base64_content}"
+        return data_uri
 
-    # Encode the content as base64
-    base64_content = base64.b64encode(response.content).decode("utf-8")
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Failed to fetch image URL {image_url}: {e}")
+        # Decide how to handle: raise custom exception, return None, return placeholder URI?
+        # Example: Raise a specific error
+        raise ValueError(f"Could not convert image URL {image_url} to data URI") from e
+    except Exception as e: # Catch other potential errors (e.g., base64 encoding)
+         logger.error(f"An unexpected error occurred converting {image_url}: {e}")
+         raise ValueError(f"Could not convert image URL {image_url} to data URI") from e
 
-    logger.info(
-        f"Image: {mime_type}, {humanize.naturalsize(len(base64_content))} ({unquote(image_url)})"
-    )
-
-    # Create the Data URI
-    data_uri = f"data:{mime_type};base64,{base64_content}"
-
-    return data_uri
