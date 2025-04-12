@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Timeline</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .timeline {
+            display: flex;
+            align-items: center;
+            position: relative;
+            width: 600px;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            flex: 1;
+        }
+
+        .circle {
+            width: 30px;
+            height: 30px;
+            background-color: #666;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-weight: bold;
+            z-index: 1;
+        }
+
+        .circle.active {
+            background-color: #4a90e2;
+        }
+
+        .label {
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .line {
+            position: absolute;
+            height: 4px;
+            background-color: #666;
+            top: 13px;
+            left: 0;
+            right: 0;
+        }
+
+        .line-progress {
+            position: absolute;
+            height: 4px;
+            background-color: #4a90e2;
+            top: 13px;
+            left: 0;
+            width: 33.33%; /* Adjust this based on progress (33.33% for 1-2 completed) */
+        }
+    </style>
+</head>
+<body>
+    <div class="timeline">
+        <div class="line"></div>
+        <div class="line-progress"></div>
+        <div class="step">
+            <div class="circle active">1</div>
+            <div class="label">Register</div>
+        </div>
+        <div class="step">
+            <div class="circle active">2</div>
+            <div class="label">Choose plan</div>
+        </div>
+        <div class="step">
+            <div class="circle">3</div>
+            <div class="label">Purchase</div>
+        </div>
+        <div class="step">
+            <div class="circle">4</div>
+            <div class="label">Receive Product</div>
+        </div>
+    </div>
+</body>
+</html>

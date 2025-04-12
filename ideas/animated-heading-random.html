@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Randomized Animated Heading</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f9f9f9;
+    }
+    
+    .heading-container {
+      overflow: hidden;
+      text-align: center;
+    }
+    
+    .heading {
+      font-size: 3rem;
+      color: #333;
+      margin: 0;
+    }
+    
+    .word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    button {
+      margin-top: 40px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    button:hover {
+      background-color: #3367d6;
+    }
+  </style>
+</head>
+<body>
+  <div class="heading-container">
+    <h1 class="heading">
+      <span class="word">Words</span>
+      <span class="word">Will</span>
+      <span class="word">Animate</span>
+      <span class="word">At</span>
+      <span class="word">Random</span>
+      <span class="word">Speeds</span>
+    </h1>
+    
+    <button id="animate-btn">Animate Again</button>
+  </div>
+
+  <script>
+    // Function to get a random number between min and max
+    function getRandomValue(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+    
+    // Function to animate heading with random intervals
+    function animateHeadingRandom(selector, customText = null) {
+      const heading = document.querySelector(selector);
+      
+      // If custom text is provided, replace the heading content
+      if (customText) {
+        heading.innerHTML = '';
+        const words = customText.split(' ');
+        
+        words.forEach(word => {
+          const span = document.createElement('span');
+          span.textContent = word + ' ';
+          span.className = 'word';
+          heading.appendChild(span);
+        });
+      }
+      
+      // Get all word spans
+      const wordSpans = heading.querySelectorAll('.word');
+      
+      // Reset any existing animations
+      wordSpans.forEach(span => {
+        span.style.opacity = '0';
+        span.style.transform = 'translateY(20px)';
+        span.style.animation = 'none';
+      });
+      
+      // Force reflow to ensure animation reset
+      void heading.offsetWidth;
+      
+      // Apply random animations to each word
+      wordSpans.forEach(span => {
+        const speed = getRandomValue(0.5, 1.0);
+        
+        const delay = getRandomValue(0.0, 0.75);
+        
+        // Apply the animation
+        span.style.animation = `fadeIn ${speed.toFixed(2)}s ease-out ${delay.toFixed(2)}s forwards`;
+      });
+    }
+    
+    // Run the animation when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      animateHeadingRandom('.heading');
+      
+      // Add button click handler to re-animate
+      document.getElementById('animate-btn').addEventListener('click', function() {
+        animateHeadingRandom('.heading');
+      });
+    });
+    
+    // Example of how to use with custom text:
+    // animateHeadingRandom('.heading', 'This is a custom animated heading');
+  </script>
+</body>
+</html>
