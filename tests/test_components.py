@@ -274,7 +274,7 @@ def test_report_creator_initialization():
 
 def test_report_creator_invalid_theme():
     """Test ReportCreator raises an error for invalid themes."""
-    with pytest.raises(ValueError, match="Theme 'invalid_theme' not in available themes"):
+    with pytest.raises(AssertionError, match="Theme 'invalid_theme' not in"):
         rc.ReportCreator(title="Test", theme="invalid_theme")
 
 
@@ -339,7 +339,7 @@ def test_report_creator_save_with_group(tmp_path):
 def test_report_creator_invalid_view():
     """Test save raises an error for invalid view types."""
     report = rc.ReportCreator(title="Invalid View Test")
-    with pytest.raises(ValueError, match="Expected view to be an instance of Base component, got str instead"):
+    with pytest.raises(ValueError, match="Expected view to be either Block or Group object"):
         report.save("InvalidViewType", "output.html")
 
 

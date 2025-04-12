@@ -1,9 +1,5 @@
-"""
-Report Creator: A library for creating beautiful HTML reports from Python.
-"""
-
-from .__version__ import __version__
-from .components import (
+from report_creator.__version__ import __version__
+from report_creator.report_creator import (
     Accordion,
     Bar,
     Base,
@@ -30,6 +26,7 @@ from .components import (
     Prolog,
     Python,
     Radar,
+    ReportCreator,
     Scatter,
     Select,
     Separator,
@@ -41,8 +38,5 @@ from .components import (
     Unformatted,
     Widget,
     Yaml,
+    report_creator_colors,
 )
-from .report_creator import ReportCreator
-
-# Re-export components and other classes, constants
-from .theming import report_creator_colors
