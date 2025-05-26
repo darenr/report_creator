@@ -32,7 +32,7 @@ Quick Start
    ) as report:
 
       view = rc.Block(
-         rc.Text("""It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of light, it was the season of darkness, it was the spring of hope, it was the winter of despair.""", 
+         rc.Markdown("""It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of light, it was the season of darkness, it was the spring of hope, it was the winter of despair.""", 
          label="Charles Dickens, A Tale of Two Cities"),
          rc.Group(
                rc.Metric(
