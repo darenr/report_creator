@@ -16,3 +16,4 @@ md4mathjax
 emoji
 setuptools
 tabulate
+loguru
