@@ -6,9 +6,9 @@ import os
 import random
 import time
 import uuid
-from collections.abc import Sequence  # Added Any, Tuple
+from collections.abc import Sequence  # Added Any, tuple
 from html.parser import HTMLParser
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Optional, Union, list
 from urllib.parse import unquote, urlparse
 
 # Third-party imports
@@ -75,7 +75,7 @@ def _is_number(value: Any) -> bool:
         return False
 
 
-def _check_html_tags_are_closed(html_content: str) -> Tuple[bool, Optional[List[str]]]:
+def _check_html_tags_are_closed(html_content: str) -> tuple[bool, Optional[list[str]]]:
     """
     Validates if all HTML tags in a given string are properly closed.
 
@@ -89,7 +89,7 @@ def _check_html_tags_are_closed(html_content: str) -> Tuple[bool, Optional[List[
                             is cast to `str` before parsing.
 
     Returns:
-        Tuple[bool, Optional[List[str]]]:
+        tuple[bool, Optional[list[str]]]:
             - `(True, None)` if all HTML tags are properly closed.
             - `(False, list_of_unclosed_tags)` if there are unclosed tags.
               `list_of_unclosed_tags` contains a copy of the names of the tags
@@ -105,9 +105,9 @@ def _check_html_tags_are_closed(html_content: str) -> Tuple[bool, Optional[List[
 
         def __init__(self) -> None:
             super().__init__()
-            self.tag_stack: List[str] = []  # Stack to keep track of opened tags
+            self.tag_stack: list[str] = []  # Stack to keep track of opened tags
 
-        def handle_starttag(self, tag: str, attrs: Any) -> None:
+        def handle_starttag(self, tag: str, attrs: Any) -> None:  # noqa: ARG002
             # When a start tag is encountered, push it onto the stack.
             self.tag_stack.append(tag)
 
@@ -127,7 +127,7 @@ def _check_html_tags_are_closed(html_content: str) -> Tuple[bool, Optional[List[
                     f"but stack top is '{self.tag_stack[-1] if self.tag_stack else 'empty'}'."
                 )
 
-        def get_validation_result(self) -> Tuple[bool, Optional[List[str]]]:
+        def get_validation_result(self) -> tuple[bool, Optional[list[str]]]:
             """Returns the validation result based on the final state of the stack."""
             if not self.tag_stack:
                 # If the stack is empty, all opened tags were properly closed.
@@ -363,14 +363,14 @@ def _strip_whitespace(func: callable) -> callable:
 
 
 def create_color_value_sensitive_mapping(
-    values: List[Union[str, int, float, bool]],  # Added bool to Union
+    values: list[Union[str, int, float, bool]],  # Added bool to Union
     error_keywords: Optional[Sequence[str]] = None,
     error_color: str = "red",
     success_color: str = "green",
     default_color: str = "gray",
     boolean_true_color: Optional[str] = None,  # Color for True booleans
     boolean_false_color: Optional[str] = None,  # Color for False booleans
-) -> List[str]:
+) -> list[str]:
     """
     Creates a list of colors corresponding to a list of input values, assigning
     colors based on error conditions, success, boolean states, or a default.
@@ -390,7 +390,7 @@ def create_color_value_sensitive_mapping(
             receive `default_color`.
 
     Args:
-        values (List[Union[str, int, float, bool]]): A list of values to be color-coded.
+        values (list[Union[str, int, float, bool]]): A list of values to be color-coded.
         error_keywords (Optional[Sequence[str]], optional): A sequence of strings.
             If any of these (case-insensitive) are found within a string value,
             it's marked as an error. Defaults to `("error", "fail", "failed", "failure", "404", "exception")`.
@@ -408,12 +408,12 @@ def create_color_value_sensitive_mapping(
 
 
     Returns:
-        List[str]: A list of color strings, one for each input value.
+        list[str]: A list of color strings, one for each input value.
     """
     if error_keywords is None:
         error_keywords = ("error", "fail", "failed", "failure", "404", "exception", "critical")
 
-    output_colors: List[str] = []
+    output_colors: list[str] = []
     # Prepare error keywords for case-insensitive matching
     lower_error_keywords = {keyword.lower() for keyword in error_keywords}
 
@@ -424,9 +424,8 @@ def create_color_value_sensitive_mapping(
         if isinstance(value, str):
             if any(err_kw in value.lower() for err_kw in lower_error_keywords):
                 assigned_color = error_color
-        elif isinstance(value, (int, float)):
-            if value < 0:
-                assigned_color = error_color
+        elif isinstance(value, (int, float)) and value < 0:
+            assigned_color = error_color
 
         # If not an error, check for boolean-specific colors
         if assigned_color is None and isinstance(value, bool):
@@ -437,19 +436,16 @@ def create_color_value_sensitive_mapping(
 
         # If still no color assigned, apply success or default
         if assigned_color is None:
-            if isinstance(
-                value, (str, int, float, bool)
-            ):  # bool included here for cases where specific bool colors are not set
-                assigned_color = success_color
-            else:
-                assigned_color = default_color  # For types not explicitly handled
+            assigned_color = (
+                success_color if isinstance(value, (str, int, float, bool)) else default_color
+            )
 
         output_colors.append(assigned_color)
 
     return output_colors
 
 
-def _random_light_color_generator(seed_word: str) -> Tuple[str, str]:
+def _random_light_color_generator(seed_word: str) -> tuple[str, str]:
     """
     Generates a light background color and a fixed text color ("black")
     deterministically based on an input `seed_word`.
@@ -464,7 +460,7 @@ def _random_light_color_generator(seed_word: str) -> Tuple[str, str]:
             ensuring deterministic output for the same seed.
 
     Returns:
-        Tuple[str, str]: A tuple where the first element is the lightened
+        tuple[str, str]: A tuple where the first element is the lightened
                          background color (hex string, e.g., "#aabbcc") and
                          the second element is the text color ("black").
     """
@@ -490,7 +486,7 @@ def _random_light_color_generator(seed_word: str) -> Tuple[str, str]:
     return lightened_bg_color, "black"  # Text color is fixed to black for light backgrounds
 
 
-def _random_color_generator(seed_word: str) -> Tuple[str, str]:
+def _random_color_generator(seed_word: str) -> tuple[str, str]:
     """
     Generates a random background color and a contrasting text color (black or white)
     deterministically based on an input `seed_word`.
@@ -504,7 +500,7 @@ def _random_color_generator(seed_word: str) -> Tuple[str, str]:
         seed_word (str): The string used to seed the random color generation.
 
     Returns:
-        Tuple[str, str]: A tuple containing:
+        tuple[str, str]: A tuple containing:
                          - The generated background color (hex string, e.g., "#1a2b3c").
                          - The contrasting text color ("black" or "white").
     """

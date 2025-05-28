@@ -4,40 +4,36 @@ import html
 import io
 import json
 import os
-from pathlib import Path
 import re
 import textwrap
 import traceback
-from abc import ABC, abstractmethod
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Optional, Union
 from uuid import uuid4
 
 # Third-party imports - organized by category
 # Data handling
-import dateutil
-import pandas as pd
-import yaml
-
 # Visualization
 import humanize
 import matplotlib
 import matplotlib as mpl
+import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
 import plotly.io as pio
+import yaml
 from cycler import cycler
 
 # Templating & formatting
 from jinja2 import Environment, FileSystemLoader
-from markupsafe import escape # Used by Jinja2, good to be aware of for context
 
 # Loguru for logging
 from loguru import logger
 
 # Internal imports
-from .base import Base # Import Base from base.py
-from .charts import Bar, Line, Pie, Radar, Scatter, Box, Histogram, PxBase # Import charts
+from .base import Base  # Import Base from base.py
+from .charts import PxBase  # Import charts
 from .theming import get_rc_theme, preferred_fonts, report_creator_colors
 from .utilities import (
     _check_html_tags_are_closed,
@@ -57,7 +53,7 @@ from .utilities import (
 # logger.add(sys.stderr, level="INFO") # Example: Add back a default stderr handler
 
 # Silence noisy loggers from dependencies
-logger.disable("urllib3") # Often too verbose with connection pool messages
+logger.disable("urllib3")  # Often too verbose with connection pool messages
 logger.disable("matplotlib.font_manager")
 
 
@@ -87,10 +83,9 @@ class Block(Base):
 
     def __init__(self, *components: Base, label: Optional[str] = None):
         super().__init__(label=label)
-        self.components = components # Store the child components
+        self.components = components  # Store the child components
         logger.info(
-            f"Block component initialized with {len(self.components)} child components. "
-            f"Label: '{label}'"
+            f"Block component initialized with {len(self.components)} child components. Label: '{label}'"
         )
 
     @_strip_whitespace
@@ -144,10 +139,9 @@ class Group(Base):
 
     def __init__(self, *components: Base, label: Optional[str] = None):
         super().__init__(label=label)
-        self.components = components # Store the child components
+        self.components = components  # Store the child components
         logger.info(
-            f"Group component initialized with {len(self.components)} child components. "
-            f"Label: '{self.label}'"
+            f"Group component initialized with {len(self.components)} child components. Label: '{self.label}'"
         )
 
     @_strip_whitespace
@@ -162,22 +156,22 @@ class Group(Base):
         Returns:
             str: The HTML representation of the group and its contents.
         """
-        html_parts = ["<div>"] # Outer container for label + group
+        html_parts = ["<div>"]  # Outer container for label + group
 
         if self.label:
             # Ensure the label is HTML-escaped before rendering
             escaped_label = html.escape(self.label)
             # Generate anchor ID from the original (unescaped) label for consistency
-            anchor_id = _generate_anchor_id(self.label) 
+            anchor_id = _generate_anchor_id(self.label)
             html_parts.append(
                 f"<report-caption><a href='#{anchor_id}'>{escaped_label}</a></report-caption>"
             )
 
-        html_parts.append('<div class="group">') # Start of the group content area
+        html_parts.append('<div class="group">')  # Start of the group content area
 
         for component in self.components:
             html_parts.append('<div class="group-content">')
-            html_parts.append(component.to_html()) # Each component renders itself
+            html_parts.append(component.to_html())  # Each component renders itself
             html_parts.append("</div>")
 
         html_parts.append("</div>")  # End of group
@@ -213,12 +207,13 @@ class Collapse(Base):
 
     def __init__(self, *components: Base, label: Optional[str] = None):
         super().__init__(label=label)
-        self.components = components # Store child components
+        self.components = components  # Store child components
         if not label:
-            logger.warning("Collapse component initialized without a label. The summary will default to 'Details'.")
+            logger.warning(
+                "Collapse component initialized without a label. The summary will default to 'Details'."
+            )
         logger.info(
-            f"Collapse component initialized with {len(self.components)} child components. "
-            f"Label: '{self.label}'"
+            f"Collapse component initialized with {len(self.components)} child components. Label: '{self.label}'"
         )
 
     @_strip_whitespace
@@ -235,14 +230,14 @@ class Collapse(Base):
         """
         # HTML-escape the label for safe rendering within <summary>.
         # Provide a default if label is None or empty.
-        summary_text = html.escape(self.label) if self.label and self.label.strip() else "Details"
+        summary_text = (
+            html.escape(self.label) if self.label and self.label.strip() else "Details"
+        )
 
-        html_parts = [
-            f'<details class="collapse"><summary>{summary_text}</summary>'
-        ]
+        html_parts = [f'<details class="collapse"><summary>{summary_text}</summary>']
 
         for component in self.components:
-            html_parts.append(component.to_html()) # Components render themselves
+            html_parts.append(component.to_html())  # Components render themselves
 
         html_parts.append("</details>")
         return "".join(html_parts)
@@ -288,24 +283,30 @@ class Widget(Base):
 
     def __init__(self, widget: Any, *, label: Optional[str] = None):
         super().__init__(label=label)
-        
+
         # Pre-process certain widget types
         processed_widget = widget
         if isinstance(widget, go.Figure):
-            PxBase.apply_common_fig_options(processed_widget) # Apply consistent styling
-        elif hasattr(widget, "get_figure") and callable(widget.get_figure): 
+            PxBase.apply_common_fig_options(processed_widget)  # Apply consistent styling
+        elif hasattr(widget, "get_figure") and callable(widget.get_figure):
             # For objects like Seaborn's FacetGrid or JointGrid
             try:
                 fig = widget.get_figure()
                 if isinstance(fig, matplotlib.figure.Figure):
                     processed_widget = fig
                 else:
-                    logger.warning(f"get_figure() on {type(widget)} did not return a Matplotlib Figure. Using original widget.")
+                    logger.warning(
+                        f"get_figure() on {type(widget)} did not return a Matplotlib Figure. Using original widget."
+                    )
             except Exception as e:
-                logger.warning(f"Error calling get_figure() on {type(widget)}: {e}. Using original widget.")
-        
+                logger.warning(
+                    f"Error calling get_figure() on {type(widget)}: {e}. Using original widget."
+                )
+
         self.widget = processed_widget
-        logger.info(f"Widget component initialized with widget of type: {type(self.widget)}. Label: '{self.label}'")
+        logger.info(
+            f"Widget component initialized with widget of type: {type(self.widget)}. Label: '{self.label}'"
+        )
 
     def _render_widget_to_html(self) -> str:
         """Determines the best HTML representation for the widget."""
@@ -316,13 +317,15 @@ class Widget(Base):
             # Convert Matplotlib figure to an embedded base64 PNG image
             img_buffer = io.BytesIO()
             # Configure figure properties for better appearance in reports
-            self.widget.set_dpi(150) # Standard DPI for web display
+            self.widget.set_dpi(150)  # Standard DPI for web display
             # Consider making figwidth/figheight configurable if needed
-            # self.widget.set_figwidth(10) 
-            self.widget.tight_layout() # Adjust layout to prevent overlapping elements
+            # self.widget.set_figwidth(10)
+            self.widget.tight_layout()  # Adjust layout to prevent overlapping elements
             self.widget.savefig(img_buffer, format="png", bbox_inches="tight")
             img_buffer.seek(0)
-            b64_image = base64.b64encode(img_buffer.getvalue()).decode("utf-8").replace("\n", "")
+            b64_image = (
+                base64.b64encode(img_buffer.getvalue()).decode("utf-8").replace("\n", "")
+            )
             alt_text = html.escape(self.label or "Matplotlib Figure")
             # Style for responsiveness: max-width ensures it scales down, height:auto maintains aspect ratio.
             return f'<img src="data:image/png;base64,{b64_image}" alt="{alt_text}" style="max-width:100%; height:auto; border: 1px solid #ddd;">'
@@ -333,7 +336,9 @@ class Widget(Base):
             # Fallback: convert the object to string, HTML-escape it, and wrap in <pre> for preformatted text
             return f"<pre>{html.escape(str(self.widget))}</pre>"
         else:
-            logger.warning(f"Widget of type {type(self.widget)} has no known HTML representation.")
+            logger.warning(
+                f"Widget of type {type(self.widget)} has no known HTML representation."
+            )
             return "<p><i>Widget content could not be rendered.</i></p>"
 
     @_strip_whitespace
@@ -351,11 +356,11 @@ class Widget(Base):
 
         if self.label:
             escaped_label = html.escape(self.label)
-            anchor_id = _generate_anchor_id(self.label) # Use original label for ID
+            anchor_id = _generate_anchor_id(self.label)  # Use original label for ID
             html_parts.append(
                 f"<report-caption><a href='#{anchor_id}'>{escaped_label}</a></report-caption>"
             )
-        
+
         html_parts.append(self._render_widget_to_html())
         html_parts.append("</div>")
         return "".join(html_parts)
@@ -397,27 +402,30 @@ class MetricGroup(Base):
     def __init__(
         self, df: pd.DataFrame, heading: str, value: str, *, label: Optional[str] = None
     ):
-        super().__init__(label=label) # The label is primarily for the Group
+        super().__init__(label=label)  # The label is primarily for the Group
 
         if not isinstance(df, pd.DataFrame):
             raise ValueError("Input 'df' must be a Pandas DataFrame.")
         if heading not in df.columns:
-            raise ValueError(f"Heading column '{heading}' not found in DataFrame columns: {df.columns.tolist()}")
+            raise ValueError(
+                f"Heading column '{heading}' not found in DataFrame columns: {df.columns.tolist()}"
+            )
         if value not in df.columns:
-            raise ValueError(f"Value column '{value}' not found in DataFrame columns: {df.columns.tolist()}")
+            raise ValueError(
+                f"Value column '{value}' not found in DataFrame columns: {df.columns.tolist()}"
+            )
 
         # Create a list of Metric components from the DataFrame rows
         metrics = [
             Metric(heading=str(row[heading]), value=row[value]) for _, row in df.iterrows()
         ]
-        
+
         # Use an internal Group component to arrange these metrics.
         # The label provided to MetricGroup is passed to this Group.
         self.group_component = Group(*metrics, label=self.label)
 
         logger.info(
-            f"MetricGroup component generated {len(metrics)} metrics. "
-            f"Label for the group: '{self.label}'"
+            f"MetricGroup component generated {len(metrics)} metrics. Label for the group: '{self.label}'"
         )
 
     @_strip_whitespace
@@ -484,15 +492,18 @@ class EventMetric(Base):
 
         if date not in df.columns:
             raise ValueError(f"Date column '{date}' not found in DataFrame.")
-        
-        self.df = df.copy() # Work on a copy
+
+        self.df = df.copy()  # Work on a copy
         self.date_col_name = date
         self.frequency = frequency
 
         # Ensure the date column is in datetime format
         from pandas.api.types import is_datetime64_any_dtype as is_datetime
+
         if not is_datetime(self.df[self.date_col_name]):
-            logger.info(f"EventMetric attempting to convert column '{self.date_col_name}' to datetime.")
+            logger.info(
+                f"EventMetric attempting to convert column '{self.date_col_name}' to datetime."
+            )
             try:
                 self.df[self.date_col_name] = pd.to_datetime(self.df[self.date_col_name])
             except Exception as e:
@@ -506,7 +517,7 @@ class EventMetric(Base):
         self.color = color
         self.heading = heading if heading is not None else self.condition
         # Internal column name for the result of the condition evaluation (0 or 1)
-        self.y_col_name = f"_Y_EVENT_METRIC_{uuid4().hex[:8]}" # Unique internal name
+        self.y_col_name = f"_Y_EVENT_METRIC_{uuid4().hex[:8]}"  # Unique internal name
 
         logger.info(
             f"EventMetric initialized: {len(self.df)} rows, "
@@ -527,8 +538,9 @@ class EventMetric(Base):
             self.df[self.y_col_name] = self.df.eval(self.condition).astype(int)
         except Exception as e:
             logger.error(f"Error evaluating condition '{self.condition}': {e}")
-            raise ValueError(f"Failed to evaluate condition: {self.condition}. Error: {e}") from e
-
+            raise ValueError(
+                f"Failed to evaluate condition: {self.condition}. Error: {e}"
+            ) from e
 
         # Group by the specified frequency and sum the event indicator column
         df_grouped = (
@@ -537,7 +549,7 @@ class EventMetric(Base):
             .sum()
             .reset_index()
         )
-        
+
         agg_value = int(df_grouped[self.y_col_name].sum(skipna=True))
         return df_grouped, agg_value
 
@@ -556,7 +568,7 @@ class EventMetric(Base):
             x=self.date_col_name,
             y=self.y_col_name,
             line_shape="spline",
-            height=135, # Compact height
+            height=135,  # Compact height
             template="simple_white",
         )
         PxBase.apply_common_fig_options(fig)
@@ -565,7 +577,7 @@ class EventMetric(Base):
             fill="tonexty",
             fillcolor=self.color,
             line_color=self.color,
-            hovertemplate=None, # Use Plotly's default hover
+            hovertemplate=None,  # Use Plotly's default hover
         )
         fig.update_layout(margin={"t": 0, "l": 0, "b": 0, "r": 0})
         fig.update_xaxes(visible=True, showticklabels=True, title=None, tickformat="%m/%d")
@@ -593,13 +605,12 @@ class EventMetric(Base):
             fig_html = "<p><i>Error generating event metric chart.</i></p>"
             agg_value = "Error"
 
-
         description_html = (
             f"<div class='metric-description'><p>{html.escape(self.label)}</p></div>"
             if self.label
             else ""
         )
-        
+
         return f"""
             <div class="metric">
                 <p>{html.escape(self.heading)}:</p>
@@ -656,16 +667,18 @@ class Metric(Base):
         color: Optional[bool] = False,
     ):
         super().__init__(label=textwrap.dedent(label) if label else None)
-        self.heading = str(heading) # Ensure heading is a string
+        self.heading = str(heading)  # Ensure heading is a string
         self.float_precision = float_precision
         self.value = value
-        self.unit = unit or "" # Ensure unit is a string, defaults to empty
+        self.unit = unit or ""  # Ensure unit is a string, defaults to empty
         self.color = color
 
         if isinstance(self.value, str):
             self.value = self.value.strip()
 
-        logger.info(f"Metric component: heading='{self.heading}', value='{self.value}', label='{self.label}'")
+        logger.info(
+            f"Metric component: heading='{self.heading}', value='{self.value}', label='{self.label}'"
+        )
 
     def __str__(self) -> str:
         return f"Metric(heading='{self.heading}', value='{self.value}', unit='{self.unit}', label='{self.label}')"
@@ -691,15 +704,25 @@ class Metric(Base):
             standard_float = f"{self.value:.{self.float_precision}f}"
             # Check if humanize.intword actually did something significant
             # This condition might need refinement based on typical value ranges
-            if humanized_float.replace(",", "").replace(".", "").isdigit() and \
-               abs(float(humanized_float.split()[0] if ' ' in humanized_float else humanized_float) - self.value) < 1e-9 : # if it's just the number
+            if (
+                humanized_float.replace(",", "").replace(".", "").isdigit()
+                and abs(
+                    float(
+                        humanized_float.split()[0]
+                        if " " in humanized_float
+                        else humanized_float
+                    )
+                    - self.value
+                )
+                < 1e-9
+            ):  # if it's just the number
                 value_str = standard_float
             else:
                 value_str = humanized_float
         elif isinstance(self.value, datetime):
             value_str = self.value.strftime("%Y-%m-%d")
         else:
-            value_str = html.escape(str(self.value)) # Escape string values
+            value_str = html.escape(str(self.value))  # Escape string values
 
         description_html = (
             f"<div class='metric-description'>{_gfm_markdown_to_html(self.label)}</div>"
@@ -711,9 +734,9 @@ class Metric(Base):
         if self.color:
             bk_color, text_color = _random_light_color_generator(self.heading)
             style_attribute = f'style="background-color: {bk_color}; color: {text_color};"'
-        
+
         escaped_heading = html.escape(self.heading)
-        
+
         return f"""
             <div class="metric" {style_attribute}>
                 <p>{escaped_heading}:</p>
@@ -758,16 +781,18 @@ class Table(Widget):
         data: Union[pd.DataFrame, list[dict]],
         *,
         label: Optional[str] = None,
-        index: Optional[bool] = False, # Default to False for cleaner tables
+        index: Optional[bool] = False,  # Default to False for cleaner tables
         float_precision: Optional[int] = 2,
     ):
         if isinstance(data, list):
             try:
                 df = pd.DataFrame(data)
             except Exception as e:
-                raise ValueError(f"Could not convert list of dictionaries to DataFrame: {e}")
+                raise ValueError(
+                    f"Could not convert list of dictionaries to DataFrame: {e}"
+                ) from e
         elif isinstance(data, pd.DataFrame):
-            df = data.copy() # Use a copy to avoid modifying the original DataFrame
+            df = data.copy()  # Use a copy to avoid modifying the original DataFrame
         else:
             raise ValueError(
                 f"Expected data to be a list of dictionaries or pd.DataFrame, got {type(data).__name__}"
@@ -776,7 +801,7 @@ class Table(Widget):
         # Apply Pandas Styler for formatting
         styler = df.style
         if not index:
-            styler = styler.hide(axis="index") # Hide index if requested
+            styler = styler.hide(axis="index")  # Hide index if requested
 
         # Format with specified precision and ensure HTML escaping for cell content.
         # The 'escape="html"' argument to Styler.format handles escaping cell content.
@@ -786,12 +811,12 @@ class Table(Widget):
         # If Widget expects raw HTML, then formatted_styler.to_html() would be passed.
         # Based on Widget's _render_widget_to_html, it expects the Styler object.
         formatted_styler = styler.format(precision=float_precision, escape="html")
-        
+
         logger.info(
             f"Table component initialized with {len(df)} rows, {len(df.columns)} columns. "
             f"Label: '{label}', Index shown: {index}, Float precision: {float_precision}"
         )
-        
+
         # Initialize the parent Widget class with the formatted Styler object
         # The label will be handled by the Widget's to_html method (including escaping).
         super().__init__(widget=formatted_styler, label=label)
@@ -837,23 +862,25 @@ class DataTable(Base):
         self,
         data: Union[pd.DataFrame, list[dict]],
         *,
-        label: Optional[str] = None, # Label for table caption
+        label: Optional[str] = None,  # Label for table caption
         wrap_text: bool = True,
-        index: Optional[bool] = False, # Default to False
-        max_rows: Optional[int] = -1, # Default to all rows
+        index: Optional[bool] = False,  # Default to False
+        max_rows: Optional[int] = -1,  # Default to all rows
         float_precision: Optional[int] = 2,
     ):
         # The 'label' for Base is used here as the table's caption.
         # Styler handles HTML escaping for the caption if 'label' is passed to it.
-        super().__init__(label=label) 
+        super().__init__(label=label)
 
         if isinstance(data, list):
             try:
                 df = pd.DataFrame(data)
             except Exception as e:
-                raise ValueError(f"Could not convert list of dictionaries to DataFrame: {e}")
+                raise ValueError(
+                    f"Could not convert list of dictionaries to DataFrame: {e}"
+                ) from e
         elif isinstance(data, pd.DataFrame):
-            df = data.copy() # Use a copy
+            df = data.copy()  # Use a copy
         else:
             raise ValueError(
                 f"Expected data to be a list of dictionaries or pd.DataFrame, got {type(data).__name__}"
@@ -863,7 +890,7 @@ class DataTable(Base):
         processed_df = df.head(max_rows) if max_rows > 0 else df
         styler = processed_df.style
 
-        if self.label: # Use the label passed to __init__ (and stored in Base)
+        if self.label:  # Use the label passed to __init__ (and stored in Base)
             # Pandas Styler's set_caption should handle HTML escaping of the caption text.
             styler = styler.set_caption(self.label)
 
@@ -878,11 +905,11 @@ class DataTable(Base):
         styler = styler.set_table_attributes(
             f'class="{" ".join(table_classes)} cellspacing="0" style="width: 100%;"'
         )
-        
+
         # Format the Styler object to HTML, ensuring cell content is escaped.
         # The 'escape="html"' argument to format() handles this.
         self.table_html = styler.format(precision=float_precision, escape="html").to_html()
-        
+
         logger.info(
             f"DataTable component initialized: {len(processed_df)} rows, {len(processed_df.columns)} columns. "
             f"Label: '{self.label}', Index: {index}, Wrap: {wrap_text}, Max Rows: {max_rows}"
@@ -947,7 +974,7 @@ class Html(Base):
         bordered: Optional[bool] = False,
     ):
         super().__init__(label=label)
-        self.html_str = str(html) # Ensure it's a string
+        self.html_str = str(html)  # Ensure it's a string
         self.css = css
         self.bordered = bordered
         status, errors = _check_html_tags_are_closed(self.html_str)
@@ -969,9 +996,9 @@ class Html(Base):
             str: The HTML string for the component.
         """
         border_class = "round-bordered" if self.bordered else ""
-        
+
         html_output_parts = []
-        
+
         if self.css:
             # CSS is typically not HTML-escaped when placed in <style> tags.
             # However, ensure no malicious content if CSS comes from untrusted source.
@@ -980,15 +1007,15 @@ class Html(Base):
 
         if self.label:
             escaped_label = html.escape(self.label)
-            anchor_id = _generate_anchor_id(self.label) # Use original label for ID
+            anchor_id = _generate_anchor_id(self.label)  # Use original label for ID
             html_output_parts.append(
                 f"<report-caption><a href='#{anchor_id}'>{escaped_label}</a></report-caption>"
             )
-        
+
         # self.html_str is already validated for closed tags in __init__.
         # It is rendered as-is.
         html_output_parts.append(f'<div class="{border_class}">{self.html_str}</div>')
-        
+
         return "".join(html_output_parts)
 
 
@@ -1039,8 +1066,8 @@ class Diagram(Base):
     ):
         super().__init__(label=label)
 
-        self.src = src # Mermaid source code
-        self.extra_css = extra_css or "" # Ensure it's a string
+        self.src = src  # Mermaid source code
+        self.extra_css = extra_css or ""  # Ensure it's a string
         self.pan_and_zoom = pan_and_zoom
         logger.info(
             f"Diagram component initialized with {len(self.src)} characters of Mermaid source. "
@@ -1064,24 +1091,22 @@ class Diagram(Base):
 
         if self.label:
             escaped_label = html.escape(self.label)
-            anchor_id = _generate_anchor_id(self.label) # Use original label for ID
+            anchor_id = _generate_anchor_id(self.label)  # Use original label for ID
             html_parts.append(
                 f"<figcaption><report-caption><a href='#{anchor_id}'>{escaped_label}</a></report-caption></figcaption>"
             )
-        
+
         # Add 'include_mermaid' class to signal JS to process this.
         # Add 'mermaid-pan-zoom' class if pan_and_zoom is enabled.
         mermaid_classes = "mermaid include_mermaid"
         if self.pan_and_zoom:
             mermaid_classes += " mermaid-pan-zoom"
-            
+
         # extra_css should be used carefully; ensure it's safe if from user input.
         # self.src is not escaped here as Mermaid.js processes it.
         # Strip leading/trailing whitespace from src for cleaner rendering in <pre>
         html_parts.append(
-            f'<pre class="{mermaid_classes}" style="{html.escape(self.extra_css, quote=True)}">'
-            f'{self.src.strip()}' 
-            f'</pre>'
+            f'<pre class="{mermaid_classes}" style="{html.escape(self.extra_css, quote=True)}">{self.src.strip()}</pre>'
         )
 
         if self.pan_and_zoom:
@@ -1144,7 +1169,7 @@ class Image(Base):
         convert_to_base64: Optional[bool] = False,
     ):
         super().__init__(label=label)
-        self.original_src = src # Keep original src for alt text or logging
+        self.original_src = src  # Keep original src for alt text or logging
         self.link_to = link_to
         self.extra_css = extra_css or ""
         self.rounded_css = "border-radius: 0.75rem;" if rounded else ""
@@ -1161,13 +1186,17 @@ class Image(Base):
                 # URL to be fetched and converted to base64
                 processed_src = _convert_imgurl_to_datauri(src)
             # If it's a URL and convert_to_base64 is False, src remains as is.
-        except ValueError as e: # Catch errors from conversion utilities
-            logger.error(f"Error processing image source '{src}': {e}. Will use original src if possible.")
+        except ValueError as e:  # Catch errors from conversion utilities
+            logger.error(
+                f"Error processing image source '{src}': {e}. Will use original src if possible."
+            )
             # Fallback to using original src if conversion failed, browser might still render it if it's a valid URL
-            processed_src = src 
-        
+            processed_src = src
+
         self.src = processed_src
-        logger.info(f"Image component: processed_src='{self.src[:70]}...', label='{self.label}'")
+        logger.info(
+            f"Image component: processed_src='{self.src[:70]}...', label='{self.label}'"
+        )
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -1184,24 +1213,28 @@ class Image(Base):
         # Determine alt text: use label if available, otherwise use the original src.
         # Escape alt text for safety.
         alt_text_source = self.label if self.label else self.original_src
-        alt_text = html.escape(alt_text_source[:100] if alt_text_source else "Image") # Limit alt text length
+        alt_text = html.escape(
+            alt_text_source[:100] if alt_text_source else "Image"
+        )  # Limit alt text length
 
         # Ensure self.src (image source) and self.extra_css are properly escaped for HTML attributes
         escaped_img_src = html.escape(self.src, quote=True)
         escaped_extra_css = html.escape(self.extra_css.strip(), quote=True)
-        
+
         image_style = f"{self.rounded_css} {escaped_extra_css}".strip()
         image_markup = f'<img src="{escaped_img_src}" style="{image_style}" alt="{alt_text}">'
 
         if self.link_to:
             escaped_link_to = html.escape(self.link_to, quote=True)
-            html_output_parts.append(f'<a href="{escaped_link_to}" target="_blank">{image_markup}</a>')
+            html_output_parts.append(
+                f'<a href="{escaped_link_to}" target="_blank">{image_markup}</a>'
+            )
         else:
             html_output_parts.append(image_markup)
 
         if self.label:
             escaped_label_for_caption = html.escape(self.label)
-            anchor_id = _generate_anchor_id(self.label) # Use original label for ID
+            anchor_id = _generate_anchor_id(self.label)  # Use original label for ID
             html_output_parts.append(
                 f"<figcaption><report-caption><a href='#{anchor_id}'>{escaped_label_for_caption}</a></report-caption></figcaption>"
             )
@@ -1249,8 +1282,8 @@ class Markdown(Base):
     ):
         super().__init__(label=label)
         # Dedent the input text to handle common indentation in triple-quoted strings
-        self.text = textwrap.dedent(str(text)) # Ensure text is string
-        self.extra_css = extra_css or "" # Ensure it's a string
+        self.text = textwrap.dedent(str(text))  # Ensure text is string
+        self.extra_css = extra_css or ""  # Ensure it's a string
         self.bordered = bordered
 
         logger.info(
@@ -1274,12 +1307,12 @@ class Markdown(Base):
         # 'include_hljs' signals to JavaScript that code blocks within this Markdown
         # should be processed by Highlight.js.
         wrapper_classes = f"markdown-wrapper include_hljs {border_class}".strip()
-        
+
         html_parts = [f'<div class="{wrapper_classes}">']
 
         if self.label:
             escaped_label = html.escape(self.label)
-            anchor_id = _generate_anchor_id(self.label) # Use original label for ID
+            anchor_id = _generate_anchor_id(self.label)  # Use original label for ID
             html_parts.append(
                 f"<report-caption><a href='#{anchor_id}'>{escaped_label}</a></report-caption>"
             )
@@ -1287,13 +1320,13 @@ class Markdown(Base):
         # Apply extra_css to an inner div. Ensure it's HTML-attribute-safe.
         escaped_extra_css = html.escape(self.extra_css, quote=True)
         style_attr = f'style="{escaped_extra_css}"' if self.extra_css else ""
-        html_parts.append(f'<div {style_attr}>')
-        
+        html_parts.append(f"<div {style_attr}>")
+
         # Convert Markdown to HTML. _gfm_markdown_to_html should produce safe HTML.
         html_parts.append(_gfm_markdown_to_html(self.text))
-        
-        html_parts.append("</div>") # End inner div
-        html_parts.append("</div>") # End markdown-wrapper
+
+        html_parts.append("</div>")  # End inner div
+        html_parts.append("</div>")  # End markdown-wrapper
 
         return "".join(html_parts)
 
@@ -1323,20 +1356,20 @@ class Heading(Base):
 
     def __init__(
         self,
-        label: str, # This is the heading text
+        label: str,  # This is the heading text
         *,
-        level: Optional[int] = 1, # HTML heading level (h1, h2, etc.)
+        level: Optional[int] = 1,  # HTML heading level (h1, h2, etc.)
     ):
         if not (isinstance(level, int) and 1 <= level <= 5):
             raise ValueError("Heading level must be an integer between 1 and 5.")
-        if not label or not str(label).strip(): # Check if label is empty or only whitespace
+        if not label or not str(label).strip():  # Check if label is empty or only whitespace
             raise ValueError("Heading text (label) cannot be empty.")
-            
+
         # The label for Base class is the heading text itself.
         # It will be HTML-escaped in to_html.
         super().__init__(label=str(label))
         self.level = level
-        
+
         logger.info(f"Heading component initialized: Level H{self.level}, Text: '{self.label}'")
 
     @_strip_whitespace
@@ -1394,7 +1427,7 @@ class Separator(Base):
         if self.label:
             # HTML-escape the label for safe rendering
             escaped_label = html.escape(self.label)
-            anchor_id = _generate_anchor_id(self.label) # Use original label for ID
+            anchor_id = _generate_anchor_id(self.label)  # Use original label for ID
             # Conventionally, caption might be above or below. Here, it's placed after the <hr>.
             return f"<br/><hr/><report-caption><a href='#{anchor_id}'>{escaped_label}</a></report-caption><br/>"
         else:
@@ -1415,6 +1448,7 @@ class Text(Markdown):
     GitHub Flavored Markdown. Refer to the `Markdown` class for detailed
     documentation on arguments and behavior (e.g., `text`, `label`, `extra_css`, `bordered`).
     """
+
     # No __init__ or other methods needed here as it's a pure alias.
     # Python's inheritance handles everything.
     # The docstring above clarifies its relationship to Markdown.
@@ -1452,17 +1486,16 @@ class Select(Base):
     """
 
     def __init__(self, blocks: list[Base], *, label: Optional[str] = None):
-        super().__init__(label=label) # Overall label for the tab group
+        super().__init__(label=label)  # Overall label for the tab group
         self.blocks = blocks
 
         # Validate that all blocks have non-empty labels, as they are used for tab titles
         for i, b in enumerate(self.blocks):
-            if not hasattr(b, 'label') or not b.label or not str(b.label).strip():
+            if not hasattr(b, "label") or not b.label or not str(b.label).strip():
                 raise ValueError(
-                    f"Block at index {i} in Select component must have a non-empty label "
-                    "to be used as a tab title."
+                    f"Block at index {i} in Select component must have a non-empty label to be used as a tab title."
                 )
-        
+
         block_labels = [str(b.label) for b in self.blocks]
         logger.info(
             f"Select component initialized with {len(self.blocks)} tabs: "
@@ -1477,12 +1510,12 @@ class Select(Base):
             escaped_block_label = html.escape(str(block.label))
             # For use in JavaScript strings, ensure proper escaping for quotes.
             js_escaped_block_label = html.escape(str(block.label), quote=True)
-            
+
             default_open_class = "defaultOpen" if i == 0 else ""
             buttons_html_parts.append(
                 f'<button class="tablinks {default_open_class}" '
                 # Pass the string representation of group_id to JS
-                f'onclick="openTab(event, \'{js_escaped_block_label}\', \'{group_id_str}\')" '
+                f"onclick=\"openTab(event, '{js_escaped_block_label}', '{group_id_str}')\" "
                 f'data-group-id="{group_id_str}">{escaped_block_label}</button>'
             )
         return f'<div class="tab">{"".join(buttons_html_parts)}</div>'
@@ -1494,14 +1527,14 @@ class Select(Base):
             # block.label is guaranteed by __init__
             # Use a combination of group_id and escaped label for unique ID
             js_escaped_block_label_for_id = html.escape(str(block.label), quote=True)
-            tab_content_id = f"tab_{group_id_str}_{_generate_anchor_id(str(block.label))}" # Use anchor for ID safety
+            tab_content_id = f"tab_{group_id_str}_{_generate_anchor_id(str(block.label))}"  # Use anchor for ID safety
 
             contents_html_parts.append(
                 # Use the unique ID and also data-group-id for JS targeting
                 f'<div id="{tab_content_id}" data-group-id="{group_id_str}" '
                 f'data-tab-name="{js_escaped_block_label_for_id}" class="tabcontent">'
-                f'{block.to_html()}' # Content from the block
-                f'</div>'
+                f"{block.to_html()}"  # Content from the block
+                f"</div>"
             )
         return "".join(contents_html_parts)
 
@@ -1519,7 +1552,7 @@ class Select(Base):
         caption_html = ""
         if self.label:
             escaped_label = html.escape(self.label)
-            anchor_id = _generate_anchor_id(self.label) # Use original label for ID
+            anchor_id = _generate_anchor_id(self.label)  # Use original label for ID
             caption_html = (
                 f"<report-caption><a href='#{anchor_id}'>{escaped_label}</a></report-caption>"
             )
@@ -1529,7 +1562,7 @@ class Select(Base):
 
         tab_buttons_html = self._generate_tab_buttons_html(group_id_str)
         tab_contents_html = self._generate_tab_contents_html(group_id_str)
-        
+
         return f"{caption_html}{tab_buttons_html}{tab_contents_html}"
 
 
@@ -1568,7 +1601,7 @@ class Accordion(Base):
         self,
         blocks: list[Base],
         *,
-        label: Optional[str] = None, # Overall label for the accordion group
+        label: Optional[str] = None,  # Overall label for the accordion group
         open_first: Optional[bool] = False,
     ):
         super().__init__(label=label)
@@ -1577,12 +1610,12 @@ class Accordion(Base):
 
         # Validate that all blocks have non-empty labels for panel titles
         for i, b in enumerate(self.blocks):
-            if not hasattr(b, 'label') or not b.label or not str(b.label).strip():
+            if not hasattr(b, "label") or not b.label or not str(b.label).strip():
                 raise ValueError(
                     f"Block at index {i} in Accordion component must have a non-empty label "
                     "to be used as a panel title."
                 )
-        
+
         block_labels = [str(b.label) for b in self.blocks]
         logger.info(
             f"Accordion component initialized with {len(self.blocks)} panels: "
@@ -1597,12 +1630,12 @@ class Accordion(Base):
             escaped_panel_label = html.escape(str(block.label))
             # Add 'open' attribute to the first panel if open_first is True
             open_attr = " open" if i == 0 and self.open_first else ""
-            
+
             panels_html_parts.append(
-                f'<details class="accordion"{open_attr}>' # Added class for potential specific styling
-                f'<summary>{escaped_panel_label}</summary>'
-                f'{block.to_html()}' # Content from the block
-                f'</details>'
+                f'<details class="accordion"{open_attr}>'  # Added class for potential specific styling
+                f"<summary>{escaped_panel_label}</summary>"
+                f"{block.to_html()}"  # Content from the block
+                f"</details>"
             )
         return "".join(panels_html_parts)
 
@@ -1620,13 +1653,11 @@ class Accordion(Base):
         caption_html = ""
         if self.label:
             escaped_caption_label = html.escape(self.label)
-            anchor_id = _generate_anchor_id(self.label) # Use original label for ID
-            caption_html = (
-                f"<report-caption><a href='#{anchor_id}'>{escaped_caption_label}</a></report-caption>"
-            )
-        
+            anchor_id = _generate_anchor_id(self.label)  # Use original label for ID
+            caption_html = f"<report-caption><a href='#{anchor_id}'>{escaped_caption_label}</a></report-caption>"
+
         accordion_panels_html = self._generate_accordion_panels_html()
-        
+
         # Wrap the entire accordion in a div for better layout control and styling
         return f'<div class="accordion-group">{caption_html}{accordion_panels_html}</div>'
 
@@ -1658,10 +1689,9 @@ class Unformatted(Base):
     def __init__(self, text: str, *, label: Optional[str] = None):
         super().__init__(label=label)
         # Store raw text; it will be escaped in to_html
-        self.text = str(text) # Ensure text is a string
+        self.text = str(text)  # Ensure text is a string
         logger.info(
-            f"Unformatted component initialized with {len(self.text)} characters of text. "
-            f"Label: '{self.label}'"
+            f"Unformatted component initialized with {len(self.text)} characters of text. Label: '{self.label}'"
         )
 
     @_strip_whitespace
@@ -1682,14 +1712,14 @@ class Unformatted(Base):
         html_parts = []
         if self.label:
             escaped_label = html.escape(self.label)
-            anchor_id = _generate_anchor_id(self.label) # Use original label for ID
+            anchor_id = _generate_anchor_id(self.label)  # Use original label for ID
             html_parts.append(
                 f"<report-caption><a href='#{anchor_id}'>{escaped_label}</a></report-caption>"
             )
-        
+
         # Wrap the formatted text block in a div, which can be useful for styling or layout.
         html_parts.append(f"<div>{formatted_text_block}</div>")
-        
+
         return "".join(html_parts)
 
 
@@ -1737,7 +1767,14 @@ class Language(Base):
     """
 
     SUPPORTED_LANGUAGES = [
-        "java", "python", "prolog", "shell", "sql", "yaml", "json", "plaintext"
+        "java",
+        "python",
+        "prolog",
+        "shell",
+        "sql",
+        "yaml",
+        "json",
+        "plaintext",
     ]
 
     def __init__(
@@ -1749,20 +1786,20 @@ class Language(Base):
         label: Optional[str] = None,
     ):
         super().__init__(label=label)
-        self.text = str(text) # Ensure text is string, raw text, will be escaped in to_html
-        self.scroll_long_content = scroll_long_content # Currently not used to alter HTML
+        self.text = str(text)  # Ensure text is string, raw text, will be escaped in to_html
+        self.scroll_long_content = scroll_long_content  # Currently not used to alter HTML
 
         if not language:
             raise ValueError("Language must be specified for the Language component.")
-        
-        normalized_language = str(language).lower() # Ensure language is string and normalized
+
+        normalized_language = str(language).lower()  # Ensure language is string and normalized
         if normalized_language not in self.SUPPORTED_LANGUAGES:
             raise ValueError(
                 f"Language '{language}' is not supported. "
                 f"Supported languages are: {', '.join(self.SUPPORTED_LANGUAGES)}"
             )
         self.language = normalized_language
-        
+
         logger.info(
             f"{self.language.capitalize()} component: {len(self.text)} characters, "
             f"label='{self.label}', scroll_long_content={self.scroll_long_content}"
@@ -1776,12 +1813,12 @@ class Language(Base):
         """
         if not self.label:
             return ""
-        
+
         # Generate a color based on the language name for consistent label styling
         label_background, label_text_color = _random_color_generator(self.language)
         # HTML-escape the label text before inserting into HTML
         escaped_label = html.escape(self.label)
-        
+
         return f"""
             <span class="code-block-label" style="background-color: {label_background}; color:{label_text_color};">
                 {escaped_label}
@@ -1798,18 +1835,18 @@ class Language(Base):
         # HTML-escape the raw text to prevent XSS and ensure correct rendering of code.
         # .strip() removes leading/trailing whitespace which might affect <pre> rendering.
         escaped_text = html.escape(self.text.strip())
-        
+
         # formatted_text will be wrapped in <pre><code class="language-..."> for Highlight.js
         # Adding newlines around escaped_text for better readability of raw HTML and
         # to ensure block display for some markdown processors if this HTML is embedded.
         formatted_text = f"<pre><code class='language-{self.language} syntax-color'>\n{escaped_text}\n</code></pre>"
-        
-        label_span_html = self._create_label_span_html() # Label is escaped within this method
-        
+
+        label_span_html = self._create_label_span_html()  # Label is escaped within this method
+
         # The 'include_hljs' class is a marker for JavaScript to initialize Highlight.js
         # on this element. 'code-block' is for general styling.
         # The scroll_long_content flag is not currently altering the HTML structure or classes.
-        
+
         return f"""
             <div class="code-block include_hljs">
                 {label_span_html}{formatted_text}
@@ -1844,9 +1881,7 @@ class Prolog(Language):
         label: Optional[str] = None,
     ):
         # Pass the raw code; Language base class's to_html method handles escaping.
-        super().__init__(
-            code, "prolog", scroll_long_content=scroll_long_content, label=label
-        )
+        super().__init__(code, "prolog", scroll_long_content=scroll_long_content, label=label)
 
 
 ##############################
@@ -1882,7 +1917,7 @@ class Python(Language):
         # Dedent the code before passing to the base class.
         # The Language base class's to_html method will handle HTML escaping.
         super().__init__(
-            textwrap.dedent(str(code)), # Ensure code is string before dedent
+            textwrap.dedent(str(code)),  # Ensure code is string before dedent
             "python",
             scroll_long_content=scroll_long_content,
             label=label,
@@ -1916,9 +1951,7 @@ class Shell(Language):
         label: Optional[str] = None,
     ):
         # Pass the raw code; Language base class's to_html method handles escaping.
-        super().__init__(
-            code, "shell", scroll_long_content=scroll_long_content, label=label
-        )
+        super().__init__(code, "shell", scroll_long_content=scroll_long_content, label=label)
 
 
 # Aliases for Shell
@@ -1926,11 +1959,13 @@ class Shell(Language):
 
 class Sh(Shell):
     """Alias for `Shell`. Displays shell script code with syntax highlighting."""
+
     pass
 
 
 class Bash(Shell):
     """Alias for `Shell`. Displays Bash script code with syntax highlighting."""
+
     pass
 
 
@@ -1961,9 +1996,7 @@ class Java(Language):
         label: Optional[str] = None,
     ):
         # Pass the raw code; Language base class's to_html method handles escaping.
-        super().__init__(
-            code, "java", scroll_long_content=scroll_long_content, label=label
-        )
+        super().__init__(code, "java", scroll_long_content=scroll_long_content, label=label)
 
 
 ##############################
@@ -2043,7 +2076,7 @@ class Sql(Language):
             "grant",
             "revoke",
         ]
-        RESERVED_WORDS = ["as"] # Words to uppercase in place
+        RESERVED_WORDS = ["as"]  # Words to uppercase in place
 
         # Add newline and tab after commas, but not if comma is inside single or double quotes.
         sql = re.sub(r"(?<!['\"]),\s*(?!['\"])", ",\n\t", sql, flags=re.DOTALL)
@@ -2051,28 +2084,27 @@ class Sql(Language):
         # Uppercase specific reserved words if they are not inside quotes.
         for reserved_word in RESERVED_WORDS:
             sql = re.sub(
-                rf"(?<!['\"])\b{reserved_word}\b(?!['\"])", 
+                rf"(?<!['\"])\b{reserved_word}\b(?!['\"])",
                 reserved_word.upper(),
                 sql,
-                flags=re.IGNORECASE | re.DOTALL, 
+                flags=re.IGNORECASE | re.DOTALL,
             )
-        
+
         # Format block statements
-        original_sql_for_check = sql 
+        original_sql_for_check = sql
         for statement_pattern in BLOCK_STATEMENTS:
             # Using a lambda that captures the current state of 'original_sql_for_check'
-            current_replacer = lambda m, osql=original_sql_for_check: (
-                f"{'' if osql.lower().lstrip().startswith(m.group(1).lower()) else '\n'}"
-                f"{m.group(1).upper()}\n\t"
-            )
+            def current_replacer(m, osql=original_sql_for_check):
+                return f"{'' if osql.lower().lstrip().startswith(m.group(1).lower()) else '\n'}{m.group(1).upper()}\n\t"
+
             # Refined pattern to better handle keywords at the start or surrounded by whitespace
             sql = re.sub(
                 rf"(?i)(?<!['\"])(?:^|\s+)({statement_pattern})(?:\s+|$)(?!['\"])",
                 current_replacer,
                 sql,
-                flags=re.DOTALL, # re.IGNORECASE is now part of the pattern string with (?i)
+                flags=re.DOTALL,  # re.IGNORECASE is now part of the pattern string with (?i)
             )
-        return sql.strip() 
+        return sql.strip()
 
     def __init__(
         self,
@@ -2132,11 +2164,19 @@ class Yaml(Language):
             if isinstance(data, (dict, list)):
                 # Convert Python dict/list to YAML string.
                 # sort_keys=False preserves insertion order for dicts (Python 3.7+).
-                content = yaml.dump(data, indent=2, Dumper=yaml.SafeDumper, sort_keys=False, width=float("inf"))
+                content = yaml.dump(
+                    data, indent=2, Dumper=yaml.SafeDumper, sort_keys=False, width=float("inf")
+                )
             elif isinstance(data, str):
                 # Ensure the input string is valid YAML, then re-dump for consistent formatting.
                 parsed_yaml = yaml.load(data, Loader=yaml.SafeLoader)
-                content = yaml.dump(parsed_yaml, indent=2, Dumper=yaml.SafeDumper, sort_keys=False, width=float("inf"))
+                content = yaml.dump(
+                    parsed_yaml,
+                    indent=2,
+                    Dumper=yaml.SafeDumper,
+                    sort_keys=False,
+                    width=float("inf"),
+                )
             else:
                 raise ValueError(
                     "Invalid data type for Yaml component. Expected dict, list, or valid YAML string."
@@ -2190,10 +2230,11 @@ class Json(Language):
         within the JSON structure being encoded. For example, if a string value is
         "Hello <world>", it will be encoded as "Hello &lt;world&gt;" in the JSON output.
         """
+
         def encode(self, o: Any) -> str:
             # This method is called by json.dumps(). 'o' is the object to be encoded.
             # We need to traverse 'o' and escape its string components.
-            
+
             def escape_recursively(item: Any) -> Any:
                 if isinstance(item, str):
                     return html.escape(item)
@@ -2206,7 +2247,7 @@ class Json(Language):
                 else:
                     # Return other types (int, float, bool, None) as is
                     return item
-            
+
             # Apply recursive escaping to the object 'o' before final encoding by the superclass.
             escaped_o = escape_recursively(o)
             # Let the parent class handle the actual JSON serialization of the modified object.
@@ -2241,7 +2282,7 @@ class Json(Language):
         except json.JSONDecodeError as e:
             logger.error(f"Invalid JSON string provided to Json component: {e}")
             raise ValueError("Input string is not valid JSON.") from e
-        except Exception as e: # Catch other potential errors (e.g., during custom encoding)
+        except Exception as e:  # Catch other potential errors (e.g., during custom encoding)
             logger.error(f"Error processing JSON data for Json component: {e}")
             raise ValueError(f"Could not process JSON data: {e}") from e
 
@@ -2354,14 +2395,14 @@ class ReportCreator:
         *,
         description: Optional[str] = None,
         author: Optional[str] = None,
-        logo: Optional[str | Path] = None, # Allow Path for logo
+        logo: Optional[str | Path] = None,  # Allow Path for logo
         theme: str = "rc",
         code_theme: str = "github-dark",
         diagram_theme: str = "default",
         accent_color: str = "black",
         footer: Optional[str] = None,
     ):
-        self.title = str(title) # Ensure title is string
+        self.title = str(title)  # Ensure title is string
         self.description = str(description) if description is not None else None
         self.author = str(author) if author is not None else None
         self.code_theme = str(code_theme)
@@ -2369,21 +2410,23 @@ class ReportCreator:
         self.accent_color = str(accent_color)
         self.footer = str(footer) if footer is not None else None
 
-        logger.info(f"ReportCreator initialized: title='{self.title}', description provided: {bool(self.description)}")
+        logger.info(
+            f"ReportCreator initialized: title='{self.title}', description provided: {bool(self.description)}"
+        )
 
         # Setup plotting template
-        if "rc" not in pio.templates: # Ensure "rc" template is added only once
+        if "rc" not in pio.templates:  # Ensure "rc" template is added only once
             pio.templates["rc"] = get_rc_theme()
 
         # Validate theme
         valid_themes = list(pio.templates.keys())
         if theme not in valid_themes:
-             raise ValueError(
-                 f"Theme '{theme}' not in available themes: {', '.join(valid_themes)}"
-             )
+            raise ValueError(
+                f"Theme '{theme}' not in available themes: {', '.join(valid_themes)}"
+            )
         pio.templates.default = theme
 
-        self._create_header(logo) # Initialize self.header_str
+        self._create_header(logo)  # Initialize self.header_str
 
     def _create_header(self, logo: Optional[str | Path]) -> None:
         """
@@ -2394,15 +2437,19 @@ class ReportCreator:
         Args:
             logo (Optional[str | Path]): The logo source, as described in `__init__`.
         """
-        logo_style = 'style="width: 125px; height: 125px; object-fit: contain;"' # Consistent style
-        self.header_str = "" 
+        logo_style = (
+            'style="width: 125px; height: 125px; object-fit: contain;"'  # Consistent style
+        )
+        self.header_str = ""
 
         if logo:
-            logo_str = str(logo) # Work with string representation
+            logo_str = str(logo)  # Work with string representation
             if logo_str.startswith(("http://", "https://", "data:image")):
                 # Direct URL or data URI - escape it for safety in HTML attribute
-                self.header_str = f'<img src="{html.escape(logo_str, quote=True)}" {logo_style}>'
-            else: # Attempt to treat as Path or GitHub username
+                self.header_str = (
+                    f'<img src="{html.escape(logo_str, quote=True)}" {logo_style}>'
+                )
+            else:  # Attempt to treat as Path or GitHub username
                 logo_path = Path(logo_str)
                 if logo_path.is_file():
                     try:
@@ -2411,29 +2458,27 @@ class ReportCreator:
                         self.header_str = f'<img src="{data_uri}" {logo_style}>'
                     except Exception as e:
                         logger.warning(
-                            f"Could not convert logo file '{logo_path}' to data URI: {e}. "
-                            "Skipping logo."
+                            f"Could not convert logo file '{logo_path}' to data URI: {e}. Skipping logo."
                         )
-                else: # Not a file, assume GitHub username if it was a string
+                else:  # Not a file, assume GitHub username if it was a string
                     logger.info(f"Assuming '{logo_str}' is a GitHub username for the logo.")
                     # Ensure username is URL-safe for the GitHub URL path
                     gh_avatar_url = f"https://avatars.githubusercontent.com/{html.escape(logo_str, quote=True)}?s=125"
                     self.header_str = f'<img src="{gh_avatar_url}" {logo_style}>'
         else:
             # Auto-generate SVG icon if no logo is provided
-            title_for_initials = self.title or "R" 
+            title_for_initials = self.title or "R"
             match = re.findall(r"[A-Z]", title_for_initials)
             icon_text = "".join(match[:2]) if match else title_for_initials[0].upper()
-            
+
             escaped_accent_color = html.escape(self.accent_color, quote=True)
-            text_fill_color = "white" 
+            text_fill_color = "white"
 
             width = 125
             cx = cy = r = width / 2
-            font_size = int(r * 0.7) 
+            font_size = int(r * 0.7)
             # Join preferred_fonts with quotes for CSS font-family
             font_family_css = ", ".join([f"'{f}'" for f in preferred_fonts] + ["sans-serif"])
-
 
             self.header_str = textwrap.dedent(f"""\
                 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="{width}" height="{width}" viewBox="0 0 {width} {width}">
@@ -2500,8 +2545,7 @@ class ReportCreator:
 
         if not isinstance(view, Base):
             raise ValueError(
-                f"Expected 'view' to be an instance of a Base component, "
-                f"got {type(view).__name__} instead."
+                f"Expected 'view' to be an instance of a Base component, got {type(view).__name__} instead."
             )
 
         logger.info("Rendering report content from view component...")
@@ -2519,11 +2563,13 @@ class ReportCreator:
         try:
             file_loader = FileSystemLoader(str(TEMPLATE_DIR))
             # Explicitly disable autoescaping at Environment level, as we handle it manually
-            env = Environment(loader=file_loader, autoescape=False) 
+            env = Environment(loader=file_loader, autoescape=False)
             template = env.get_template("default.html")
         except Exception as e:
             logger.error(f"Failed to load report template from '{TEMPLATE_DIR}': {e}")
-            raise FileNotFoundError(f"Could not load report template 'default.html': {e}") from e
+            raise FileNotFoundError(
+                f"Could not load report template 'default.html': {e}"
+            ) from e
 
         include_plotly = "plotly-graph-div" in body_html
         include_datatable = "include_datatable" in body_html
@@ -2540,16 +2586,18 @@ class ReportCreator:
         template_context = {
             "title": html.escape(self.title or "Report"),
             "description": _gfm_markdown_to_html(self.description) if self.description else "",
-            "author": html.escape(self.author.strip()) if self.author and self.author.strip() else "",
-            "body": body_html, 
+            "author": html.escape(self.author.strip())
+            if self.author and self.author.strip()
+            else "",
+            "body": body_html,
             "header_logo": self.header_str,
             "include_plotly": include_plotly,
             "include_datatable": include_datatable,
             "include_mermaid": include_mermaid,
             "include_hljs": include_hljs,
-            "code_theme": html.escape(self.code_theme), 
+            "code_theme": html.escape(self.code_theme),
             "diagram_theme": html.escape(self.diagram_theme),
-            "accent_color": html.escape(self.accent_color), 
+            "accent_color": html.escape(self.accent_color),
             "footer": _gfm_markdown_to_html(self.footer).strip() if self.footer else "",
         }
 
@@ -2563,16 +2611,16 @@ class ReportCreator:
         if prettify_html:
             try:
                 from bs4 import BeautifulSoup
+
                 soup = BeautifulSoup(final_html_content, "html.parser")
-                output_to_write = soup.prettify(formatter="minimal") 
+                output_to_write = soup.prettify(formatter="minimal")
             except ImportError:
                 logger.warning(
-                    "BeautifulSoup not installed (`pip install beautifulsoup4`), "
-                    "saving HTML without prettification."
+                    "BeautifulSoup not installed (`pip install beautifulsoup4`), saving HTML without prettification."
                 )
             except Exception as e:
                 logger.warning(f"HTML prettification failed: {e}. Saving raw HTML instead.")
-        
+
         try:
             output_path.parent.mkdir(parents=True, exist_ok=True)
             output_path.write_text(output_to_write, encoding="utf-8")
@@ -2581,6 +2629,6 @@ class ReportCreator:
                 f"ReportCreator successfully created report at: '{output_path.resolve()}' "
                 f'(Size: {humanize.naturalsize(file_size, binary=True)}, Title: "{self.title}")'
             )
-        except (IOError, OSError) as e:
+        except OSError as e:
             logger.error(f"Failed to write report file to '{output_path}': {e}")
-            raise IOError(f"Failed to write report file: {e}") from e
+            raise OSError(f"Failed to write report file: {e}") from e

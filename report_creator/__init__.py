@@ -1,3 +1,7 @@
+# Make loguru logger available for the library.
+# The consuming application can then configure handlers if needed.
+from loguru import logger
+
 from report_creator.__version__ import __version__
 
 # Import from new locations
@@ -49,10 +53,6 @@ from .report_creator import (
 
 # It's good practice to import specific variables if they are part of the public API
 from .theming import report_creator_colors
-
-# Make loguru logger available for the library.
-# The consuming application can then configure handlers if needed.
-from loguru import logger
 
 # By default, Loguru adds a handler to stderr.
 # If this library should not output logs unless configured by the application,

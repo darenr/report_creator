@@ -6,7 +6,7 @@ import plotly.graph_objs as go
 # for more control over typography, assuming those fonts are available on the
 # system rendering the report.
 preferred_fonts = [
-    "sans-serif", 
+    "sans-serif",
 ]
 
 # Provides the default color palette used for charts and other themed visual elements
@@ -67,28 +67,28 @@ def get_rc_theme() -> go.layout.Template:
             "paper_bgcolor": "white",
             "plot_bgcolor": "white",
             "colorway": report_creator_colors,
-            "autotypenumbers": "strict", # Ensures strict data type interpretation
-            "hovermode": "closest",      # Shows hover information for the nearest data point
+            "autotypenumbers": "strict",  # Ensures strict data type interpretation
+            "hovermode": "closest",  # Shows hover information for the nearest data point
             "font": {
                 "family": preferred_fonts[0] if preferred_fonts else "sans-serif",
                 "size": 12,
                 "color": "black",
             },
             "xaxis": {
-                "automargin": True,      # Automatically adjust margins for x-axis elements
-                "title": {"standoff": 30} # Space between axis title and tick labels
+                "automargin": True,  # Automatically adjust margins for x-axis elements
+                "title": {"standoff": 30},  # Space between axis title and tick labels
             },
             "yaxis": {
-                "automargin": True,      # Automatically adjust margins for y-axis elements
-                "title": {"standoff": 30} # Space between axis title and tick labels
+                "automargin": True,  # Automatically adjust margins for y-axis elements
+                "title": {"standoff": 30},  # Space between axis title and tick labels
             },
             "title": {
-                "x": 0.05,               # Align title to the left
+                "x": 0.05,  # Align title to the left
                 # 'xanchor': 'left' # Could be added for more precise left alignment
             },
         },
         data={
             # Specific settings for pie charts
-            "pie": [{"automargin": True}] # Ensure pie chart labels fit
+            "pie": [{"automargin": True}]  # Ensure pie chart labels fit
         },
     )

@@ -1,24 +1,21 @@
 # Standard library imports
-import io
-import base64
-import html # For escaping
-import textwrap # For dedenting docstrings and potentially for title wrapping
-from abc import ABC, abstractmethod # Use ABC for abstract base classes
-from typing import Any, Optional, Union, List, Dict # Added Dict for **kwargs
+from abc import ABC, abstractmethod  # Use ABC for abstract base classes
+from typing import Any, Optional, Union, dict, list  # Added dict for **kwargs
 
 # Third-party imports
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
-import matplotlib # Only imported for type checking, not direct use in charts.py
 
 # Loguru for logging
 from loguru import logger
 
 # Internal imports
 from .base import Base
-from .theming import preferred_fonts # report_creator_colors is not directly used here
-from .utilities import _strip_whitespace # _generate_anchor_id, _gfm_markdown_to_html not used here
+from .theming import preferred_fonts  # report_creator_colors is not directly used here
+from .utilities import (
+    _strip_whitespace,  # _generate_anchor_id, _gfm_markdown_to_html not used here
+)
 
 
 class PxBase(Base, ABC):
@@ -39,6 +36,7 @@ class PxBase(Base, ABC):
             automatically formatted and set as the title by `apply_common_kwargs`.
             Defaults to None.
     """
+
     def __init__(self, label: Optional[str] = None):
         super().__init__(label=label)
 
@@ -75,15 +73,15 @@ class PxBase(Base, ABC):
             font_family=preferred_fonts[0] if preferred_fonts else "sans-serif",
             autosize=True,
             # Remove less commonly used tools from the modebar
-            modebar_remove=["lasso2d", "select2d"], 
+            modebar_remove=["lasso2d", "select2d"],
         )
         fig.update_xaxes(
             title_font_family=preferred_fonts[0] if preferred_fonts else "sans-serif",
-            tickangle=90 # Rotates x-axis labels to prevent overlap
+            tickangle=90,  # Rotates x-axis labels to prevent overlap
         )
 
     @staticmethod
-    def apply_common_kwargs(kwargs: Dict[str, Any], label: Optional[str] = None) -> None:
+    def apply_common_kwargs(kwargs: dict[str, Any], label: Optional[str] = None) -> None:
         """
         Applies common keyword arguments to a kwargs dictionary, primarily for
         setting a chart title based on the provided `label`.
@@ -95,19 +93,20 @@ class PxBase(Base, ABC):
         a title is explicitly overridden in `**kwargs`.
 
         Args:
-            kwargs (Dict[str, Any]): The dictionary of keyword arguments intended for
+            kwargs (dict[str, Any]): The dictionary of keyword arguments intended for
                 a Plotly Express function. This dictionary is modified in place.
             label (Optional[str], optional): The label for the chart. If provided,
                 it's used to generate a title. Defaults to None.
         """
+
         def _format_title_with_line_breaks(text: str, max_words_per_line: int = 5) -> str:
             """
             Formats a string by inserting HTML <br> tags to wrap lines,
             aiming to break lines after a specified number of words.
             """
-            if not text: # Handle empty or None text
+            if not text:  # Handle empty or None text
                 return ""
-            words = str(text).split() # Ensure text is string
+            words = str(text).split()  # Ensure text is string
             lines = []
             current_line_words = []
             for word in words:
@@ -115,7 +114,7 @@ class PxBase(Base, ABC):
                 if len(current_line_words) >= max_words_per_line:
                     lines.append(" ".join(current_line_words))
                     current_line_words = []
-            if current_line_words: # Add any remaining words
+            if current_line_words:  # Add any remaining words
                 lines.append(" ".join(current_line_words))
             return "<br>".join(lines)
 
@@ -172,20 +171,26 @@ class Bar(PxBase):
     ):
         super().__init__(label=label)
         self.df = df
-        self.x_col = x 
-        self.y_col = y 
-        self.dimension_col = dimension 
+        self.x_col = x
+        self.y_col = y
+        self.dimension_col = dimension
         self.kwargs = kwargs
 
         if self.x_col not in self.df.columns:
-            raise ValueError(f"X-axis column '{self.x_col}' not found in DataFrame columns: {self.df.columns.tolist()}.")
+            raise ValueError(
+                f"X-axis column '{self.x_col}' not found in DataFrame columns: {self.df.columns.tolist()}."
+            )
         if self.y_col not in self.df.columns:
-            raise ValueError(f"Y-axis column '{self.y_col}' not found in DataFrame columns: {self.df.columns.tolist()}.")
+            raise ValueError(
+                f"Y-axis column '{self.y_col}' not found in DataFrame columns: {self.df.columns.tolist()}."
+            )
 
         if self.dimension_col:
             if self.dimension_col not in self.df.columns:
-                raise ValueError(f"Dimension column '{self.dimension_col}' not found in DataFrame columns: {self.df.columns.tolist()}.")
-            if "color" not in self.kwargs: 
+                raise ValueError(
+                    f"Dimension column '{self.dimension_col}' not found in DataFrame columns: {self.df.columns.tolist()}."
+                )
+            if "color" not in self.kwargs:
                 self.kwargs["color"] = self.dimension_col
 
         PxBase.apply_common_kwargs(self.kwargs, label=self.label)
@@ -198,9 +203,13 @@ class Bar(PxBase):
         """Generates the HTML representation of the bar chart."""
         fig = px.bar(self.df, x=self.x_col, y=self.y_col, **self.kwargs)
         PxBase.apply_common_fig_options(fig)
-        if 'bargap' not in self.kwargs: # Apply default bargap if not user-specified
+        if "bargap" not in self.kwargs:  # Apply default bargap if not user-specified
             fig.update_layout(bargap=0.1)
-        return fig.to_html(include_plotlyjs=False, full_html=False, config={"responsive": True, "displayModeBar": True})
+        return fig.to_html(
+            include_plotlyjs=False,
+            full_html=False,
+            config={"responsive": True, "displayModeBar": True},
+        )
 
 
 class Line(PxBase):
@@ -214,7 +223,7 @@ class Line(PxBase):
     Args:
         df (pd.DataFrame): DataFrame for the chart.
         x (str): Column name for the x-axis.
-        y (Union[str, List[str]]): Column name or list of column names for the y-axis.
+        y (Union[str, list[str]]): Column name or list of column names for the y-axis.
         dimension (Optional[str], optional): Column name for color-coding and symbol
             differentiation. Defaults to None.
         label (Optional[str], optional): Chart label, used for title generation.
@@ -230,7 +239,7 @@ class Line(PxBase):
         self,
         df: pd.DataFrame,
         x: str,
-        y: Union[str, List[str]],
+        y: Union[str, list[str]],
         *,
         dimension: Optional[str] = None,
         label: Optional[str] = None,
@@ -239,31 +248,45 @@ class Line(PxBase):
         super().__init__(label=label)
         self.df = df
         self.x_col = x
-        self.y_cols = y 
+        self.y_cols = y
         self.dimension_col = dimension
         self.kwargs = kwargs
 
         if self.x_col not in self.df.columns:
-            raise ValueError(f"X-axis column '{self.x_col}' not found in DataFrame columns: {self.df.columns.tolist()}.")
+            raise ValueError(
+                f"X-axis column '{self.x_col}' not found in DataFrame columns: {self.df.columns.tolist()}."
+            )
 
         if isinstance(self.y_cols, list):
             for y_col_name in self.y_cols:
                 if y_col_name not in self.df.columns:
-                    raise ValueError(f"Y-axis column '{y_col_name}' not found in DataFrame columns: {self.df.columns.tolist()}.")
+                    raise ValueError(
+                        f"Y-axis column '{y_col_name}' not found in DataFrame columns: {self.df.columns.tolist()}."
+                    )
         elif isinstance(self.y_cols, str):
             if self.y_cols not in self.df.columns:
-                raise ValueError(f"Y-axis column '{self.y_cols}' not found in DataFrame columns: {self.df.columns.tolist()}.")
+                raise ValueError(
+                    f"Y-axis column '{self.y_cols}' not found in DataFrame columns: {self.df.columns.tolist()}."
+                )
         else:
-            raise ValueError(f"Parameter 'y' must be a string or a list of strings, got {type(self.y_cols).__name__}.")
+            raise ValueError(
+                f"Parameter 'y' must be a string or a list of strings, got {type(self.y_cols).__name__}."
+            )
 
         if self.dimension_col:
             if self.dimension_col not in self.df.columns:
-                raise ValueError(f"Dimension column '{self.dimension_col}' not found in DataFrame columns: {self.df.columns.tolist()}.")
-            if "color" not in self.kwargs: self.kwargs["color"] = self.dimension_col
-            if "symbol" not in self.kwargs: self.kwargs["symbol"] = self.dimension_col
-        
-        if "line_shape" not in self.kwargs: self.kwargs["line_shape"] = "spline"
-        if "markers" not in self.kwargs: self.kwargs["markers"] = True
+                raise ValueError(
+                    f"Dimension column '{self.dimension_col}' not found in DataFrame columns: {self.df.columns.tolist()}."
+                )
+            if "color" not in self.kwargs:
+                self.kwargs["color"] = self.dimension_col
+            if "symbol" not in self.kwargs:
+                self.kwargs["symbol"] = self.dimension_col
+
+        if "line_shape" not in self.kwargs:
+            self.kwargs["line_shape"] = "spline"
+        if "markers" not in self.kwargs:
+            self.kwargs["markers"] = True
 
         PxBase.apply_common_kwargs(self.kwargs, label=self.label)
         logger.info(
@@ -275,7 +298,11 @@ class Line(PxBase):
         """Generates the HTML representation of the line chart."""
         fig = px.line(self.df, x=self.x_col, y=self.y_cols, **self.kwargs)
         PxBase.apply_common_fig_options(fig)
-        return fig.to_html(include_plotlyjs=False, full_html=False, config={"responsive": True, "displayModeBar": True})
+        return fig.to_html(
+            include_plotlyjs=False,
+            full_html=False,
+            config={"responsive": True, "displayModeBar": True},
+        )
 
 
 class Pie(PxBase):
@@ -314,12 +341,17 @@ class Pie(PxBase):
         self.kwargs = kwargs
 
         if self.values_col not in self.df.columns:
-            raise ValueError(f"Values column '{self.values_col}' not found in DataFrame columns: {self.df.columns.tolist()}.")
+            raise ValueError(
+                f"Values column '{self.values_col}' not found in DataFrame columns: {self.df.columns.tolist()}."
+            )
         if self.names_col not in self.df.columns:
-            raise ValueError(f"Names column '{self.names_col}' not found in DataFrame columns: {self.df.columns.tolist()}.")
+            raise ValueError(
+                f"Names column '{self.names_col}' not found in DataFrame columns: {self.df.columns.tolist()}."
+            )
 
         PxBase.apply_common_kwargs(self.kwargs, label=self.label)
-        if "hole" not in self.kwargs: self.kwargs["hole"] = 0.4 # Default to donut
+        if "hole" not in self.kwargs:
+            self.kwargs["hole"] = 0.4  # Default to donut
 
         logger.info(
             f"Pie chart: values='{self.values_col}', names='{self.names_col}', label='{self.label}'"
@@ -332,7 +364,11 @@ class Pie(PxBase):
         fig.update_traces(textposition="inside", textinfo="percent+label")
         fig.update_layout(uniformtext_minsize=10, uniformtext_mode="hide")
         PxBase.apply_common_fig_options(fig)
-        return fig.to_html(include_plotlyjs=False, full_html=False, config={"responsive": True, "displayModeBar": True})
+        return fig.to_html(
+            include_plotlyjs=False,
+            full_html=False,
+            config={"responsive": True, "displayModeBar": True},
+        )
 
 
 class Radar(PxBase):
@@ -372,23 +408,25 @@ class Radar(PxBase):
         **kwargs: Any,
     ):
         super().__init__(label=label)
-        
+
         if not isinstance(df, pd.DataFrame):
             raise ValueError("Input 'df' must be a Pandas DataFrame.")
         if df.index is None or len(df.index) == 0:
             raise ValueError("DataFrame must have a non-empty index for Radar chart traces.")
         if not df.index.is_unique:
             raise ValueError("DataFrame index must be unique for Radar chart traces.")
-        if df.index.hasnans: # Checks for NaNs in the index
+        if df.index.hasnans:  # Checks for NaNs in the index
             raise ValueError("DataFrame index must not contain NaNs for Radar chart traces.")
-            
+
         self.df = df
         self.filled = filled
         self.kwargs = kwargs
 
-        self.min_value = 0.0 if lock_minimum_to_zero else float(df.min(numeric_only=True).min(skipna=True))
+        self.min_value = (
+            0.0 if lock_minimum_to_zero else float(df.min(numeric_only=True).min(skipna=True))
+        )
         self.max_value = float(df.max(numeric_only=True).max(skipna=True))
-        
+
         PxBase.apply_common_kwargs(self.kwargs, label=self.label)
         logger.info(
             f"Radar chart: {len(self.df)} traces, {len(self.df.columns)} categories. "
@@ -400,11 +438,11 @@ class Radar(PxBase):
         """Generates the HTML representation of the radar chart."""
         fig = go.Figure()
         theta_categories = self.df.columns.tolist()
-        theta_closed_loop = theta_categories + theta_categories[:1] # Close the loop
+        theta_closed_loop = theta_categories + theta_categories[:1]  # Close the loop
 
         for trace_name, row_data in self.df.iterrows():
             r_values = row_data.values.tolist()
-            r_closed_loop = r_values + r_values[:1] # Close the loop for r values
+            r_closed_loop = r_values + r_values[:1]  # Close the loop for r values
 
             trace_specific_kwargs = self.kwargs.get("trace_kwargs", {})
             fig.add_trace(
@@ -412,18 +450,22 @@ class Radar(PxBase):
                     r=r_closed_loop,
                     theta=theta_closed_loop,
                     fill="toself" if self.filled else None,
-                    name=str(trace_name), # Ensure trace name is string
-                    **trace_specific_kwargs
+                    name=str(trace_name),  # Ensure trace name is string
+                    **trace_specific_kwargs,
                 )
             )
 
         PxBase.apply_common_fig_options(fig)
         fig.update_layout(
-            polar=dict(radialaxis=dict(visible=True, range=[self.min_value, self.max_value])),
-            height=self.kwargs.get("height", 600), # Allow height override
-            title=self.kwargs.get("title") # Title applied via PxBase
+            polar={"radialaxis": {"visible": True, "range": [self.min_value, self.max_value]}},
+            height=self.kwargs.get("height", 600),  # Allow height override
+            title=self.kwargs.get("title"),  # Title applied via PxBase
         )
-        return fig.to_html(include_plotlyjs=False, full_html=False, config={"responsive": True, "displayModeBar": True})
+        return fig.to_html(
+            include_plotlyjs=False,
+            full_html=False,
+            config={"responsive": True, "displayModeBar": True},
+        )
 
 
 class Scatter(PxBase):
@@ -470,22 +512,32 @@ class Scatter(PxBase):
         self.kwargs = kwargs
 
         if self.x_col not in self.df.columns:
-            raise ValueError(f"X-axis column '{self.x_col}' not found in DataFrame columns: {self.df.columns.tolist()}.")
+            raise ValueError(
+                f"X-axis column '{self.x_col}' not found in DataFrame columns: {self.df.columns.tolist()}."
+            )
         if self.y_col not in self.df.columns:
-            raise ValueError(f"Y-axis column '{self.y_col}' not found in DataFrame columns: {self.df.columns.tolist()}.")
+            raise ValueError(
+                f"Y-axis column '{self.y_col}' not found in DataFrame columns: {self.df.columns.tolist()}."
+            )
 
         VALID_MARGINALS = ["histogram", "violin", "box", "rug"]
         if marginal:
             if marginal not in VALID_MARGINALS:
-                raise ValueError(f"Invalid 'marginal' type '{marginal}'. Must be one of {VALID_MARGINALS}.")
+                raise ValueError(
+                    f"Invalid 'marginal' type '{marginal}'. Must be one of {VALID_MARGINALS}."
+                )
             self.kwargs["marginal_x"] = marginal
             self.kwargs["marginal_y"] = marginal
 
         if self.dimension_col:
             if self.dimension_col not in self.df.columns:
-                raise ValueError(f"Dimension column '{self.dimension_col}' not found in DataFrame columns: {self.df.columns.tolist()}.")
-            if "color" not in self.kwargs: self.kwargs["color"] = self.dimension_col
-            if "symbol" not in self.kwargs: self.kwargs["symbol"] = self.dimension_col
+                raise ValueError(
+                    f"Dimension column '{self.dimension_col}' not found in DataFrame columns: {self.df.columns.tolist()}."
+                )
+            if "color" not in self.kwargs:
+                self.kwargs["color"] = self.dimension_col
+            if "symbol" not in self.kwargs:
+                self.kwargs["symbol"] = self.dimension_col
 
         PxBase.apply_common_kwargs(self.kwargs, label=self.label)
         logger.info(
@@ -498,7 +550,11 @@ class Scatter(PxBase):
         """Generates the HTML representation of the scatter plot."""
         fig = px.scatter(self.df, x=self.x_col, y=self.y_col, **self.kwargs)
         PxBase.apply_common_fig_options(fig)
-        return fig.to_html(include_plotlyjs=False, full_html=False, config={"responsive": True, "displayModeBar": True})
+        return fig.to_html(
+            include_plotlyjs=False,
+            full_html=False,
+            config={"responsive": True, "displayModeBar": True},
+        )
 
 
 class Box(PxBase):
@@ -528,7 +584,7 @@ class Box(PxBase):
         self,
         df: pd.DataFrame,
         y: Optional[str] = None,
-        dimension: Optional[str] = None, 
+        dimension: Optional[str] = None,
         *,
         label: Optional[str] = None,
         **kwargs: Any,
@@ -536,17 +592,23 @@ class Box(PxBase):
         super().__init__(label=label)
         self.df = df
         self.y_col = y
-        self.dimension_col = dimension 
+        self.dimension_col = dimension
         self.kwargs = kwargs
 
         if self.y_col and self.y_col not in self.df.columns:
-            raise ValueError(f"Y-axis column '{self.y_col}' not found in DataFrame columns: {self.df.columns.tolist()}.")
-        
+            raise ValueError(
+                f"Y-axis column '{self.y_col}' not found in DataFrame columns: {self.df.columns.tolist()}."
+            )
+
         if self.dimension_col:
             if self.dimension_col not in self.df.columns:
-                raise ValueError(f"Dimension column '{self.dimension_col}' not found in DataFrame columns: {self.df.columns.tolist()}.")
-            if "x" not in self.kwargs: self.kwargs["x"] = self.dimension_col
-            if "color" not in self.kwargs: self.kwargs["color"] = self.dimension_col
+                raise ValueError(
+                    f"Dimension column '{self.dimension_col}' not found in DataFrame columns: {self.df.columns.tolist()}."
+                )
+            if "x" not in self.kwargs:
+                self.kwargs["x"] = self.dimension_col
+            if "color" not in self.kwargs:
+                self.kwargs["color"] = self.dimension_col
 
         PxBase.apply_common_kwargs(self.kwargs, label=self.label)
         logger.info(
@@ -558,9 +620,13 @@ class Box(PxBase):
         """Generates the HTML representation of the box plot."""
         fig = px.box(self.df, y=self.y_col, **self.kwargs)
         PxBase.apply_common_fig_options(fig)
-        if "boxpoints" not in self.kwargs: # Show outliers by default
-            fig.update_traces(boxpoints="outliers") 
-        return fig.to_html(include_plotlyjs=False, full_html=False, config={"responsive": True, "displayModeBar": True})
+        if "boxpoints" not in self.kwargs:  # Show outliers by default
+            fig.update_traces(boxpoints="outliers")
+        return fig.to_html(
+            include_plotlyjs=False,
+            full_html=False,
+            config={"responsive": True, "displayModeBar": True},
+        )
 
 
 class Histogram(PxBase):
@@ -587,7 +653,7 @@ class Histogram(PxBase):
         self,
         df: pd.DataFrame,
         x: str,
-        dimension: Optional[str] = None, 
+        dimension: Optional[str] = None,
         *,
         label: Optional[str] = None,
         **kwargs: Any,
@@ -599,12 +665,17 @@ class Histogram(PxBase):
         self.kwargs = kwargs
 
         if self.x_col not in self.df.columns:
-            raise ValueError(f"X-axis column '{self.x_col}' not found in DataFrame columns: {self.df.columns.tolist()}.")
+            raise ValueError(
+                f"X-axis column '{self.x_col}' not found in DataFrame columns: {self.df.columns.tolist()}."
+            )
 
         if self.dimension_col:
             if self.dimension_col not in self.df.columns:
-                raise ValueError(f"Dimension column '{self.dimension_col}' not found in DataFrame columns: {self.df.columns.tolist()}.")
-            if "color" not in self.kwargs: self.kwargs["color"] = self.dimension_col
+                raise ValueError(
+                    f"Dimension column '{self.dimension_col}' not found in DataFrame columns: {self.df.columns.tolist()}."
+                )
+            if "color" not in self.kwargs:
+                self.kwargs["color"] = self.dimension_col
 
         PxBase.apply_common_kwargs(self.kwargs, label=self.label)
         logger.info(
@@ -615,7 +686,11 @@ class Histogram(PxBase):
     def to_html(self) -> str:
         """Generates the HTML representation of the histogram."""
         fig = px.histogram(self.df, x=self.x_col, **self.kwargs)
-        if 'bargap' not in self.kwargs: # Default bargap for histograms
+        if "bargap" not in self.kwargs:  # Default bargap for histograms
             fig.update_layout(bargap=0.1)
         PxBase.apply_common_fig_options(fig)
-        return fig.to_html(include_plotlyjs=False, full_html=False, config={"responsive": True, "displayModeBar": True})
+        return fig.to_html(
+            include_plotlyjs=False,
+            full_html=False,
+            config={"responsive": True, "displayModeBar": True},
+        )

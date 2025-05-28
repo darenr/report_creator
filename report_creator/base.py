@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional
-from loguru import logger # Import Loguru logger
+
 
 class Base(ABC):
     """
