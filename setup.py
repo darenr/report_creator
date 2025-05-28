@@ -12,13 +12,18 @@ def read_requirements():
     return [line.strip() for line in content]
 
 
+def read_readme():
+    with open("README.md") as readme_file:
+        return readme_file.read()
+
+
 setup(
     name="report_creator",
     version=__version__,
     author="Daren Race",
     author_email="daren.race@gmail.com",
     description="Create self-contained HTML reports from Python.",
-    long_description=open("README.md").read(),
+    long_description=read_readme(),
     long_description_content_type="text/markdown",
     license="MIT",
     keywords="python, html, reports, report, creator, generator, markdown, yaml, plot, chart, table, blog",
