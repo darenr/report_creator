@@ -508,18 +508,17 @@
 
         // Get all elements with class="tabcontent" and hide them
         tabcontent = document.querySelectorAll(
-          '.tabcontent[data-table-index="' + tableIndex + '"]'
+          '.tabcontent[data-group-id="' + tableIndex + '"]'
         );
 
         // Hide all tab contents for the specified table index
         for (i = 0; i < tabcontent.length; i++) {
-          // tabcontent[i].style.display = "none";
           tabcontent[i].classList.add('offscreen');
         }
 
         // Get all elements with class="tablinks" and remove the class "active"
         tablinks = document.querySelectorAll(
-          '.tablinks[data-table-index="' + tableIndex + '"]'
+          '.tablinks[data-group-id="' + tableIndex + '"]'
         );
         for (i = 0; i < tablinks.length; i++) {
           tablinks[i].classList.remove("active");
@@ -527,9 +526,9 @@
 
         // Show the current tab, and add an "active" class to the button that opened the tab
         for (i = 0; i < tabcontent.length; i++) {
-          if (tabcontent[i].id == tabName) {
+          if (tabcontent[i].getAttribute('data-tab-name') == tabName &&
+              tabcontent[i].getAttribute('data-group-id') == tableIndex) {
             tabcontent[i].classList.remove('offscreen');
-
           }
         }
         evt.currentTarget.classList.add("active");

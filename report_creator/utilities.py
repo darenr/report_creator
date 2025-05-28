@@ -6,21 +6,22 @@ import os
 import random
 import time
 import uuid
+from collections.abc import Sequence  # Added Any, Tuple
 from html.parser import HTMLParser
-from typing import List, Sequence, Union, Optional, Any, Tuple # Added Any, Tuple
+from typing import Any, List, Optional, Tuple, Union
 from urllib.parse import unquote, urlparse
 
 # Third-party imports
-import emoji # For Markdown emoji processing
-import humanize # For human-readable sizes
-import requests # For fetching images from URLs
-import requests.exceptions # For specific request error handling
+import emoji  # For Markdown emoji processing
+import humanize  # For human-readable sizes
+import requests  # For fetching images from URLs
+import requests.exceptions  # For specific request error handling
 
 # Loguru logger
 from loguru import logger
 
 # Internal imports
-from .theming import report_creator_colors # For deterministic color generation
+from .theming import report_creator_colors  # For deterministic color generation
 
 # Default length for URL ellipsis
 DEFAULT_ELLIPSIS_LENGTH = 45
@@ -29,6 +30,7 @@ DEFAULT_ELLIPSIS_LENGTH = 45
 # This ensures that repeated calls with the same seed word produce the same color,
 # but different seed words can produce different colors.
 _color_rng = random.Random()
+
 
 def _generate_anchor_id(text: str) -> str:
     """
@@ -100,9 +102,10 @@ def _check_html_tags_are_closed(html_content: str) -> Tuple[bool, Optional[List[
         Internal parser class to validate HTML tag closure.
         It maintains a stack of opened tags.
         """
+
         def __init__(self) -> None:
             super().__init__()
-            self.tag_stack: List[str] = [] # Stack to keep track of opened tags
+            self.tag_stack: List[str] = []  # Stack to keep track of opened tags
 
         def handle_starttag(self, tag: str, attrs: Any) -> None:
             # When a start tag is encountered, push it onto the stack.
@@ -119,8 +122,10 @@ def _check_html_tags_are_closed(html_content: str) -> Tuple[bool, Optional[List[
                 # without a corresponding opening tag that was expected.
                 # For this validator's purpose (checking for unclosed tags),
                 # we are more concerned about the final state of the stack.
-                logger.debug(f"HTML structure issue: Encountered end tag '{tag}' "
-                               f"but stack top is '{self.tag_stack[-1] if self.tag_stack else "empty"}'.")
+                logger.debug(
+                    f"HTML structure issue: Encountered end tag '{tag}' "
+                    f"but stack top is '{self.tag_stack[-1] if self.tag_stack else 'empty'}'."
+                )
 
         def get_validation_result(self) -> Tuple[bool, Optional[List[str]]]:
             """Returns the validation result based on the final state of the stack."""
@@ -133,7 +138,7 @@ def _check_html_tags_are_closed(html_content: str) -> Tuple[bool, Optional[List[
                 return (False, list(self.tag_stack))
 
     validator = HTMLTagValidator()
-    validator.feed(str(html_content)) # Ensure content is string before feeding
+    validator.feed(str(html_content))  # Ensure content is string before feeding
     return validator.get_validation_result()
 
 
@@ -158,16 +163,16 @@ def _ellipsis_url(url: str, max_length: int = DEFAULT_ELLIPSIS_LENGTH) -> str:
     Returns:
         str: The original or truncated URL string.
     """
-    url_str = str(url) # Ensure input is a string
+    url_str = str(url)  # Ensure input is a string
 
     if len(url_str) <= max_length:
         return url_str
 
-    if max_length < 4: # Not enough space for ellipsis + context
+    if max_length < 4:  # Not enough space for ellipsis + context
         return url_str[:max_length]
-    
-    if max_length < 10: # Ellipsis at the end for moderately short lengths
-        return f"{url_str[:max_length - 3]}..."
+
+    if max_length < 10:  # Ellipsis at the end for moderately short lengths
+        return f"{url_str[: max_length - 3]}..."
 
     # For longer max_length, place ellipsis in the middle
     # Reserve 3 characters for "..."
@@ -175,17 +180,16 @@ def _ellipsis_url(url: str, max_length: int = DEFAULT_ELLIPSIS_LENGTH) -> str:
     # Distribute remaining length, favoring the start slightly
     start_length = (chars_to_show + 1) // 2
     end_length = chars_to_show // 2
-    
+
     # Ensure start and end lengths are non-negative (should be covered by max_length < 10 check)
     # but as a safeguard:
-    if start_length < 0: start_length = 0
-    if end_length < 0: end_length = 0
-    
+    start_length = max(start_length, 0)
+    end_length = max(end_length, 0)
+
     # Ensure we don't show more than available if start_length + end_length > len(url_str)
     # This path should ideally not be hit if len(url_str) > max_length
     if start_length + end_length >= len(url_str):
-         return f"{url_str[:max_length-3]}..."
-
+        return f"{url_str[: max_length - 3]}..."
 
     return f"{url_str[:start_length]}...{url_str[-end_length:]}"
 
@@ -221,12 +225,12 @@ def _gfm_markdown_to_html(text: str) -> str:
              The `mistune` renderer is configured with `escape=False` because
              escaping is handled selectively (e.g., within `block_code` for
              non-Mermaid code).
-    
+
     Dependencies:
         - `mistune`: For Markdown parsing and rendering.
         - `emoji`: For converting emoji codes to characters.
     """
-    import mistune # Lazily import mistune as it's a core dependency for this function.
+    import mistune  # Lazily import mistune as it's a core dependency for this function.
 
     # Plugin for emoji support
     def emojis_plugin(md: mistune.Markdown) -> None:
@@ -234,18 +238,18 @@ def _gfm_markdown_to_html(text: str) -> str:
         # Regex for common emoji cheat sheet codes
         INLINE_EMOJI_PATTERN = r":[A-Za-z0-9+._’()_-]+:"
 
-        def parse_inline_emoji(inline: mistune.InlineParser, match: Any, state: mistune.InlineState) -> int:
+        def parse_inline_emoji(
+            inline: mistune.InlineParser, match: Any, state: mistune.InlineState
+        ) -> int:
             """Parses an emoji token."""
-            state.append_token(
-                {"type": "emoji_text", "attrs": {"text": match.group(0)}}
-            )
+            state.append_token({"type": "emoji_text", "attrs": {"text": match.group(0)}})
             return match.end()
 
         def render_html_emoji(text: str) -> str:
             """Renders the emoji token to its Unicode character."""
             return emoji.emojize(text, variant="emoji_type", language="en")
 
-        md.inline.register_rule("emoji", INLINE_EMOJI_PATTERN, parse_inline_emoji)
+        md.inline.register("emoji", INLINE_EMOJI_PATTERN, parse_inline_emoji)
         # Add 'emoji' to the default inline methods list
         md.inline.rules.append("emoji")
         if md.renderer and hasattr(md.renderer, "register"):
@@ -253,16 +257,21 @@ def _gfm_markdown_to_html(text: str) -> str:
 
     class CustomHighlightRenderer(mistune.HTMLRenderer):
         """Custom renderer to handle script blocking and code block highlighting."""
+
         def block_html(self, html: str) -> str:
             # Prevent raw script tags from Markdown to avoid XSS
             stripped_html = html.strip()
-            if stripped_html.lower().startswith("<script") and stripped_html.lower().endswith("</script>"):
+            if stripped_html.lower().startswith("<script") and stripped_html.lower().endswith(
+                "</script>"
+            ):
                 logger.warning("Blocked a <script> tag found in Markdown content.")
                 return "<!-- Potentially unsafe script tag was blocked by Report Creator -->"
-            return super().block_html(html) # Use super for other HTML blocks
+            return super().block_html(html)  # Use super for other HTML blocks
 
         def block_code(self, code: str, info: Optional[str] = None) -> str:
-            language = info.strip() if info else "plaintext" # Default to plaintext if no language info
+            language = (
+                info.strip() if info else "plaintext"
+            )  # Default to plaintext if no language info
 
             if language == "mermaid":
                 # For Mermaid diagrams, wrap in a div for Mermaid.js to process.
@@ -274,25 +283,25 @@ def _gfm_markdown_to_html(text: str) -> str:
                 escaped_code = mistune.escape(code)
                 return (
                     f'<div class="codehilite code-block">'
-                    f'<pre><code class="language-{mistune.escape_html(language)}">{escaped_code}</code></pre>'
-                    f'</div>'
+                    f'<pre><code class="language-{mistune.escape(language)}">{escaped_code}</code></pre>'
+                    f"</div>"
                 )
 
     # Create Markdown parser with the custom renderer and plugins
     markdown_parser = mistune.create_markdown(
-        renderer=CustomHighlightRenderer(escape=False), # Renderer handles its own escaping
+        renderer=CustomHighlightRenderer(escape=False),  # Renderer handles its own escaping
         plugins=[
-            "task_lists",    # For `- [ ]` and `- [x]`
-            "def_list",      # For definition lists
-            "math",          # For LaTeX math (requires MathJax/KaTeX on client)
-            "table",         # For GFM tables
-            "strikethrough", # For `~~strikethrough~~`
-            "footnotes",     # For `[^1]` and `[^1]: footnote content`
-            "url",           # For auto-linking URLs
-            "spoiler",       # For `||spoiler||` (GFM-style)
-            emojis_plugin,   # Custom emoji plugin
+            "task_lists",  # For `- [ ]` and `- [x]`
+            "def_list",  # For definition lists
+            "math",  # For LaTeX math (requires MathJax/KaTeX on client)
+            "table",  # For GFM tables
+            "strikethrough",  # For `~~strikethrough~~`
+            "footnotes",  # For `[^1]` and `[^1]: footnote content`
+            "url",  # For auto-linking URLs
+            "spoiler",  # For `||spoiler||` (GFM-style)
+            # emojis_plugin,  # Custom emoji plugin
         ],
-        hard_wrap=False # Respect Markdown newlines for paragraphs
+        hard_wrap=False,  # Respect Markdown newlines for paragraphs
     )
     return markdown_parser(str(text))
 
@@ -312,7 +321,8 @@ def _time_it(func: callable) -> callable:
         callable: The wrapped function, which when called, will execute the original
                   function, log its execution time, and return its result.
     """
-    @functools.wraps(func) # Preserves metadata of the original function
+
+    @functools.wraps(func)  # Preserves metadata of the original function
     def wrapper_timer(*args: Any, **kwargs: Any) -> Any:
         start_time = time.perf_counter()  # More precise than time.time() for short durations
         value = func(*args, **kwargs)
@@ -321,6 +331,7 @@ def _time_it(func: callable) -> callable:
         # func.__qualname__ gives Class.method or just function name, good for context
         logger.debug(f"Execution of [{func.__qualname__}] took: {run_time:.4f} secs")
         return value
+
     return wrapper_timer
 
 
@@ -340,23 +351,25 @@ def _strip_whitespace(func: callable) -> callable:
                   have leading/trailing whitespace removed. Otherwise, the original
                   return value is passed through.
     """
-    @functools.wraps(func) # Preserves metadata
+
+    @functools.wraps(func)  # Preserves metadata
     def wrapper(*args: Any, **kwargs: Any) -> Any:
         result = func(*args, **kwargs)
         if isinstance(result, str):
-            return result.strip() # Strip whitespace if it's a string
-        return result # Return as-is if not a string
+            return result.strip()  # Strip whitespace if it's a string
+        return result  # Return as-is if not a string
+
     return wrapper
 
 
 def create_color_value_sensitive_mapping(
-    values: List[Union[str, int, float, bool]], # Added bool to Union
+    values: List[Union[str, int, float, bool]],  # Added bool to Union
     error_keywords: Optional[Sequence[str]] = None,
     error_color: str = "red",
     success_color: str = "green",
     default_color: str = "gray",
-    boolean_true_color: Optional[str] = None, # Color for True booleans
-    boolean_false_color: Optional[str] = None, # Color for False booleans
+    boolean_true_color: Optional[str] = None,  # Color for True booleans
+    boolean_false_color: Optional[str] = None,  # Color for False booleans
 ) -> List[str]:
     """
     Creates a list of colors corresponding to a list of input values, assigning
@@ -405,7 +418,7 @@ def create_color_value_sensitive_mapping(
     lower_error_keywords = {keyword.lower() for keyword in error_keywords}
 
     for value in values:
-        assigned_color = None # Color for the current value
+        assigned_color = None  # Color for the current value
 
         # Check for error conditions first
         if isinstance(value, str):
@@ -414,23 +427,25 @@ def create_color_value_sensitive_mapping(
         elif isinstance(value, (int, float)):
             if value < 0:
                 assigned_color = error_color
-        
+
         # If not an error, check for boolean-specific colors
         if assigned_color is None and isinstance(value, bool):
             if value is True and boolean_true_color is not None:
                 assigned_color = boolean_true_color
             elif value is False and boolean_false_color is not None:
                 assigned_color = boolean_false_color
-        
+
         # If still no color assigned, apply success or default
         if assigned_color is None:
-            if isinstance(value, (str, int, float, bool)): # bool included here for cases where specific bool colors are not set
+            if isinstance(
+                value, (str, int, float, bool)
+            ):  # bool included here for cases where specific bool colors are not set
                 assigned_color = success_color
             else:
-                assigned_color = default_color # For types not explicitly handled
-        
+                assigned_color = default_color  # For types not explicitly handled
+
         output_colors.append(assigned_color)
-        
+
     return output_colors
 
 
@@ -463,7 +478,7 @@ def _random_light_color_generator(seed_word: str) -> Tuple[str, str]:
         Factor = 0.0: no change. Factor = 1.0: completely white.
         """
         hex_color_str = hex_color_str.lstrip("#")
-        rgb = [int(hex_color_str[i:i+2], 16) for i in (0, 2, 4)] # Convert hex to R, G, B
+        rgb = [int(hex_color_str[i : i + 2], 16) for i in (0, 2, 4)]  # Convert hex to R, G, B
         # Calculate lightened RGB components
         light_rgb = [min(255, int(c + (255 - c) * factor)) for c in rgb]
         return "#{:02x}{:02x}{:02x}".format(*light_rgb)
@@ -471,8 +486,8 @@ def _random_light_color_generator(seed_word: str) -> Tuple[str, str]:
     # Choose a base color from the predefined list using the seeded RNG
     base_color = _color_rng.choice(report_creator_colors)
     lightened_bg_color = lighten_hex_color(base_color, factor=0.64)
-    
-    return lightened_bg_color, "black" # Text color is fixed to black for light backgrounds
+
+    return lightened_bg_color, "black"  # Text color is fixed to black for light backgrounds
 
 
 def _random_color_generator(seed_word: str) -> Tuple[str, str]:
@@ -495,19 +510,19 @@ def _random_color_generator(seed_word: str) -> Tuple[str, str]:
     """
     # Seed the module-level RNG with a combination of word and a salt for this generator
     _color_rng.seed(f"contrast_{seed_word}_gen".encode())
-    
+
     # Generate random R, G, B components
     r_val = _color_rng.randint(0, 255)
     g_val = _color_rng.randint(0, 255)
     b_val = _color_rng.randint(0, 255)
 
     background_color_hex = f"#{r_val:02x}{g_val:02x}{b_val:02x}"
-    
+
     # Calculate luminance of the background color to determine text color
     # Formula for luminance: Y = 0.299*R + 0.587*G + 0.114*B
     # (standard formula for perceived brightness)
     luminance = (0.299 * r_val + 0.587 * g_val + 0.114 * b_val) / 255
-    
+
     # If luminance is greater than 0.5, background is light, use black text.
     # Otherwise, background is dark, use white text.
     text_color = "black" if luminance > 0.5 else "white"
@@ -531,11 +546,11 @@ def _get_url_root(url: str) -> str:
              string if the URL is malformed and cannot be parsed.
     """
     try:
-        parsed_url = urlparse(str(url)) # Ensure URL is a string
+        parsed_url = urlparse(str(url))  # Ensure URL is a string
         # Reconstruct the root URL from scheme and netloc
         root_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
         return root_url
-    except Exception: # Catch potential errors from urlparse on malformed URLs
+    except Exception:  # Catch potential errors from urlparse on malformed URLs
         logger.warning(f"Could not parse URL to get root: {_ellipsis_url(str(url))}")
         return ""
 
@@ -560,7 +575,7 @@ def _convert_filepath_to_datauri(filepath: str) -> str:
                     if an `IOError` occurs during file reading, or if any other
                     unexpected error happens during the conversion process.
     """
-    if not os.path.isfile(filepath): # More specific check than os.path.exists
+    if not os.path.isfile(filepath):  # More specific check than os.path.exists
         raise FileNotFoundError(f"File not found or is not a regular file: {filepath}")
 
     try:
@@ -568,27 +583,35 @@ def _convert_filepath_to_datauri(filepath: str) -> str:
         mime_type, encoding = mimetypes.guess_type(filepath)
         if mime_type is None:
             # Fallback or raise error if MIME type is crucial
-            logger.warning(f"Could not determine MIME type for {filepath}. Defaulting to 'application/octet-stream'.")
-            mime_type = 'application/octet-stream'
+            logger.warning(
+                f"Could not determine MIME type for {filepath}. Defaulting to 'application/octet-stream'."
+            )
+            mime_type = "application/octet-stream"
 
         with open(filepath, "rb") as file_handle:
             file_bytes = file_handle.read()
-        
+
         base64_encoded_data = base64.b64encode(file_bytes).decode("utf-8")
         data_uri = f"data:{mime_type};base64,{base64_encoded_data}"
-        
+
         logger.info(
             f"Converted local file to data URI: '{_ellipsis_url(filepath)}' "
             f"(MIME: {mime_type}, Original Size: {humanize.naturalsize(len(file_bytes))})"
         )
         return data_uri
-        
-    except IOError as e:
+
+    except OSError as e:
         logger.error(f"IOError when reading file '{filepath}': {e}")
-        raise ValueError(f"Could not convert file '{filepath}' to data URI due to an IO error.") from e
-    except Exception as e: # Catch any other unexpected errors
-         logger.error(f"An unexpected error occurred while converting file '{filepath}' to data URI: {e}")
-         raise ValueError(f"Could not convert file '{filepath}' to data URI due to an unexpected error.") from e
+        raise ValueError(
+            f"Could not convert file '{filepath}' to data URI due to an IO error."
+        ) from e
+    except Exception as e:  # Catch any other unexpected errors
+        logger.error(
+            f"An unexpected error occurred while converting file '{filepath}' to data URI: {e}"
+        )
+        raise ValueError(
+            f"Could not convert file '{filepath}' to data URI due to an unexpected error."
+        ) from e
 
 
 def _convert_imgurl_to_datauri(image_url: str) -> str:
@@ -613,38 +636,45 @@ def _convert_imgurl_to_datauri(image_url: str) -> str:
                     other unexpected error occurs during the process. This wraps exceptions
                     from `requests.exceptions.RequestException`.
     """
-    if not isinstance(image_url, str) or not image_url.startswith(('http://', 'https://')):
-        raise ValueError(f"Invalid image URL provided: {_ellipsis_url(str(image_url))}. Must be a valid HTTP/HTTPS URL.")
+    if not isinstance(image_url, str) or not image_url.startswith(("http://", "https://")):
+        raise ValueError(
+            f"Invalid image URL provided: {_ellipsis_url(str(image_url))}. Must be a valid HTTP/HTTPS URL."
+        )
 
     try:
         # Use the root of the image URL as the Referer. Some servers might require this.
         # Also, set a reasonable timeout for the request.
         headers = {"Referer": _get_url_root(image_url)}
-        timeout_seconds = 10 
+        timeout_seconds = 10
         response = requests.get(image_url, headers=headers, timeout=timeout_seconds)
         response.raise_for_status()  # Raises HTTPError for bad responses (4XX or 5XX)
 
         # Determine MIME type primarily from Content-Type header
-        content_type_header = response.headers.get('Content-Type')
+        content_type_header = response.headers.get("Content-Type")
         mime_type = None
         if content_type_header:
-             mime_type = content_type_header.split(';')[0].strip().lower() # Normalize
-        
-        # If Content-Type is missing or generic, try guessing from URL extension
-        if not mime_type or mime_type == 'application/octet-stream':
-             guessed_mime_type, _ = mimetypes.guess_type(urlparse(image_url).path) # Use path part of URL
-             if guessed_mime_type:
-                 mime_type = guessed_mime_type
-             elif mime_type == 'application/octet-stream' and not guessed_mime_type: # Still generic
-                 raise ValueError(f"Could not reliably determine MIME type for image URL: {image_url}. Content-Type: '{content_type_header}'.")
-        
-        if not mime_type: # Final fallback if still no MIME type
-            raise ValueError(f"MIME type for image URL {image_url} could not be determined.")
+            mime_type = content_type_header.split(";")[0].strip().lower()  # Normalize
 
+        # If Content-Type is missing or generic, try guessing from URL extension
+        if not mime_type or mime_type == "application/octet-stream":
+            guessed_mime_type, _ = mimetypes.guess_type(
+                urlparse(image_url).path
+            )  # Use path part of URL
+            if guessed_mime_type:
+                mime_type = guessed_mime_type
+            elif (
+                mime_type == "application/octet-stream" and not guessed_mime_type
+            ):  # Still generic
+                raise ValueError(
+                    f"Could not reliably determine MIME type for image URL: {image_url}. Content-Type: '{content_type_header}'."
+                )
+
+        if not mime_type:  # Final fallback if still no MIME type
+            raise ValueError(f"MIME type for image URL {image_url} could not be determined.")
 
         base64_encoded_content = base64.b64encode(response.content).decode("utf-8")
         data_uri = f"data:{mime_type};base64,{base64_encoded_content}"
-        
+
         logger.info(
             f"Fetched image from URL and converted to data URI: '{_ellipsis_url(unquote(image_url))}' "
             f"(MIME: {mime_type}, Original Size: {humanize.naturalsize(len(response.content))})"
@@ -655,13 +685,21 @@ def _convert_imgurl_to_datauri(image_url: str) -> str:
         logger.error(f"Timeout while fetching image URL '{image_url}': {e}")
         raise ValueError(f"Timeout converting image URL '{image_url}' to data URI.") from e
     except requests.exceptions.HTTPError as e:
-        logger.error(f"HTTP error {e.response.status_code} while fetching image URL '{image_url}': {e}")
+        logger.error(
+            f"HTTP error {e.response.status_code} while fetching image URL '{image_url}': {e}"
+        )
         raise ValueError(f"HTTP error converting image URL '{image_url}' to data URI.") from e
-    except requests.exceptions.RequestException as e: 
+    except requests.exceptions.RequestException as e:
         # Catches other general request issues like connection errors
         logger.error(f"Failed to fetch image URL '{image_url}' due to a request exception: {e}")
-        raise ValueError(f"Could not convert image URL '{image_url}' to data URI due to a request failure.") from e
-    except Exception as e: 
+        raise ValueError(
+            f"Could not convert image URL '{image_url}' to data URI due to a request failure."
+        ) from e
+    except Exception as e:
         # Catch any other unexpected errors (e.g., base64 encoding, unexpected NoneTypes)
-         logger.error(f"An unexpected error occurred while converting image URL '{image_url}' to data URI: {e}")
-         raise ValueError(f"Could not convert image URL '{image_url}' to data URI due to an unexpected error.") from e
+        logger.error(
+            f"An unexpected error occurred while converting image URL '{image_url}' to data URI: {e}"
+        )
+        raise ValueError(
+            f"Could not convert image URL '{image_url}' to data URI due to an unexpected error."
+        ) from e
