@@ -120,3 +120,7 @@ This project is under active development
 <a href="https://github.com/darenr/report_creator/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=darenr/report_creator" />
 </a>
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=darenr/report_creator&type=Date)](https://www.star-history.com/#darenr/report_creator&Date)
