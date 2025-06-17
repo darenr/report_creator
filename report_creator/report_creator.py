@@ -258,13 +258,13 @@ class Widget(Base):
     The component intelligently attempts to find the best HTML representation:
     - For Plotly `go.Figure` objects, common styling options are applied.
     - For objects with a `get_figure()` method (common in libraries like Seaborn),
-      that method is called to retrieve the figure.
+    that method is called to retrieve the figure.
     - For Pandas DataFrames, `style._repr_html_()` is used.
     - For Matplotlib figures, they are saved as PNG images, base64-encoded,
-      and embedded in an `<img>` tag with styling for responsiveness.
+    and embedded in an `<img>` tag with styling for responsiveness.
     - For other objects, it checks for a `_repr_html_()` method.
     - As a fallback, it uses the object's standard `__repr__` or `__str__`
-      representation wrapped in `<pre>` tags after HTML escaping.
+    representation wrapped in `<pre>` tags after HTML escaping.
 
     An optional `label` (HTML-escaped) can be displayed as a caption above the widget.
 
@@ -1136,10 +1136,10 @@ class Image(Base):
         src (str): The source of the image. The component handles `src` as follows:
             - **Base64 Data URI:** If `src` starts with "data:image", it's used directly.
             - **Local File Path:** If `src` is a valid local file path (checked using `os.path.exists`),
-              the image is read, converted to a base64 data URI, and embedded.
+            the image is read, converted to a base64 data URI, and embedded.
             - **URL (Remote Image):** If `src` is a URL (e.g., "http://", "https://"):
-                - If `convert_to_base64` is `True`, the image is downloaded, converted to base64, and embedded.
-                - If `convert_to_base64` is `False` (default), the `src` URL is used directly.
+            if `convert_to_base64` is `True`, the image is downloaded, converted to base64, and embedded.
+            if `convert_to_base64` is `False` (default), the `src` URL is used directly.
             The `alt` attribute for the image is generated from the `label` if provided,
             otherwise from the `src` (first 50 chars if long).
         link_to (Optional[str], optional): An optional URL. If provided, the image will be
@@ -1156,6 +1156,11 @@ class Image(Base):
         convert_to_base64 (bool, optional): If `True` and `src` is a URL, the image is
             fetched, converted to base64, and embedded. Defaults to False.
             Has no effect if `src` is already a data URI or a local file path.
+    Raises:
+            ValueError: If the `src` is not a valid image source or if conversion fails.
+            The component logs errors and falls back to using the original `src` if conversion fails.
+            This allows the browser to attempt rendering the image if it's a valid URL.
+
     """
 
     def __init__(
@@ -2036,7 +2041,7 @@ class Sql(Language):
         - Placing commas on new lines followed by a tab (if not inside quotes).
         - Uppercasing reserved words (currently only 'AS').
         - Uppercasing block statements (e.g., SELECT, FROM, WHERE) and placing them
-          on new lines, followed by a tab.
+        on new lines, followed by a tab.
 
         Note: This is a basic formatter and may not correctly format all complex SQL queries,
         especially those with comments or already intricate formatting.

@@ -8,7 +8,7 @@ import time
 import uuid
 from collections.abc import Sequence  # Added Any, tuple
 from html.parser import HTMLParser
-from typing import Any, Optional, Union, list
+from typing import Any, Optional, Union
 from urllib.parse import unquote, urlparse
 
 # Third-party imports
