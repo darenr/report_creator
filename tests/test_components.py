@@ -631,7 +631,7 @@ def test_html_with_label():
 
 
 def test_html_unclosed_tags():
-    with pytest.raises(ValueError, match="tags are not closed"):
+    with pytest.raises(ValueError, match="contains unclosed tags"):
         rc.Html("<div>Test")
 
 
@@ -725,5 +725,5 @@ def test_markdown_unclosed_tags():
 
 # --- Yaml/Json Component Tests ---
 def test_json_invalid():
-    with pytest.raises(json.JSONDecodeError):
+    with pytest.raises(ValueError, match="Input string is not valid JSON"):
         rc.Json("invalid json")
