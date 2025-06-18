@@ -15,4 +15,3 @@ pillow
 md4mathjax
 emoji
 setuptools
-tabulate
