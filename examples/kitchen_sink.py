@@ -191,7 +191,7 @@ if __name__ == "__main__":
                         "name": "Alice",
                         "age": 25,
                         "city": "Wonderland",
-                        "hobbies": ["reading", "adventures", "tea parties", "<script>alert('Hello!');</script>"]
+                        "hobbies": ["reading", "adventures", "tea parties", "cats"]
                     }
                     """),
                     label="JSON",
