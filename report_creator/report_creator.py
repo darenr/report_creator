@@ -664,7 +664,9 @@ class Metric(Base):
     ):
         super().__init__(label=textwrap.dedent(label) if label else None)
         self.heading = str(heading)  # Ensure heading is a string
-        self.float_precision = float_precision
+        self.float_precision = (
+            float_precision or 3
+        )  # Default to 3 decimal places if not specified
         self.value = value
         self.unit = unit or ""  # Ensure unit is a string, defaults to empty
         self.color = color
@@ -673,11 +675,11 @@ class Metric(Base):
             self.value = self.value.strip()
 
         logger.info(
-            f"Metric component: heading='{self.heading}', value='{self.value}', label='{self.label}'"
+            f"Metric component: heading='{self.heading}', value='{self.value}', label='{self.label}', unit='{self.unit}', color={self.color}', float_precision={self.float_precision}"
         )
 
     def __str__(self) -> str:
-        return f"Metric(heading='{self.heading}', value='{self.value}', unit='{self.unit}', label='{self.label}')"
+        return f"Metric component: heading='{self.heading}', value='{self.value}', label='{self.label}', unit='{self.unit}', color={self.color}', float_precision={self.float_precision}"
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -695,26 +697,8 @@ class Metric(Base):
             # Humanize large integers (e.g., 1000000 -> "1.0 Million")
             value_str = humanize.intword(self.value, format=f"%.{self.float_precision}f")
         elif isinstance(self.value, float):
-            # Attempt to humanize; if it doesn't change much, use standard float formatting
-            humanized_float = humanize.intword(self.value, format=f"%.{self.float_precision}f")
-            standard_float = f"{self.value:.{self.float_precision}f}"
-            # Check if humanize.intword actually did something significant
-            # This condition might need refinement based on typical value ranges
-            if (
-                humanized_float.replace(",", "").replace(".", "").isdigit()
-                and abs(
-                    float(
-                        humanized_float.split()[0]
-                        if " " in humanized_float
-                        else humanized_float
-                    )
-                    - self.value
-                )
-                < 1e-9
-            ):  # if it's just the number
-                value_str = standard_float
-            else:
-                value_str = humanized_float
+            # Format float with specified precision
+            value_str = f"{self.value:.{self.float_precision}f}"
         elif isinstance(self.value, datetime):
             value_str = self.value.strftime("%Y-%m-%d")
         else:
@@ -2225,35 +2209,6 @@ class Json(Language):
             other error occurs during JSON processing.
     """
 
-    class _RecursiveHtmlEscapingEncoder(json.JSONEncoder):
-        """
-        A custom JSONEncoder that recursively HTML-escapes string values
-        within the JSON structure being encoded. For example, if a string value is
-        "Hello <world>", it will be encoded as "Hello &lt;world&gt;" in the JSON output.
-        """
-
-        def encode(self, o: Any) -> str:
-            # This method is called by json.dumps(). 'o' is the object to be encoded.
-            # We need to traverse 'o' and escape its string components.
-
-            def escape_recursively(item: Any) -> Any:
-                if isinstance(item, str):
-                    return html.escape(item)
-                elif isinstance(item, dict):
-                    # Recursively process dictionary values
-                    return {k: escape_recursively(v) for k, v in item.items()}
-                elif isinstance(item, list):
-                    # Recursively process list elements
-                    return [escape_recursively(elem) for elem in item]
-                else:
-                    # Return other types (int, float, bool, None) as is
-                    return item
-
-            # Apply recursive escaping to the object 'o' before final encoding by the superclass.
-            escaped_o = escape_recursively(o)
-            # Let the parent class handle the actual JSON serialization of the modified object.
-            return super().encode(escaped_o)
-
     def __init__(
         self,
         data: Union[dict, list, str],
@@ -2274,11 +2229,9 @@ class Json(Language):
                     "Invalid data type for JSON component. Expected dict, list, or valid JSON string."
                 )
 
-            # Serialize the Python structure to a JSON string, using the custom encoder.
-            # This encoder will HTML-escape string values *within* the JSON structure.
             content_json_string = json.dumps(
                 parsed_data,
-                indent=2,  # cls=Json._RecursiveHtmlEscapingEncoder
+                indent=2,
             )
 
         except json.JSONDecodeError as e:

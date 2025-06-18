@@ -339,7 +339,8 @@ def test_report_creator_invalid_view():
     """Test save raises an error for invalid view types."""
     report = rc.ReportCreator(title="Invalid View Test")
     with pytest.raises(
-        ValueError, match="Expected view to be an instance of Base component, got str instead"
+        ValueError,
+        match="Expected 'view' to be an instance of a Base component, got str instead.",
     ):
         report.save("InvalidViewType", "output.html")
 
