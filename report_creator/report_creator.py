@@ -30,6 +30,7 @@ from jinja2 import Environment, FileSystemLoader
 
 # Loguru for logging
 from loguru import logger
+from pandas.api.types import is_datetime64_any_dtype as is_datetime
 
 # Internal imports
 from .base import Base  # Import Base from base.py
@@ -47,13 +48,9 @@ from .utilities import (
     _time_it,
 )
 
-# Configure Loguru - basic setup. Applications using this library can add their own handlers.
-# Remove default handler to prevent duplicate logs if the application also configures Loguru.
-# logger.remove()
-# logger.add(sys.stderr, level="INFO") # Example: Add back a default stderr handler
-
 # Silence noisy loggers from dependencies
 logger.disable("urllib3")  # Often too verbose with connection pool messages
+logger.disable("matplotlib")
 logger.disable("matplotlib.font_manager")
 
 
@@ -498,7 +495,6 @@ class EventMetric(Base):
         self.frequency = frequency
 
         # Ensure the date column is in datetime format
-        from pandas.api.types import is_datetime64_any_dtype as is_datetime
 
         if not is_datetime(self.df[self.date_col_name]):
             logger.info(
@@ -2281,7 +2277,8 @@ class Json(Language):
             # Serialize the Python structure to a JSON string, using the custom encoder.
             # This encoder will HTML-escape string values *within* the JSON structure.
             content_json_string = json.dumps(
-                parsed_data, indent=2, cls=Json._RecursiveHtmlEscapingEncoder
+                parsed_data,
+                indent=2,  # cls=Json._RecursiveHtmlEscapingEncoder
             )
 
         except json.JSONDecodeError as e:

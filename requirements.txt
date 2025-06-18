@@ -17,3 +17,5 @@ emoji
 setuptools
 tabulate
 loguru
+rich
+

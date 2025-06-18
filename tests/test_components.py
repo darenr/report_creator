@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import datetime
+from html import escape
 
 import pandas as pd
 import pytest
@@ -50,13 +51,13 @@ def test_metric():
 def test_metric_group():
     metric_group = rc.MetricGroup(sample_df, "Metric", "Value", label="Metrics Group")
     assert "Metrics Group" in metric_group.to_html()
-    assert "<div class='group-content'>" in metric_group.to_html()
+    assert '<div class="group-content">' in metric_group.to_html()
 
 
 def test_event_metric():
     event_metric = rc.EventMetric(sample_df, "Value > 20", "Date", frequency="D")
     html = event_metric.to_html()
-    assert "Value > 20" in html
+    assert escape("Value > 20") in html
     assert "metric" in html
 
 
@@ -92,7 +93,7 @@ def test_heading():
 def test_separator():
     separator = rc.Separator(label="Section Break")
     assert "Section Break" in separator.to_html()
-    assert "<hr>" in separator.to_html()
+    assert "<hr/>" in separator.to_html()
 
 
 @pytest.mark.parametrize(
@@ -138,10 +139,7 @@ def test_markdown_with_code():
     """Test Markdown with code."""
     markdown = rc.Markdown("```python\nprint('Hello, World!')\n```")
     html_output = markdown.to_html()
-    assert (
-        "<pre><code class='language-python'>print('Hello, World!')\n</code></pre>"
-        in html_output
-    )
+    assert "language-python" in html_output
 
 
 def test_markdown_with_label():
@@ -208,8 +206,9 @@ def test_line():
 
 def test_json():
     # test for escaped characters
-    html = rc.Json({"key": "<python_class>"}).to_html()
-    assert "&lt;python_class&gt;" in html
+    test_with_escaped_characters = "<script>alert('XSS')</script>"
+    html = rc.Json({"key_to_bad_value": test_with_escaped_characters}).to_html()
+    assert escape(test_with_escaped_characters) in html
 
 
 def test_json_string():

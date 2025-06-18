@@ -1,4 +1,13 @@
+# Silence noisy loggers from dependencies
+import logging
+
 from loguru import logger
+
+# Silence noisy loggers from dependencies
+logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+logging.getLogger("matplotlib.font_manager").setLevel(logging.WARNING)
+
 
 from report_creator.__version__ import __version__
 

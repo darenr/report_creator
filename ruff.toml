@@ -6,7 +6,6 @@ line-length = 120
 
 
 [lint]
-extend-ignore = ["E402", "N806", "N803"]
 ignore = [
   "S101",    # use of assert
   "B008",    # function call in argument defaults
@@ -17,6 +16,7 @@ ignore = [
   "E501",    # from scripts/lint_backend.sh
   "PLR091",  # complexity rules
   "PLR2004", # magic numbers
+  "PLC0415", # import not at top of file
   "PLW2901", # `for` loop variable overwritten by assignment target
   "SIM105",  # contextlib.suppress (has a performance cost)
   "SIM117",  # multiple nested with blocks (doesn't look good with gr.Row etc)
@@ -25,6 +25,7 @@ ignore = [
   "W291",    # trailing whitespace is legal in markdown for newline preserving format
   "ARG001",  # Unused function argument
 ]
+extend-ignore = ["E402", "N806", "N803"]
 extend-select = [
   "ARG",
   "B",
@@ -39,4 +40,3 @@ extend-select = [
   "UP",
   "W",
 ]
-
