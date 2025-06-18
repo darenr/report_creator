@@ -22,6 +22,9 @@ Quick Start
 
 .. code-block:: python
 
+   import plotly.express as px # for chart data
+
+   # Import the report_creator module
    import report_creator as rc
 
    with rc.ReportCreator(
