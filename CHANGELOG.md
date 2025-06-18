@@ -2,9 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
-## 1.0.39
+## 1.1.0 (June 18, 2025)
 
-- <todo>
+- Refactored code into modules for improved maintainability
+- Added support for `Path` objects in `logo` parameter of `ReportCreator`
+- Added new language components: `rc.Shell()`, `rc.Bash()`, and `rc.Sh()`
+- Enhanced `rc.Sql()` component with `prettify` option for automatic SQL formatting
+- Added `scroll_long_content` option for code components to manage long content display
+- Improved documentation with additional examples and clearer explanations
+- Fixed Mermaid diagram rendering issues in collapsed sections
+- Optimized pan/zoom functionality for diagrams
+- Updated styling and CSS for better component appearance and layout
+- Theme consistency improvements throughout components
 
 ## 1.0.38
 

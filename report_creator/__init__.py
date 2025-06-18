@@ -1,33 +1,39 @@
+# Silence noisy loggers from dependencies
+import logging
+
+from loguru import logger
+
+# Silence noisy loggers from dependencies
+logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+logging.getLogger("matplotlib.font_manager").setLevel(logging.WARNING)
+
+
 from report_creator.__version__ import __version__
-from report_creator.report_creator import (
+
+from .base import Base
+from .charts import Bar, Box, Histogram, Line, Pie, Radar, Scatter
+from .report_creator import (
     Accordion,
-    Bar,
-    Base,
     Bash,
     Block,
-    Box,
     Collapse,
     DataTable,
     Diagram,
     EventMetric,
     Group,
     Heading,
-    Histogram,
     Html,
     Image,
     Java,
     Json,
-    Line,
     Markdown,
     Metric,
     MetricGroup,
-    Pie,
     Plaintext,
     Prolog,
     Python,
-    Radar,
     ReportCreator,
-    Scatter,
     Select,
     Separator,
     Sh,
@@ -38,5 +44,5 @@ from report_creator.report_creator import (
     Unformatted,
     Widget,
     Yaml,
-    report_creator_colors,
 )
+from .theming import report_creator_colors

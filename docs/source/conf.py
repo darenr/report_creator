@@ -1,4 +1,5 @@
 import glob
+import os
 import sys
 
 for path in ["./", "../", "../../", "../../../"]:
@@ -6,6 +7,8 @@ for path in ["./", "../", "../../", "../../../"]:
     if candidate in glob.glob(f"{path}*"):
         sys.path.append(candidate)
         break
+
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 
 project = "report_creator"

@@ -18,12 +18,6 @@ help:
 
 .PHONY: help Makefile
 
-.PHONY: gh-pages
-.ONESHELL:
-gh-pages: html
-	rm -rf /tmp/gh-pages
-	cp -r $(BUILDDIR)/html /tmp/gh-pages
-	git checkout gh-pages && rm -rf * && cp -r /tmp/gh-pages/* ./ && rm -rf /tmp/gh-pages && git add . && git commit -m "Updated gh-pages" && git push && git checkout main
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).

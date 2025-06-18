@@ -167,6 +167,36 @@ if __name__ == "__main__":
                     label="Prolog",
                 ),
             ),
+            rc.Group(
+                rc.Yaml(
+                    textwrap.dedent("""
+                    # Example YAML configuration
+                    version: 1.0
+                    services:
+                      web:
+                        image: nginx:latest
+                        ports:  
+                          - "80:80"
+                      db:
+                        image: postgres:latest
+                        environment:
+                          POSTGRES_USER: user
+                          POSTGRES_PASSWORD: password
+                    """),
+                    label="YAML",
+                ),
+                rc.Json(
+                    textwrap.dedent("""
+                    {
+                        "name": "Alice",
+                        "age": 25,
+                        "city": "Wonderland",
+                        "hobbies": ["reading", "adventures", "tea parties", "<script>alert('Hello!');</script>"]
+                    }
+                    """),
+                    label="JSON",
+                ),
+            ),
             rc.Separator(),
             rc.Markdown(example_md, label="README.md"),
             rc.Widget(df1.plot.bar(x="Name", y="Age"), label="Matplotlib Figure - People"),
