@@ -634,7 +634,7 @@ class Metric(Base):
             The `heading` is also used as a seed for the random background color
             if `color` is set to True.
         value (Union[str, int, float, datetime]): The actual value of the metric.
-            - `int` and `float` values may be humanized (e.g., 1,000,000 becomes "1.0 Million").
+            - `int` values may be humanized (e.g., 1,000,000 becomes "1.0 Million").
             - `datetime` objects are formatted as "YYYY-MM-DD".
             - `str` values are displayed as is (after stripping whitespace).
         unit (Optional[str], optional): An optional unit of measurement for the metric,
@@ -694,11 +694,9 @@ class Metric(Base):
         """
         value_str: str
         if isinstance(self.value, int):
-            # Humanize large integers (e.g., 1000000 -> "1.0 Million")
-            value_str = humanize.intword(self.value, format=f"%.{self.float_precision}f")
+            value_str = humanize.intword(self.value) if self.value > 1000 else str(self.value)
         elif isinstance(self.value, float):
-            # Format float with specified precision
-            value_str = f"{self.value:.{self.float_precision}f}"
+            value_str = f"{self.value:.{self.float_precision}f}".rstrip("0").rstrip(".")
         elif isinstance(self.value, datetime):
             value_str = self.value.strftime("%Y-%m-%d")
         else:
