@@ -23,7 +23,7 @@ either the horizontal (`rc.Group()`) or Vertical (`rc.Block()`) direction.
 Create an html report on this dataframe, use context7
 ```
 
-## ⚡ Features
+## Features
 
 - [x] Good pandas/dataframe/table support
 - [x] Look modern
@@ -34,7 +34,7 @@ Create an html report on this dataframe, use context7
 - [x] images (styled by the library) with an option to fetch at report build time (no fetch on render)
 - [x] `json`/`yaml`/`python`/`java`/`prolog`/`plaintext` code blocks with color syntax highlighting
 
-## ⚡ Example
+## Example
 
 ```python
 import report_creator as rc
