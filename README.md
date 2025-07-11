@@ -16,7 +16,7 @@ Library to assemble reports in HTML from various components using python. This i
 it's a tool to put together professional looking reports from python easily and quickly. The philosophy for layout is that components flow in
 either the horizontal (`rc.Group()`) or Vertical (`rc.Block()`) direction.
 
-⚡ Talk to this repo using [DeepWiki](https://deepwiki.com/darenr/report_creator) 
+⚡ Talk to this repo using [DeepWiki Report Creator](https://deepwiki.com/darenr/report_creator) 
 
 ## ⚡ Features
 
