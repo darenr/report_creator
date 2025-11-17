@@ -27,7 +27,6 @@
               python-version: ${{ matrix.python-version }}
               activate-environment: test-env # Name of the conda environment
               auto-update-conda: true
-              auto-activate: false # Prevent auto-activation of base environment
               conda-remove-defaults: true
 
           - name: Install dependencies
