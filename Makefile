@@ -9,7 +9,7 @@ setup:
 	@python3 -m pip install -qr requirements-doc.txt -U
 	@python3 -m pip install -qr requirements-test.txt -U
 	@echo "Installing/updating dev tools..."
-	@python3 -m pip install -q ruff twine -U
+	@python3 -m pip install -q ruff twine ghapi -U
 
 examples: setup
 	@for file in $(wildcard examples/*.py); do \
