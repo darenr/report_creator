@@ -38,4 +38,4 @@
           - name: Run tests
             shell: bash -l {0} # Use login shell for conda environment activation
             run: |
-              make test
+              python3 -m pytest -v

@@ -2078,6 +2078,7 @@ class Sql(Language):
         for statement_pattern in BLOCK_STATEMENTS:
             # Using a lambda that captures the current state of 'original_sql_for_check'
             def current_replacer(m, osql=original_sql_for_check):
+                # force error in old versions of python
                 return f"{'' if osql.lower().lstrip().startswith(m.group(1).lower()) else '\n'}{m.group(1).upper()}\n\t"
 
                 # return (
