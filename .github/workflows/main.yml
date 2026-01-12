@@ -28,6 +28,7 @@
               activate-environment: test-env # Name of the conda environment
               auto-update-conda: true
               conda-remove-defaults: true
+              channels: conda-forge
 
           - name: Install dependencies
             shell: bash -l {0} # Use login shell for conda environment activation
