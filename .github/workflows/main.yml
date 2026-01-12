@@ -15,21 +15,16 @@
           matrix:
             python-version: ["3.10", "3.11", "3.12", "3.13"]
         steps:
-          - uses: actions/checkout@v5
           - uses: conda-incubator/setup-miniconda@v3
             with:
+              auto-update-conda: true
               python-version: ${{ matrix.python-version }}
-              mamba-version: "*"
-              channels: conda-forge,defaults
-              channel-priority: true
-              activate-environment: anaconda-client-env
-
 
           - name: Install dependencies
             shell: bash -l {0}
             run: |
               conda config --set auto_activate false
-              conda install -y pip # Ensure pip is installed in the environment
+              conda install -y pip
               make setup
 
           - name: Run tests
