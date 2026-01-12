@@ -23,7 +23,6 @@
               channels: conda-forge,defaults
               channel-priority: true
               activate-environment: anaconda-client-env
-              environment-file: etc/example-environment.yml
 
 
           - name: Install dependencies
