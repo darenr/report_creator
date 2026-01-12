@@ -10,24 +10,29 @@
 
     jobs:
       test:
-        runs-on: "ubuntu-latest"
+        runs-on: ubuntu-latest
         strategy:
           matrix:
             python-version: ["3.10", "3.11", "3.12", "3.13"]
+          fail-fast: false
+
         steps:
+          - name: Checkout repository
+            uses: actions/checkout@v4
+
           - uses: conda-incubator/setup-miniconda@v3
             with:
               auto-update-conda: true
               python-version: ${{ matrix.python-version }}
 
           - name: Install dependencies
-            shell: bash -l {0}
+            shell: bash -l {0} # Use login shell for conda environment activation
             run: |
               conda config --set auto_activate false
-              conda install -y pip
+              conda install -y pip # Ensure pip is installed in the environment
               make setup
 
           - name: Run tests
-            shell: bash -l {0} 
+            shell: bash -l {0} # Use login shell for conda environment activation
             run: |
               python3 -m pytest -v
