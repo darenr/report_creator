@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.1.3 (January 16, 2026)
+
+- Testing matrix now uses Linux, MacOS, and Windows, and Python version 3.10 through 3.14 (inclusive)
+
+
 ## 1.1.2 (January 15, 2026)
 
 - Support Python 3.14
