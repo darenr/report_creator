@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.1.2 (January 15, 2026)
+
+- Support Python 3.14
+- Upgrade github actions for testing to use Mamba for faster release testing
+
+## 1.1.1 (November 17, 2025)
+
+- Use github releases for immutable builds 
+
+
 ## 1.1.0 (June 18, 2025)
 
 - Refactored code into modules for improved maintainability
