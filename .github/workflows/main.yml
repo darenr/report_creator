@@ -24,6 +24,7 @@
             uses: conda-incubator/setup-miniconda@v3
             with:
               miniforge-version: latest
+              channels: conda-forge
               use-mamba: true
               python-version: ${{ matrix.python-version }}
 
