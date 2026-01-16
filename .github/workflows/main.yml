@@ -24,7 +24,7 @@
             uses: conda-incubator/setup-miniconda@v3
             with:
               miniforge-version: latest
-              channels: conda-forge
+              channels: conda-forge, nodefaults
               use-mamba: true
               python-version: ${{ matrix.python-version }}
               activate-environment: test-env
