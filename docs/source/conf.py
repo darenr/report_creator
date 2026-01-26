@@ -27,7 +27,6 @@ extensions = [
     "sphinx_copybutton",
     "sphinxcontrib.mermaid",
     "sphinx.ext.inheritance_diagram",
-    "sphinxcontrib.video",
     "sphinx_tabs.tabs",
     "myst_parser",
 ]
