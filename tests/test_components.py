@@ -7,15 +7,6 @@ import pytest
 
 import report_creator as rc
 
-# Sample DataFrame for testing
-sample_df = pd.DataFrame(
-    {
-        "Date": pd.date_range(start="2023-01-01", periods=5),
-        "Value": [10, 20, 30, 40, 50],
-        "Metric": ["A", "B", "C", "D", "E"],
-    }
-)
-
 
 def test_block():
     metric1 = rc.Metric("Test Metric", 123)
@@ -47,27 +38,27 @@ def test_metric():
     assert "123ms" in html
 
 
-def test_metric_group():
+def test_metric_group(sample_df):
     metric_group = rc.MetricGroup(sample_df, "Metric", "Value", label="Metrics Group")
     assert "Metrics Group" in metric_group.to_html()
     assert '<div class="group-content">' in metric_group.to_html()
 
 
-def test_event_metric():
+def test_event_metric(sample_df):
     event_metric = rc.EventMetric(sample_df, "Value > 20", "Date", frequency="D")
     html = event_metric.to_html()
     assert escape("Value > 20") in html
     assert "metric" in html
 
 
-def test_table():
+def test_table(sample_df):
     table = rc.Table(sample_df, label="Test Table")
     html = table.to_html()
     assert "Test Table" in html
     assert "<table" in html
 
 
-def test_data_table():
+def test_data_table(sample_df):
     data_table = rc.DataTable(sample_df, label="Data Table Example")
     html = data_table.to_html()
     assert "Data Table Example" in html
@@ -190,13 +181,13 @@ def test_markdown_html_script_injection():
     assert "The End" in html_output
 
 
-def test_widget():
+def test_widget(sample_df):
     widget = rc.Widget(sample_df)
     html = widget.to_html()
     assert "report-widget" in html
 
 
-def test_line():
+def test_line(sample_df):
     line_chart = rc.Line(sample_df, x="Date", y="Value", label="Line Chart")
     html = line_chart.to_html()
     assert "Line Chart" in html
@@ -344,49 +335,23 @@ def test_report_creator_invalid_view():
         report.save("InvalidViewType", "output.html")
 
 
-def test_report_creator_save_prettify_html(tmp_path):
-    """Test saving a report with prettified HTML."""
-    tmp_file = tmp_path / "prettified_report.html"
+@pytest.mark.parametrize("prettify_html", [True, False])
+def test_report_creator_save_prettify(tmp_path, prettify_html):
+    """Test saving a report with and without prettified HTML."""
+    tmp_file = tmp_path / f"report_{prettify_html}.html"
+    report = rc.ReportCreator(title=f"Report {prettify_html}")
+    block = rc.Block(rc.Metric("Metric", 123))
 
-    report = rc.ReportCreator(
-        title="Prettified Report", description="A report with prettified HTML."
-    )
+    report.save(block, str(tmp_file), prettify_html=prettify_html)
 
-    block = rc.Block(rc.Metric("Pretty Metric", 789))
-
-    # Save the report with prettified HTML
-    report.save(block, str(tmp_file), prettify_html=True)
-
-    # Verify the file is saved
     assert os.path.exists(tmp_file)
     with open(tmp_file) as f:
         content = f.read()
 
-    # Verify the prettified content
-    assert "Pretty Metric" in content
-    assert "789" in content
-    assert "</html>" in content  # Ensure the HTML is well-formed
-
-
-def test_report_creator_save_without_prettify_html(tmp_path):
-    """Test saving a report without prettified HTML."""
-    tmp_file = tmp_path / "non_prettified_report.html"
-
-    report = rc.ReportCreator(title="Non-Prettified Report")
-
-    block = rc.Block(rc.Metric("Simple Metric", 456))
-
-    # Save the report without prettified HTML
-    report.save(block, str(tmp_file), prettify_html=False)
-
-    # Verify the file is saved
-    assert os.path.exists(tmp_file)
-    with open(tmp_file) as f:
-        content = f.read()
-
-    # Verify the non-prettified content
-    assert "Simple Metric" in content
-    assert "456" in content
+    assert "Metric" in content
+    assert "123" in content
+    if prettify_html:
+        assert "</html>" in content
 
 
 def test_empty_block():
@@ -416,25 +381,20 @@ def test_empty_collapse():
     assert "</details>" in html
 
 
-# Sample DataFrame for testing
-sample_df = pd.DataFrame(
-    {
-        "Date": pd.date_range(start="2023-01-01", periods=5),
-        "Value": [10, 20, 30, 40, 50],
-        "Metric": ["A", "B", "C", "D", "E"],
-        "Category": ["X", "Y", "X", "Y", "X"],
-    }
-)
-
-
 # --- Metric Component Tests ---
-def test_metric_various_values():
+@pytest.mark.parametrize(
+    "heading, value, expected",
+    [
+        ("Int", 123, "123"),
+        ("Float", 123.4567, "123.457"),
+        ("String", "Test", "Test"),
+        ("Datetime", datetime(2023, 1, 1), "2023-01-01"),
+        ("None", None, "None"),
+    ]
+)
+def test_metric_various_values(heading, value, expected):
     """Test Metric with different value types."""
-    assert "123" in rc.Metric("Int", 123).to_html()
-    assert "123.457" in rc.Metric("Float", 123.4567).to_html()
-    assert "Test" in rc.Metric("String", "Test").to_html()
-    assert "2023-01-01" in rc.Metric("Datetime", datetime(2023, 1, 1)).to_html()
-    assert "None" in rc.Metric("None", None).to_html()
+    assert expected in rc.Metric(heading, value).to_html()
 
 
 @pytest.mark.parametrize(
@@ -455,14 +415,15 @@ def test_metric_with_unit():
     assert "123ms" in rc.Metric("Test", 123, unit="ms").to_html()
 
 
-def test_metric_with_color():
+@pytest.mark.parametrize("color, expected_style", [(True, True), (False, False)])
+def test_metric_with_color(color, expected_style):
     """Test Metric with color."""
-    metric_a = rc.Metric("Test", 123, color=True)
-    metric_b = rc.Metric("Test", 123, color=False)
-    metric_a_html = metric_a.to_html()
-    metric_b_html = metric_b.to_html()
-    assert 'style="background-color' in metric_a_html
-    assert metric_a_html != metric_b_html
+    metric = rc.Metric("Test", 123, color=color)
+    html = metric.to_html()
+    if expected_style:
+        assert 'style="background-color' in html
+    else:
+        assert 'style="background-color' not in html
 
 
 def test_metric_html_label():
@@ -505,7 +466,7 @@ def test_table_index():
     assert table_with_index.to_html().count("</th>") == 4
 
 
-def test_table_with_label():
+def test_table_with_label(sample_df):
     table = rc.Table(sample_df, label="Test Table")
     html = table.to_html()
     assert "Test Table" in html
@@ -544,13 +505,15 @@ def test_datatable_max_rows():
     assert dt_half.to_html().count("</td>") == 5
 
 
-def test_datatable_wrap_text():
+@pytest.mark.parametrize("wrap_text", [True, False])
+def test_datatable_wrap_text(wrap_text):
     """Test DataTable wrap_text."""
     df = pd.DataFrame({"A": ["a" * 100, "b"]})
-    dt_wrapped = rc.DataTable(df, wrap_text=True)
-    dt_nowrapped = rc.DataTable(df, wrap_text=False)
-    assert "nowrap" not in dt_wrapped.to_html()
-    assert "nowrap" in dt_nowrapped.to_html()
+    dt = rc.DataTable(df, wrap_text=wrap_text)
+    if wrap_text:
+        assert "nowrap" not in dt.to_html()
+    else:
+        assert "nowrap" in dt.to_html()
 
 
 def test_datatable_float_precision():
@@ -561,7 +524,7 @@ def test_datatable_float_precision():
     assert "1.11" in html
 
 
-def test_datatable_with_label():
+def test_datatable_with_label(sample_df):
     data_table = rc.DataTable(sample_df, label="Data Table Example")
     html = data_table.to_html()
     assert "Data Table Example" in html
@@ -580,7 +543,7 @@ def test_widget_matplotlib():
     assert "<img" in html
 
 
-def test_widget_plotly():
+def test_widget_plotly(sample_df):
     """Test Widget with a Plotly figure."""
     import plotly.express as px
 
@@ -591,7 +554,7 @@ def test_widget_plotly():
     assert "plotly-graph-div" in html
 
 
-def test_widget_pandas_style():
+def test_widget_pandas_style(sample_df):
     """Test Widget with a pandas style"""
     widget = rc.Widget(sample_df.style, label="Plotly Widget")
     html = widget.to_html()
@@ -600,7 +563,7 @@ def test_widget_pandas_style():
     assert "<td" in html
 
 
-def test_widget_with_label():
+def test_widget_with_label(sample_df):
     widget = rc.Widget(sample_df, label="Test Widget")
     html = widget.to_html()
     assert "Test Widget" in html
@@ -615,12 +578,14 @@ def test_html_with_css():
     assert "<h1>Test</h1>" in html.to_html()
 
 
-def test_html_with_border():
+@pytest.mark.parametrize("bordered", [True, False])
+def test_html_with_border(bordered):
     """Test Html with border."""
-    html_bordered = rc.Html("<div>Test</div>", bordered=True)
-    html_nobordered = rc.Html("<div>Test</div>", bordered=False)
-    assert "round-bordered" in html_bordered.to_html()
-    assert "round-bordered" not in html_nobordered.to_html()
+    html = rc.Html("<div>Test</div>", bordered=bordered)
+    if bordered:
+        assert "round-bordered" in html.to_html()
+    else:
+        assert "round-bordered" not in html.to_html()
 
 
 def test_html_with_label():
@@ -641,12 +606,14 @@ def test_html_injection():
 
 
 # --- Diagram Component Tests ---
-def test_diagram_pan_and_zoom():
+@pytest.mark.parametrize("pan_and_zoom", [True, False])
+def test_diagram_pan_and_zoom(pan_and_zoom):
     """Test Diagram pan_and_zoom."""
-    diagram_panzoom = rc.Diagram("graph LR\nA-->B", pan_and_zoom=True)
-    diagram_nopanzomm = rc.Diagram("graph LR\nA-->B", pan_and_zoom=False)
-    assert "mermaid-pan-zoom" in diagram_panzoom.to_html()
-    assert "mermaid-pan-zoom" not in diagram_nopanzomm.to_html()
+    diagram = rc.Diagram("graph LR\nA-->B", pan_and_zoom=pan_and_zoom)
+    if pan_and_zoom:
+        assert "mermaid-pan-zoom" in diagram.to_html()
+    else:
+        assert "mermaid-pan-zoom" not in diagram.to_html()
 
 
 def test_diagram_extra_css():
@@ -693,12 +660,14 @@ def test_image_clickable():
     assert '<a href="https://example.com"' in image.to_html()
 
 
-def test_image_rounded():
+@pytest.mark.parametrize("rounded", [True, False])
+def test_image_rounded(rounded):
     """Test Image rounded."""
-    image_rounded = rc.Image("https://via.placeholder.com/150", rounded=True)
-    image_notrounded = rc.Image("https://via.placeholder.com/150", rounded=False)
-    assert "border-radius" in image_rounded.to_html()
-    assert "border-radius" not in image_notrounded.to_html()
+    image = rc.Image("https://via.placeholder.com/150", rounded=rounded)
+    if rounded:
+        assert "border-radius" in image.to_html()
+    else:
+        assert "border-radius" not in image.to_html()
 
 
 def test_image_extra_css():
