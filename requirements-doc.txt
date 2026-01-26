@@ -9,4 +9,3 @@ sphinxcontrib-mermaid
 sphinx-book-theme
 sphinx-tabs
 myst-parser
-loguru

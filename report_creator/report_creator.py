@@ -17,8 +17,8 @@ from uuid import uuid4
 # Visualization
 import humanize
 import matplotlib
-import matplotlib.figure
 import matplotlib as mpl
+import matplotlib.figure
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
