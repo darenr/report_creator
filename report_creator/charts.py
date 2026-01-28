@@ -440,8 +440,9 @@ class Radar(PxBase):
         theta_categories = self.df.columns.tolist()
         theta_closed_loop = theta_categories + theta_categories[:1]  # Close the loop
 
-        for trace_name, row_data in self.df.iterrows():
-            r_values = row_data.values.tolist()
+        for row in self.df.itertuples(name=None):
+            trace_name = row[0]
+            r_values = list(row[1:])
             r_closed_loop = r_values + r_values[:1]  # Close the loop for r values
 
             trace_specific_kwargs = self.kwargs.get("trace_kwargs", {})
