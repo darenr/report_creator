@@ -257,21 +257,7 @@ class Line(PxBase):
                 f"X-axis column '{self.x_col}' not found in DataFrame columns: {self.df.columns.tolist()}."
             )
 
-        if isinstance(self.y_cols, list):
-            for y_col_name in self.y_cols:
-                if y_col_name not in self.df.columns:
-                    raise ValueError(
-                        f"Y-axis column '{y_col_name}' not found in DataFrame columns: {self.df.columns.tolist()}."
-                    )
-        elif isinstance(self.y_cols, str):
-            if self.y_cols not in self.df.columns:
-                raise ValueError(
-                    f"Y-axis column '{self.y_cols}' not found in DataFrame columns: {self.df.columns.tolist()}."
-                )
-        else:
-            raise ValueError(
-                f"Parameter 'y' must be a string or a list of strings, got {type(self.y_cols).__name__}."
-            )
+        self._validate_y_columns()
 
         if self.dimension_col:
             if self.dimension_col not in self.df.columns:
@@ -292,6 +278,24 @@ class Line(PxBase):
         logger.info(
             f"Line chart: x='{self.x_col}', y(s)='{self.y_cols}', dimension='{self.dimension_col}', label='{self.label}'"
         )
+
+    def _validate_y_columns(self) -> None:
+        """Validates that the specified y-axis column(s) exist in the DataFrame."""
+        if isinstance(self.y_cols, list):
+            for y_col_name in self.y_cols:
+                if y_col_name not in self.df.columns:
+                    raise ValueError(
+                        f"Y-axis column '{y_col_name}' not found in DataFrame columns: {self.df.columns.tolist()}."
+                    )
+        elif isinstance(self.y_cols, str):
+            if self.y_cols not in self.df.columns:
+                raise ValueError(
+                    f"Y-axis column '{self.y_cols}' not found in DataFrame columns: {self.df.columns.tolist()}."
+                )
+        else:
+            raise ValueError(
+                f"Parameter 'y' must be a string or a list of strings, got {type(self.y_cols).__name__}."
+            )
 
     @_strip_whitespace
     def to_html(self) -> str:
