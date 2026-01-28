@@ -2,14 +2,18 @@ import glob
 import os
 import sys
 
-for path in ["./", "../", "../../", "../../../"]:
-    candidate = f"{path}report_creator"
-    if candidate in glob.glob(f"{path}*"):
-        sys.path.append(candidate)
-        break
+# for path in ["./", "../", "../../", "../../../"]:
+#     candidate = f"{path}report_creator"
+#     if candidate in glob.glob(f"{path}*"):
+#         sys.path.append(candidate)
+#         break
 
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+# sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
+# This causes documentation within the __init__ method to be pulled into the documentation properly
+autoclass_content = "both"
+
+sys.path.insert(0, os.path.abspath("../.."))
 
 project = "report_creator"
 copyright = "2025, Daren Race"
