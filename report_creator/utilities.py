@@ -422,7 +422,8 @@ def create_color_value_sensitive_mapping(
 
         # Check for error conditions first
         if isinstance(value, str):
-            if any(err_kw in value.lower() for err_kw in lower_error_keywords):
+            value_lower = value.lower()
+            if any(err_kw in value_lower for err_kw in lower_error_keywords):
                 assigned_color = error_color
         elif isinstance(value, (int, float)) and value < 0:
             assigned_color = error_color
