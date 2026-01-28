@@ -11,7 +11,6 @@ ignore = [
   "B008",    # function call in argument defaults
   "B017",    # pytest.raises considered evil
   "B028",    # explicit stacklevel for warnings
-  "C901",    # function is too complex (TODO: un-ignore this)
   "E501",    # from scripts/lint_backend.sh
   "PLR091",  # complexity rules
   "PLR2004", # magic numbers

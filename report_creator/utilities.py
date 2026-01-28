@@ -610,6 +610,36 @@ def _convert_filepath_to_datauri(filepath: str) -> str:
         ) from e
 
 
+def _determine_mime_type(response: requests.Response, image_url: str) -> str:
+    """
+    Helper to determine the MIME type of an image from response headers or URL.
+    """
+    # Determine MIME type primarily from Content-Type header
+    content_type_header = response.headers.get("Content-Type")
+    mime_type = None
+    if content_type_header:
+        mime_type = content_type_header.split(";")[0].strip().lower()  # Normalize
+
+    # If Content-Type is missing or generic, try guessing from URL extension
+    if not mime_type or mime_type == "application/octet-stream":
+        guessed_mime_type, _ = mimetypes.guess_type(
+            urlparse(image_url).path
+        )  # Use path part of URL
+        if guessed_mime_type:
+            mime_type = guessed_mime_type
+        elif (
+            mime_type == "application/octet-stream" and not guessed_mime_type
+        ):  # Still generic
+            raise ValueError(
+                f"Could not reliably determine MIME type for image URL: {image_url}. Content-Type: '{content_type_header}'."
+            )
+
+    if not mime_type:  # Final fallback if still no MIME type
+        raise ValueError(f"MIME type for image URL {image_url} could not be determined.")
+
+    return mime_type
+
+
 def _convert_imgurl_to_datauri(image_url: str) -> str:
     """
     Fetches an image from a given URL and converts it into a base64-encoded data URI.
@@ -645,28 +675,7 @@ def _convert_imgurl_to_datauri(image_url: str) -> str:
         response = requests.get(image_url, headers=headers, timeout=timeout_seconds)
         response.raise_for_status()  # Raises HTTPError for bad responses (4XX or 5XX)
 
-        # Determine MIME type primarily from Content-Type header
-        content_type_header = response.headers.get("Content-Type")
-        mime_type = None
-        if content_type_header:
-            mime_type = content_type_header.split(";")[0].strip().lower()  # Normalize
-
-        # If Content-Type is missing or generic, try guessing from URL extension
-        if not mime_type or mime_type == "application/octet-stream":
-            guessed_mime_type, _ = mimetypes.guess_type(
-                urlparse(image_url).path
-            )  # Use path part of URL
-            if guessed_mime_type:
-                mime_type = guessed_mime_type
-            elif (
-                mime_type == "application/octet-stream" and not guessed_mime_type
-            ):  # Still generic
-                raise ValueError(
-                    f"Could not reliably determine MIME type for image URL: {image_url}. Content-Type: '{content_type_header}'."
-                )
-
-        if not mime_type:  # Final fallback if still no MIME type
-            raise ValueError(f"MIME type for image URL {image_url} could not be determined.")
+        mime_type = _determine_mime_type(response, image_url)
 
         base64_encoded_content = base64.b64encode(response.content).decode("utf-8")
         data_uri = f"data:{mime_type};base64,{base64_encoded_content}"
