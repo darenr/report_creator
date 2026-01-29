@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.1.4 ()
+
+- Minor optimizations and code clean up
+- Fix docs issue on readthedocs.org so doc is building again
+- Refreshed [Context7](https://context7.com/darenr/report_creator) integration
+
 ## 1.1.3 (January 16, 2026)
 
 - Testing matrix now uses Linux, MacOS, and Windows, and Python version 3.10 through 3.14 (inclusive)
