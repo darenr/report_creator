@@ -4,7 +4,6 @@
 [![PyPI Version](https://img.shields.io/pypi/v/report_creator.svg?style=for-the-badge&color=blue)](https://pypi.org/project/report_creator)
 [![Python Versions](https://img.shields.io/pypi/pyversions/report_creator.svg?logo=python&logoColor=white&style=for-the-badge)](https://pypi.org/project/report_creator)
 [![Python Stats](https://img.shields.io/pypi/dw/report_creator?style=for-the-badge)](https://pypi.org/project/report_creator)
-[![Discord](https://img.shields.io/discord/1318814951795593236?style=for-the-badge)](https://discord.gg/c4VZp5ze)
 
 [GitHub](https://github.com/darenr/report_creator) |
 [PyPI](https://pypi.org/project/report_creator/) |
@@ -120,7 +119,6 @@ make targets
 This project is under active development
 
 - Report bugs via [GitHub Issues](https://github.com/darenr/report_creator/issues).
-- Chat with the maintainers on [Discord](https://discord.com/channels/1318814951795593236/1318814951795593239).
 
 ## Contributors
 
