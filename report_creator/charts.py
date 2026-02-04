@@ -438,25 +438,30 @@ class Radar(PxBase):
     @_strip_whitespace
     def to_html(self) -> str:
         """Generates the HTML representation of the radar chart."""
-        fig = go.Figure()
         theta_categories = self.df.columns.tolist()
         theta_closed_loop = theta_categories + theta_categories[:1]  # Close the loop
 
+        data = []
+        trace_specific_kwargs = self.kwargs.get("trace_kwargs", {})
+
+        # Optimize by avoiding repeated go.Scatterpolar instantiation and add_trace calls
+        # Construct raw dictionaries instead
         for row in self.df.itertuples(name=None):
             trace_name = row[0]
             r_values = list(row[1:])
             r_closed_loop = r_values + r_values[:1]  # Close the loop for r values
 
-            trace_specific_kwargs = self.kwargs.get("trace_kwargs", {})
-            fig.add_trace(
-                go.Scatterpolar(
-                    r=r_closed_loop,
-                    theta=theta_closed_loop,
-                    fill="toself" if self.filled else None,
-                    name=str(trace_name),  # Ensure trace name is string
-                    **trace_specific_kwargs,
-                )
-            )
+            trace = {
+                "type": "scatterpolar",
+                "r": r_closed_loop,
+                "theta": theta_closed_loop,
+                "fill": "toself" if self.filled else None,
+                "name": str(trace_name),
+                **trace_specific_kwargs,
+            }
+            data.append(trace)
+
+        fig = go.Figure(data=data)
 
         PxBase.apply_common_fig_options(fig)
         fig.update_layout(
