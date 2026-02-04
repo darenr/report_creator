@@ -1,5 +1,6 @@
 # Standard library imports
 import base64
+import concurrent.futures
 import html
 import io
 import json
@@ -41,6 +42,7 @@ from .utilities import (
     _check_html_tags_are_closed,
     _convert_filepath_to_datauri,
     _convert_imgurl_to_datauri,
+    _convert_imgurl_to_datauri_async,
     _generate_anchor_id,
     _gfm_markdown_to_html,
     _random_color_generator,
@@ -1169,7 +1171,8 @@ class Image(Base):
                 processed_src = _convert_filepath_to_datauri(src)
             elif src.startswith(("http://", "https://")) and convert_to_base64:
                 # URL to be fetched and converted to base64
-                processed_src = _convert_imgurl_to_datauri(src)
+                # This returns a Future now
+                processed_src = _convert_imgurl_to_datauri_async(src)
             # If it's a URL and convert_to_base64 is False, src remains as is.
         except ValueError as e:  # Catch errors from conversion utilities
             logger.error(
@@ -1179,9 +1182,13 @@ class Image(Base):
             processed_src = src
 
         self.src = processed_src
-        logger.info(
-            f"Image component: processed_src='{self.src[:70]}...', label='{self.label}'"
+
+        src_info = (
+            "processing in background..."
+            if isinstance(self.src, concurrent.futures.Future)
+            else f"'{self.src[:70]}...'"
         )
+        logger.info(f"Image component: processed_src={src_info}, label='{self.label}'")
 
     @_strip_whitespace
     def to_html(self) -> str:
@@ -1193,6 +1200,17 @@ class Image(Base):
         Returns:
             str: The HTML representation of the image component.
         """
+        # Resolve Future if needed
+        current_src = self.src
+        if isinstance(current_src, concurrent.futures.Future):
+            try:
+                current_src = current_src.result()
+            except Exception as e:
+                logger.error(
+                    f"Error processing image source '{self.original_src}': {e}. Will use original src."
+                )
+                current_src = self.original_src
+
         html_output_parts = ['<div class="image-block"><figure>']
 
         # Determine alt text: use label if available, otherwise use the original src.
@@ -1203,7 +1221,7 @@ class Image(Base):
         )  # Limit alt text length
 
         # Ensure self.src (image source) and self.extra_css are properly escaped for HTML attributes
-        escaped_img_src = html.escape(self.src, quote=True)
+        escaped_img_src = html.escape(current_src, quote=True)
         escaped_extra_css = html.escape(self.extra_css.strip(), quote=True)
 
         image_style = f"{self.rounded_css} {escaped_extra_css}".strip()
