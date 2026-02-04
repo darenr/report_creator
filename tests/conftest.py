@@ -1,6 +1,7 @@
 import pandas as pd
 import pytest
 
+
 @pytest.fixture
 def sample_df():
     return pd.DataFrame(

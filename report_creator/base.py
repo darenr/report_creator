@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import Optional
 
 
 class Base(ABC):
@@ -12,7 +13,7 @@ class Base(ABC):
     from this class.
     """
 
-    def __init__(self, label: Optional[str] = None):
+    def __init__(self, label: str | None = None):
         self.label = label
 
     @abstractmethod
