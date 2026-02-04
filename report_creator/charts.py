@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 # Standard library imports
 from abc import ABC, abstractmethod  # Use ABC for abstract base classes
-from typing import Any, Optional, Union
+from typing import Any
 
 # Third-party imports
 import pandas as pd
@@ -37,7 +39,7 @@ class PxBase(Base, ABC):
             Defaults to None.
     """
 
-    def __init__(self, label: Optional[str] = None):
+    def __init__(self, label: str | None = None):
         super().__init__(label=label)
 
     @abstractmethod
@@ -81,7 +83,7 @@ class PxBase(Base, ABC):
         )
 
     @staticmethod
-    def apply_common_kwargs(kwargs: dict[str, Any], label: Optional[str] = None) -> None:
+    def apply_common_kwargs(kwargs: dict[str, Any], label: str | None = None) -> None:
         """
         Applies common keyword arguments to a kwargs dictionary, primarily for
         setting a chart title based on the provided `label`.
@@ -163,8 +165,8 @@ class Bar(PxBase):
         x: str,
         y: str,
         *,
-        dimension: Optional[str] = None,
-        label: Optional[str] = None,
+        dimension: str | None = None,
+        label: str | None = None,
         **kwargs: Any,
     ):
         super().__init__(label=label)
@@ -237,10 +239,10 @@ class Line(PxBase):
         self,
         df: pd.DataFrame,
         x: str,
-        y: Union[str, list[str]],
+        y: str | list[str],
         *,
-        dimension: Optional[str] = None,
-        label: Optional[str] = None,
+        dimension: str | None = None,
+        label: str | None = None,
         **kwargs: Any,
     ):
         super().__init__(label=label)
@@ -333,7 +335,7 @@ class Pie(PxBase):
         values: str,
         names: str,
         *,
-        label: Optional[str] = None,
+        label: str | None = None,
         **kwargs: Any,
     ):
         super().__init__(label=label)
@@ -404,9 +406,9 @@ class Radar(PxBase):
         self,
         df: pd.DataFrame,
         *,
-        label: Optional[str] = None,
-        lock_minimum_to_zero: Optional[bool] = False,
-        filled: Optional[bool] = False,
+        label: str | None = None,
+        lock_minimum_to_zero: bool | None = False,
+        filled: bool | None = False,
         **kwargs: Any,
     ):
         super().__init__(label=label)
@@ -506,10 +508,10 @@ class Scatter(PxBase):
         df: pd.DataFrame,
         x: str,
         y: str,
-        dimension: Optional[str] = None,
+        dimension: str | None = None,
         *,
-        label: Optional[str] = None,
-        marginal: Optional[str] = None,
+        label: str | None = None,
+        marginal: str | None = None,
         **kwargs: Any,
     ):
         super().__init__(label=label)
@@ -591,10 +593,10 @@ class Box(PxBase):
     def __init__(
         self,
         df: pd.DataFrame,
-        y: Optional[str] = None,
-        dimension: Optional[str] = None,
+        y: str | None = None,
+        dimension: str | None = None,
         *,
-        label: Optional[str] = None,
+        label: str | None = None,
         **kwargs: Any,
     ):
         super().__init__(label=label)
@@ -661,9 +663,9 @@ class Histogram(PxBase):
         self,
         df: pd.DataFrame,
         x: str,
-        dimension: Optional[str] = None,
+        dimension: str | None = None,
         *,
-        label: Optional[str] = None,
+        label: str | None = None,
         **kwargs: Any,
     ):
         super().__init__(label=label)

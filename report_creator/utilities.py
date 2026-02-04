@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # Standard library imports
 import base64
 import concurrent.futures
@@ -9,7 +11,7 @@ import time
 import uuid
 from collections.abc import Sequence  # Added Any, tuple
 from html.parser import HTMLParser
-from typing import Any, Optional, Union
+from typing import Any
 from urllib.parse import unquote, urlparse
 
 # Third-party imports
@@ -80,7 +82,7 @@ def _is_number(value: Any) -> bool:
         return False
 
 
-def _check_html_tags_are_closed(html_content: str) -> tuple[bool, Optional[list[str]]]:
+def _check_html_tags_are_closed(html_content: str) -> tuple[bool, list[str] | None]:
     """
     Validates if all HTML tags in a given string are properly closed.
 
@@ -132,7 +134,7 @@ def _check_html_tags_are_closed(html_content: str) -> tuple[bool, Optional[list[
                     f"but stack top is '{self.tag_stack[-1] if self.tag_stack else 'empty'}'."
                 )
 
-        def get_validation_result(self) -> tuple[bool, Optional[list[str]]]:
+        def get_validation_result(self) -> tuple[bool, list[str] | None]:
             """Returns the validation result based on the final state of the stack."""
             if not self.tag_stack:
                 # If the stack is empty, all opened tags were properly closed.
@@ -273,7 +275,7 @@ def _gfm_markdown_to_html(text: str) -> str:
                 return "<!-- Potentially unsafe script tag was blocked by Report Creator -->"
             return super().block_html(html)  # Use super for other HTML blocks
 
-        def block_code(self, code: str, info: Optional[str] = None) -> str:
+        def block_code(self, code: str, info: str | None = None) -> str:
             language = (
                 info.strip() if info else "plaintext"
             )  # Default to plaintext if no language info
@@ -383,13 +385,13 @@ def _optimize_error_keywords(error_keywords: Sequence[str]) -> tuple[str, ...]:
 
 
 def create_color_value_sensitive_mapping(
-    values: list[Union[str, int, float, bool]],  # Added bool to Union
-    error_keywords: Optional[Sequence[str]] = None,
+    values: list[str | int | float | bool],  # Added bool to Union
+    error_keywords: Sequence[str] | None = None,
     error_color: str = "red",
     success_color: str = "green",
     default_color: str = "gray",
-    boolean_true_color: Optional[str] = None,  # Color for True booleans
-    boolean_false_color: Optional[str] = None,  # Color for False booleans
+    boolean_true_color: str | None = None,  # Color for True booleans
+    boolean_false_color: str | None = None,  # Color for False booleans
 ) -> list[str]:
     """
     Creates a list of colors corresponding to a list of input values, assigning

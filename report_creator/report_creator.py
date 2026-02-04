@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # Standard library imports
 import base64
 import concurrent.futures
@@ -10,7 +12,7 @@ import textwrap
 import traceback
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 from uuid import uuid4
 
 # Third-party imports - organized by category
@@ -81,7 +83,7 @@ class Block(Base):
             identification or other purposes if accessed directly. Defaults to None.
     """
 
-    def __init__(self, *components: Base, label: Optional[str] = None):
+    def __init__(self, *components: Base, label: str | None = None):
         super().__init__(label=label)
         self.components = components  # Store the child components
         logger.info(
@@ -137,7 +139,7 @@ class Group(Base):
             HTML-escaped. Inherits from `Base`. Defaults to None.
     """
 
-    def __init__(self, *components: Base, label: Optional[str] = None):
+    def __init__(self, *components: Base, label: str | None = None):
         super().__init__(label=label)
         self.components = components  # Store the child components
         logger.info(
@@ -205,7 +207,7 @@ class Collapse(Base):
             Inherits from `Base`. Defaults to None, in which case "Details" is used.
     """
 
-    def __init__(self, *components: Base, label: Optional[str] = None):
+    def __init__(self, *components: Base, label: str | None = None):
         super().__init__(label=label)
         self.components = components  # Store child components
         if not label:
@@ -281,7 +283,7 @@ class Widget(Base):
             linked with an anchor ID. Inherits from `Base`. Defaults to None.
     """
 
-    def __init__(self, widget: Any, *, label: Optional[str] = None):
+    def __init__(self, widget: Any, *, label: str | None = None):
         super().__init__(label=label)
 
         # Pre-process certain widget types
@@ -400,7 +402,7 @@ class MetricGroup(Base):
     """
 
     def __init__(
-        self, df: pd.DataFrame, heading: str, value: str, *, label: Optional[str] = None
+        self, df: pd.DataFrame, heading: str, value: str, *, label: str | None = None
     ):
         super().__init__(label=label)  # The label is primarily for the Group
 
@@ -485,9 +487,9 @@ class EventMetric(Base):
         date: str,
         frequency: str = "D",
         color: str = "red",
-        heading: Optional[str] = None,
+        heading: str | None = None,
         *,
-        label: Optional[str] = None,
+        label: str | None = None,
     ):
         super().__init__(label=label)
 
@@ -659,12 +661,12 @@ class Metric(Base):
     def __init__(
         self,
         heading: str,
-        value: Union[str, int, float, datetime],
+        value: str | int | float | datetime,
         *,
-        unit: Optional[str] = None,
-        float_precision: Optional[int] = 3,
-        label: Optional[str] = None,
-        color: Optional[bool] = False,
+        unit: str | None = None,
+        float_precision: int | None = 3,
+        label: str | None = None,
+        color: bool | None = False,
     ):
         super().__init__(label=textwrap.dedent(label) if label else None)
         self.heading = str(heading)  # Ensure heading is a string
@@ -760,11 +762,11 @@ class Table(Widget):
 
     def __init__(
         self,
-        data: Union[pd.DataFrame, list[dict]],
+        data: pd.DataFrame | list[dict],
         *,
-        label: Optional[str] = None,
-        index: Optional[bool] = False,  # Default to False for cleaner tables
-        float_precision: Optional[int] = 2,
+        label: str | None = None,
+        index: bool | None = False,  # Default to False for cleaner tables
+        float_precision: int | None = 2,
     ):
         if isinstance(data, list):
             try:
@@ -842,13 +844,13 @@ class DataTable(Base):
 
     def __init__(
         self,
-        data: Union[pd.DataFrame, list[dict]],
+        data: pd.DataFrame | list[dict],
         *,
-        label: Optional[str] = None,  # Label for table caption
+        label: str | None = None,  # Label for table caption
         wrap_text: bool = True,
-        index: Optional[bool] = False,  # Default to False
-        max_rows: Optional[int] = -1,  # Default to all rows
-        float_precision: Optional[int] = 2,
+        index: bool | None = False,  # Default to False
+        max_rows: int | None = -1,  # Default to all rows
+        float_precision: int | None = 2,
     ):
         # The 'label' for Base is used here as the table's caption.
         # Styler handles HTML escaping for the caption if 'label' is passed to it.
@@ -951,9 +953,9 @@ class Html(Base):
         self,
         html: str,
         *,
-        css: Optional[str] = None,
-        label: Optional[str] = None,
-        bordered: Optional[bool] = False,
+        css: str | None = None,
+        label: str | None = None,
+        bordered: bool | None = False,
     ):
         super().__init__(label=label)
         self.html_str = str(html)  # Ensure it's a string
@@ -1042,9 +1044,9 @@ class Diagram(Base):
         self,
         src: str,
         *,
-        pan_and_zoom: Optional[bool] = True,
-        extra_css: Optional[str] = None,
-        label: Optional[str] = None,
+        pan_and_zoom: bool | None = True,
+        extra_css: str | None = None,
+        label: str | None = None,
     ):
         super().__init__(label=label)
 
@@ -1149,11 +1151,11 @@ class Image(Base):
         self,
         src: str,
         *,
-        link_to: Optional[str] = None,
-        label: Optional[str] = None,
-        extra_css: Optional[str] = None,
-        rounded: Optional[bool] = True,
-        convert_to_base64: Optional[bool] = False,
+        link_to: str | None = None,
+        label: str | None = None,
+        extra_css: str | None = None,
+        rounded: bool | None = True,
+        convert_to_base64: bool | None = False,
     ):
         super().__init__(label=label)
         self.original_src = src  # Keep original src for alt text or logging
@@ -1279,9 +1281,9 @@ class Markdown(Base):
         self,
         text: str,
         *,
-        label: Optional[str] = None,
-        extra_css: Optional[str] = None,
-        bordered: Optional[bool] = False,
+        label: str | None = None,
+        extra_css: str | None = None,
+        bordered: bool | None = False,
     ):
         super().__init__(label=label)
         # Dedent the input text to handle common indentation in triple-quoted strings
@@ -1361,7 +1363,7 @@ class Heading(Base):
         self,
         label: str,  # This is the heading text
         *,
-        level: Optional[int] = 1,  # HTML heading level (h1, h2, etc.)
+        level: int | None = 1,  # HTML heading level (h1, h2, etc.)
     ):
         if not (isinstance(level, int) and 1 <= level <= 5):
             raise ValueError("Heading level must be an integer between 1 and 5.")
@@ -1411,7 +1413,7 @@ class Separator(Base):
             is rendered.
     """
 
-    def __init__(self, label: Optional[str] = None):
+    def __init__(self, label: str | None = None):
         super().__init__(label=label)
         logger.info(f"Separator component initialized. Label: '{self.label}'")
 
@@ -1488,7 +1490,7 @@ class Select(Base):
             or if a label is empty or consists only of whitespace.
     """
 
-    def __init__(self, blocks: list[Base], *, label: Optional[str] = None):
+    def __init__(self, blocks: list[Base], *, label: str | None = None):
         super().__init__(label=label)  # Overall label for the tab group
         self.blocks = blocks
 
@@ -1604,8 +1606,8 @@ class Accordion(Base):
         self,
         blocks: list[Base],
         *,
-        label: Optional[str] = None,  # Overall label for the accordion group
-        open_first: Optional[bool] = False,
+        label: str | None = None,  # Overall label for the accordion group
+        open_first: bool | None = False,
     ):
         super().__init__(label=label)
         self.blocks = blocks
@@ -1689,7 +1691,7 @@ class Unformatted(Base):
             text as a caption with an anchor. Inherits from `Base`. Defaults to None.
     """
 
-    def __init__(self, text: str, *, label: Optional[str] = None):
+    def __init__(self, text: str, *, label: str | None = None):
         super().__init__(label=label)
         # Store raw text; it will be escaped in to_html
         self.text = str(text)  # Ensure text is a string
@@ -1785,8 +1787,8 @@ class Language(Base):
         text: str,
         language: str,
         *,
-        scroll_long_content: Optional[bool] = False,
-        label: Optional[str] = None,
+        scroll_long_content: bool | None = False,
+        label: str | None = None,
     ):
         super().__init__(label=label)
         self.text = str(text)  # Ensure text is string, raw text, will be escaped in to_html
@@ -1880,8 +1882,8 @@ class Prolog(Language):
         self,
         code: str,
         *,
-        scroll_long_content: Optional[bool] = False,
-        label: Optional[str] = None,
+        scroll_long_content: bool | None = False,
+        label: str | None = None,
     ):
         # Pass the raw code; Language base class's to_html method handles escaping.
         super().__init__(code, "prolog", scroll_long_content=scroll_long_content, label=label)
@@ -1914,8 +1916,8 @@ class Python(Language):
         self,
         code: str,
         *,
-        scroll_long_content: Optional[bool] = False,
-        label: Optional[str] = None,
+        scroll_long_content: bool | None = False,
+        label: str | None = None,
     ):
         # Dedent the code before passing to the base class.
         # The Language base class's to_html method will handle HTML escaping.
@@ -1950,8 +1952,8 @@ class Shell(Language):
         self,
         code: str,
         *,
-        scroll_long_content: Optional[bool] = False,
-        label: Optional[str] = None,
+        scroll_long_content: bool | None = False,
+        label: str | None = None,
     ):
         # Pass the raw code; Language base class's to_html method handles escaping.
         super().__init__(code, "shell", scroll_long_content=scroll_long_content, label=label)
@@ -1995,8 +1997,8 @@ class Java(Language):
         self,
         code: str,
         *,
-        scroll_long_content: Optional[bool] = False,
-        label: Optional[str] = None,
+        scroll_long_content: bool | None = False,
+        label: str | None = None,
     ):
         # Pass the raw code; Language base class's to_html method handles escaping.
         super().__init__(code, "java", scroll_long_content=scroll_long_content, label=label)
@@ -2117,9 +2119,9 @@ class Sql(Language):
         self,
         code: str,
         *,
-        scroll_long_content: Optional[bool] = False,
-        prettify: Optional[bool] = False,
-        label: Optional[str] = None,
+        scroll_long_content: bool | None = False,
+        prettify: bool | None = False,
+        label: str | None = None,
     ):
         processed_code = Sql.format_sql(str(code)) if prettify else str(code)
         super().__init__(
@@ -2162,10 +2164,10 @@ class Yaml(Language):
 
     def __init__(
         self,
-        data: Union[str, dict, list],
+        data: str | dict | list,
         *,
-        scroll_long_content: Optional[bool] = False,
-        label: Optional[str] = None,
+        scroll_long_content: bool | None = False,
+        label: str | None = None,
     ):
         try:
             if isinstance(data, (dict, list)):
@@ -2233,10 +2235,10 @@ class Json(Language):
 
     def __init__(
         self,
-        data: Union[dict, list, str],
+        data: dict | list | str,
         *,
-        scroll_long_content: Optional[bool] = False,
-        label: Optional[str] = None,
+        scroll_long_content: bool | None = False,
+        label: str | None = None,
     ):
         try:
             if isinstance(data, str):
@@ -2301,8 +2303,8 @@ class Plaintext(Language):
         self,
         text: str,
         *,
-        scroll_long_content: Optional[bool] = False,
-        label: Optional[str] = None,
+        scroll_long_content: bool | None = False,
+        label: str | None = None,
     ):
         # Pass the raw text; Language base class's to_html method handles escaping
         # and uses "plaintext" for the Highlight.js class.
@@ -2370,14 +2372,14 @@ class ReportCreator:
         self,
         title: str,
         *,
-        description: Optional[str] = None,
-        author: Optional[str] = None,
-        logo: Optional[str | Path] = None,  # Allow Path for logo
+        description: str | None = None,
+        author: str | None = None,
+        logo: str | Path | None = None,  # Allow Path for logo
         theme: str = "rc",
         code_theme: str = "github-dark",
         diagram_theme: str = "default",
         accent_color: str = "black",
-        footer: Optional[str] = None,
+        footer: str | None = None,
     ):
         self.title = str(title)  # Ensure title is string
         self.description = str(description) if description is not None else None
@@ -2405,7 +2407,7 @@ class ReportCreator:
 
         self._create_header(logo)  # Initialize self.header_str
 
-    def _create_header(self, logo: Optional[str | Path]) -> None:
+    def _create_header(self, logo: str | Path | None) -> None:
         """
         Creates the HTML string for the report's header, primarily for the logo.
         Logo source is HTML-escaped if it's a URL. Local files are converted to
@@ -2473,7 +2475,7 @@ class ReportCreator:
                 </svg>
             """)
 
-    def __enter__(self) -> "ReportCreator":
+    def __enter__(self) -> ReportCreator:
         """
         Enters a context, saving the original Matplotlib color cycle and applying
         Report Creator's theme colors. This ensures Matplotlib figures generated
