@@ -107,16 +107,14 @@ class PxBase(Base, ABC):
             if not text:  # Handle empty or None text
                 return ""
             words = str(text).split()  # Ensure text is string
-            lines = []
-            current_line_words = []
-            for word in words:
-                current_line_words.append(word)
-                if len(current_line_words) >= max_words_per_line:
-                    lines.append(" ".join(current_line_words))
-                    current_line_words = []
-            if current_line_words:  # Add any remaining words
-                lines.append(" ".join(current_line_words))
-            return "<br>".join(lines)
+            if max_words_per_line <= 0:
+                max_words_per_line = 1
+            return "<br>".join(
+                [
+                    " ".join(words[i : i + max_words_per_line])
+                    for i in range(0, len(words), max_words_per_line)
+                ]
+            )
 
         if label and "title" not in kwargs:
             kwargs["title"] = _format_title_with_line_breaks(label)
