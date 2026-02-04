@@ -362,6 +362,21 @@ def _strip_whitespace(func: callable) -> callable:
     return wrapper
 
 
+def _optimize_error_keywords(error_keywords: Sequence[str]) -> tuple[str, ...]:
+    """
+    Optimizes the list of error keywords by removing redundant superstrings.
+    For example, if "fail" is present, "failed" and "failure" are redundant.
+    """
+    lower_kws = {keyword.lower() for keyword in error_keywords}
+    # Convert to sorted list to process by length
+    sorted_kws = sorted(lower_kws, key=len)
+    minimal_kws = []
+    for kw in sorted_kws:
+        if not any(existing in kw for existing in minimal_kws):
+            minimal_kws.append(kw)
+    return tuple(minimal_kws)
+
+
 def create_color_value_sensitive_mapping(
     values: list[Union[str, int, float, bool]],  # Added bool to Union
     error_keywords: Optional[Sequence[str]] = None,
@@ -415,7 +430,7 @@ def create_color_value_sensitive_mapping(
 
     output_colors: list[str] = []
     # Prepare error keywords for case-insensitive matching
-    lower_error_keywords = {keyword.lower() for keyword in error_keywords}
+    lower_error_keywords = _optimize_error_keywords(error_keywords)
 
     for value in values:
         assigned_color = None  # Color for the current value
