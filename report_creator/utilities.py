@@ -1,5 +1,6 @@
 # Standard library imports
 import base64
+import concurrent.futures
 import functools
 import mimetypes
 import os
@@ -30,6 +31,10 @@ DEFAULT_ELLIPSIS_LENGTH = 45
 # This ensures that repeated calls with the same seed word produce the same color,
 # but different seed words can produce different colors.
 _color_rng = random.Random()
+
+# ThreadPoolExecutor for background image processing.
+# Allows fetching and processing multiple images concurrently.
+_image_processing_executor = concurrent.futures.ThreadPoolExecutor()
 
 
 def _generate_anchor_id(text: str) -> str:
@@ -641,27 +646,10 @@ def _determine_mime_type(response: requests.Response, image_url: str) -> str:
     return mime_type
 
 
-def _convert_imgurl_to_datauri(image_url: str) -> str:
+def _convert_imgurl_to_datauri_sync(image_url: str) -> str:
     """
+    Synchronous version of _convert_imgurl_to_datauri.
     Fetches an image from a given URL and converts it into a base64-encoded data URI.
-
-    This function uses the `requests` library to download the image. The MIME type
-    is determined from the 'Content-Type' HTTP header of the server's response.
-    If the header is missing or uninformative, it attempts to guess the MIME type
-    from the URL's file extension. A 'Referer' header (using the root of the
-    image URL) and a network timeout are used for the HTTP GET request.
-
-    Args:
-        image_url (str): The URL of the image to fetch and convert.
-
-    Returns:
-        str: The data URI string (e.g., "data:image/png;base64,iVBORw0KGgo...").
-
-    Raises:
-        ValueError: If the image cannot be fetched (due to network issues, HTTP errors,
-                    timeouts), if the MIME type cannot be reliably determined, or if any
-                    other unexpected error occurs during the process. This wraps exceptions
-                    from `requests.exceptions.RequestException`.
     """
     if not isinstance(image_url, str) or not image_url.startswith(("http://", "https://")):
         raise ValueError(
@@ -709,3 +697,25 @@ def _convert_imgurl_to_datauri(image_url: str) -> str:
         raise ValueError(
             f"Could not convert image URL '{image_url}' to data URI due to an unexpected error."
         ) from e
+
+
+def _convert_imgurl_to_datauri(image_url: str) -> str:
+    """
+    Fetches an image from a given URL and converts it into a base64-encoded data URI.
+    This is a synchronous wrapper around the core logic.
+    """
+    return _convert_imgurl_to_datauri_sync(image_url)
+
+
+def _convert_imgurl_to_datauri_async(image_url: str) -> concurrent.futures.Future:
+    """
+    Submits the image fetching and conversion task to a thread pool.
+
+    Args:
+        image_url (str): The URL of the image to fetch and convert.
+
+    Returns:
+        concurrent.futures.Future: A future object representing the pending result of the
+                                   data URI conversion.
+    """
+    return _image_processing_executor.submit(_convert_imgurl_to_datauri_sync, image_url)
