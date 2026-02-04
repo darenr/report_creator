@@ -78,6 +78,26 @@ with rc.ReportCreator(
     report.save(view, "report.html")
 ```
 
+## AI Report Generator CLI
+
+Report Creator comes with a CLI tool that uses AI (OpenAI or Gemini) to automatically generate reports from your data files.
+
+### Prerequisites
+
+You need to set one of the following environment variables:
+- `OPENAI_API_KEY`: Your OpenAI API key
+- `GEMINI_API_KEY`: Your Google Gemini API key
+
+### Usage
+
+Run the module with your data file:
+
+```sh
+python -m report_creator path/to/data.csv
+```
+
+The tool will analyze your data and generate a report named `report.html` in the current directory.
+
 ## Development
 
 ```sh

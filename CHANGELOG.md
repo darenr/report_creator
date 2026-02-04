@@ -2,9 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## 1.1.4 ()
+## 1.1.4 (February 4, 2026)
 
-- Minor optimizations and code clean up
+- **Performance**: Asynchronous image fetching in Image component for improved performance.
+- **Performance**: Optimized color mapping, radar chart generation, and chart title wrapping.
+- **Maintenance**: Minor optimizations, code cleanup, and modernized type annotations (Ruff UP007).
 - Fix docs issue on readthedocs.org so doc is building again
 - Refreshed [Context7](https://context7.com/darenr/report_creator) integration
 
