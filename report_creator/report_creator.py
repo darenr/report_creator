@@ -289,6 +289,7 @@ class Widget(Base):
         # Pre-process certain widget types
         processed_widget = widget
         if isinstance(widget, go.Figure):
+            processed_widget.update_layout(template="rc")
             PxBase.apply_common_fig_options(processed_widget)  # Apply consistent styling
         elif hasattr(widget, "get_figure") and callable(widget.get_figure):
             # For objects like Seaborn's FacetGrid or JointGrid
@@ -401,9 +402,7 @@ class MetricGroup(Base):
             found in the input `df`, or if `df` is not a Pandas DataFrame.
     """
 
-    def __init__(
-        self, df: pd.DataFrame, heading: str, value: str, *, label: str | None = None
-    ):
+    def __init__(self, df: pd.DataFrame, heading: str, value: str, *, label: str | None = None):
         super().__init__(label=label)  # The label is primarily for the Group
 
         if not isinstance(df, pd.DataFrame):
@@ -419,9 +418,7 @@ class MetricGroup(Base):
 
         # Create a list of Metric components from the DataFrame rows
         # Using zip is significantly faster than iterrows (approx 2.5x speedup)
-        metrics = [
-            Metric(heading=str(h), value=v) for h, v in zip(df[heading], df[value])
-        ]
+        metrics = [Metric(heading=str(h), value=v) for h, v in zip(df[heading], df[value])]
 
         # Use an internal Group component to arrange these metrics.
         # The label provided to MetricGroup is passed to this Group.
