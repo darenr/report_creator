@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.1.5 (February 9, 2026)
+
+- Added `rc.D3()` component to support embedding charts from the `d3blocks` library.
+
 ## 1.1.4 (February 4, 2026)
 
 - **Performance**: Asynchronous image fetching in Image component for improved performance.

@@ -16,6 +16,7 @@ from .report_creator import (
     Bash,
     Block,
     Collapse,
+    D3,
     DataTable,
     Diagram,
     EventMetric,

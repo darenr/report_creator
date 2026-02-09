@@ -25,6 +25,27 @@ if __name__ == "__main__":
     with open("README.md") as f:
         example_md = f.read()
 
+    # Try to import d3blocks for the D3 component example
+    try:
+        from d3blocks import D3Blocks
+
+        d3 = D3Blocks()
+        d3_df = d3.import_example("energy")
+        # Ensure compatibility with newer pandas versions that might use PyArrow backed strings
+        # d3blocks/ismember might fail with ArrowStringArray
+        for col in d3_df.columns:
+            if str(d3_df[col].dtype).startswith("string"):
+                d3_df[col] = d3_df[col].astype(object)
+
+        d3.sankey(d3_df, showfig=False)
+        d3_component = rc.D3(d3, label="Sankey Chart using D3Blocks")
+    except (ImportError, Exception) as e:
+        logging.warning(f"Could not create D3 example: {e}")
+        d3_component = rc.Markdown(
+            f"**d3blocks** example skipped due to error: {e}",
+            label="D3Blocks Error",
+        )
+
     # begin the use of the report_creator package
 
     with rc.ReportCreator(
@@ -375,6 +396,8 @@ if __name__ == "__main__":
                 ],
                 label="Tab Group of Diagrams",
             ),
+            rc.Separator(),
+            d3_component,
             rc.Separator(),
             rc.Radar(
                 df=pd.DataFrame(
