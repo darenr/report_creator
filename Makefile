@@ -16,8 +16,8 @@ examples: setup
         PYTHONPATH=. python $$file; \
 	done	
 
-logs-infographic: setup
-	PYTHONPATH=. python examples/logs_infographic.py
+infographic: setup
+	PYTHONPATH=. python examples/infographic.py && open infographic.html
 
 profile: setup
 	PYTHONPATH=. python -m cProfile  -o output.prof examples/kitchen_sink.py
