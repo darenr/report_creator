@@ -49,7 +49,7 @@ release: setup clean
 
 tests: setup
 	@python3 -c 'import report_creator; print(report_creator.__version__)'
-	@python3 -m pytest -v --cov=report_creator --cov-report=html
+	@python3 -m pytest -v --cov=report_creator --cov-report=markdown:coverage_report.md
 
 .PHONY: targets
 targets:
