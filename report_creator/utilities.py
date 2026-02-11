@@ -202,6 +202,71 @@ def _ellipsis_url(url: str, max_length: int = DEFAULT_ELLIPSIS_LENGTH) -> str:
     return f"{url_str[:start_length]}...{url_str[-end_length:]}"
 
 
+def _parse_inline_emoji(
+    inline: mistune.InlineParser, m: Any, state: mistune.InlineState
+) -> int:
+    """Parses an emoji token from the match."""
+    # The 'emoji_code' group is expected in the pattern
+    code = m.group("emoji_code")
+    state.append_token({"type": "emoji", "raw": code})
+    return m.end()
+
+
+def _render_html_emoji(renderer: mistune.HTMLRenderer, text: str) -> str:
+    """Renders the emoji code into its Unicode character."""
+    return emoji.emojize(f":{text}:", language="alias")
+
+
+def _emojis_plugin(md: mistune.Markdown) -> None:
+    """
+    Mistune plugin to parse and render emoji codes like :smile: or :rocket:.
+    """
+    # Regex to match :emoji_code:
+    pattern = r":(?P<emoji_code>[A-Za-z0-9+._’()_-]+):"
+
+    md.inline.register("emoji", pattern, _parse_inline_emoji, before="link")
+
+    if md.renderer and md.renderer.NAME == "html":
+        md.renderer.register("emoji", _render_html_emoji)
+
+
+class _CustomHighlightRenderer(mistune.HTMLRenderer):
+    """Custom renderer to handle script blocking and code block highlighting."""
+
+    def block_html(self, html: str) -> str:
+        # Prevent raw script tags from Markdown to avoid XSS
+        stripped_html = html.strip()
+        if stripped_html.lower().startswith("<script") and stripped_html.lower().endswith(
+            "</script>"
+        ):
+            logger.warning("Blocked a <script> tag found in Markdown content.")
+            return "<!-- Potentially unsafe script tag was blocked by Report Creator -->"
+        return super().block_html(html)  # Use super for other HTML blocks
+
+    def block_code(self, code: str, info: str | None = None) -> str:
+        language = (
+            info.strip() if info else "plaintext"
+        )  # Default to plaintext if no language info
+
+        if language == "mermaid":
+            # For Mermaid diagrams, wrap in a div for Mermaid.js to process.
+            # The content itself should not be escaped here, as Mermaid.js needs the raw syntax.
+            return f'<div class="mermaid include_mermaid">{mistune.escape(code)}</div>'
+        else:
+            # For other code blocks, prepare for Highlight.js.
+            # Escape the code content to safely display it as preformatted text.
+            escaped_code = mistune.escape(code)
+            return (
+                f'<div class="codehilite code-block">'
+                f'<pre><code class="language-{mistune.escape(language)}">{escaped_code}</code></pre>'
+                f"</div>"
+            )
+
+
+# Global variable to cache the Markdown parser instance
+_gfm_markdown_parser = None
+
+
 def _gfm_markdown_to_html(text: str) -> str:
     """
     Converts GitHub Flavored Markdown (GFM) text to HTML using `mistune`.
@@ -238,81 +303,27 @@ def _gfm_markdown_to_html(text: str) -> str:
         - `mistune`: For Markdown parsing and rendering.
         - `emoji`: For converting emoji codes to characters.
     """
+    global _gfm_markdown_parser
 
-    def parse_inline_emoji(
-        inline: mistune.InlineParser, m: Any, state: mistune.InlineState
-    ) -> int:
-        """Parses an emoji token from the match."""
-        # The 'emoji_code' group is expected in the pattern
-        code = m.group("emoji_code")
-        state.append_token({"type": "emoji", "raw": code})
-        return m.end()
+    if _gfm_markdown_parser is None:
+        # Create Markdown parser with the custom renderer and plugins
+        _gfm_markdown_parser = mistune.create_markdown(
+            renderer=_CustomHighlightRenderer(escape=False),  # Renderer handles its own escaping
+            plugins=[
+                "task_lists",  # For `- [ ]` and `- [x]`
+                "def_list",  # For definition lists
+                "math",  # For LaTeX math (requires MathJax/KaTeX on client)
+                "table",  # For GFM tables
+                "strikethrough",  # For `~~strikethrough~~`
+                "footnotes",  # For `[^1]` and `[^1]: footnote content`
+                "url",  # For auto-linking URLs
+                "spoiler",  # For `||spoiler||` (GFM-style)
+                _emojis_plugin,  # Custom emoji plugin
+            ],
+            hard_wrap=False,  # Respect Markdown newlines for paragraphs
+        )
 
-    def render_html_emoji(renderer: mistune.HTMLRenderer, text: str) -> str:
-        """Renders the emoji code into its Unicode character."""
-        return emoji.emojize(f":{text}:", language="alias")
-
-    def emojis_plugin(md: mistune.Markdown) -> None:
-        """
-        Mistune plugin to parse and render emoji codes like :smile: or :rocket:.
-        """
-        # Regex to match :emoji_code:
-        pattern = r":(?P<emoji_code>[A-Za-z0-9+._’()_-]+):"
-
-        md.inline.register("emoji", pattern, parse_inline_emoji, before="link")
-
-        if md.renderer and md.renderer.NAME == "html":
-            md.renderer.register("emoji", render_html_emoji)
-
-    class CustomHighlightRenderer(mistune.HTMLRenderer):
-        """Custom renderer to handle script blocking and code block highlighting."""
-
-        def block_html(self, html: str) -> str:
-            # Prevent raw script tags from Markdown to avoid XSS
-            stripped_html = html.strip()
-            if stripped_html.lower().startswith("<script") and stripped_html.lower().endswith(
-                "</script>"
-            ):
-                logger.warning("Blocked a <script> tag found in Markdown content.")
-                return "<!-- Potentially unsafe script tag was blocked by Report Creator -->"
-            return super().block_html(html)  # Use super for other HTML blocks
-
-        def block_code(self, code: str, info: str | None = None) -> str:
-            language = (
-                info.strip() if info else "plaintext"
-            )  # Default to plaintext if no language info
-
-            if language == "mermaid":
-                # For Mermaid diagrams, wrap in a div for Mermaid.js to process.
-                # The content itself should not be escaped here, as Mermaid.js needs the raw syntax.
-                return f'<div class="mermaid include_mermaid">{mistune.escape(code)}</div>'
-            else:
-                # For other code blocks, prepare for Highlight.js.
-                # Escape the code content to safely display it as preformatted text.
-                escaped_code = mistune.escape(code)
-                return (
-                    f'<div class="codehilite code-block">'
-                    f'<pre><code class="language-{mistune.escape(language)}">{escaped_code}</code></pre>'
-                    f"</div>"
-                )
-
-    # Create Markdown parser with the custom renderer and plugins
-    markdown_parser = mistune.create_markdown(
-        renderer=CustomHighlightRenderer(escape=False),  # Renderer handles its own escaping
-        plugins=[
-            "task_lists",  # For `- [ ]` and `- [x]`
-            "def_list",  # For definition lists
-            "math",  # For LaTeX math (requires MathJax/KaTeX on client)
-            "table",  # For GFM tables
-            "strikethrough",  # For `~~strikethrough~~`
-            "footnotes",  # For `[^1]` and `[^1]: footnote content`
-            "url",  # For auto-linking URLs
-            "spoiler",  # For `||spoiler||` (GFM-style)
-            emojis_plugin,  # Custom emoji plugin
-        ],
-        hard_wrap=False,  # Respect Markdown newlines for paragraphs
-    )
-    return markdown_parser(str(text))
+    return _gfm_markdown_parser(str(text))
 
 
 def _time_it(func: callable) -> callable:
