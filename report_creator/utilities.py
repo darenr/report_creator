@@ -17,6 +17,7 @@ from urllib.parse import unquote, urlparse
 # Third-party imports
 import emoji  # For Markdown emoji processing
 import humanize  # For human-readable sizes
+import mistune  # For Markdown parsing and rendering
 import requests  # For fetching images from URLs
 import requests.exceptions  # For specific request error handling
 
@@ -237,30 +238,31 @@ def _gfm_markdown_to_html(text: str) -> str:
         - `mistune`: For Markdown parsing and rendering.
         - `emoji`: For converting emoji codes to characters.
     """
-    import mistune  # Lazily import mistune as it's a core dependency for this function.
 
-    # Plugin for emoji support
+    def parse_inline_emoji(
+        inline: mistune.InlineParser, m: Any, state: mistune.InlineState
+    ) -> int:
+        """Parses an emoji token from the match."""
+        # The 'emoji_code' group is expected in the pattern
+        code = m.group("emoji_code")
+        state.append_token({"type": "emoji", "raw": code})
+        return m.end()
+
+    def render_html_emoji(renderer: mistune.HTMLRenderer, text: str) -> str:
+        """Renders the emoji code into its Unicode character."""
+        return emoji.emojize(f":{text}:", language="alias")
+
     def emojis_plugin(md: mistune.Markdown) -> None:
-        """Mistune plugin to parse and render emoji codes like :smile:."""
-        # Regex for common emoji cheat sheet codes
-        INLINE_EMOJI_PATTERN = r":[A-Za-z0-9+._’()_-]+:"
+        """
+        Mistune plugin to parse and render emoji codes like :smile: or :rocket:.
+        """
+        # Regex to match :emoji_code:
+        pattern = r":(?P<emoji_code>[A-Za-z0-9+._’()_-]+):"
 
-        def parse_inline_emoji(
-            inline: mistune.InlineParser, match: Any, state: mistune.InlineState
-        ) -> int:
-            """Parses an emoji token."""
-            state.append_token({"type": "emoji_text", "attrs": {"text": match.group(0)}})
-            return match.end()
+        md.inline.register("emoji", pattern, parse_inline_emoji, before="link")
 
-        def render_html_emoji(text: str) -> str:
-            """Renders the emoji token to its Unicode character."""
-            return emoji.emojize(text, variant="emoji_type", language="en")
-
-        md.inline.register("emoji", INLINE_EMOJI_PATTERN, parse_inline_emoji)
-        # Add 'emoji' to the default inline methods list
-        md.inline.rules.append("emoji")
-        if md.renderer and hasattr(md.renderer, "register"):
-            md.renderer.register("emoji_text", render_html_emoji)
+        if md.renderer and md.renderer.NAME == "html":
+            md.renderer.register("emoji", render_html_emoji)
 
     class CustomHighlightRenderer(mistune.HTMLRenderer):
         """Custom renderer to handle script blocking and code block highlighting."""
@@ -283,7 +285,7 @@ def _gfm_markdown_to_html(text: str) -> str:
             if language == "mermaid":
                 # For Mermaid diagrams, wrap in a div for Mermaid.js to process.
                 # The content itself should not be escaped here, as Mermaid.js needs the raw syntax.
-                return f'<div class="mermaid include_mermaid">{mistune.escape_html(code)}</div>'
+                return f'<div class="mermaid include_mermaid">{mistune.escape(code)}</div>'
             else:
                 # For other code blocks, prepare for Highlight.js.
                 # Escape the code content to safely display it as preformatted text.
@@ -306,7 +308,7 @@ def _gfm_markdown_to_html(text: str) -> str:
             "footnotes",  # For `[^1]` and `[^1]: footnote content`
             "url",  # For auto-linking URLs
             "spoiler",  # For `||spoiler||` (GFM-style)
-            # emojis_plugin,  # Custom emoji plugin
+            emojis_plugin,  # Custom emoji plugin
         ],
         hard_wrap=False,  # Respect Markdown newlines for paragraphs
     )
@@ -650,9 +652,7 @@ def _determine_mime_type(response: requests.Response, image_url: str) -> str:
         )  # Use path part of URL
         if guessed_mime_type:
             mime_type = guessed_mime_type
-        elif (
-            mime_type == "application/octet-stream" and not guessed_mime_type
-        ):  # Still generic
+        elif mime_type == "application/octet-stream" and not guessed_mime_type:  # Still generic
             raise ValueError(
                 f"Could not reliably determine MIME type for image URL: {image_url}. Content-Type: '{content_type_header}'."
             )
@@ -712,7 +712,7 @@ def _convert_imgurl_to_datauri_sync(image_url: str) -> str:
             f"An unexpected error occurred while converting image URL '{image_url}' to data URI: {e}"
         )
         raise ValueError(
-            f"Could not convert image URL '{image_url}' to data URI due to an unexpected error."
+            f"Could not convert image URL '{image_url}' to data URI due to an unexpected error. {e}"
         ) from e
 
 
