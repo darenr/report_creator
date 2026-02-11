@@ -30,7 +30,8 @@ Create an html report on this dataframe, use context7
 - [x] Allows html as input
 - [x] Components for things like metrics ("Accuracy: 87%") from a key & value
 - [x] Support for plotting figures, interactive `plotly` and `matplotlib`
-- [x] images (styled by the library) with an option to fetch at report build time (no fetch on render)
+- [x] Images (styled by the library) with an option to fetch at report build time (no fetch on render)
+- [x] Supports faithful extended markdown support (emojis, mermaid etc)
 - [x] `json`/`yaml`/`python`/`java`/`prolog`/`plaintext` code blocks with color syntax highlighting
 
 ## Example
