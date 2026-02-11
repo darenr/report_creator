@@ -1165,13 +1165,14 @@ class Image(Base):
             if src.startswith("data:image"):
                 # Already a Base64 image
                 pass
+            elif src.startswith(("http://", "https://")):
+                if convert_to_base64:
+                    # URL to be fetched and converted to base64
+                    # This returns a Future now
+                    processed_src = _convert_imgurl_to_datauri_async(src)
             elif os.path.exists(src):
                 # Local file, always convert to base64
                 processed_src = _convert_filepath_to_datauri(src)
-            elif src.startswith(("http://", "https://")) and convert_to_base64:
-                # URL to be fetched and converted to base64
-                # This returns a Future now
-                processed_src = _convert_imgurl_to_datauri_async(src)
             # If it's a URL and convert_to_base64 is False, src remains as is.
         except ValueError as e:  # Catch errors from conversion utilities
             logger.error(
