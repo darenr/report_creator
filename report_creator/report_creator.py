@@ -2076,23 +2076,29 @@ class Sql(Language):
             )
 
         # Format block statements
-        original_sql_for_check = sql
-        for statement_pattern in BLOCK_STATEMENTS:
-            # Using a lambda that captures the current state of 'original_sql_for_check'
-            def current_replacer(m, osql=original_sql_for_check):
-                return (
-                    ""
-                    if osql.lower().lstrip().startswith(m.group(1).lower())
-                    else "\n" + m.group(1).upper() + "\n\t"
-                )
+        combined_pattern = "|".join(BLOCK_STATEMENTS)
 
-            # Refined pattern to better handle keywords at the start or surrounded by whitespace
-            sql = re.sub(
-                rf"(?i)(?<!['\"])(?:^|\s+)({statement_pattern})(?:\s+|$)(?!['\"])",
-                current_replacer,
-                sql,
-                flags=re.DOTALL,  # re.IGNORECASE is now part of the pattern string with (?i)
-            )
+        def current_replacer(m):
+            keyword = m.group(1).upper()
+            # If the match is at the start of the string (ignoring leading whitespace),
+            # don't prepend a newline.
+            # m.start() is the index in the original string.
+            # The pattern (?:^|\s+) matches leading whitespace.
+            # If m.start() == 0, it is at the beginning.
+            # Note: m.start() refers to the start of the match in the original string.
+            # Since the pattern starts with (?:^|\s+), m.start() == 0 means the match
+            # is at the very beginning of the string.
+            if m.start() == 0:
+                return keyword + "\n\t"
+            else:
+                return "\n" + keyword + "\n\t"
+
+        sql = re.sub(
+            rf"(?i)(?<!['\"])(?:^|\s+)({combined_pattern})(?:\s+|$)(?!['\"])",
+            current_replacer,
+            sql,
+            flags=re.DOTALL,
+        )
         return sql.strip()
 
     def __init__(
