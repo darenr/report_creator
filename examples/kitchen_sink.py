@@ -168,22 +168,21 @@ if __name__ == "__main__":
                 ),
             ),
             rc.Group(
-                rc.Yaml(
+                rc.Sql(
                     textwrap.dedent("""
-                    # Example YAML configuration
-                    version: 1.0
-                    services:
-                      web:
-                        image: nginx:latest
-                        ports:  
-                          - "80:80"
-                      db:
-                        image: postgres:latest
-                        environment:
-                          POSTGRES_USER: user
-                          POSTGRES_PASSWORD: password
+                    -- Example SQL
+                    SELECT
+                        ename,
+                        DECODE(deptno,
+                            10, 'Accounting',
+                            20, 'Research',
+                            30, 'Sales',
+                            40, 'Operations',
+                        ) AS department_name
+                    FROM
+                        scott.emp;
                     """),
-                    label="YAML",
+                    label="SQL",
                 ),
                 rc.Json(
                     textwrap.dedent("""
