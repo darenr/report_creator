@@ -493,24 +493,25 @@ class EventMetric(Base):
         if date not in df.columns:
             raise ValueError(f"Date column '{date}' not found in DataFrame.")
 
-        self.df = df.copy()  # Work on a copy
+        self.df = df
         self.date_col_name = date
         self.frequency = frequency
 
         # Ensure the date column is in datetime format
-
         if not is_datetime(self.df[self.date_col_name]):
             logger.info(
                 f"EventMetric attempting to convert column '{self.date_col_name}' to datetime."
             )
             try:
-                self.df[self.date_col_name] = pd.to_datetime(self.df[self.date_col_name])
+                self.date_series = pd.to_datetime(self.df[self.date_col_name])
             except Exception as e:
                 logger.error(f"Error converting column '{self.date_col_name}' to datetime: {e}")
                 raise ValueError(
                     f"Could not parse dates in column '{self.date_col_name}'. "
                     "Ensure it contains valid date representations."
                 ) from e
+        else:
+            self.date_series = self.df[self.date_col_name]
 
         self.condition = condition
         self.color = color
@@ -532,18 +533,29 @@ class EventMetric(Base):
         Returns:
             tuple[pd.DataFrame, int]: (grouped_df, total_event_count)
         """
+        # Create a temporary DataFrame for evaluation to avoid modifying the original self.df
+        # We use a shallow copy to be efficient, and override the date column with the converted series
+        df_context = self.df.copy(deep=False)
+        df_context[self.date_col_name] = self.date_series
+
         # Evaluate the condition to create the target column (1 if true, 0 if false)
         try:
-            self.df[self.y_col_name] = self.df.eval(self.condition).astype(int)
+            y_values = df_context.eval(self.condition).astype(int)
         except Exception as e:
             logger.error(f"Error evaluating condition '{self.condition}': {e}")
             raise ValueError(
                 f"Failed to evaluate condition: {self.condition}. Error: {e}"
             ) from e
 
+        # Create a lightweight DataFrame for grouping
+        df_for_grouping = pd.DataFrame({
+            self.date_col_name: self.date_series,
+            self.y_col_name: y_values,
+        })
+
         # Group by the specified frequency and sum the event indicator column
         df_grouped = (
-            self.df[[self.date_col_name, self.y_col_name]]
+            df_for_grouping
             .groupby(pd.Grouper(key=self.date_col_name, freq=self.frequency))
             .sum()
             .reset_index()
