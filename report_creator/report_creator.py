@@ -941,9 +941,13 @@ class Html(Base):
             it will be HTML-escaped before rendering. Defaults to None.
         bordered (Optional[bool], optional): If True, the HTML content will be rendered
             within a container styled with a border. Defaults to False.
+        validate_html (bool, optional): If True (default), the provided `html` string
+            is validated to ensure all tags are properly closed. This can be disabled
+            for performance with trusted content. Defaults to True.
 
     Raises:
-        ValueError: If the provided `html` string contains unclosed HTML tags.
+        ValueError: If `validate_html` is True and the provided `html` string contains
+            unclosed HTML tags.
     """
 
     def __init__(
@@ -953,17 +957,21 @@ class Html(Base):
         css: str | None = None,
         label: str | None = None,
         bordered: bool | None = False,
+        validate_html: bool = True,
     ):
         super().__init__(label=label)
         self.html_str = str(html)  # Ensure it's a string
         self.css = css
         self.bordered = bordered
-        status, errors = _check_html_tags_are_closed(self.html_str)
-        if not status:
-            # Raise ValueError for invalid HTML structure
-            error_message = f"HTML component (label: '{self.label}') contains unclosed tags: {', '.join(errors)}"
-            logger.error(error_message)
-            raise ValueError(error_message)
+
+        if validate_html:
+            status, errors = _check_html_tags_are_closed(self.html_str)
+            if not status:
+                # Raise ValueError for invalid HTML structure
+                error_message = f"HTML component (label: '{self.label}') contains unclosed tags: {', '.join(errors)}"
+                logger.error(error_message)
+                raise ValueError(error_message)
+
         logger.info(f"Html component: {len(self.html_str)} HTML characters, label='{label}'")
 
     @_strip_whitespace
