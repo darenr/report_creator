@@ -416,27 +416,72 @@ class MetricGroup(Base):
                 f"Value column '{value}' not found in DataFrame columns: {df.columns.tolist()}"
             )
 
-        # Create a list of Metric components from the DataFrame rows
-        # Using zip is significantly faster than iterrows (approx 2.5x speedup)
-        metrics = [Metric(heading=str(h), value=v) for h, v in zip(df[heading], df[value])]
-
-        # Use an internal Group component to arrange these metrics.
-        # The label provided to MetricGroup is passed to this Group.
-        self.group_component = Group(*metrics, label=self.label)
+        self.df = df
+        self.heading = heading
+        self.value = value
 
         logger.info(
-            f"MetricGroup component generated {len(metrics)} metrics. Label for the group: '{self.label}'"
+            f"MetricGroup component initialized with {len(df)} metrics. Label for the group: '{self.label}'"
         )
 
     @_strip_whitespace
     def to_html(self) -> str:
         """
-        Renders the MetricGroup to HTML by delegating to its internal `Group` component.
+        Renders the MetricGroup to HTML.
+        Generates HTML directly for each metric for performance reasons,
+        avoiding instantiation of individual Metric and Group objects.
 
         Returns:
             str: The HTML representation of the grouped metrics.
         """
-        return self.group_component.to_html()
+        html_parts = ["<div>"]  # Outer container for label + group
+
+        if self.label:
+            escaped_label = html.escape(self.label)
+            anchor_id = _generate_anchor_id(self.label)
+            html_parts.append(
+                f"<report-caption><a href='#{anchor_id}'>{escaped_label}</a></report-caption>"
+            )
+
+        html_parts.append('<div class="group">')
+
+        # Using zip for iteration speed
+        heading_col = self.df[self.heading]
+        value_col = self.df[self.value]
+
+        # Pre-bind functions to avoid lookup overhead in loop
+        escape = html.escape
+        intword = humanize.intword
+        isinstance_ = isinstance
+
+        for h, v in zip(heading_col, value_col):
+            # Heading formatting
+            escaped_heading = escape(str(h))
+
+            # Value formatting - replicating logic from Metric class
+            if isinstance_(v, str):
+                v = v.strip()
+                val_str = escape(v)
+            elif isinstance_(v, int):
+                val_str = intword(v) if v > 1000 else str(v)
+            elif isinstance_(v, float):
+                val_str = f"{v:.3f}".rstrip("0").rstrip(".")
+            elif isinstance_(v, datetime):
+                val_str = v.strftime("%Y-%m-%d")
+            else:
+                val_str = escape(str(v))
+
+            # Construct HTML structure matching Metric + Group
+            # Metric structure: <div class="metric"><p>{heading}:</p><h1>{value}</h1></div>
+            # Group structure wrapper: <div class="group-content">{component_html}</div>
+            html_parts.append(
+                f'<div class="group-content"><div class="metric"><p>{escaped_heading}:</p><h1>{val_str}</h1></div></div>'
+            )
+
+        html_parts.append("</div>")  # End group
+        html_parts.append("</div>")  # End outer container
+
+        return "".join(html_parts)
 
 
 ##############################
