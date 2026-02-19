@@ -2503,7 +2503,7 @@ class ReportCreator:
         logger.debug("Exited ReportCreator context: Original Matplotlib styles restored.")
 
     @_time_it
-    def save(self, view: Base, path: str | Path, prettify_html: bool = True) -> None:
+    def save(self, view: Base, path: str | Path, prettify_html: bool = False) -> None:
         """
         Renders the report content and saves it to an HTML file.
 
@@ -2515,8 +2515,8 @@ class ReportCreator:
         Args:
             view (Base): The root `Base` component representing the report's content.
             path (str | Path): File path to save the HTML report.
-            prettify_html (bool, optional): If True (default), uses BeautifulSoup
-                to prettify the HTML output. Requires `beautifulsoup4`. Defaults to True.
+            prettify_html (bool, optional): If True, uses BeautifulSoup
+                to prettify the HTML output. Requires `beautifulsoup4`. Defaults to False.
 
         Raises:
             ValueError: If `view` is not an instance of `Base`.
@@ -2595,7 +2595,12 @@ class ReportCreator:
             try:
                 from bs4 import BeautifulSoup
 
-                soup = BeautifulSoup(final_html_content, "html.parser")
+                # Use lxml if available for significantly better performance
+                try:
+                    soup = BeautifulSoup(final_html_content, "lxml")
+                except Exception:
+                    soup = BeautifulSoup(final_html_content, "html.parser")
+
                 output_to_write = soup.prettify(formatter="minimal")
             except ImportError:
                 logger.warning(
