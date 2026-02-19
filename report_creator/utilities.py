@@ -83,6 +83,47 @@ def _is_number(value: Any) -> bool:
         return False
 
 
+class HTMLTagValidator(HTMLParser):
+    """
+    Internal parser class to validate HTML tag closure.
+    It maintains a stack of opened tags.
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.tag_stack: list[str] = []  # Stack to keep track of opened tags
+
+    def handle_starttag(self, tag: str, attrs: Any) -> None:  # noqa: ARG002
+        # When a start tag is encountered, push it onto the stack.
+        self.tag_stack.append(tag)
+
+    def handle_endtag(self, tag: str) -> None:
+        # When an end tag is encountered:
+        # If the stack is not empty and the top of the stack matches the end tag,
+        # it means the tag is properly closed, so pop it from the stack.
+        if self.tag_stack and self.tag_stack[-1] == tag:
+            self.tag_stack.pop()
+        else:
+            # This case indicates a mismatched closing tag or a closing tag
+            # without a corresponding opening tag that was expected.
+            # For this validator's purpose (checking for unclosed tags),
+            # we are more concerned about the final state of the stack.
+            logger.debug(
+                f"HTML structure issue: Encountered end tag '{tag}' "
+                f"but stack top is '{self.tag_stack[-1] if self.tag_stack else 'empty'}'."
+            )
+
+    def get_validation_result(self) -> tuple[bool, list[str] | None]:
+        """Returns the validation result based on the final state of the stack."""
+        if not self.tag_stack:
+            # If the stack is empty, all opened tags were properly closed.
+            return (True, None)
+        else:
+            # If the stack is not empty, it contains unclosed tags.
+            # Return a copy of the stack to prevent external modification.
+            return (False, list(self.tag_stack))
+
+
 def _check_html_tags_are_closed(html_content: str) -> tuple[bool, list[str] | None]:
     """
     Validates if all HTML tags in a given string are properly closed.
@@ -104,47 +145,6 @@ def _check_html_tags_are_closed(html_content: str) -> tuple[bool, list[str] | No
               that were left open at the end of parsing, in the order they
               were opened.
     """
-
-    class HTMLTagValidator(HTMLParser):
-        """
-        Internal parser class to validate HTML tag closure.
-        It maintains a stack of opened tags.
-        """
-
-        def __init__(self) -> None:
-            super().__init__()
-            self.tag_stack: list[str] = []  # Stack to keep track of opened tags
-
-        def handle_starttag(self, tag: str, attrs: Any) -> None:  # noqa: ARG002
-            # When a start tag is encountered, push it onto the stack.
-            self.tag_stack.append(tag)
-
-        def handle_endtag(self, tag: str) -> None:
-            # When an end tag is encountered:
-            # If the stack is not empty and the top of the stack matches the end tag,
-            # it means the tag is properly closed, so pop it from the stack.
-            if self.tag_stack and self.tag_stack[-1] == tag:
-                self.tag_stack.pop()
-            else:
-                # This case indicates a mismatched closing tag or a closing tag
-                # without a corresponding opening tag that was expected.
-                # For this validator's purpose (checking for unclosed tags),
-                # we are more concerned about the final state of the stack.
-                logger.debug(
-                    f"HTML structure issue: Encountered end tag '{tag}' "
-                    f"but stack top is '{self.tag_stack[-1] if self.tag_stack else 'empty'}'."
-                )
-
-        def get_validation_result(self) -> tuple[bool, list[str] | None]:
-            """Returns the validation result based on the final state of the stack."""
-            if not self.tag_stack:
-                # If the stack is empty, all opened tags were properly closed.
-                return (True, None)
-            else:
-                # If the stack is not empty, it contains unclosed tags.
-                # Return a copy of the stack to prevent external modification.
-                return (False, list(self.tag_stack))
-
     validator = HTMLTagValidator()
     validator.feed(str(html_content))  # Ensure content is string before feeding
     return validator.get_validation_result()
