@@ -785,7 +785,7 @@ class Table(Widget):
                     f"Could not convert list of dictionaries to DataFrame: {e}"
                 ) from e
         elif isinstance(data, pd.DataFrame):
-            df = data.copy()  # Use a copy to avoid modifying the original DataFrame
+            df = data  # Avoid copying the DataFrame to improve performance
         else:
             raise ValueError(
                 f"Expected data to be a list of dictionaries or pd.DataFrame, got {type(data).__name__}"
