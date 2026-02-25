@@ -390,11 +390,30 @@ def _optimize_error_keywords(error_keywords: Sequence[str]) -> tuple[str, ...]:
     lower_kws = {keyword.lower() for keyword in error_keywords}
     # Convert to sorted list to process by length
     sorted_kws = sorted(lower_kws, key=len)
-    minimal_kws = []
+    minimal_kws_set = set()
+    minimal_kws_list = []
+    present_lengths = set()
+
     for kw in sorted_kws:
-        if not any(existing in kw for existing in minimal_kws):
-            minimal_kws.append(kw)
-    return tuple(minimal_kws)
+        found_super = False
+        n = len(kw)
+
+        # Optimization: only check substrings of lengths we have seen so far
+        for L in present_lengths:
+            for start in range(n - L + 1):
+                sub = kw[start : start + L]
+                if sub in minimal_kws_set:
+                    found_super = True
+                    break
+            if found_super:
+                break
+
+        if not found_super:
+            minimal_kws_set.add(kw)
+            minimal_kws_list.append(kw)
+            present_lengths.add(n)
+
+    return tuple(minimal_kws_list)
 
 
 def create_color_value_sensitive_mapping(
