@@ -7,6 +7,7 @@ import functools
 import mimetypes
 import os
 import random
+import re
 import time
 import uuid
 from collections.abc import Sequence  # Added Any, tuple
@@ -18,6 +19,7 @@ from urllib.parse import unquote, urlparse
 import emoji  # For Markdown emoji processing
 import humanize  # For human-readable sizes
 import mistune  # For Markdown parsing and rendering
+import pandas as pd  # For vectorized operations
 import requests  # For fetching images from URLs
 import requests.exceptions  # For specific request error handling
 
@@ -416,8 +418,87 @@ def _optimize_error_keywords(error_keywords: Sequence[str]) -> tuple[str, ...]:
     return tuple(minimal_kws_list)
 
 
+def _create_color_value_sensitive_mapping_pandas(
+    values: pd.Series | pd.Index,
+    lower_error_keywords: tuple[str, ...],
+    error_color: str,
+    success_color: str,
+    default_color: str,
+    boolean_true_color: str | None,
+    boolean_false_color: str | None,
+) -> list[str]:
+    """
+    Helper function to optimized color mapping for Pandas Series/Index using vectorization.
+    """
+    # Ensure we are working with a Series for consistent API
+    if isinstance(values, pd.Index):
+        s_values = values.to_series().reset_index(drop=True)
+    else:
+        s_values = values
+
+    # Initialize with default color
+    colors = pd.Series(default_color, index=s_values.index, dtype=object)
+
+    # Create masks for types using map() which is efficient enough for this purpose
+    # Identify booleans first (excluding non-bools in object dtype)
+    if s_values.dtype == bool:
+        is_bool = pd.Series(True, index=s_values.index)
+    else:
+        is_bool = s_values.map(lambda x: isinstance(x, bool))
+
+    # Identify numbers (int/float but not bool)
+    if pd.api.types.is_numeric_dtype(s_values) and not pd.api.types.is_bool_dtype(s_values):
+        is_num = ~s_values.isna()
+    else:
+        is_num = s_values.map(lambda x: isinstance(x, (int, float)) and not isinstance(x, bool))
+
+    # Identify strings
+    if pd.api.types.is_string_dtype(s_values) or s_values.dtype == object:
+        is_str = s_values.map(lambda x: isinstance(x, str))
+    else:
+        is_str = pd.Series(False, index=s_values.index)
+
+    # Apply Success Color to all valid types (str, number, bool) initially
+    mask_valid = is_str | is_num | is_bool
+    colors.loc[mask_valid] = success_color
+
+    # 1. Handle Errors in Strings (Vectorized Regex)
+    if is_str.any():
+        pattern = "|".join(re.escape(kw) for kw in lower_error_keywords)
+        if pattern:
+            # Filter to only strings to avoid issues with mixed types
+            str_values = s_values[is_str].astype(str)
+            has_error = str_values.str.contains(pattern, case=False, regex=True, na=False)
+
+            # Map back to original index and update colors
+            error_indices = has_error[has_error].index
+            colors.loc[error_indices] = error_color
+
+    # 2. Handle Errors in Numbers (negative values)
+    if is_num.any():
+        num_values = s_values[is_num]
+        is_neg = num_values < 0
+        neg_indices = is_neg[is_neg].index
+        colors.loc[neg_indices] = error_color
+
+    # 3. Handle Boolean specific colors (overriding success if specified)
+    if is_bool.any():
+        bool_values = s_values[is_bool]
+
+        if boolean_true_color:
+            # Need to explicitly check for True (and handle potential mixed types safely if needed)
+            true_indices = bool_values[bool_values == True].index
+            colors.loc[true_indices] = boolean_true_color
+
+        if boolean_false_color:
+            false_indices = bool_values[bool_values == False].index
+            colors.loc[false_indices] = boolean_false_color
+
+    return colors.tolist()
+
+
 def create_color_value_sensitive_mapping(
-    values: list[str | int | float | bool],  # Added bool to Union
+    values: list[str | int | float | bool] | pd.Series | pd.Index,
     error_keywords: Sequence[str] | None = None,
     error_color: str = "red",
     success_color: str = "green",
@@ -467,9 +548,30 @@ def create_color_value_sensitive_mapping(
     if error_keywords is None:
         error_keywords = ("error", "fail", "failed", "failure", "404", "exception", "critical")
 
-    output_colors: list[str] = []
     # Prepare error keywords for case-insensitive matching
     lower_error_keywords = _optimize_error_keywords(error_keywords)
+
+    # Optimization: Use vectorized operations if input is a Pandas Series/Index OR a large list
+    # Benchmark indicates crossover point for list conversion is around 3000-5000 items.
+    use_pandas = False
+    if isinstance(values, (pd.Series, pd.Index)):
+        use_pandas = True
+    elif isinstance(values, list) and len(values) > 5000:
+        use_pandas = True
+        values = pd.Series(values)
+
+    if use_pandas:
+        return _create_color_value_sensitive_mapping_pandas(
+            values,
+            lower_error_keywords,
+            error_color,
+            success_color,
+            default_color,
+            boolean_true_color,
+            boolean_false_color,
+        )
+
+    output_colors: list[str] = []
 
     for value in values:
         assigned_color = None  # Color for the current value
