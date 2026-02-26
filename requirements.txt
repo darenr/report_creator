@@ -11,6 +11,7 @@ humanize
 beautifulsoup4
 python-dateutil
 requests
+httpx
 pillow
 md4mathjax
 emoji

@@ -1,25 +1,26 @@
 from __future__ import annotations
 
 # Standard library imports
+import asyncio
 import base64
 import concurrent.futures
 import functools
 import mimetypes
 import os
 import random
+import threading
 import time
 import uuid
-from collections.abc import Sequence  # Added Any, tuple
+from collections.abc import Sequence
 from html.parser import HTMLParser
 from typing import Any
 from urllib.parse import unquote, urlparse
 
 # Third-party imports
 import emoji  # For Markdown emoji processing
+import httpx  # For fetching images from URLs (faster, supports async)
 import humanize  # For human-readable sizes
 import mistune  # For Markdown parsing and rendering
-import requests  # For fetching images from URLs
-import requests.exceptions  # For specific request error handling
 
 # Loguru logger
 from loguru import logger
@@ -35,9 +36,53 @@ DEFAULT_ELLIPSIS_LENGTH = 45
 # but different seed words can produce different colors.
 _color_rng = random.Random()
 
-# ThreadPoolExecutor for background image processing.
-# Allows fetching and processing multiple images concurrently.
-_image_processing_executor = concurrent.futures.ThreadPoolExecutor()
+# Global httpx clients for connection pooling and better performance.
+_httpx_client: httpx.Client | None = None
+_httpx_async_client: httpx.AsyncClient | None = None
+_background_loop: asyncio.AbstractEventLoop | None = None
+_loop_thread: threading.Thread | None = None
+_initialization_lock = threading.Lock()
+
+
+def _get_httpx_client() -> httpx.Client:
+    """Lazily initializes and returns a global synchronous httpx client."""
+    global _httpx_client
+    if _httpx_client is None:
+        with _initialization_lock:
+            if _httpx_client is None:
+                _httpx_client = httpx.Client(timeout=10.0, follow_redirects=True)
+    return _httpx_client
+
+
+def _start_background_loop(loop: asyncio.AbstractEventLoop) -> None:
+    """Runs the provided event loop forever in a background thread."""
+    global _httpx_async_client
+    asyncio.set_event_loop(loop)
+    # Initialize the async client within the loop it will be used in
+    _httpx_async_client = httpx.AsyncClient(timeout=10.0, follow_redirects=True)
+    loop.run_forever()
+
+
+def _ensure_async_initialized() -> None:
+    """Lazily initializes the background event loop and async httpx client."""
+    global _background_loop, _loop_thread
+    if _background_loop is None:
+        with _initialization_lock:
+            if _background_loop is None:
+                _background_loop = asyncio.new_event_loop()
+                _loop_thread = threading.Thread(
+                    target=_start_background_loop,
+                    args=(_background_loop,),
+                    daemon=True,
+                    name="RCAsyncLoopThread",
+                )
+                _loop_thread.start()
+
+                # Wait for the client to be initialized in the background thread
+                # This is a short busy-wait to avoid race conditions on first use
+                timeout = time.time() + 2.0
+                while _httpx_async_client is None and time.time() < timeout:
+                    time.sleep(0.01)
 
 
 def _generate_anchor_id(text: str) -> str:
@@ -646,7 +691,7 @@ def _convert_filepath_to_datauri(filepath: str) -> str:
         ) from e
 
 
-def _determine_mime_type(response: requests.Response, image_url: str) -> str:
+def _determine_mime_type(response: Any, image_url: str) -> str:
     """
     Helper to determine the MIME type of an image from response headers or URL.
     """
@@ -678,6 +723,7 @@ def _convert_imgurl_to_datauri_sync(image_url: str) -> str:
     """
     Synchronous version of _convert_imgurl_to_datauri.
     Fetches an image from a given URL and converts it into a base64-encoded data URI.
+    Uses a global httpx client for connection pooling.
     """
     if not isinstance(image_url, str) or not image_url.startswith(("http://", "https://")):
         raise ValueError(
@@ -686,11 +732,9 @@ def _convert_imgurl_to_datauri_sync(image_url: str) -> str:
 
     try:
         # Use the root of the image URL as the Referer. Some servers might require this.
-        # Also, set a reasonable timeout for the request.
         headers = {"Referer": _get_url_root(image_url)}
-        timeout_seconds = 10
-        response = requests.get(image_url, headers=headers, timeout=timeout_seconds)
-        response.raise_for_status()  # Raises HTTPError for bad responses (4XX or 5XX)
+        response = _get_httpx_client().get(image_url, headers=headers)
+        response.raise_for_status()  # Raises HTTPStatusError for 4XX or 5XX
 
         mime_type = _determine_mime_type(response, image_url)
 
@@ -703,15 +747,15 @@ def _convert_imgurl_to_datauri_sync(image_url: str) -> str:
         )
         return data_uri
 
-    except requests.exceptions.Timeout as e:
+    except httpx.TimeoutException as e:
         logger.error(f"Timeout while fetching image URL '{image_url}': {e}")
         raise ValueError(f"Timeout converting image URL '{image_url}' to data URI.") from e
-    except requests.exceptions.HTTPError as e:
+    except httpx.HTTPStatusError as e:
         logger.error(
             f"HTTP error {e.response.status_code} while fetching image URL '{image_url}': {e}"
         )
         raise ValueError(f"HTTP error converting image URL '{image_url}' to data URI.") from e
-    except requests.exceptions.RequestException as e:
+    except httpx.RequestError as e:
         # Catches other general request issues like connection errors
         logger.error(f"Failed to fetch image URL '{image_url}' due to a request exception: {e}")
         raise ValueError(
@@ -735,9 +779,61 @@ def _convert_imgurl_to_datauri(image_url: str) -> str:
     return _convert_imgurl_to_datauri_sync(image_url)
 
 
+async def _convert_imgurl_to_datauri_coro(image_url: str) -> str:
+    """
+    Asynchronous coroutine to fetch an image and convert it to a data URI.
+    Uses the global httpx async client.
+    """
+    if not isinstance(image_url, str) or not image_url.startswith(("http://", "https://")):
+        raise ValueError(
+            f"Invalid image URL provided: {_ellipsis_url(str(image_url))}. Must be a valid HTTP/HTTPS URL."
+        )
+
+    try:
+        headers = {"Referer": _get_url_root(image_url)}
+        # Ensure client is initialized
+        if _httpx_async_client is None:
+            raise RuntimeError("httpx AsyncClient is not initialized")
+
+        response = await _httpx_async_client.get(image_url, headers=headers)
+        response.raise_for_status()
+
+        mime_type = _determine_mime_type(response, image_url)
+
+        base64_encoded_content = base64.b64encode(response.content).decode("utf-8")
+        data_uri = f"data:{mime_type};base64,{base64_encoded_content}"
+
+        logger.info(
+            f"Fetched image ASYNC from URL and converted to data URI: '{_ellipsis_url(unquote(image_url))}' "
+            f"(MIME: {mime_type}, Original Size: {humanize.naturalsize(len(response.content))})"
+        )
+        return data_uri
+
+    except httpx.TimeoutException as e:
+        logger.error(f"Timeout while fetching image URL '{image_url}': {e}")
+        raise ValueError(f"Timeout converting image URL '{image_url}' to data URI.") from e
+    except httpx.HTTPStatusError as e:
+        logger.error(
+            f"HTTP error {e.response.status_code} while fetching image URL '{image_url}': {e}"
+        )
+        raise ValueError(f"HTTP error converting image URL '{image_url}' to data URI.") from e
+    except httpx.RequestError as e:
+        logger.error(f"Failed to fetch image URL '{image_url}' due to a request exception: {e}")
+        raise ValueError(
+            f"Could not convert image URL '{image_url}' to data URI due to a request failure."
+        ) from e
+    except Exception as e:
+        logger.error(
+            f"An unexpected error occurred while converting image URL '{image_url}' ASYNC to data URI: {e}"
+        )
+        raise ValueError(
+            f"Could not convert image URL '{image_url}' to data URI due to an unexpected error. {e}"
+        ) from e
+
+
 def _convert_imgurl_to_datauri_async(image_url: str) -> concurrent.futures.Future:
     """
-    Submits the image fetching and conversion task to a thread pool.
+    Submits the image fetching and conversion task to the background event loop.
 
     Args:
         image_url (str): The URL of the image to fetch and convert.
@@ -746,4 +842,7 @@ def _convert_imgurl_to_datauri_async(image_url: str) -> concurrent.futures.Futur
         concurrent.futures.Future: A future object representing the pending result of the
                                    data URI conversion.
     """
-    return _image_processing_executor.submit(_convert_imgurl_to_datauri_sync, image_url)
+    _ensure_async_initialized()
+    return asyncio.run_coroutine_threadsafe(
+        _convert_imgurl_to_datauri_coro(image_url), _background_loop
+    )

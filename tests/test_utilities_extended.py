@@ -3,8 +3,7 @@ import tempfile
 from unittest.mock import MagicMock, patch
 
 import pytest
-import requests
-import requests.exceptions
+import httpx
 
 from report_creator.utilities import (
     _check_html_tags_are_closed,
@@ -164,36 +163,38 @@ def test_convert_filepath_to_datauri():
 
 
 def test_convert_imgurl_to_datauri_sync():
-    # Line 724
     url = "https://example.com/image.png"
     mock_response = MagicMock()
     mock_response.status_code = 200
     mock_response.content = b"fake-image-data"
     mock_response.headers = {"Content-Type": "image/png"}
 
-    with patch("requests.get", return_value=mock_response):
+    with patch("report_creator.utilities._get_httpx_client") as mock_get_client:
+        mock_get_client.return_value.get.return_value = mock_response
         uri = _convert_imgurl_to_datauri_sync(url)
         assert uri.startswith("data:image/png;base64,")
 
     # Test exceptions
-    mock_response.raise_for_status.side_effect = Exception("HTTP error")
-    with patch("requests.get", return_value=mock_response):
-        with pytest.raises(ValueError, match="unexpected error"):  # Generic exception catch
+    mock_response.raise_for_status.side_effect = httpx.HTTPStatusError(
+        "HTTP error", request=MagicMock(), response=mock_response
+    )
+    with patch("report_creator.utilities._get_httpx_client") as mock_get_client:
+        mock_get_client.return_value.get.return_value = mock_response
+        with pytest.raises(ValueError, match="HTTP error"):
             _convert_imgurl_to_datauri_sync(url)
 
 
 def test_convert_imgurl_to_datauri_async():
-    # Line 738
     url = "https://example.com/async-image.png"
-    mock_response = MagicMock()
-    mock_response.status_code = 200
-    mock_response.content = b"async-data"
-    mock_response.headers = {"Content-Type": "image/png"}
+    mock_future = MagicMock()
+    mock_future.result.return_value = "data:image/png;base64,mocked_async_data"
 
-    with patch("requests.get", return_value=mock_response):
+    with patch(
+        "report_creator.utilities.asyncio.run_coroutine_threadsafe", return_value=mock_future
+    ), patch("report_creator.utilities._ensure_async_initialized"):
         future = _convert_imgurl_to_datauri_async(url)
         uri = future.result()
-        assert uri.startswith("data:image/png;base64,")
+        assert uri == "data:image/png;base64,mocked_async_data"
 
 
 def test_time_it():
@@ -230,12 +231,16 @@ def test_convert_imgurl_to_datauri_sync_exceptions():
     url = "https://example.com/image.png"
 
     # Timeout
-    with patch("requests.get", side_effect=requests.exceptions.Timeout("timeout")):
+    with patch("report_creator.utilities._get_httpx_client") as mock_get_client:
+        mock_get_client.return_value.get.side_effect = httpx.TimeoutException("timeout")
         with pytest.raises(ValueError, match="Timeout"):
             _convert_imgurl_to_datauri_sync(url)
 
     # RequestException
-    with patch("requests.get", side_effect=requests.exceptions.RequestException("error")):
+    with patch("report_creator.utilities._get_httpx_client") as mock_get_client:
+        mock_get_client.return_value.get.side_effect = httpx.RequestError(
+            "error", request=MagicMock()
+        )
         with pytest.raises(ValueError, match="request failure"):
             _convert_imgurl_to_datauri_sync(url)
 
