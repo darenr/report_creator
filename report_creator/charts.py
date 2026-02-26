@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod  # Use ABC for abstract base classes
 from typing import Any
 
 # Third-party imports
+import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
@@ -447,18 +448,21 @@ class Radar(PxBase):
         trace_specific_kwargs = self.kwargs.get("trace_kwargs", {})
 
         # Optimize by avoiding repeated go.Scatterpolar instantiation and add_trace calls
-        # Construct raw dictionaries instead
-        for row in self.df.itertuples(name=None):
-            trace_name = row[0]
-            r_values = list(row[1:])
-            r_closed_loop = r_values + r_values[:1]  # Close the loop for r values
+        # Construct raw dictionaries instead.
+        # Use numpy for faster array manipulation and iteration
+        values = self.df.to_numpy()
+        # Concatenate the first column to the end to close the loop
+        r_closed_loop_values = np.hstack((values, values[:, :1]))
+        r_data = r_closed_loop_values.tolist()
+        trace_names = self.df.index.astype(str).tolist()
 
+        for trace_name, r_closed_loop in zip(trace_names, r_data):  # noqa: B905
             trace = {
                 "type": "scatterpolar",
                 "r": r_closed_loop,
                 "theta": theta_closed_loop,
                 "fill": "toself" if self.filled else None,
-                "name": str(trace_name),
+                "name": trace_name,
                 **trace_specific_kwargs,
             }
             data.append(trace)
