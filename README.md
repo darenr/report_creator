@@ -83,6 +83,7 @@ with rc.ReportCreator(
 
 ```mermaid
 classDiagram
+    direction LR
     class Base {
         +to_html() str
     }
