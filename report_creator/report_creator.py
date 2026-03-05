@@ -593,15 +593,16 @@ class EventMetric(Base):
             ) from e
 
         # Create a lightweight DataFrame for grouping
-        df_for_grouping = pd.DataFrame({
-            self.date_col_name: self.date_series,
-            self.y_col_name: y_values,
-        })
+        df_for_grouping = pd.DataFrame(
+            {
+                self.date_col_name: self.date_series,
+                self.y_col_name: y_values,
+            }
+        )
 
         # Group by the specified frequency and sum the event indicator column
         df_grouped = (
-            df_for_grouping
-            .groupby(pd.Grouper(key=self.date_col_name, freq=self.frequency))
+            df_for_grouping.groupby(pd.Grouper(key=self.date_col_name, freq=self.frequency))
             .sum()
             .reset_index()
         )
@@ -950,7 +951,8 @@ class DataTable(Base):
 
         logger.info(
             f"DataTable component initialized: {len(processed_df)} rows, {len(processed_df.columns)} columns. "
-            f"Label: '{self.label}', Index: {index}, Wrap: {wrap_text}, Max Rows: {max_rows}"
+            f"Label: '{self.label}', Index: {index}, Wrap: {wrap_text}, Max Rows: {max_rows}, "
+            f"Rows per Page: {rows_per_page}, Show Page Length: {show_page_length}"
         )
 
     @_strip_whitespace

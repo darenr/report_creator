@@ -1,88 +1,73 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>{{title}}</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css"
-    />
+  <title>{{title}}</title>
 
-    <!-- hightlight.js -->
-    {% if include_hljs %}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css" />
 
-    <!-- see https://highlightjs.org/examples -->
+  <!-- hightlight.js -->
+  {% if include_hljs %}
 
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/{{code_theme}}.css"
-    />
+  <!-- see https://highlightjs.org/examples -->
 
-    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/{{code_theme}}.css" />
 
-    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/python.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/shell.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/yaml.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/json.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/sql.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/java.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/bash.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/prolog.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js"></script>
 
-    {% endif %}
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/python.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/shell.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/sql.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/java.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/languages/prolog.min.js"></script>
 
-    <script
-      id="MathJax-script"
-      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-    ></script>
+  {% endif %}
 
-    <!-- DataTable -->
-    {% if include_datatable %}
+  <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
-    <link
-      href="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-2.2.2/b-3.2.2/b-colvis-3.2.2/b-html5-3.2.2/b-print-3.2.2/cr-2.0.4/date-1.5.5/fc-5.0.4/fh-4.0.1/r-3.0.4/sc-2.4.3/sp-2.3.3/datatables.min.css"
-      rel="stylesheet"
-      integrity="sha384-SiA6nFlx5ok4nU+Uxtuw1yyMIzmbXeH+VenPsi2Xag6RRxxZAX2RwS6o6DAQuAdD"
-      crossorigin="anonymous"
-    />
+  <!-- DataTable -->
+  {% if include_datatable %}
 
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"
-      integrity="sha384-VFQrHzqBh5qiJIU0uGU5CIW3+OWpdGGJM9LBnGbuIH2mkICcFZ7lPd/AAtI7SNf7"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"
-      integrity="sha384-/RlQG9uf0M2vcTw3CX7fbqgbj/h8wKxw7C3zu9/GxcBPRKOEcESxaxufwRXqzq6n"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-2.2.2/b-3.2.2/b-colvis-3.2.2/b-html5-3.2.2/b-print-3.2.2/cr-2.0.4/date-1.5.5/fc-5.0.4/fh-4.0.1/r-3.0.4/sc-2.4.3/sp-2.3.3/datatables.min.js"
-      integrity="sha384-RiyJWHnQvvLKekzAG6mCM9pTHYtGtoYkqaEdF52hKGued4T+riRRg0QzVL9hhFGS"
-      crossorigin="anonymous"
-    ></script>
+  <link
+    href="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-2.3.7/b-3.2.6/b-colvis-3.2.6/b-html5-3.2.6/b-print-3.2.6/cr-2.1.2/date-1.6.3/fh-4.0.6/sc-2.4.3/sp-2.3.5/datatables.min.css"
+    rel="stylesheet" integrity="sha384-Fd8yhPVR9MpQQdZM82WsWpaW2s1HaAWlTAZTJIeF+ioIrWRsH1lKxDpMoj98yHuz"
+    crossorigin="anonymous">
 
-    {% endif %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"
+    integrity="sha384-VFQrHzqBh5qiJIU0uGU5CIW3+OWpdGGJM9LBnGbuIH2mkICcFZ7lPd/AAtI7SNf7"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"
+    integrity="sha384-/RlQG9uf0M2vcTw3CX7fbqgbj/h8wKxw7C3zu9/GxcBPRKOEcESxaxufwRXqzq6n"
+    crossorigin="anonymous"></script>
+  <script
+    src="https://cdn.datatables.net/v/dt/jq-3.7.0/jszip-3.10.1/dt-2.3.7/b-3.2.6/b-colvis-3.2.6/b-html5-3.2.6/b-print-3.2.6/cr-2.1.2/date-1.6.3/fh-4.0.6/sc-2.4.3/sp-2.3.5/datatables.min.js"
+    integrity="sha384-SCIxh9ILg+WGkXN6guHbexMCA1yaYv1Tog/6987wwmPamaaJGcbFPKIswyu/1Crf"
+    crossorigin="anonymous"></script>
 
-    <!-- Mermaid JS -->
-    {% if include_mermaid %}
+  {% endif %}
 
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-    <script src="https://unpkg.com/@panzoom/panzoom/dist/panzoom.min.js"></script>
+  <!-- Mermaid JS -->
+  {% if include_mermaid %}
 
-    {% endif %}
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script src="https://unpkg.com/@panzoom/panzoom/dist/panzoom.min.js"></script>
 
-    <!-- Plotly -->
-    {% if include_plotly %}
+  {% endif %}
 
-    <script src="https://cdn.jsdelivr.net/npm/plotly.js/dist/plotly.min.js"></script>
+  <!-- Plotly -->
+  {% if include_plotly %}
 
-    {% endif %}
+  <script src="https://cdn.jsdelivr.net/npm/plotly.js/dist/plotly.min.js"></script>
 
-    <!--
+  {% endif %}
+
+  <!--
             variables, for example: style: color: var(--links)
 
                 --background-body
@@ -109,513 +94,522 @@
             https://github.com/kognise/water.css#theming
         -->
 
-    <style>
-      :root {
-        --focus: {{accent_color}};
-        --button-hover: black;
-        --font-size: calc(.6em + 1vw);
+  <style>
+    :root {
+      --focus: {
+          {
+          accent_color
+        }
       }
 
-      html {
-        font-smooth: auto !important;
-        -webkit-font-smoothing: antialiased !important;
-        -moz-osx-font-smoothing: grayscale !important;
-      }
+      ;
+      --button-hover: black;
+      --font-size: calc(.6em + 1vw);
+    }
 
+    html {
+      font-smooth: auto !important;
+      -webkit-font-smoothing: antialiased !important;
+      -moz-osx-font-smoothing: grayscale !important;
+    }
+
+    body {
+      max-width: 95%;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    }
+
+    hr {
+      width: 100%;
+      /* Full width, fixes issue with flex container */
+    }
+
+    /* Styles for desktop (90% width) */
+    @media (min-width: 768px) {
       body {
-        max-width: 95%;
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-
+        max-width: 90%;
       }
+    }
 
-      hr {
-        width: 100%; /* Full width, fixes issue with flex container */
-      }
+    input:disabled {
+      opacity: unset;
+    }
 
-      /* Styles for desktop (90% width) */
-      @media (min-width: 768px) {
-        body {
-          max-width: 90%;
-        }
-      }
+    details {
+      background-color: var(--background-body);
+      margin: 0;
+    }
 
-      input:disabled {
-        opacity: unset;
-      }
+    .collapse {
+      display: block;
+      width: inherit;
+    }
 
-      details {
-        background-color: var(--background-body);
-        margin: 0;
-      }
+    summary {
+      background-color: var(--background-body);
+      margin-left: -20px !important;
+    }
 
-      .collapse {
-        display: block;
-        width: inherit;
-      }
+    blockquote {
+      background: #f9f9f9;
+      border-left: 10px solid #ccc;
+      margin: 1.5em 10px;
+      padding: 0.75em 10px;
+    }
 
-      summary {
-        background-color: var(--background-body);
-        margin-left: -20px !important;
-      }
+    blockquote:before {
+      color: #ccc;
+      font-size: 4em;
+      line-height: 0.1em;
+      margin-right: 0.25em;
+      vertical-align: -0.4em;
+    }
 
-      blockquote {
-        background: #f9f9f9;
-        border-left: 10px solid #ccc;
-        margin: 1.5em 10px;
-        padding: 0.75em 10px;
-      }
+    blockquote p {
+      display: inline;
+    }
 
-      blockquote:before {
-        color: #ccc;
-        font-size: 4em;
-        line-height: 0.1em;
-        margin-right: 0.25em;
-        vertical-align: -0.4em;
-      }
+    block {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+      min-width: 0;
+      width: 100%;
+      flex-wrap: nowrap;
+    }
 
-      blockquote p {
-        display: inline;
-      }
+    block-component {
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      flex: 1;
+      align-items: stretch;
+    }
 
-      block {
-        display: flex;
-        flex-wrap: wrap;
-        flex-direction: column;
-        min-width: 0;
-        width: 100%;
-        flex-wrap: nowrap;
-      }
+    .group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1em;
+    }
 
-      block-component {
-        display: flex;
-        flex-direction: column;
-        padding: 10px;
-        flex: 1;
-        align-items: stretch;
-      }
+    .group>* {
+      flex: 1 1 300px;
+    }
 
-      .group {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1em;
-      }
+    div.round-bordered {
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 20px;
+    }
 
-      .group > * {
-        flex: 1 1 300px;
-      }
+    .metric {
+      padding: 10px;
+      padding-left: 25px;
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      height: 100%;
+      width: 100%;
+      box-sizing: border-box;
+    }
 
-      div.round-bordered {
-        border: 1px solid var(--border);
-        border-radius: 0.75rem;
-        padding: 20px;
-      }
+    .metric h1 {
+      font-size: calc(var(--font-size) * 2);
+      margin-top: 3px;
+      margin-bottom: 3px;
+      word-wrap: break-word;
+      word-break: break-word;
+    }
 
-      .metric {
-        padding: 10px;
-        padding-left: 25px;
-        border: 1px solid var(--border);
-        border-radius: 0.75rem;
-        height: 100%;
-        width: 100%;
-        box-sizing: border-box;
-      }
+    .metric p {
+      color: var(--text-main);
+      margin-top: 0;
+    }
 
-      .metric h1 {
-        font-size: calc(var(--font-size) * 2);
-        margin-top: 3px;
-        margin-bottom: 3px;
-        word-wrap: break-word;
-        word-break: break-word;
-      }
+    .block-bordered {
+      border-left: 10px solid var(--focus) !important;
+      padding-left: 15px !important;
+    }
 
-      .metric p {
-        color: var(--text-main);
-        margin-top: 0;
-      }
+    header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-content: stretch;
+      gap: 25px;
+    }
 
-      .block-bordered {
-        border-left: 10px solid var(--focus) !important;
-        padding-left: 15px !important;
-      }
+    header .header-text {
+      display: flex;
+      flex-direction: column;
+    }
 
-      header {
-        display: flex;
-        align-items: flex-start;
-        justify-content: flex-start;
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-content: stretch;
-        gap: 25px;
-      }
+    header .header-text h1 {
+      font-size: calc(var(--font-size) * 3);
+    }
 
-      header .header-text {
-        display: flex;
-        flex-direction: column;
-      }
+    header .letter-icon {
+      display: flex;
+      flex-direction: column;
+    }
 
-      header .header-text h1 {
-        font-size: calc(var(--font-size) * 3);
-      }
+    report-caption {
+      display: block;
+      margin-top: 0.75em;
+      margin-bottom: 1.2em;
+      font-size: calc(var(--font-size) * 1.25);
+      font-weight: bold;
+      border-left: 5px solid var(--focus);
+      padding-left: 15px;
+    }
 
-      header .letter-icon {
-        display: flex;
-        flex-direction: column;
-      }
+    report-caption a {
+      color: var(--text-bright);
+    }
 
-      report-caption {
-        display: block;
-        margin-top: 0.75em;
-        margin-bottom: 1.2em;
-        font-size: calc(var(--font-size) * 1.25);
-        font-weight: bold;
-        border-left: 5px solid var(--focus);
-        padding-left: 15px;
-      }
+    report-text {
+      margin-top: 0.5em;
+      margin-bottom: 1.5em;
+      font-size: 1.1em;
+    }
 
-      report-caption a {
-        color: var(--text-bright);
-      }
+    caption {
+      margin-top: 0.5em;
+      margin-bottom: 1em;
+      font-size: calc(var(--font-size) * 1.5);
+      font-weight: bold;
+      border-left: 5px solid var(--focus);
+      padding-left: 15px;
+    }
 
-      report-text {
-        margin-top: 0.5em;
-        margin-bottom: 1.5em;
-        font-size: 1.1em;
-      }
+    select:not([multiple]):not([size]) {
+      /* this selector targets standard, single-select dropdown lists */
+      padding-right: 1.5rem;
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      -moz-appearance: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
 
-      caption {
-        margin-top: 0.5em;
-        margin-bottom: 1em;
-        font-size: calc(var(--font-size) * 1.5);
-        font-weight: bold;
-        border-left: 5px solid var(--focus);
-        padding-left: 15px;
-      }
+    .tab {
+      overflow: hidden;
+      border-bottom: 3px solid var(--button-hover);
+    }
 
-      select:not([multiple]):not([size]) {
-        /* this selector targets standard, single-select dropdown lists */
-        padding-right: 1.5rem;
-        background-repeat: no-repeat;
-        background-position: right 0.75rem center;
-        -moz-appearance: none;
-        -webkit-appearance: none;
-        appearance: none;
-      }
+    .tab button {
+      font-weight: normal;
 
-      .tab {
-        overflow: hidden;
-        border-bottom: 3px solid var(--button-hover);
-      }
+      background: var(--background-body) !important;
+      color: var(--text-muted);
 
-      .tab button {
-        font-weight: normal;
+      float: left;
 
-        background: var(--background-body) !important;
-        color: var(--text-muted);
+      cursor: pointer;
+      transition: 0.1s;
+      margin: 0 !important;
+      border-radius: 0;
+      border: none;
+      outline: none;
+      box-shadow: none !important;
+    }
 
-        float: left;
+    .tab button:hover {
+      color: var(--text-bright);
+    }
 
-        cursor: pointer;
-        transition: 0.1s;
-        margin: 0 !important;
-        border-radius: 0;
-        border: none;
-        outline: none;
-        box-shadow: none !important;
-      }
+    .tab button.active {
+      background: var(--button-hover) !important;
+      color: white;
+      border-top-right-radius: 0.25em;
+      border-top-left-radius: 0.25em;
+    }
 
-      .tab button:hover {
-        color: var(--text-bright);
-      }
+    .tabcontent {
+      width: 100%;
+      border: 0.5px solid var(--border);
+      box-sizing: border-box;
+      border-bottom-left-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
+      padding: 20px;
+    }
 
-      .tab button.active {
-        background: var(--button-hover) !important;
-        color: white;
-        border-top-right-radius: 0.25em;
-        border-top-left-radius: 0.25em;
-      }
+    .offscreen {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
 
-      .tabcontent {
-        width: 100%;
-        border: 0.5px solid var(--border);
-        box-sizing: border-box;
-        border-bottom-left-radius: 0.5rem;
-        border-bottom-right-radius: 0.5rem;
-        padding: 20px;
-      }
-
+    @media print {
       .offscreen {
-        position: absolute;
-        left: -9999px;
-        width: 1px;
-        height: 1px;
-        overflow: hidden;
-      }
-
-      @media print {
-        .offscreen {
-          display: none;
-        }
-      }
-
-      .indented-text-block {
-        text-indent: 20px;
-      }
-
-      .diagram-block {
-        flex: 1;
-        box-sizing: border-box;
-      }
-
-      .diagram-block figure {
-        margin: 0 !important;
-      }
-
-      .image-block {
-        flex: 1;
-        box-sizing: border-box;
-      }
-
-      .image-block figure {
-        margin: 0 !important;
-      }
-
-      .image-block img {
-        /* height: 500px; */
-        object-fit: scale-down;
-      }
-
-      div.markdown-wrapper {
-        flex: 1;
-      }
-
-      .rounded {
-        border-radius: 0.75rem;
-      }
-
-      div.markdown-wrapper pre {
-        white-space: pre-wrap;
-      }
-
-      .remove-all-styles {
-        all: unset;
-        display: block;
-      }
-
-      div.dt-search input {
-        all: unset;
-      }
-
-      div.dt-layout-cell caption {
-        border: unset;
-        padding: unset;
-        font-size: unset;
-      }
-
-      table.dataTable tbody tr {
-        font-weight: normal;
-      }
-
-      .code-block {
-        height: 100%;
-        box-sizing: border-box;
-        position: relative;
-      }
-
-      .code-block-label {
-        position: absolute;
-        box-sizing: border-box;
-        top: 0;
-        right: 0;;
-        padding: 5px 10px;
-        border-radius: 0 0.75rem 0 0.75rem;
-        overflow: hidden;
-      }
-
-      .code-block pre {
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        box-sizing: border-box;
-        margin: 0;
-        overflow: hidden;
-        border: 1px solid var(--border);
-        border-radius: 0.75rem;
-      }
-
-      .report-widget {
-        width: 100%;
-      }
-
-      .report-widget table {
-        display: block;
-        max-width: -moz-fit-content;
-        max-width: fit-content;
-        overflow-x: auto;
-        white-space: nowrap;
-        border: none;
-      }
-
-      .component-description {
-        font-size: calc(var(--font-size) * 1.0);
-        color: var(--text-muted);
-      }
-
-      details report-caption {
-        /* don't show the caption label within an accodion */
         display: none;
       }
+    }
 
-      summary {
-        font-weight: bold;
+    .indented-text-block {
+      text-indent: 20px;
+    }
+
+    .diagram-block {
+      flex: 1;
+      box-sizing: border-box;
+    }
+
+    .diagram-block figure {
+      margin: 0 !important;
+    }
+
+    .image-block {
+      flex: 1;
+      box-sizing: border-box;
+    }
+
+    .image-block figure {
+      margin: 0 !important;
+    }
+
+    .image-block img {
+      /* height: 500px; */
+      object-fit: scale-down;
+    }
+
+    div.markdown-wrapper {
+      flex: 1;
+    }
+
+    .rounded {
+      border-radius: 0.75rem;
+    }
+
+    div.markdown-wrapper pre {
+      white-space: pre-wrap;
+    }
+
+    .remove-all-styles {
+      all: unset;
+      display: block;
+    }
+
+    div.dt-search input {
+      all: unset;
+    }
+
+    div.dt-layout-cell caption {
+      border: unset;
+      padding: unset;
+      font-size: unset;
+    }
+
+    table.dataTable tbody tr {
+      font-weight: normal;
+    }
+
+    .code-block {
+      height: 100%;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .code-block-label {
+      position: absolute;
+      box-sizing: border-box;
+      top: 0;
+      right: 0;
+      ;
+      padding: 5px 10px;
+      border-radius: 0 0.75rem 0 0.75rem;
+      overflow: hidden;
+    }
+
+    .code-block pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      box-sizing: border-box;
+      margin: 0;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+    }
+
+    .report-widget {
+      width: 100%;
+    }
+
+    .report-widget table {
+      display: block;
+      max-width: -moz-fit-content;
+      max-width: fit-content;
+      overflow-x: auto;
+      white-space: nowrap;
+      border: none;
+    }
+
+    .component-description {
+      font-size: calc(var(--font-size) * 1.0);
+      color: var(--text-muted);
+    }
+
+    details report-caption {
+      /* don't show the caption label within an accodion */
+      display: none;
+    }
+
+    summary {
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      padding: 3px;
+    }
+
+    .markdown-wrapper li.task-list-item {
+      list-style-type: none;
+      margin-left: -1.5em;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="letter-icon">{{header_logo|safe}}</div>
+    <div class="header-text">
+      <h1>{{title}}</h1>
+      {% if description %} {{description}} {% endif %} {% if author %}
+      <p><small>{{author}}</small></p>
+      {% endif %}
+    </div>
+  </header>
+
+  <hr />
+
+  <div class="container">{{body}}</div>
+
+  {% if footer %}
+  <footer>{{footer}}</footer>
+  {% endif %}
+
+  <script>
+    function triggerResize() {
+      window.dispatchEvent(new Event("resize"));
+    }
+    function openTab(evt, tabName, tableIndex) {
+      // Declare variables
+      var i, tabcontent, tablinks;
+
+      // Get all elements with class="tabcontent" and hide them
+      tabcontent = document.querySelectorAll(
+        '.tabcontent[data-group-id="' + tableIndex + '"]'
+      );
+
+      // Hide all tab contents for the specified table index
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].classList.add('offscreen');
       }
 
-      footer {
-        text-align: center;
-        padding: 3px;
+      // Get all elements with class="tablinks" and remove the class "active"
+      tablinks = document.querySelectorAll(
+        '.tablinks[data-group-id="' + tableIndex + '"]'
+      );
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].classList.remove("active");
       }
 
-      .markdown-wrapper li.task-list-item {
-        list-style-type: none;
-        margin-left: -1.5em;
-      }
-    </style>
-  </head>
-
-  <body>
-    <header>
-      <div class="letter-icon">{{header_logo|safe}}</div>
-      <div class="header-text">
-        <h1>{{title}}</h1>
-        {% if description %} {{description}} {% endif %} {% if author %}
-        <p><small>{{author}}</small></p>
-        {% endif %}
-      </div>
-    </header>
-
-    <hr />
-
-    <div class="container">{{body}}</div>
-
-    {% if footer %}
-    <footer>{{footer}}</footer>
-    {% endif %}
-
-    <script>
-      function triggerResize() {
-        window.dispatchEvent(new Event("resize"));
-      }
-      function openTab(evt, tabName, tableIndex) {
-        // Declare variables
-        var i, tabcontent, tablinks;
-
-        // Get all elements with class="tabcontent" and hide them
-        tabcontent = document.querySelectorAll(
-          '.tabcontent[data-group-id="' + tableIndex + '"]'
-        );
-
-        // Hide all tab contents for the specified table index
-        for (i = 0; i < tabcontent.length; i++) {
-          tabcontent[i].classList.add('offscreen');
+      // Show the current tab, and add an "active" class to the button that opened the tab
+      for (i = 0; i < tabcontent.length; i++) {
+        if (tabcontent[i].getAttribute('data-tab-name') == tabName &&
+          tabcontent[i].getAttribute('data-group-id') == tableIndex) {
+          tabcontent[i].classList.remove('offscreen');
         }
-
-        // Get all elements with class="tablinks" and remove the class "active"
-        tablinks = document.querySelectorAll(
-          '.tablinks[data-group-id="' + tableIndex + '"]'
-        );
-        for (i = 0; i < tablinks.length; i++) {
-          tablinks[i].classList.remove("active");
-        }
-
-        // Show the current tab, and add an "active" class to the button that opened the tab
-        for (i = 0; i < tabcontent.length; i++) {
-          if (tabcontent[i].getAttribute('data-tab-name') == tabName &&
-              tabcontent[i].getAttribute('data-group-id') == tableIndex) {
-            tabcontent[i].classList.remove('offscreen');
-          }
-        }
-        evt.currentTarget.classList.add("active");
-        triggerResize();
       }
-      (function () {
+      evt.currentTarget.classList.add("active");
+      triggerResize();
+    }
+    (function () {
 
-        // Initialize highlight.js, mermaid.js, dataTables.js etc conditionally
+      // Initialize highlight.js, mermaid.js, dataTables.js etc conditionally
 
-        {% if include_hljs %}
+      {% if include_hljs %}
 
-        console.log("initializing highlight.js (theme: {{code_theme}})");
-        // style any code blocks
-        document
-          .querySelectorAll(".syntax-color, .codehilite pre code")
-          .forEach((element, key) => {
-            hljs.highlightElement(element);
-            hljs.configure({
-              ignoreUnescapedHTML: true,
+      console.log("initializing highlight.js (theme: {{code_theme}})");
+      // style any code blocks
+      document
+        .querySelectorAll(".syntax-color, .codehilite pre code")
+        .forEach((element, key) => {
+          hljs.highlightElement(element);
+          hljs.configure({
+            ignoreUnescapedHTML: true,
+          });
+        });
+      {% endif %}
+
+
+      document.querySelectorAll(".defaultOpen").forEach(function (button) {
+        button.click();
+      });
+
+      {% if include_datatable %}
+
+      console.log("initializing DataTables");
+      // style tables
+      table = new DataTable("table.fancy-table", {
+        layout: {
+          topStart: {
+            buttons: ["copyHtml5", "excelHtml5", "csvHtml5", "print"],
+          },
+        },
+        colReorder: true,
+        responsive: true,
+        autoWidth: true,
+      });
+
+      {% endif %}
+
+      {% if include_mermaid %}
+
+      console.log("initializing mermaid (theme: {{diagram_theme}})");
+      mermaid.initialize({
+        startOnLoad: true,
+        securityLevel: "loose",
+        theme: "{{diagram_theme}}",
+        themeVariables: {
+          fontFamily: "Helvetica Neue",
+        },
+      });
+
+      mermaid.run({
+        querySelector: '.mermaid-pan-zoom',
+        postRenderCallback: (id) => {
+          const svgElement = document.getElementById(id);
+
+          // Initialize Panzoom
+          const panzoom = Panzoom(svgElement, {
+            cursor: 'grab',   // Change the cursor style
+          });
+
+          svgElement.addEventListener('wheel', function (event) {
+            if (!event.shiftKey) return
+            panzoom.zoomWithWheel(event)
+          })
+
+          document.querySelectorAll(".panzoom-reset").forEach(function (button) {
+            button.addEventListener("click", function () {
+              panzoom.reset();
             });
           });
-        {% endif %}
 
+        }
+      });
 
-        document.querySelectorAll(".defaultOpen").forEach(function (button) {
-          button.click();
-        });
+      {% endif %}
 
-        {% if include_datatable %}
+      // plotly doesn't properly resize on page load, so trigger responsive event
+      triggerResize();
+    })();
+  </script>
+</body>
 
-        console.log("initializing DataTables");
-        // style tables
-        table = new DataTable("table.fancy-table", {
-          layout: {
-            topStart: {
-              buttons: ["copyHtml5", "excelHtml5", "csvHtml5", "print"],
-            },
-          },
-          colReorder: true,
-          responsive: true,
-          autoWidth: true,
-        });
-
-        {% endif %}
-
-        {% if include_mermaid %}
-
-        console.log("initializing mermaid (theme: {{diagram_theme}})");
-        mermaid.initialize({
-          startOnLoad: true,
-          securityLevel: "loose",
-          theme: "{{diagram_theme}}",
-          themeVariables: {
-            fontFamily: "Helvetica Neue",
-          },
-        });
-
-        mermaid.run({
-            querySelector: '.mermaid-pan-zoom',
-            postRenderCallback: (id) => {
-                const svgElement = document.getElementById(id);
-
-                // Initialize Panzoom
-                const panzoom = Panzoom(svgElement, {
-                    cursor: 'grab',   // Change the cursor style
-                });
-
-                svgElement.addEventListener('wheel', function(event) {
-                  if (!event.shiftKey) return
-                  panzoom.zoomWithWheel(event)
-                })
-
-                document.querySelectorAll(".panzoom-reset").forEach(function (button) {
-                  button.addEventListener("click", function () {
-                    panzoom.reset();
-                  });
-                });
-
-            }
-        });
-
-        {% endif %}
-
-        // plotly doesn't properly resize on page load, so trigger responsive event
-        triggerResize();
-      })();
-    </script>
-  </body>
 </html>
