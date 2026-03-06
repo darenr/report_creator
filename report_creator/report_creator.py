@@ -952,7 +952,6 @@ class DataTable(Base):
         logger.info(
             f"DataTable component initialized: {len(processed_df)} rows, {len(processed_df.columns)} columns. "
             f"Label: '{self.label}', Index: {index}, Wrap: {wrap_text}, Max Rows: {max_rows}, "
-            f"Rows per Page: {rows_per_page}, Show Page Length: {show_page_length}"
         )
 
     @_strip_whitespace
