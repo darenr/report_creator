@@ -43,7 +43,6 @@ from .theming import get_rc_theme, preferred_fonts, report_creator_colors
 from .utilities import (
     _check_html_tags_are_closed,
     _convert_filepath_to_datauri,
-    _convert_imgurl_to_datauri,
     _convert_imgurl_to_datauri_async,
     _generate_anchor_id,
     _gfm_markdown_to_html,
