@@ -1,8 +1,8 @@
 | Name                               |    Stmts |     Miss |   Branch |   BrPart |   Cover |
 |----------------------------------- | -------: | -------: | -------: | -------: | ------: |
 | report\_creator/base.py            |        8 |        1 |        0 |        0 |     88% |
-| report\_creator/charts.py          |      231 |       11 |       96 |       13 |     93% |
-| report\_creator/report\_creator.py |      673 |      177 |      146 |       23 |     72% |
+| report\_creator/charts.py          |      233 |       11 |       96 |       13 |     93% |
+| report\_creator/report\_creator.py |      711 |      173 |      162 |       27 |     74% |
 | report\_creator/theming.py         |        5 |        0 |        0 |        0 |    100% |
-| report\_creator/utilities.py       |      230 |       10 |       58 |        5 |     95% |
-| **TOTAL**                          | **1147** |  **199** |  **300** |   **41** | **81%** |
+| report\_creator/utilities.py       |      280 |       13 |       86 |        8 |     94% |
+| **TOTAL**                          | **1237** |  **198** |  **344** |   **48** | **83%** |
