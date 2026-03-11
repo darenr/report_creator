@@ -1,8 +1,10 @@
 all: setup examples
 .PHONY: clean examples
 
+SENTINEL = .last_run
+TIMEOUT = 5 # minutes
 
-setup:
+actual_setup:
 	@echo "Setting up environment..."
 	@python3 -m pip install -q --upgrade pip
 	@python3 -m pip install -qr requirements.txt -U
@@ -10,6 +12,17 @@ setup:
 	@python3 -m pip install -qr requirements-test.txt -U
 	@echo "Installing/updating dev tools..."
 	@python3 -m pip install -q ruff twine ghapi -U
+
+setup:
+	@# Check if the sentinel exists and was modified less than 5 minutes ago, \
+	@# speed up development by skipping environment setup if it was recently done
+	@if [ -f $(SENTINEL) ] && [ `find $(SENTINEL) -mmin -$(TIMEOUT)` ]; then \
+		echo "Skipped environment setup: Run less than $(TIMEOUT) minutes ago."; \
+	else \
+		$(MAKE) actual_setup; \
+		touch $(SENTINEL); \
+	fi
+
 
 examples: setup
 	@for file in $(wildcard examples/*.py); do \
