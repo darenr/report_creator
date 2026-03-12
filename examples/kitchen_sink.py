@@ -141,7 +141,7 @@ if __name__ == "__main__":
             ),
             rc.Text(
                 example_text,
-                label="Alice’s Adventures in Wonderland (Text)",
+                label="FINNEGANS WAKE (Text)",
             ),
             rc.Group(
                 rc.Java(

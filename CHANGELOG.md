@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.1.5 (March 2026)
+
+- Switch CSS from water.css to classless, this interefers less with libraries
+- Put blocks of CSS into layers (framework, library, app) with ordering
+- Updates DataTable javascript library version
+- (Breaking) `rc.Text()` no longer extends Markdown, use `rc.Markdown()` for that, this is to prevent unexpected formatting
+- Minor sytyling changes
+- Performance improvements in generation and rendering
+
 ## 1.1.4 (February 4, 2026)
 
 - **Performance**: Asynchronous image fetching in Image component for improved performance.

@@ -125,23 +125,11 @@
       background-color: var(--body-bg);
     }
 
-    blockquote {
-      border-left: 10px solid var(--accent-color);
-      margin: 1.5em 10px;
-      padding: 0.75em 10px;
-    }
 
     blockquote:before {
       color: var(--accent-color);
-      font-size: 4em;
-      line-height: 0.1em;
-      margin-right: 0.25em;
-      vertical-align: -0.4em;
     }
 
-    blockquote p {
-      display: inline;
-    }
 
     block {
       display: flex;
@@ -153,11 +141,13 @@
 
       margin-bottom: calc(var(--spacing-base) * 2);
       background-color: var(--card-bg);
+      /*
       box-shadow: var(--shadow);
       padding: var(--spacing-base);
       border-radius: var(--border-radius-lg);
       transition: var(--transition-base);
       border: 1px solid var(--border-color);
+      */
     }
 
     block-component {
@@ -258,6 +248,10 @@
       width: 100%;
     }
 
+    a:hover {
+      color: unset;
+    }
+
 
     report-text {
       margin-top: 0.5em;
@@ -328,6 +322,11 @@
       border-bottom-right-radius: 0.5rem;
       padding: 20px;
     }
+
+    .dataTables-wrapper thead {
+      background: var(--button-hover);
+    }
+
 
     .offscreen {
       position: absolute;
@@ -465,24 +464,33 @@
     li.task-list-item input[type="checkbox"] {
       margin-left: 0.25em;
       padding-left: 0.25em;
+      margin-right: 0.25rem;
     }
   </style>
 </head>
 
 <body>
-  <header>
-    <div class="letter-icon">{{header_logo|safe}}</div>
-    <div class="header-text">
-      <h1>{{title}}</h1>
-      {% if description %} {{description}} {% endif %} {% if author %}
-      <p><small>{{author}}</small></p>
-      {% endif %}
-    </div>
-  </header>
 
-  <hr />
 
-  <div class="container">{{body}}</div>
+  <div class="container">
+
+    <header>
+      <div class="letter-icon">{{header_logo|safe}}</div>
+      <div class="header-text">
+        <h1>{{title}}</h1>
+        {% if description %} {{description}} {% endif %} {% if author %}
+        <p><small>{{author}}</small></p>
+        {% endif %}
+      </div>
+    </header>
+
+    <hr />
+
+    {{body}}
+
+  </div>
+
+
 
   {% if footer %}
   <footer>{{footer}}</footer>
