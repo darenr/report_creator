@@ -7,9 +7,9 @@ All notable changes to this project will be documented in this file.
 - Switch CSS from water.css to classless, this interefers less with libraries
 - Put blocks of CSS into layers (framework, library, app) with ordering
 - Updates DataTable javascript library version
-- (Breaking) `rc.Text()` no longer extends Markdown, use `rc.Markdown()` for that, this is to prevent unexpected formatting
+- Indented text in rc.Text or rc.Markdown will *not* be treated as code blocks, use fenced blocks explicitely
 - Minor sytyling changes
-- Performance improvements in generation and rendering
+- Performance improvements in html generation and rendering
 
 ## 1.1.4 (February 4, 2026)
 

@@ -2524,7 +2524,8 @@ class ReportCreator:
 
             width = 125
             cx = cy = r = width / 2
-            font_size = int(r * 0.7)
+            font_size = f"{int(r * 0.7)}px"
+            font_size = "4rem"  # Override to ensure it fits well within the circle
             # Join preferred_fonts with quotes for CSS font-family
             font_family_css = ", ".join([f"'{f}'" for f in preferred_fonts] + ["sans-serif"])
 
@@ -2533,7 +2534,7 @@ class ReportCreator:
                     <style>
                         .icon_text_style {{
                             font-family: {font_family_css};
-                            font-size: {font_size}px;
+                            font-size: {font_size};
                             font-weight: bold;
                             text-anchor: middle;
                             dominant-baseline: central;

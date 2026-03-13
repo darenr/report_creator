@@ -18,6 +18,7 @@ either the horizontal (`rc.Group()`) or Vertical (`rc.Block()`) direction.
 Talk to this repo using [DeepWiki Report Creator](https://deepwiki.com/darenr/report_creator) 
 
 Use the documentation in Cursor, Windsurf, Claude Desktop or another MCP Client via the [Context7 MCP](https://context7.com/darenr/report_creator) for example
+
 ```plaintext
 Create an html report on this dataframe, use context7
 ```
