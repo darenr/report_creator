@@ -30,7 +30,7 @@ if __name__ == "__main__":
     with rc.ReportCreator(
         title="Kitchen Sink",
         description="**All** the *things*",
-        footer=f"Made with `report_creator` (v{rc.__version__}), `pip install report-creator` :red_heart:",
+        footer=f"Made with [report_creator](https://github.com/darenr/report_creator) (v{rc.__version__}), `pip install report-creator` :cat_face:",
         accent_color="#f00",
     ) as report:
         view = rc.Block(
