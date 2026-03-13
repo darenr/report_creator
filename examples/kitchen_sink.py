@@ -31,6 +31,7 @@ if __name__ == "__main__":
         title="Kitchen Sink",
         description="**All** the *things*",
         footer=f"Made with `report_creator` (v{rc.__version__}), `pip install report-creator` :red_heart:",
+        accent_color="#f00",
     ) as report:
         view = rc.Block(
             rc.Collapse(
@@ -141,7 +142,8 @@ if __name__ == "__main__":
             ),
             rc.Text(
                 example_text,
-                label="FINNEGANS WAKE (Text)",
+                label="Pale Blue Dot (1994) by Carl Sagan",
+                bordered=True,
             ),
             rc.Group(
                 rc.Java(

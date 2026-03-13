@@ -308,9 +308,21 @@ def _gfm_markdown_to_html(text: str) -> str:
     global _gfm_markdown_parser
 
     if _gfm_markdown_parser is None:
+
+        def _disable_indented_code(md):
+            # Remove 'indented_code' from the block rules
+            kill_rule = "indent_code"
+            if kill_rule in md.block.rules:
+                logger.debug(
+                    f"Disabling '{kill_rule}' rule in Markdown parser to avoid conflicts with fenced code blocks."
+                )
+                md.block.rules.remove(kill_rule)
+
         # Create Markdown parser with the custom renderer and plugins
         _gfm_markdown_parser = mistune.create_markdown(
-            renderer=_CustomHighlightRenderer(escape=False),  # Renderer handles its own escaping
+            renderer=_CustomHighlightRenderer(
+                escape=False
+            ),  # Renderer handles its own escaping
             plugins=[
                 "task_lists",  # For `- [ ]` and `- [x]`
                 "def_list",  # For definition lists
@@ -321,6 +333,7 @@ def _gfm_markdown_to_html(text: str) -> str:
                 "url",  # For auto-linking URLs
                 "spoiler",  # For `||spoiler||` (GFM-style)
                 _emojis_plugin,  # Custom emoji plugin
+                _disable_indented_code,  # Disable indented code blocks to avoid conflicts with fenced code blocks
             ],
             hard_wrap=False,  # Respect Markdown newlines for paragraphs
         )
