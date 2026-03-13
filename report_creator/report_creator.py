@@ -1323,15 +1323,11 @@ class Markdown(Base):
     options for adding custom CSS styles and borders.
 
     Args:
-        text (str): The Markdown-formatted text to be rendered. This string will be
-            processed by `textwrap.dedent` to remove common leading whitespace,
-            then converted from GitHub Flavored Markdown to HTML using an internal utility
-            (`_gfm_markdown_to_html`). The resulting HTML is then rendered.
-            Code blocks within the Markdown can be syntax highlighted if Highlight.js
-            is active (signaled by `include_hljs` class).
+        text (str): The GitHub Flavored Markdown formatted text to be rendered. Supports standard Markdown
+            features like headings, lists, links, images, etc, also emoji's for example ":red_heart:"
         label (Optional[str], optional): An optional label or heading for the Markdown section.
             If provided, it's HTML-escaped and displayed above the content, linked
-            with an anchor ID. Inherits from `Base`. Defaults to None.
+            with an anchor ID. Defaults to None.
         extra_css (Optional[str], optional): Additional inline CSS styles to be applied
             to the inner `div` that wraps the Markdown content. Be cautious with
             user-provided CSS. Defaults to an empty string.
