@@ -2091,6 +2091,67 @@ class Sql(Language):
             above it. Defaults to None.
     """
 
+    BLOCK_STATEMENTS = [
+        "create.*?table",  # regex for all variants, e.g. CREATE OR REPLACE TABLE
+        "create.*?view",  # regex for all variants, e.g. CREATE OR REPLACE VIEW
+        "select distinct",
+        "select",
+        "from",
+        "left join",
+        "inner join",
+        "outer join",
+        "right join",
+        "union",
+        "on",
+        "where",
+        "group by",
+        "order by",
+        "asc",
+        "desc",
+        "limit",
+        "offset",
+        "insert.*?into",
+        "update",
+        "set",
+        "delete",
+        "drop",
+        "alter",
+        "add",
+        "modify",
+        "rename",
+        "truncate",
+        "begin",
+        "commit",
+        "rollback",
+        "grant",
+        "revoke",
+    ]
+    RESERVED_WORDS = ["as"]  # Words to uppercase in place
+
+    _COMMA_RE = re.compile(r"(?<!['\"]),\s*(?!['\"])", flags=re.DOTALL)
+    _RESERVED_WORDS_RE = [
+        (
+            word.upper(),
+            re.compile(rf"(?<!['\"])\b{word}\b(?!['\"])", flags=re.IGNORECASE | re.DOTALL),
+        )
+        for word in RESERVED_WORDS
+    ]
+    _COMBINED_BLOCK_RE = re.compile(
+        rf"(?i)(?<!['\"])(?:^|\s+)({'|'.join(BLOCK_STATEMENTS)})(?:\s+|$)(?!['\"])",
+        flags=re.DOTALL,
+    )
+
+    @staticmethod
+    def _sql_block_replacer(m: re.Match) -> str:
+        """Helper for Sql.format_sql to replace keywords with uppercased versions and formatting."""
+        keyword = m.group(1).upper()
+        # If the match is at the start of the string (ignoring leading whitespace),
+        # don't prepend a newline.
+        # m.start() == 0 means the match is at the very beginning of the string.
+        if m.start() == 0:
+            return f"{keyword}\n\t"
+        return f"\n{keyword}\n\t"
+
     @staticmethod
     def format_sql(sql: str) -> str:
         """
@@ -2105,79 +2166,16 @@ class Sql(Language):
         Note: This is a basic formatter and may not correctly format all complex SQL queries,
         especially those with comments or already intricate formatting.
         """
-        BLOCK_STATEMENTS = [
-            "create.*?table",  # regex for all variants, e.g. CREATE OR REPLACE TABLE
-            "create.*?view",  # regex for all variants, e.g. CREATE OR REPLACE VIEW
-            "select distinct",
-            "select",
-            "from",
-            "left join",
-            "inner join",
-            "outer join",
-            "right join",
-            "union",
-            "on",
-            "where",
-            "group by",
-            "order by",
-            "asc",
-            "desc",
-            "limit",
-            "offset",
-            "insert.*?into",
-            "update",
-            "set",
-            "delete",
-            "drop",
-            "alter",
-            "add",
-            "modify",
-            "rename",
-            "truncate",
-            "begin",
-            "commit",
-            "rollback",
-            "grant",
-            "revoke",
-        ]
-        RESERVED_WORDS = ["as"]  # Words to uppercase in place
-
         # Add newline and tab after commas, but not if comma is inside single or double quotes.
-        sql = re.sub(r"(?<!['\"]),\s*(?!['\"])", ",\n\t", sql, flags=re.DOTALL)
+        sql = Sql._COMMA_RE.sub(",\n\t", sql)
 
         # Uppercase specific reserved words if they are not inside quotes.
-        for reserved_word in RESERVED_WORDS:
-            sql = re.sub(
-                rf"(?<!['\"])\b{reserved_word}\b(?!['\"])",
-                reserved_word.upper(),
-                sql,
-                flags=re.IGNORECASE | re.DOTALL,
-            )
+        for upper_word, pattern in Sql._RESERVED_WORDS_RE:
+            sql = pattern.sub(upper_word, sql)
 
         # Format block statements
-        combined_pattern = "|".join(BLOCK_STATEMENTS)
+        sql = Sql._COMBINED_BLOCK_RE.sub(Sql._sql_block_replacer, sql)
 
-        def current_replacer(m):
-            keyword = m.group(1).upper()
-            # If the match is at the start of the string (ignoring leading whitespace),
-            # don't prepend a newline.
-            # m.start() is the index in the original string.
-            # The pattern (?:^|\s+) matches leading whitespace.
-            # If m.start() == 0, it is at the beginning.
-            # Note: m.start() refers to the start of the match in the original string.
-            # Since the pattern starts with (?:^|\s+), m.start() == 0 means the match
-            # is at the very beginning of the string.
-            if m.start() == 0:
-                return keyword + "\n\t"
-            else:
-                return "\n" + keyword + "\n\t"
-
-        sql = re.sub(
-            rf"(?i)(?<!['\"])(?:^|\s+)({combined_pattern})(?:\s+|$)(?!['\"])",
-            current_replacer,
-            sql,
-            flags=re.DOTALL,
-        )
         return sql.strip()
 
     def __init__(
