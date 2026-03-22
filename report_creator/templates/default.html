@@ -75,7 +75,7 @@
     :root {
       --button-hover: black;
       --font-size: calc(.6em + 1vw);
-      --font-family-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      --font-family-sans: "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
 
 
@@ -335,6 +335,14 @@
 
       .dataTables-wrapper thead {
         background: var(--button-hover);
+      }
+
+      .dt-container .dt-length,
+      .dt-container .dt-search {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 150px;
       }
 
 
@@ -598,7 +606,8 @@
         topStart: null,
         topEnd: null,
         bottomStart: 'info',
-        bottomEnd: 'paging'
+        bottomEnd: 'paging',
+
       };
 
       table = new DataTable("table.fancy-table", {
@@ -611,6 +620,9 @@
               menu: [10, 25, 50, -1]
             }
           }, 'search']
+        },
+        "language": {
+          "lengthMenu": "_MENU_ Rows",
         },
         colReorder: true,
         responsive: true,
