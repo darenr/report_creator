@@ -1328,6 +1328,8 @@ class Markdown(Base):
         label (Optional[str], optional): An optional label or heading for the Markdown section.
             If provided, it's HTML-escaped and displayed above the content, linked
             with an anchor ID. Defaults to None.
+        footer (Optional[str], optional): An optional footer for the Markdown section.
+            If provided, it's HTML-escaped and displayed below the content. Defaults to None.
         extra_css (Optional[str], optional): Additional inline CSS styles to be applied
             to the inner `div` that wraps the Markdown content. Be cautious with
             user-provided CSS. Defaults to an empty string.
@@ -1341,12 +1343,14 @@ class Markdown(Base):
         text: str,
         *,
         label: str | None = None,
+        footer: str | None = None,
         extra_css: str | None = None,
         bordered: bool | None = False,
     ):
         super().__init__(label=label)
         # Dedent the input text to handle common indentation in triple-quoted strings
         self.text = textwrap.dedent(str(text))  # Ensure text is string
+        self.footer = footer  # Store the footer for potential future use (not currently rendered in to_html)
         self.extra_css = extra_css or ""  # Ensure it's a string
         self.bordered = bordered
 
@@ -1390,6 +1394,13 @@ class Markdown(Base):
         html_parts.append(_gfm_markdown_to_html(self.text))
 
         html_parts.append("</div>")  # End inner div
+
+        if self.footer:
+            escaped_footer = html.escape(self.footer)
+            html_parts.append(
+                f"<br /><footer><br /><p><i>{escaped_footer}</i></p></footer>"
+            )  # Footer is currently rendered outside the main wrapper
+
         html_parts.append("</div>")  # End markdown-wrapper
 
         return "".join(html_parts)

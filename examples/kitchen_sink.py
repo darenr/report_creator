@@ -142,6 +142,7 @@ if __name__ == "__main__":
             rc.Text(
                 example_text,
                 label="Pale Blue Dot (1994) by Carl Sagan",
+                footer="For all the engineers that have been inspired by Carl Sagan's words to pursue a career in computer science and engineering, and for all the people that have been inspired to care about our planet and the universe we live in by his writing.",
                 bordered=True,
             ),
             rc.Group(
