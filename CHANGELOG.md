@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.1.5 (March 2026)
+
+- Refresh dependencies
+- Minor styling fixes
+
 ## 1.1.4 (February 4, 2026)
 
 - **Performance**: Asynchronous image fetching in Image component for improved performance.
